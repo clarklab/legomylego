@@ -87,3 +87,33 @@ def test_loose_piece_after_step_fails(engine):
     m.main.place("3001", "White", (0, -200, 0))
     r = check(engine, m)
     assert r.status == "fail" and any("loose" in i["problem"] for i in r.items)
+
+
+def test_loose_plates_on_the_table_until_locked(engine):
+    m = Model("B", "b", {}, engine.catalog)
+    s = m.main
+    s.place("3023b", "White", (0, 0, -10))            # two loose 1x2 plates lying side by side
+    s.place("3023b", "White", (0, 0, 10))
+    s.step()
+    s.place("3023b", "White", (10, -8, 0), rot(y=90))  # a crossing plate locks them
+    assert check(engine, m).status == "pass"
+
+
+def test_loose_at_the_end_fails(engine):
+    m = Model("B", "b", {}, engine.catalog)
+    s = m.main
+    s.place("3023b", "White", (0, 0, -10))
+    s.place("3023b", "White", (0, 0, 10))              # never locked
+    r = check(engine, m)
+    assert r.status == "fail" and "loose" in r.items[0]["problem"]
+
+
+def test_floating_loose_part_fails(engine):
+    m = Model("B", "b", {}, engine.catalog)
+    s = m.main
+    s.place("3001", "White")
+    s.place("3005", "White", (0, -60, 0))              # hanging in the air
+    s.step()
+    s.place("3001", "White", (0, -24, 0))
+    r = check(engine, m)
+    assert r.status == "fail" and "loose" in r.items[0]["problem"]

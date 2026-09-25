@@ -135,6 +135,41 @@ def setup(s):
     return cam
 
 
+MASK = {}
+
+
+def mask_pass(sc, s, job, is_new):
+    """Render which pixels show this step's new parts (white on black, flat, no AA) so the
+    booklet can draw a highlight ring around them. Leaves shading as it found it."""
+    if not MASK:
+        for key, rgb in (("new", (1, 1, 1, 1)), ("old", (0, 0, 0, 1))):
+            m = bpy.data.materials.new(f"mask_{key}")
+            m.diffuse_color = rgb
+            MASK[key] = m
+    sh = sc.display.shading
+    saved = (sh.light, sh.show_cavity, sh.show_object_outline, sh.show_specular_highlight,
+             sc.display.render_aa, sc.world.color[:], sc.view_settings.exposure,
+             sc.render.image_settings.file_format, sc.render.image_settings.color_mode)
+    mats = {ob: ob.material_slots[0].material for ob in is_new}
+    for ob, new in is_new.items():
+        ob.material_slots[0].material = MASK["new" if new else "old"]
+    sh.light = "FLAT"
+    sh.show_cavity = sh.show_object_outline = sh.show_specular_highlight = False
+    sc.display.render_aa = "OFF"
+    sc.world.color = (0, 0, 0)
+    sc.view_settings.exposure = 0
+    sc.render.image_settings.file_format = "PNG"
+    sc.render.image_settings.color_mode = "BW"
+    sc.render.filepath = f"{s['out_dir']}/{job['name']}_mask.png"
+    bpy.ops.render.render(write_still=True)
+    (sh.light, sh.show_cavity, sh.show_object_outline, sh.show_specular_highlight,
+     sc.display.render_aa, wc, sc.view_settings.exposure,
+     sc.render.image_settings.file_format, sc.render.image_settings.color_mode) = saved
+    sc.world.color = wc
+    for ob, m in mats.items():
+        ob.material_slots[0].material = m
+
+
 def view_rotation(az, el):
     a, e = math.radians(az), math.radians(el)
     direction = Vector((math.sin(a) * math.cos(e), -math.cos(a) * math.cos(e), math.sin(e)))
@@ -209,6 +244,9 @@ def main():
         ext = ".png" if sc.render.film_transparent else ".jpg"
         sc.render.filepath = f"{s['out_dir']}/{job['name']}{ext}"
         bpy.ops.render.render(write_still=True)
+        if job.get("highlight"):
+            new_obs = {objs[n] for n in new if objs[n] is not None}
+            mask_pass(sc, s, job, {ob: ob in new_obs for ob in shown})
         print("BRICKKIT_RENDERED", job["name"])
     for ob in all_objs:
         ob.hide_render = True

@@ -103,9 +103,12 @@ def build_context(engine, proj, model, img_dir: Path) -> dict:
                   "element": l.element_id, "bl_part": l.bl_part, "bl_colour": l.color.bl_id,
                   "rare": l.rare} for l in sorted(bom, key=lambda l: (l.color.name, l.name))]
     report = {}
-    rp = proj.out / "report.json"
-    if rp.exists():
-        report = json.loads(rp.read_text())
+    for rp in (proj.out / "report.json", img_dir.parent / "report.json"):
+        if rp.exists():             # a colourway's own report re-runs the colour checks only
+            r = json.loads(rp.read_text())
+            by_name = {c["name"]: c for c in report.get("checks", [])}
+            by_name.update({c["name"]: c for c in r.get("checks", [])})
+            report = {**report, **r, "checks": list(by_name.values())}
     checks = [{"name": c["name"].replace("_", " "), "status": c["status"], "summary": c["summary"]}
               for c in report.get("checks", [])]
     stats = {c["name"]: c.get("stats", {}) for c in report.get("checks", [])}
@@ -126,6 +129,9 @@ def build_context(engine, proj, model, img_dir: Path) -> dict:
         "cover": "cover.png", "logo": "logo.png", "url": f"{SITE_URL}/m/{proj.slug}",
         "site": SITE_URL, "date": dt.date.today().isoformat(),
         "variant": model.variant,
+        "variant_title": (proj.variant_title(model.variant) if model.variant
+                          else proj.config.get("model", {}).get("palette_title", "")
+                          if proj.variants() else ""),
     }
 
 
@@ -147,10 +153,14 @@ def html_to_pdf(html: Path, pdf: Path) -> Path:
     return pdf
 
 
-def make_booklet(engine, proj, model, *, rerender: bool = True, cover: Path | None = None) -> Path:
+def make_booklet(engine, proj, model, *, rerender: bool = True, cover: Path | None = None,
+                 out_dir: Path | None = None) -> Path:
+    """Render (unless `rerender` is off and pictures exist) and write out_dir/booklet.pdf;
+    out_dir defaults to the model's out/ (a colourway passes out/variants/<name>/)."""
     from ..render import instructions
     from ..render.scene import render_model
-    img_dir = proj.out / "booklet"
+    out_dir = Path(out_dir or proj.out)
+    img_dir = out_dir / "booklet"
     if rerender or not (img_dir / "plan.json").exists():
         instructions.render(engine, model, img_dir)
     if cover is None:
@@ -174,4 +184,4 @@ def make_booklet(engine, proj, model, *, rerender: bool = True, cover: Path | No
             shutil.copy2(src, dst)
             ctx["works"][k] = {**w, "image": dst.name}
     html = render_html(ctx, img_dir / "booklet.html")
-    return html_to_pdf(html, proj.out / "booklet.pdf")
+    return html_to_pdf(html, out_dir / "booklet.pdf")

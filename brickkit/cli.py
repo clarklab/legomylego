@@ -94,6 +94,8 @@ def main(argv=None) -> int:
     p.add_argument("--preview", action="store_true", help="540x540, low samples, every 2nd frame")
     p.add_argument("--segments", help="comma list, e.g. build,mechanism (default: all)")
     p.add_argument("--force", action="store_true", help="re-render cached frames")
+    p.add_argument("--engine", choices=("eevee", "cycles"), default="eevee")
+    p.add_argument("--device", choices=("gpu", "cpu"), default="gpu", help="Cycles only")
     p = sub.add_parser("viewer", help="export the model (and its colourways) to the viewer site")
     p.add_argument("slug")
     p.add_argument("--site", help="site directory (default: site/)")
@@ -135,14 +137,16 @@ def main(argv=None) -> int:
     proj, model = _build(engine, args.slug, getattr(args, "variant", None))
     if args.cmd == "booklet":
         from .booklet.booklet import make_booklet
-        pdf = make_booklet(engine, proj, model, rerender=not args.no_render)
+        pdf = make_booklet(engine, proj, model, rerender=not args.no_render,
+                           out_dir=_out(proj, model.variant))
         print(f"booklet -> {pdf}")
         return 0
     if args.cmd == "video":
         from .video import make_video
         segs = [s.strip() for s in args.segments.split(",") if s.strip()] if args.segments else None
         out = make_video(engine, proj, model, _out(proj, model.variant), preview=args.preview,
-                         segments=segs, force=args.force)
+                         segments=segs, force=args.force, render_engine=args.engine,
+                         device=args.device)
         print(f"video -> {out}")
         return 0
     if args.cmd == "viewer":

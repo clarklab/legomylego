@@ -127,11 +127,14 @@ def disc(sub, color="skirt_accent") -> set:
     loose = singles_a & singles_b
     a = [r for r in a if not (r[2] == 1 and r[:2] in loose)]
     b = [r for r in b if not (r[2] == 1 and r[:2] in loose)]
-    sub.step("Base disc: two crossed layers of plates")
-    for i, k, n, axis in a:
-        _place_run(sub, plates[n], color, i, k, n, axis, DISC_TOP, "disc")
-    for i, k, n, axis in b:
-        _place_run(sub, plates[n], color, i, k, n, axis, DISC_TOP + 8, "disc")
+    # laid out on the table: the bottom layer (b) loose, then the top layer (a) locks it
+    for layer, runs, y in (("bottom", b, DISC_TOP + 8), ("top", a, DISC_TOP)):
+        mid = sorted(r[0] for r in runs)[len(runs) // 2]
+        for side, half in (("left", [r for r in runs if r[0] < mid]),
+                           ("right", [r for r in runs if r[0] >= mid])):
+            sub.step(f"Base disc: {layer} layer, {side} half")
+            for i, k, n, axis in half:
+                _place_run(sub, plates[n], color, i, k, n, axis, y, "disc")
     return cells - loose
 
 

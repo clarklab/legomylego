@@ -94,6 +94,9 @@ def check_buildability(ctx, cfg) -> CheckResult:
         parts_of = defaultdict(list)
         for i, ui in enumerate(owner):
             parts_of[ui].append(i)
+        bottoms = defaultdict(lambda: -1e9)                  # lowest point (max y) per unit
+        for i, ui in enumerate(owner):
+            bottoms[ui] = max(bottoms[ui], float(boxes_all[i][1][1]))
         built: list[int] = []
         built_parts: list[int] = []
 
@@ -141,6 +144,13 @@ def check_buildability(ctx, cfg) -> CheckResult:
             index = {u: k for k, u in enumerate(built)}
             edges = [(index[a], index[b]) for a in built for b, _, _ in links[a] if b in bset]
             comps = components(len(built), edges)
+            if len(comps) > 1 and s < sub.n_steps - 1:
+                # loose pieces lying on the table next to the model are fine mid-build (a
+                # plate layer laid out before the crossing layer locks it); not at the end
+                table = max(bottoms[ui] for ui in built)
+                comps = [c for c in comps
+                         if not any(abs(bottoms[built[i]] - table) < 0.5 for i in c)] or [[]]
+                comps = [[]] + [c for c in comps if c]
             if len(comps) > 1:
                 items.append({"submodel": sub.name, "step": s + 1,
                               "part": ", ".join(units[built[i]].label for i in comps[1][:5]),

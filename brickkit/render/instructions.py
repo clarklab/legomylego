@@ -99,7 +99,8 @@ def plan(engine, model, out_dir: Path) -> dict:
         view = _view_for(engine, items, visible, new, hint)
         name = f"step_{number:04d}"
         jobs.append({"name": name, "set": sub_name, "visible": visible, "new": new,
-                     "azimuth": front + 30, "elevation": 32 if view == "above" else -30})
+                     "azimuth": front + 30, "elevation": 32 if view == "above" else -30,
+                     "highlight": len(visible) > len(new)})
         parts, subs = {}, {}
         for k in sorted({items[n][0] for n in new}):
             it = sub.items[k]
@@ -127,12 +128,35 @@ def plan(engine, model, out_dir: Path) -> dict:
             "used_subs": sorted(used_subs)}
 
 
+HIGHLIGHT = (255, 205, 0)          # ring round the new parts of a step
+HIGHLIGHT_EDGE = (28, 28, 28)
+
+
+def outline_new_parts(image: Path, mask: Path, width: int = 5) -> None:
+    """Draw a yellow ring with a thin dark edge around the new parts' visible pixels."""
+    from PIL import Image, ImageChops, ImageFilter
+    if not mask.exists():
+        return
+    img = Image.open(image).convert("RGB")
+    m = Image.open(mask).convert("L").point(lambda v: 255 if v > 127 else 0)
+    if m.size != img.size or not m.getbbox():
+        mask.unlink()
+        return
+    inner = m.filter(ImageFilter.MaxFilter(2 * width + 1))
+    outer = inner.filter(ImageFilter.MaxFilter(3))
+    img.paste(Image.new("RGB", img.size, HIGHLIGHT_EDGE), mask=ImageChops.subtract(outer, m))
+    img.paste(Image.new("RGB", img.size, HIGHLIGHT), mask=ImageChops.subtract(inner, m))
+    img.save(image, quality=88)
+    mask.unlink()
+
+
 def render(engine, model, out_dir: Path, *, size=(1100, 820), part_px_per_ldu: float = 1.6,
            only_parts: bool = False) -> dict:
     out_dir = Path(out_dir).resolve()
     out_dir.mkdir(parents=True, exist_ok=True)
     p = plan(engine, model, out_dir)
-    parts = {i["part"] for s in p["sets"].values() for i in s}
+    parts = ({i["part"] for s in p["sets"].values() for i in s}
+             | {j["part"] for j in p["part_jobs"]})         # incl. bought-only extras
     codes = {i["color"] for s in p["sets"].values() for i in s}
     for part in parts:
         codes |= {int(c) for c in np.unique(engine.geom.mesh(part).colors) if c not in (16, 24)}
@@ -146,6 +170,9 @@ def render(engine, model, out_dir: Path, *, size=(1100, 820), part_px_per_ldu: f
              "part_jobs": p["part_jobs"], "size": list(size), "out_dir": str(out_dir),
              "part_px_per_ldu": part_px_per_ldu}
     run_blender(scene, out_dir, script=SCRIPT, timeout=7200)
+    for job in scene["jobs"]:
+        if job.get("highlight"):
+            outline_new_parts(out_dir / f"{job['name']}.jpg", out_dir / f"{job['name']}_mask.png")
     (out_dir / "plan.json").write_text(json.dumps({
         "steps": [s.__dict__ for s in p["steps"]], "used_subs": p["used_subs"],
         "part_images": {f"{part_id(j['part'])}_{j['color']}": j["name"] + ".png"

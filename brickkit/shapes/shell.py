@@ -243,11 +243,13 @@ def _smooth(sub, lower, upper, next_kind, color, top_y, vocab, tag, n) -> int:
 
 
 def woven_disc(sub, cells, color, *, surface_y: float, plate: dict | None = None,
-               tag: str = "", caption: str = "Cap", origin=(0.0, 0.0)) -> dict:
+               tag: str = "", caption: str = "Cap", origin=(0.0, 0.0),
+               on_table: bool = False) -> dict:
     """Two plate layers over `cells` with runs crossing at right angles (x then z), so the disc
     is one rigid sheet that can bridge a hole in the ring below. `surface_y` is the LDraw y of
     the surface under the first layer. Both layers go in one step (the first layer is only
-    locked by the second). Returns stats and the top y."""
+    locked by the second), unless the disc is laid out `on_table`: then each layer goes in two
+    half-steps, the loose first layer resting on the table. Returns stats and the top y."""
     plate = plate or {2: "3023b", 1: "3024"}
     lengths = tuple(sorted(plate, reverse=True))
     best = None
@@ -265,13 +267,22 @@ def woven_disc(sub, cells, color, *, surface_y: float, plate: dict | None = None
             pieces = _sheet_pieces(a, b)
             if best is None or pieces < best[0]:
                 best = (pieces, a, b)
-    sub.step(caption)
     count = 0
     y = surface_y
-    for runs in best[1:]:
-        for i, k, n, axis in runs:
-            _place_run(sub, plate[n], color, i, k, n, axis, y - 8, tag, origin)
-            count += 1
+    if not on_table:
+        sub.step(caption)
+    for layer, runs in enumerate(best[1:]):
+        halves = [runs]
+        if on_table:
+            mid = sorted(r[0] for r in runs)[len(runs) // 2]
+            halves = [[r for r in runs if r[0] < mid], [r for r in runs if r[0] >= mid]]
+        for h, part in enumerate(halves):
+            if on_table:
+                sub.step(f"{caption}: {('bottom', 'top')[layer]} layer, "
+                         f"{('left', 'right')[h]} half")
+            for i, k, n, axis in part:
+                _place_run(sub, plate[n], color, i, k, n, axis, y - 8, tag, origin)
+                count += 1
         y -= 8
     covered = {c for run in best[2] for c in _run_cells(run)}
     return {"parts": count, "top_y": y, "pieces": best[0], "cells": covered}

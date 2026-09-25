@@ -20,7 +20,7 @@ def stand(model):
     s = model.submodel("stand", "Hover stand")
     disc = ring_cells(BASE_R)
     bottom = woven_disc(s, disc, "stand_base", surface_y=TABLE_Y, caption="Base plate",
-                        plate={6: "3666", 4: "3710", 2: "3023b", 1: "3024"})
+                        plate={6: "3666", 4: "3710", 2: "3023b", 1: "3024"}, on_table=True)
     y = bottom["top_y"]                                                    # 408
     s.step("Battery box, switch and plug facing up")
     s.place("64228", "battery", (0, y - 96, 60), tag="battery")

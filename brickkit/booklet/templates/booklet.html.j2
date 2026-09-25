@@ -9,6 +9,7 @@
     <img class="logo" src="{{ logo }}">
     <div class="kicker">A LEGO® brick model of</div>
     <h1>{{ name }}</h1>
+    {% if variant_title %}<div class="kicker" style="margin-bottom:3mm">{{ variant_title }} colourway</div>{% endif %}
     <div class="sub">{{ subtitle }}</div>
     <div class="count">{{ pieces }} <small>pieces · {{ n_steps }} steps · {{ sections|length }} sections</small></div>
     <div class="flag">Unofficial fan-made building instructions</div>
@@ -25,11 +26,11 @@
     <div>
       <div class="box"><h3>An unofficial fan-made manual</h3><p>This booklet is not a LEGO product. It was generated from the model file by a computer program and checked part by part.</p></div>
       <div class="box red" style="margin-top:5mm"><h3>Not physically build-tested</h3><p>The model and these steps were checked on a computer only: every part/colour is a real LEGO element, all {{ connections or "the" }} connections between parts were matched in 3D, no two parts overlap, every part can be pushed into place in its step, and the model's balance was estimated{% if has_mechanism %}; the mechanism was swept through its whole range{% endif %}. Not tested: how firmly parts hold, part tolerances and how it copes with handling. Take your time and support the model while you work.</p></div>
-      <div class="box" style="margin-top:5mm"><h3>The finished model</h3><p>About {{ dims[0] }} × {{ dims[1] }} × {{ dims[2] }} cm{% if weight_text %}, about {{ weight_text }} (estimated){% endif %}.</p>{% if intro %}<p>{{ intro }}</p>{% endif %}</div>
+      <div class="box" style="margin-top:5mm"><h3>The finished model</h3><p>About {{ dims[0] }} × {{ dims[2] }} cm and {{ dims[1] }} cm tall{% if weight_text %}, about {{ weight_text }} (estimated){% endif %}.</p>{% if intro %}<p>{{ intro }}</p>{% endif %}</div>
     </div>
     <div>
       <div class="box"><h3>You will need</h3><ul><li>The {{ pieces }} pieces in {{ colours|length }} colours listed at the back, with their LEGO element IDs and BrickLink numbers.</li>{% for n in you_will_need %}<li>{{ n }}</li>{% endfor %}<li>A brick separator for pieces that sit too deep for a finger.</li></ul></div>
-      <div class="box" style="margin-top:5mm"><h3>Tips</h3><ul><li>Sort the pieces by colour before you start.</li><li>Build the sections in order: each sub-assembly is finished before it is used.</li><li>New pieces in a step are drawn in full colour; earlier pieces are drawn paler.</li>{% for n in notes %}<li>{{ n }}</li>{% endfor %}</ul></div>
+      <div class="box" style="margin-top:5mm"><h3>Tips</h3><ul><li>Sort the pieces by colour before you start.</li><li>Build the sections in order: each sub-assembly is finished before it is used.</li><li>New pieces in a step have a yellow outline; earlier pieces are drawn paler.</li>{% for n in notes %}<li>{{ n }}</li>{% endfor %}</ul></div>
       <div class="box" style="margin-top:5mm"><h3>The {{ colours|length }} colours</h3><div class="colours">{% for c in colours %}<div><span class="swatch" style="background:{{ c.hex }}"></span>{{ c.name }}: {{ c.qty }}</div>{% endfor %}</div></div>
     </div>
   </div>
@@ -41,7 +42,7 @@
   <h2>How to read the steps</h2>
   <div class="grid3">
     <div class="box"><h3>Parts and step number</h3><div class="demo"><span class="bignum">7</span><span class="callout"><span class="item"><img src="{{ inventory[0].img }}">2x</span></span></div><p>The parts for the step and how many of each, then the step number. All parts are drawn at one scale.</p></div>
-    <div class="box"><h3>New parts</h3><p>The parts added in a step are drawn in full colour; the parts from earlier steps are drawn paler, so the new ones stand out.</p></div>
+    <div class="box"><h3>New parts</h3><p>The parts added in a step have a yellow outline and are drawn in full colour; the parts from earlier steps are drawn paler.</p></div>
     <div class="box"><h3>Sub-assemblies</h3><div class="demo"><span class="callout"><span class="item sub"><img src="sub_{{ sections[0].name }}.png">1x</span></span></div><p>A yellow-framed picture means: put in the sub-assembly you built in its own section. "Build 4x" means you need four of them.</p></div>
     <div class="box"><h3>Sections</h3><p>Each section starts with its name at the top of the page. Sections are built in the order they appear.</p></div>
     <div class="box"><h3>Seen from below</h3><p>When a step adds parts underneath, the picture shows the model from below. A small label says so.</p></div>
