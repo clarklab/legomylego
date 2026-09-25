@@ -304,6 +304,15 @@ _instances = T.part_instances
 default_callouts = T.default_callouts
 
 
+def part_label(name: str) -> str:
+    """A catalogue name for the screen: 'Dish 2 x 2 Inverted [Radar]' -> 'Dish 2×2 inverted'."""
+    import re
+    name = re.sub(r"\s*[\[(].*?[\])]", "", name).strip()
+    name = re.sub(r"(\d)\s*x\s*(\d)", "\\1\u00d7\\2", name)
+    words = name.split(" ")
+    return " ".join(words[:1] + [w if any(c.isdigit() for c in w) else w.lower() for w in words[1:]])
+
+
 def callouts(engine, model, placed, C, tl, cfg, log=print) -> list[dict]:
     """Callouts for the mechanism shot, each anchor tracked through the shot's camera and
     the moving groups' poses: [{label, sub, n, xray, parts, side, y, track: [[x, y], ...]}]."""
@@ -316,6 +325,7 @@ def callouts(engine, model, placed, C, tl, cfg, log=print) -> list[dict]:
     angles = tl["mechanism"]["angles"]
     frames = list(range(seg["start"], seg["end"]))
     out = []
+    told = set()                              # groups whose turn a callout already gives
     for sel in conf:
         inst = _instances(placed, sel)
         if not inst:
@@ -335,11 +345,14 @@ def callouts(engine, model, placed, C, tl, cfg, log=print) -> list[dict]:
             anchors.append({"track": track, "group": int(g)})
         sub = sel.get("sub")
         if sub is None:
+            # how far its group turns (once per group), else what the part is
             g = gi[inst[0][0]]
-            if g >= 0 and names[g] in angles and angles[names[g]] > 1:
-                sub = f"turns {angles[names[g]]:.0f}°"
-            elif len(inst[0]) == 1:
-                sub = engine.catalog.part_name(placed[inst[0][0]].part)
+            kinds = {placed[i].part for idx in inst for i in idx}
+            if g >= 0 and g not in told and names[g] in angles and angles[names[g]] > 1:
+                sub = f"turns {angles[names[g]]:.0f}\u00b0"
+                told.add(g)
+            elif len(kinds) == 1:
+                sub = part_label(engine.catalog.part_name(next(iter(kinds))))
             else:
                 sub = f"{sum(len(i) for i in inst)} pieces"
         mid = len(frames) // 2

@@ -342,3 +342,8 @@ def test_callout_layout_stays_in_frame():
     assert (len(left), len(right)) == (3, 2)          # the columns are balanced
     assert all(b - a >= 100 - 1e-6 for a, b in zip(left, left[1:]))
     assert all(c["elbow"] is not None for c in out)
+
+
+def test_part_label():
+    assert R.part_label("Dish 2 x 2 Inverted [Radar]") == "Dish 2×2 inverted"
+    assert R.part_label("Technic Gear 24 Tooth [New Style with Single Axle Hole]") == "Technic gear 24 tooth"

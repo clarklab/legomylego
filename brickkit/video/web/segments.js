@@ -151,7 +151,7 @@ function chip(value, lab, x, y, p, k = 0, o = {}) {
   } else if (t === 'tape') {
     CX.fillStyle = rgba('#000000', 0.55); CX.fillRect(0, 0, w, h);
     CX.strokeStyle = rgba(k % 2 ? TH.accent2 : TH.accent, 0.9); CX.lineWidth = 2; CX.strokeRect(1, 1, w - 2, h - 2);
-    fg = TH.ink; lc = k % 2 ? TH.accent2 : TH.accent;
+    fg = TH.ink; lc = mix(k % 2 ? TH.accent2 : TH.accent, '#ffffff', 0.4);
   } else if (t === 'playful') {
     const cols = [TH.accent, TH.accent2, '#2BB673', '#3D7DFF', TH.bg2];
     const col = cols[k % cols.length];
@@ -512,15 +512,27 @@ SEG.title = {
       odometer(n, M, 1000, csize, cp, { color: TH.name === 'tape' ? TH.ink : TH.ink });
       CX.restore();
     }
-    // stat chips, two rows to the right of the counter
+    // stat chips to the right of the counter, at most two rows (smaller chips if need be)
     const cw = measure(fmt(D.model.pieces), font(csize, 700)) + M + 40;
-    let x = Math.max(cw, 400), y = 872, rowStart = x;
+    const x0c = Math.max(cw, 360);
+    const widths = D.chips.map((c, k) => chip(UP(c.value), c.label, 0, -999, 0, k));   // measure
+    let sc = 1, place = [];
+    for (sc of [1, 0.9, 0.8, 0.72, 0.64]) {
+      place = []; let x = x0c, row = 0;
+      widths.forEach((w0) => {
+        const w = w0 * sc;
+        if (x + w > L - M + 4 && x > x0c) { x = x0c; row++; }
+        place.push([x, row]); x += w + 14 * sc;
+      });
+      if (row <= 1) break;
+    }
     D.chips.forEach((c, k) => {
       const t0 = m.chips[k] !== undefined ? m.chips[k] : m.chips[m.chips.length - 1] + (k - m.chips.length + 1) * 4;
-      const w = chip(UP(c.value), c.label, 0, -999, 0, k);     // measure only
-      if (x + w > L - M + 4 && x > rowStart) { x = rowStart; y += 74; }
-      chip(UP(c.value), c.label, x, y, ramp(f, t0, t0 + 9), k);
-      x += w + 14;
+      const [x, row] = place[k];
+      const y = 872 + row * 74 * sc;
+      CX.save(); CX.translate(x, y); CX.scale(sc, sc);
+      chip(UP(c.value), c.label, 0, 0, ramp(f, t0, t0 + 9), k);
+      CX.restore();
     });
   },
 };
@@ -761,9 +773,10 @@ function progressBar(f, s, p, done) {
   const flash = done ? Math.exp(-(f - D.build.land_last) / 5) : 0;
   CX.save();
   if (t === 'tape') {
-    // a VCR counter strip
-    CX.fillStyle = rgba('#000', 0.5); CX.fillRect(x0, y - 8, x1 - x0, 16);
-    CX.fillStyle = TH.accent; CX.fillRect(x0, y - 8, (x1 - x0) * p, 16);
+    // a VCR counter strip, stopping short of the timecode
+    const xe = x1 - 190;
+    CX.fillStyle = rgba('#000', 0.5); CX.fillRect(x0, y - 8, xe - x0, 16);
+    CX.fillStyle = TH.accent; CX.fillRect(x0, y - 8, (xe - x0) * p, 16);
     text(`${fmt(pieces)} / ${fmt(D.model.pieces)} PCS`, x0, y - 22, { font: font(40, 400, 'VT323'), color: TH.ink, shadow: rgba('#000', 0.8), sx: 3, sy: 3, spacing: 2 });
     CX.restore();
     return;
