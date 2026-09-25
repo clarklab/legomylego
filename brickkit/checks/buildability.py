@@ -1,6 +1,8 @@
 """Can every step be built? Each new part (or sub-assembly) must slide into place along one
 of its connection axes (or its insertion hint) without hitting what is already built, and
-each submodel must be one piece at the end of every step."""
+each submodel must be one piece at the end of every step. Clips and hinges snap on (their
+fingers flex) and Technic pins click in (the split, flared tip compresses in the hole), so the
+parts a unit clips, hinges or pins onto never block its path."""
 from __future__ import annotations
 
 from collections import defaultdict
@@ -12,6 +14,8 @@ from ..ldraw.matrix import translate
 from ..model.builder import Placement
 from ..snaps.match import find_connections
 from .base import CheckResult, components, register
+
+SNAP_KINDS = ("clip", "hinge", "pin")   # connections that flex as they go on (see docstring)
 
 
 @dataclass
@@ -78,11 +82,15 @@ def check_buildability(ctx, cfg) -> CheckResult:
         boxes_all = ctx.collide.aabbs(flat)
         wc = [[c.transformed(M) for c in ctx.shadow.connectors(part)] for part, M in flat]
         links: dict[int, list] = defaultdict(list)
+        snaps: dict[int, set] = defaultdict(set)     # unit -> parts it snaps onto
         for c in find_connections(wc):
             ua, ub = owner[c.a], owner[c.b]
             if ua != ub:
                 links[ua].append((ub, c.ca.axis, c.overlap))
                 links[ub].append((ua, c.ca.axis, c.overlap))
+                if c.kind in SNAP_KINDS:
+                    snaps[ua].add(c.b)
+                    snaps[ub].add(c.a)
         parts_of = defaultdict(list)
         for i, ui in enumerate(owner):
             parts_of[ui].append(i)
@@ -111,7 +119,8 @@ def check_buildability(ctx, cfg) -> CheckResult:
                             and _lowest(units[o]) > _lowest(u) + 0.5 for o in pending if o != ui):
                         continue                             # a lower loose part goes first
                     tried += 1
-                    if _insertable(ctx, u, ui, links, set(built), flat, built_parts, boxes_all,
+                    blockers = [i for i in built_parts if i not in snaps[ui]]
+                    if _insertable(ctx, u, ui, links, set(built), flat, blockers, boxes_all,
                                    stride, min_travel):
                         pending.remove(ui)
                         add(ui)
