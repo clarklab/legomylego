@@ -10,6 +10,8 @@ models/_sample/out/
 *.egg-info/
 models/*/out/video_frames/
 models/*/out/variants/*/video_frames/
+models/*/out/video_*.mp4
+models/*/out/variants/*/video_*.mp4
 # render intermediates (deliverables in out/ stay tracked)
 models/*/out/**/scene.json
 models/*/out/booklet/

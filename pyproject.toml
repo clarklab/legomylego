@@ -3,7 +3,8 @@ name = "brickkit"
 version = "0.1.0"
 description = "Design, verify and document buildable LEGO models"
 requires-python = ">=3.12"
-dependencies = ["numpy", "scipy", "trimesh", "python-fcl", "jinja2", "playwright"]
+dependencies = ["numpy", "scipy", "trimesh", "python-fcl", "jinja2", "playwright", "pillow",
+                "pypdfium2"]
 
 [project.optional-dependencies]
 dev = ["pytest"]
