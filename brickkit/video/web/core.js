@@ -127,6 +127,26 @@ function off(name, w = L, h = L) {        // an offscreen canvas at device resol
   return [c, x];
 }
 
+// the logo file sits on a flat yellow card: key that yellow out (sampled from its corner) so
+// the logo lands on whatever is behind it
+function keyLogo() {
+  const bm = IMG.get(D.logo);
+  if (!bm) return;
+  const c = document.createElement('canvas');
+  c.width = bm.width; c.height = bm.height;
+  const x = c.getContext('2d', { willReadFrequently: true });
+  x.drawImage(bm, 0, 0);
+  const im = x.getImageData(0, 0, c.width, c.height);
+  const d = im.data;
+  const [r0, g0, b0] = [d[0], d[1], d[2]];
+  for (let i = 0; i < d.length; i += 4) {
+    const dist = Math.hypot(d[i] - r0, d[i + 1] - g0, d[i + 2] - b0);
+    d[i + 3] = Math.round(d[i + 3] * clamp((dist - 22) / 40));
+  }
+  x.putImageData(im, 0, 0);
+  IMG.set(D.logo, c);
+}
+
 // ------------------------------------------------------------------------------ text
 const MONO_UPPER = () => TH.mono !== 'Fredoka';
 function font(size, weight = 700, fam = null, stretch = null) {
@@ -432,6 +452,7 @@ async function init(size, plan) {
   CX = CV.getContext('2d', { alpha: false });
   await loadFonts();
   await Promise.all([img(D.logo), D.hero ? img(D.hero.url) : null, ...D.thumbs.map(u => img(u))]);
+  keyLogo();
   await loadWire();
   makeNoise();
   return true;
@@ -450,9 +471,11 @@ async function renderFrame(f) {
   CX.setTransform(S, 0, 0, S, 0, 0);
   SHAKE = 0;
   if (drawer.shake) drawer.shake(f, s);
-  if (SHAKE > 0.01) {
+  if (SHAKE > 0.01) {                      // shake, scaled up a touch so no edge shows
     const a = hash(f, 7) * Math.PI * 2;
-    CX.translate(Math.cos(a) * SHAKE, Math.sin(a) * SHAKE);
+    const k = 1 + 2.4 * SHAKE / L;
+    CX.translate(L / 2 + Math.cos(a) * SHAKE, L / 2 + Math.sin(a) * SHAKE);
+    CX.scale(k, k); CX.translate(-L / 2, -L / 2);
   }
   drawer.draw(f, s, pre);
   CX.setTransform(S, 0, 0, S, 0, 0);
