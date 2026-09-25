@@ -49,9 +49,10 @@ warning: the Power Functions battery box is rare (last in a set in 2015).
 - Not built with real bricks. The checks cover part existence, connections, collisions,
   every insertion, balance, the mechanism sweep and lead lengths. They cannot judge clutch,
   part tolerances, how stiff the axle-16 column is, or how the dome survives handling.
-- **Smaller than agreed.** The spec aimed for a body about 25 cm across (30-32 studs). The
-  dome was shrunk while the part count was brought down, so the body is about 18 cm across.
-  Scaling it back up to 25 cm would take roughly twice the parts (about 5,000).
+- **Smaller than first planned.** The spec aimed for a body about 25 cm across (30-32 studs).
+  The dome was shrunk while the part count was brought down, so the body is about 18 cm
+  across. Scaling it back up to 25 cm would take roughly twice the parts (about 5,000). The
+  18 cm size was approved on 2026-09-25.
 - The part count is well above the 900-1,400 first estimated. The woven dome and the stand
   base account for most of it. A lower count would need a coarser dome.
 - Power Functions was discontinued in 2018. The 8870 lights and the 64228 AAA battery box
