@@ -129,7 +129,9 @@ def run_blender(scene: dict, work_dir: Path, script: Path = SCRIPT, timeout: int
 def render_model(engine, model, out_dir, *, views=("three_quarter",), size=900, samples=64,
                  pose_t: float | None = None, lights_on: bool = False, background="#F7F8FA",
                  ground: bool = True, transparent: bool = False, lens: float = 70.0,
-                 placed=None) -> list[Path]:
+                 placed=None, settings: dict | None = None) -> list[Path]:
+    """`settings` overrides scene keys read by blender_scene.py, e.g. world_strength,
+    light_power, trans_density, ground_color."""
     out_dir = Path(out_dir).resolve()
     scene = model_scene(engine, model, pose_t=pose_t, lights_on=lights_on, placed=placed)
     w, h = (size, size) if isinstance(size, int) else size
@@ -144,5 +146,6 @@ def render_model(engine, model, out_dir, *, views=("three_quarter",), size=900, 
         "size": [w, h], "samples": samples, "background": background, "ground": ground,
         "transparent": transparent, "out_dir": str(out_dir),
     })
+    scene.update(settings or {})
     run_blender(scene, out_dir)
     return [out_dir / f"{v['name']}.png" for v in scene["views"]]
