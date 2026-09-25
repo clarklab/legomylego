@@ -35,6 +35,8 @@ EYE_LOOK, EAR_LOOK = 45.0, 55.0
 EYES = [((-2, 4), 30, EYE_LOOK, -1), ((1, 4), 30, EYE_LOOK, 1)]
 EARS = [((-3, 7), None, EAR_LOOK, -1), ((2, 7), None, EAR_LOOK, 1)]
 NOSE = ((-1, 0), 27)            # 1x2 brick with two side studs: left cell, bottom plate
+TONGUE = ((-1, 0), 24)          # 1x1 brick with a side stud under the nose: the "blep"
+WHISKERS = [(-2, 1), (1, 1)]    # clip tiles on the whisker pads (on top of the head there)
 
 
 def yaw_of(look: float, side: int) -> float:
@@ -118,6 +120,9 @@ def keepout() -> set:
     for p in range(p0 + 1, p0 + 4):
         for di in (-1, 0, 1, 2):
             out.add(((i + di, j - 1), p))
+    (i, j), p0 = TONGUE
+    for p in range(p0, p0 + 4):
+        out.add(((i, j - 1), p))
     return out
 
 
@@ -131,6 +136,9 @@ def layers() -> dict[int, set]:
     (i, j), p0 = NOSE
     for p in range(p0, p0 + 3):
         L[p] |= {(i, j), (i + 1, j)}
+    (i, j), p0 = TONGUE
+    for p in range(p0, p0 + 3):
+        L[p].add((i, j))
     for c, p in keepout():
         L.get(p, set()).discard(c)
     return L
@@ -168,6 +176,20 @@ def pieces(sizes_of):
                             "nose socket"))
     for p in range(p0, p0 + 3):
         reserved.setdefault(p, set()).update(cells)
+    (i, j), p0 = TONGUE
+    tc = frozenset({(i, j)})
+    sockets.append(sc.Piece("87087", "face", tc, p0, p0 + 3, tc, {p0: tc},
+                            ((i + 0.5) * 20, -8 * (p0 + 3), (j + 0.5) * 20), None, p0,
+                            "tongue socket"))
+    for p in range(p0, p0 + 3):
+        reserved.setdefault(p, set()).add((i, j))
+    for c in WHISKERS:
+        top = max(p for p in L if c in L[p])
+        cc = frozenset({c})
+        sockets.append(sc.Piece("15712", "face", cc, top + 1, top + 2, frozenset(),
+                                {top + 1: cc}, ((c[0] + 0.5) * 20, -8 * (top + 2), (c[1] + 0.5) * 20),
+                                sc.rot(y=90), top + 1, "whisker clip"))
+        reserved.setdefault(top + 1, set()).add(c)
 
     ps = sorted(p for p in L if L[p])
     layer_list = []

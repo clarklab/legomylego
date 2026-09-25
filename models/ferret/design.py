@@ -309,9 +309,20 @@ def build_head(model, av: Avail):
                 W = dish @ transform((0, -8, 0))
                 head.place("98138", "ear_inner", tuple(W[:3, 3]), W[:3, :3],
                            tag=f"inner_ear_{side}")
-    head.step("The nose")
+    head.step("The nose and the tip of the tongue")
     pos, R = attach(nose, (0, 10, -18), rot(x=90))
     head.place("1748", "nose", pos, R, tag="nose")
+    tongue = next(p for p in pieces if p.note == "tongue socket")
+    pos, R = attach(tongue, (0, 10, -18), rot(x=90))
+    head.place("24246", "tongue", pos, R, tag="tongue")
+    head.step("Whiskers")
+    for p in (q for q in pieces if q.note == "whisker clip"):
+        # the clip holds a bar along X, 6 LDU above the tile; the bar runs outwards from it
+        cx, cy, cz = p.pos[0], p.pos[1] - 6, p.pos[2]
+        out = -1 if cx < 0 else 1
+        x0 = cx - 56 if out < 0 else cx - 4
+        side = "r" if out < 0 else "l"
+        head.place("87994", "whisker", (x0, cy, cz), rot(z=-90), tag=f"whisker_{side}")
     return head
 
 
