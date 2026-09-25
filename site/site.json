@@ -1,0 +1,6 @@
+{
+  "_help": "Site-wide settings read by the pages and tools/site_assets.py. notices: trademark/credit lines per model slug, shown in the footer (a model's own `notice` field in model.json wins if the export adds one).",
+  "notices": {
+    "baby_metroid": "Metroid is © Nintendo."
+  }
+}
