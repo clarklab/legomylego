@@ -1,0 +1,91 @@
+{
+  "title": "Ferret",
+  "status": "pass",
+  "checks": [
+    {
+      "name": "real_elements",
+      "status": "pass",
+      "summary": "72 part/colour combinations: 0 not real, 0 rare",
+      "items": [],
+      "stats": {
+        "combinations": 72,
+        "not_real": 0,
+        "rare": 0
+      }
+    },
+    {
+      "name": "connections",
+      "status": "pass",
+      "summary": "2273 connections (2266 stud, 5 bar, 2 clip); 1 separate piece(s)",
+      "items": [],
+      "stats": {
+        "connections": 2273,
+        "by_kind": {
+          "stud": 2266,
+          "bar": 5,
+          "clip": 2
+        },
+        "pieces": 1
+      }
+    },
+    {
+      "name": "collisions",
+      "status": "pass",
+      "summary": "0 overlapping pair(s) among 895 parts",
+      "items": [],
+      "stats": {
+        "pairs": 0
+      }
+    },
+    {
+      "name": "buildability",
+      "status": "pass",
+      "summary": "883 insertions tried across 8 submodel(s); 0 problem(s)",
+      "items": [],
+      "stats": {
+        "insertions": 883
+      }
+    },
+    {
+      "name": "stability",
+      "status": "pass",
+      "summary": "about 825 g; centre of mass inside the base (97% margin); tips at 14.1 deg",
+      "items": [],
+      "stats": {
+        "mass_g": 824.504769811189,
+        "com": [
+          -2.029227302236655,
+          -231.14775670900184,
+          600.8630445115156
+        ],
+        "approx_parts": 0,
+        "margin": 0.9661795449627224,
+        "tip_angle_deg": 14.079122736780615,
+        "com_height_ldu": 231.14775670900184
+      }
+    },
+    {
+      "name": "mechanism",
+      "status": "pass",
+      "summary": "24 poses swept for 1 moving group(s); 0 gear pair(s); 0 problem(s)",
+      "items": [],
+      "stats": {
+        "poses": 24
+      }
+    },
+    {
+      "name": "electrics",
+      "status": "pass",
+      "summary": "no electrics in this model",
+      "items": [],
+      "stats": {}
+    },
+    {
+      "name": "technique",
+      "status": "pass",
+      "summary": "0 note(s)",
+      "items": [],
+      "stats": {}
+    }
+  ]
+}

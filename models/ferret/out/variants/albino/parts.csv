@@ -1,0 +1,53 @@
+qty,part,name,colour,ldraw_colour,rebrickable_part,rebrickable_colour,bricklink_part,bricklink_colour,element_id,rare
+2,32828,Plate Special Round 1 x 1 with Hollow Stud and Horizontal Bar 1L,Black,0,32828,0,32828,11,6196548,0
+1,3680,"Turntable 2 x 2 Plate, Base",Black,0,3680,0,3680,11,368076,0
+1,1748,Tile Round 1 x 2 Half Circle,Bright Pink,29,1748,29,1748,104,6542399,0
+2,98138,Tile Round 1 x 1,Bright Pink,29,98138,29,98138,104,6284587,0
+1,24246,Tile Round 1 x 1 Half Circle,Coral,353,24246,1050,24246,220,6475308,0
+2,22885,Brick Special 1 x 2 x 1 2/3 with 4 Studs on 1 Side,Light Bluish Gray,71,22885,71,22885,86,6123809,0
+3,3001,Brick 2 x 4,Light Bluish Gray,71,3001,71,3001,86,4211385,0
+6,3004,Brick 1 x 2,Light Bluish Gray,71,3004,71,3004,86,4211388,0
+6,3005,Brick 1 x 1,Light Bluish Gray,71,3005,71,3005,86,4211389,0
+11,3006,Brick 2 x 10,Light Bluish Gray,71,3006,71,3006,86,4617862,0
+5,3007,Brick 2 x 8,Light Bluish Gray,71,3007,71,3007,86,6037399,0
+1,3009,Brick 1 x 6,Light Bluish Gray,71,3009,71,3009,86,4211393,0
+3,3010,Brick 1 x 4,Light Bluish Gray,71,3010,71,3010,86,4211394,0
+3,3622,Brick 1 x 3,Light Bluish Gray,71,3622,71,3622,86,4211428,0
+1,3679,Turntable 2 x 2 Plate - Top,Light Bluish Gray,71,3679,71,3679,86,4540203,0
+1,3710,Plate 1 x 4,Light Bluish Gray,71,3710,71,3710,86,4211445,0
+2,4740,Dish 2 x 2 Inverted [Radar],Red,4,4740,4,4740,5,4585146,0
+1,11211,Brick Special 1 x 2 with 2 Studs on 1 Side,White,15,11211,15,11211,1,6550150,0
+56,11477,Brick Curved 2 x 1 No Studs [1/2 Bow],White,15,11477,15,11477,1,6552145,0
+2,15068,Brick Curved 2 x 2 x 2/3,White,15,15068,15,15068,1,6552147,0
+2,15712,Tile Special 1 x 1 with Clip with Rounded Edges,White,15,15712,15,15712,1,6348055,0
+21,2456,Brick 2 x 6,White,15,2456,15,2456,1,6552122,0
+34,3001,Brick 2 x 4,White,15,3001,15,3001,1,6552094,0
+1,3002,Brick 2 x 3,White,15,3002,15,3002,1,6550133,0
+45,3003,Brick 2 x 2,White,15,3003,15,3003,1,6552095,0
+75,3004,Brick 1 x 2,White,15,3004,15,3004,1,6548257,0
+64,3005,Brick 1 x 1,White,15,3005,15,3005,1,6552096,0
+3,3006,Brick 2 x 10,White,15,3006,15,3006,1,4617855,0
+4,3007,Brick 2 x 8,White,15,3007,15,3007,1,6619309,0
+20,3008,Brick 1 x 8,White,15,3008,15,3008,1,6550134,0
+2,3009,Brick 1 x 6,White,15,3009,15,3009,1,6552097,0
+15,3010,Brick 1 x 4,White,15,3010,15,3010,1,6550135,0
+9,3020,Plate 2 x 4,White,15,3020,15,3020,1,6552098,0
+3,3021,Plate 2 x 3,White,15,3021,15,3021,1,6550136,0
+14,3022,Plate 2 x 2,White,15,3022,15,3022,1,6552099,0
+31,3023b,Plate 1 x 2,White,15,3023,15,3023,1,6552100,0
+154,3024,Plate 1 x 1,White,15,3024,15,3024,1,6548262,0
+2,3069b,Tile 1 x 2 with Groove,White,15,3069b,15,3069b,1,6548264,0
+30,3070b,Tile 1 x 1 with Groove,White,15,3070b,15,3070b,1,6550138,0
+2,32828,Plate Special Round 1 x 1 with Hollow Stud and Horizontal Bar 1L,White,15,32828,15,32828,1,6550170,0
+1,3460,Plate 1 x 8,White,15,3460,15,3460,1,6550141,0
+17,3622,Brick 1 x 3,White,15,3622,15,3622,1,6550143,0
+4,3623,Plate 1 x 3,White,15,3623,15,3623,1,6552105,0
+3,3666,Plate 1 x 6,White,15,3666,15,3666,1,6552107,0
+12,3710,Plate 1 x 4,White,15,3710,15,3710,1,6552108,0
+14,3795,Plate 2 x 6,White,15,3795,15,3795,1,6550146,0
+2,4740,Dish 2 x 2 Inverted [Radar],White,15,4740,15,4740,1,6601845,0
+12,50950,Brick Curved 3 x 1 No Studs,White,15,50950,15,50950,1,6548268,0
+184,54200,Brick Sloped 30° 1 x 1 x 2/3 (Cheese Slope),White,15,54200,15,54200,1,6550179,0
+2,85984,Brick Sloped 30° 1 x 2 x 2/3,White,15,85984,15,85984,1,6550189,0
+1,87087,Brick Special 1 x 1 with Stud on 1 Side,White,15,87087,15,87087,1,6550190,0
+2,87994,Bar 3L,White,15,87994,15,87994,1,6552205,0

@@ -20,8 +20,8 @@ Target was a real adult ferret: 35–40 cm head+body, 10–13 cm tail, 10–15 c
 brief's "≈120–130 studs" does not match its own millimetre target (50 cm is ≈ 63 studs of 8 mm),
 so the millimetre target was followed.
 
-About 890 parts, ≈ 820 g, 187 instruction steps. Centre of mass sits over the four feet with
-97 % margin; the model tips at 14°.
+895 parts, ≈ 825 g, 189 instruction steps, the same build in every colourway (only colours
+differ). Centre of mass sits over the four feet with 97 % margin; the model tips at 14°.
 
 ## Construction
 
