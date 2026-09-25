@@ -11,6 +11,7 @@ mask = "Dark Brown"          # bandit mask round the eyes
 face = "White"               # muzzle, chin, ear rims
 nose = "Reddish Brown"
 eye = "Black"
+ear_inner = "Bright Pink"
 core = "Light Bluish Gray"   # hidden structure (same in every colourway)
 
 [variants.albino]

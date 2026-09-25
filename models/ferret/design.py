@@ -16,8 +16,10 @@ HERE = Path(__file__).resolve().parent
 if str(HERE) not in sys.path:
     sys.path.insert(0, str(HERE))
 
+import ferret_head as fh  # noqa: E402
 import ferret_sculpt as sc  # noqa: E402
 import ferret_shape as fs  # noqa: E402
+from brickkit.ldraw.matrix import rot, transform  # noqa: E402
 
 # grid extent (cells) and the sculpt origin in LDU
 XS = np.arange(-6, 6)
@@ -25,7 +27,7 @@ ZS = np.arange(-1, 66)
 KS = np.arange(0, 18)
 SEAM = 8                    # brick band where the back starts (chest and hips below it)
 SOCKET = 2                  # band of the leg sockets (lower legs + paws are sub-assemblies)
-TORSO = (10, 64)            # z cells of the brick-built body and tail (the head is built apart)
+TORSO = (11, 64)            # z cells of the brick-built body and tail (the head is built apart)
 FRONT_LEG = ((-3, 19), (1, 19))   # lower-left cell (i, j) of each 2x2 front-leg socket
 HIND_LEG = ((-3, 43), (1, 43))
 
@@ -80,6 +82,10 @@ def body_layers() -> dict[int, set]:
             S[k] = set()
     for i0, j0 in FRONT_LEG + HIND_LEG:
         S[SOCKET] |= sc.rect(i0, j0, 2, 2)
+    # the throat runs forward under the back of the head: the head sits on it
+    for j in range(fh.SHELF_ROW, TORSO[0]):
+        S[fh.SHELF_TOP // 3 - 2] |= {(-1, j), (0, j)}
+        S[fh.SHELF_TOP // 3 - 1] |= {(i, j) for i in range(-2, 2)}
     return S
 
 
@@ -149,8 +155,9 @@ def cell_role(c, k, S, legs: set) -> str:
         return "dark"                                   # tail
     if fs.limb_dist(x, h, z) <= 1.0:
         return "dark"                                   # legs, dark up to shoulders and thighs
-    if z < 44:
-        return "face" if h < 84 else ("mask" if z > 20 and h < 96 else "coat")
+    if z < 96 and h < 80:
+        return "face"                                   # white throat
+
     below = (c not in S.get(k - 1, set()))
     if below:
         return "belly"
@@ -226,11 +233,15 @@ def sculpt_pieces(av: Avail):
         if n_clusters > 1:
             print(f"[ferret] {name}: packed into {n_clusters} separate clusters")
         sections[name] += pieces
+    HL = fh.layers()
+    head_seat = {c for p in range(fh.SHELF_TOP, fh.SHELF_TOP + 3) for c in HL.get(p, set())}
     for k in ks:
         cells = S[k]
         above = S.get(k + 1, set())
-        # caps on the exposed tops of this layer, in band k + 1
+        # caps on the exposed tops of this layer, in band k + 1 (not where the head sits)
         T = cells - above
+        if 3 * (k + 1) == fh.SHELF_TOP:
+            T -= head_seat
         dirs = {c: grad_dir(*centre_mm(c, k + 1)) for c in T}
         for run, d in ramps_of(T, dirs):
             role = cell_role(run[-1], k, S, legs)
@@ -283,6 +294,44 @@ def build_leg(model, name: str, title: str, band: int, hind: bool):
 
 
 # ------------------------------------------------------------------------------------------
+# head
+
+def attach(parent: sc.Piece, local_pos, local_rot=None):
+    """World (pos, rot) of a part fixed to `parent` at a position in the parent's frame."""
+    W = transform(parent.pos, parent.rot) @ transform(local_pos, local_rot)
+    return tuple(W[:3, 3]), W[:3, :3]
+
+
+def build_head(model, av: Avail):
+    pieces, n_clusters, _ = fh.pieces(lambda r: av.sizes(sc.PLATE, r))
+    if n_clusters > 1:
+        print(f"[ferret] head: packed into {n_clusters} separate clusters")
+    pl = sc.plan(pieces, lambda p: (p.p0, min(c[1] for c in p.cells), min(p.cells)))
+    if pl.stuck:
+        print(f"[ferret] head: {len(pl.stuck)} piece(s) could not be planned, e.g. "
+              f"{[(p.part, sorted(p.cells)[:2], p.p0) for p in pl.stuck[:5]]}")
+    head = model.submodel("head", "Head")
+    sc.emit(head, sc.steps(pl.order + pl.stuck))
+    nose = next(p for p in pieces if p.note == "nose socket")
+    for kind, caption, role in (("eye", "Big shiny eyes", "eye"), ("ear", "Round ears", "face")):
+        head.step(caption)
+        for p in (q for q in pieces if q.note == f"{kind} socket"):
+            pos, R = attach(p, *fh.dish_local())
+            side = "r" if min(p.cells)[0] < 0 else "l"
+            head.place("4740", role, pos, R, tag=f"{kind}_{side}")
+            if kind == "ear":
+                # the pink inner ear: a round tile on the dish's centre stud
+                dish = transform(pos, R)
+                W = dish @ transform((0, -8, 0))
+                head.place("98138", "ear_inner", tuple(W[:3, 3]), W[:3, :3],
+                           tag=f"inner_ear_{side}")
+    head.step("The nose")
+    pos, R = attach(nose, (0, 10, -18), rot(x=90))
+    head.place("1748", "nose", pos, R, tag="nose")
+    return head
+
+
+# ------------------------------------------------------------------------------------------
 
 def build(model):
     av = Avail(model.catalog)
@@ -311,9 +360,13 @@ def build(model):
             side = "l" if i0 > 0 else "r"
             sub.use(leg, (sc.STUD * (i0 + 1), 0, sc.STUD * (j0 + 1)), tag=f"{tag}_leg_{side}")
 
+    head = build_head(model, av)
+
     main = model.main
     main.step("Stand the chest on its front legs")
     main.use(subs["chest"], tag="chest")
     main.step("Set the hips beside it and lower the back onto both")
     main.use(subs["back"], tag="back")
     main.use(subs["hips"], tag="hips")
+    main.step("Set the head on the throat")
+    main.use(head, tag="head")

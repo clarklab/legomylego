@@ -14,13 +14,13 @@ BRICK = 9.6         # mm
 # Spine nodes: (z, centre height, half-width, half-height), all in mm.
 # Head low and forward, back arched high in the middle, rump dropping into a thick tail.
 SPINE = [
-    (0.0, 80.0, 5.0, 5.0),      # nose tip
-    (14.0, 82.0, 12.0, 12.0),   # muzzle
-    (34.0, 86.0, 19.0, 17.0),   # eyes
-    (56.0, 88.0, 25.0, 21.0),   # cheeks, ears
-    (74.0, 86.0, 24.0, 21.0),   # back of the skull
-    (96.0, 80.0, 23.0, 22.0),   # neck
-    (126.0, 74.0, 27.0, 27.0),  # base of the neck
+    (0.0, 88.0, 5.0, 5.0),      # nose tip (the head itself is built apart: ferret_head)
+    (16.0, 90.0, 12.0, 12.0),   # muzzle
+    (38.0, 94.0, 19.0, 17.0),   # eyes
+    (62.0, 97.0, 25.0, 21.0),   # cheeks, ears
+    (82.0, 96.0, 24.0, 21.0),   # back of the skull
+    (104.0, 88.0, 23.0, 22.0),  # neck, rising to hold the head up
+    (130.0, 78.0, 27.0, 27.0),  # base of the neck
     (158.0, 74.0, 30.0, 31.0),  # shoulders, deep chest
     (200.0, 96.0, 31.0, 30.0),
     (246.0, 116.0, 31.0, 28.0), # top of the arch
