@@ -1,0 +1,92 @@
+{
+  "title": "VHS Cassette",
+  "status": "pass",
+  "checks": [
+    {
+      "name": "real_elements",
+      "status": "pass",
+      "summary": "66 part/colour combinations: 0 not real, 0 rare",
+      "items": [],
+      "stats": {
+        "combinations": 66,
+        "not_real": 0,
+        "rare": 0
+      }
+    },
+    {
+      "name": "connections",
+      "status": "pass",
+      "summary": "899 connections (882 stud, 13 pin, 2 hinge, 2 axle); 1 separate piece(s)",
+      "items": [],
+      "stats": {
+        "connections": 899,
+        "by_kind": {
+          "stud": 882,
+          "pin": 13,
+          "hinge": 2,
+          "axle": 2
+        },
+        "pieces": 1
+      }
+    },
+    {
+      "name": "collisions",
+      "status": "pass",
+      "summary": "0 overlapping pair(s) among 348 parts",
+      "items": [],
+      "stats": {
+        "pairs": 0
+      }
+    },
+    {
+      "name": "buildability",
+      "status": "pass",
+      "summary": "259 insertions tried across 6 submodel(s); 0 problem(s)",
+      "items": [],
+      "stats": {
+        "insertions": 259
+      }
+    },
+    {
+      "name": "stability",
+      "status": "pass",
+      "summary": "about 288 g; centre of mass inside the base (100% margin); tips at 75.5 deg",
+      "items": [],
+      "stats": {
+        "mass_g": 288.11681113390495,
+        "com": [
+          0.19023948408053012,
+          -33.6160707248624,
+          -0.020462497249133862
+        ],
+        "approx_parts": 0,
+        "margin": 0.9998425961750067,
+        "tip_angle_deg": 75.49955513030876,
+        "com_height_ldu": 33.6160707248624
+      }
+    },
+    {
+      "name": "mechanism",
+      "status": "pass",
+      "summary": "24 poses swept for 3 moving group(s); 0 gear pair(s); 0 problem(s)",
+      "items": [],
+      "stats": {
+        "poses": 24
+      }
+    },
+    {
+      "name": "electrics",
+      "status": "pass",
+      "summary": "no electrics in this model",
+      "items": [],
+      "stats": {}
+    },
+    {
+      "name": "technique",
+      "status": "pass",
+      "summary": "0 note(s)",
+      "items": [],
+      "stats": {}
+    }
+  ]
+}

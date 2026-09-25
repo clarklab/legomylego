@@ -145,7 +145,11 @@ mechanism (24 poses, 3 moving groups, plus the size check), electrics (none), te
 
 ## Renders
 
-`out/renders/`: `three_quarter.png`, `top.png`, `front.png`, `open.png` (door up, reels
-turned), `back.png` (spine label and write-protect tab), `under.png` (screws, spindle holes,
-lamp and lock holes, mouth; rendered without the ground plane, since the stock `low` view
-sits below the ground for a model this flat), `clear_window.png`, `white.png`.
+`out/renders/`: `three_quarter.png` (final build), `open.png` (door up, reels turned, tape
+across the mouth), `back.png` (spine label and write-protect tab) and `clear_window.png`
+(window close-up in the clear colourway). The last three were rendered a few commits
+earlier, when the pin holders over the hubs were still light grey; nothing else visible
+has changed. Further renders were skipped because the shared machine was saturated.
+
+The stock `low` view (elevation -8) sits below the ground plane for a model this flat, so
+it only shows the ground; an underside view needs `render_model(..., ground=False)`.
