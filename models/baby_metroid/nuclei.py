@@ -4,9 +4,10 @@ pushed up into the pin hole of a round 4x4 plate. Two nuclei sit low at the fron
 the back on a hollow chimney.
 
 Wiring: the two 8870 light leads are laid before the membrane. Their plugs go down through the
-opening in the base disc (core.LEAD_HOLE) and hang down to the stand; the lamps come up through
-2x2 openings in the membrane (the back one up the chimney). Under the membrane the leads run in
-the 16 LDU gap above the hub (y -8..8), clear of every moving part.
+opening in the base disc (core.LEAD_HOLE) and hang down beside the clear tube to the hatch
+over the battery box's plug; the lamps come up through 2x2 openings in the membrane (the back
+one up the chimney). Under the membrane the leads run in the gap above the fixed hub; the body
+moves with the leads when tapped, and the gap never gets smaller than about 4 mm.
 
 Heights: posts from the base disc (y 56) up to the platform (plates -24..-8)."""
 import math
@@ -136,7 +137,8 @@ def nuclei(model, sub):
 LEAD_LEN = 1000.0   # LDU (40 cm) per lamp: the 8870's lead is listed at 50 cm; 10 cm kept in
                     # reserve for where the lead splits to its two lamps
 UNDER = 0.0         # the leads run under the membrane at this height
-DROP = (-90.0, 60.0)   # centre of core.LEAD_HOLE
+DROP = (80.0, 70.0)    # centre of core.LEAD_HOLE
+HATCH = (50.0, 0.0)    # the stand's hatch over the battery box's plug
 
 
 def leads(model):
@@ -145,7 +147,8 @@ def leads(model):
     placed 62498c01 parts."""
     model.extra("62501c01", "led", 2, "Power Functions light unit 8870: 2 lamps on one lead")
     dx, dz = DROP
-    tail = [(dx, 64.0, dz), (dx, 250.0, dz), (-50.0, 300.0, dz)]   # through the base, down to
+    hx, hz = HATCH
+    tail = [(dx, 64.0, dz), (dx, 230.0, dz), (hx, 240.0, hz), (hx, 300.0, hz)]   # down to
     for n, (cx, cz) in enumerate(FRONT + [BACK]):                    # the hatch in the stand
         route = [(cx, UNDER, cz), (dx, UNDER, dz)] + tail
         model.cable(f"Light lead to nucleus {n + 1}", f"lamp_nucleus_{n}/led", "battery", LEAD_LEN,

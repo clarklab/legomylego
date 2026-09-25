@@ -4,6 +4,7 @@ from .base import CheckResult, describe, register
 @register("collisions")
 def check_collisions(ctx, cfg) -> CheckResult:
     pairs = ctx.collide.pairs([(p.part, p.M) for p in ctx.placed])
+    pairs = [(i, j) for i, j in pairs if not ctx.model.contact_ok(ctx.placed[i], ctx.placed[j])]
     items = [{"a": describe(ctx.placed[i]), "b": describe(ctx.placed[j]),
               "problem": "parts overlap"} for i, j in pairs]
     return CheckResult("collisions", "fail" if items else "pass",

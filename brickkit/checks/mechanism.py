@@ -79,6 +79,8 @@ def check_mechanism(ctx, cfg) -> CheckResult:
         placed = m.flatten(pose=m.pose(float(t)))
         moving = {i for i, p in enumerate(placed) if m.group_of(p) is not None}
         for i, j in ctx.collide.pairs([(p.part, p.M) for p in placed], only=moving):
+            if m.contact_ok(placed[i], placed[j]):
+                continue
             items.append({"pose": round(float(t), 3), "a": describe(placed[i]),
                           "b": describe(placed[j]), "problem": "parts collide while moving"})
         conns = find_connections(ctx.world_connectors(placed))

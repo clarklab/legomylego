@@ -103,6 +103,18 @@ axis through point P: `translate(*P) @ R @ translate(*-P)`. The mechanism check 
 fails on collisions or on the model falling apart, and checks gear spacing (LEGO gears are
 module 1: pitch radius = 1.25 LDU per tooth).
 
+```python
+model.moving_group("body", "*", exclude={"stand", "hub"})  # catch-all: every other part
+model.allow_contact("tube", "battery", "presser pushes the button")  # may touch/overlap
+model.captive("tube", "slides in the stand's top plate")   # held by a guide, not studs
+```
+A catch-all group moves everything not in another group and not under an excluded tag (a whole
+body sliding on a fixed stand). `allow_contact` exempts pairs of tagged parts from the collision
+and mechanism checks, for contact the part geometry can't show (a presser on a spring-loaded
+button, a push rod riding on a lever). `captive` tells the buildability check that parts under
+a tag are held without studs (a slider in its guide); the whole model must still join them up.
+The Baby Metroid's tap mechanism (`models/baby_metroid/core.py`, `stand.py`) uses all three.
+
 ### Electrics and lights
 ```python
 model.light("nucleus_1", "nucleus_l/led", color="#FF3A1A", power=1.5,

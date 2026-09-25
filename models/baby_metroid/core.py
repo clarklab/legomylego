@@ -1,17 +1,21 @@
-"""Core of the Baby Metroid: base disc, fang mechanism, stand socket.
+"""Core of the Baby Metroid: base disc, fangs, tap mechanism.
 
-Frame: LDraw units, -Y up, dome rim at y = 0; the base disc spans y 56..72.
+Frame: LDraw units, -Y up, dome rim at y = 0; the base disc spans y 56..72. The model is built
+in its RESTING state: the body up, fangs open.
 
-Fang mechanism (+X fang shown; the others are quarter turns of it):
+Tap lamp: the whole body slides down the stand's fixed centre axle. A clear tube hangs under
+the body (it belongs to the stand, see stand.py) and presses the battery box's green on/off
+button, a push-on/push-off switch inside a real LEGO element. Rubber belts in the stand push
+the tube, and with it the body, back up.
+
+Fangs (+X fang shown; the others are quarter turns of it):
   pivot   P = (120, 106): a short axle along Z in two Technic bricks hanging under the disc
-  fang    white bent beam locked on the axle (z -10..10), tip bending inward, tooth at the tip
-  lever   thin 1x3 on the axle (z -20..-10) pointing inward: pin hole L = (100, 106)
-  link    thick 1x5 (round holes, 80 LDU) from L up through the disc to H = (100, 26)
-  hub     four Technic bricks 1x6 in a pinwheel under a 6x6 plate; their outer holes are H
-Opening a fang pushes its lever end down, which pulls the hub down, which opens the other three
-fangs through their links. The +X axle also carries a 24T gear driven by a vertical worm
-(self-locking, so the fangs hold any position); a 12T bevel pair turns the worm's axle into a
-horizontal axle with a knob outside the skirt at the back (+Z)."""
+  fang    white bent beam locked on the axle, tip bending inward, tooth at the tip
+  lever   thin 1x3 on the axle pointing inward: pin hole L
+  link    thick 1x5 (round holes, 80 LDU) from L up through the disc to the hub pin H
+  hub     FIXED on top of the stand's centre axle, above the disc
+Pushing the body down moves the levers down past the fixed hub pins, which turns all four
+fangs shut together; the belts bring it back and the fangs open again."""
 from __future__ import annotations
 
 import math
@@ -28,15 +32,10 @@ DISC_BOTTOM = 72
 P = np.array([120.0, 106.0])     # pivot (x, y)
 LEVER = 20.0                     # inward
 LINK = 80.0
-H_Y = 26.0                       # hub pin height at rest
-GEAR_Z = 80.0                    # 24T on the +X axle (z 70..90)
-WORM_X = 80.0                    # vertical worm axle at (80, z=80)
-KNOB_Y = 18.0                    # knob axle height
-BEVEL_D = 20.0
-OPEN_DEG = 45.0
-WORM_PHASE = 320.0
-KNOB_PHASE = 15.0
-KNOB_SENSE = 1.0
+H_Y = 26.0                       # hub pin height relative to the body with the fangs shut
+REST_DROP = 16.0                 # at rest the hub pins sit this much lower (fangs open)
+H_REST = H_Y + REST_DROP         # 42: hub pin height, fixed in the world
+PRESS = 10.5                     # tap stroke: the box's button bottoms out here
 QUARTERS = [0, -90, 180, 90]     # +X, +Z, -X, -Z
 
 ALONG_Z = rot(y=90)                                                    # local X -> Z
@@ -72,25 +71,49 @@ def hub_drop(theta: float) -> float:
     return LINK + LEVER * math.sin(t) - math.sqrt(LINK ** 2 - (LEVER * (1 - math.cos(t))) ** 2)
 
 
-def pose(t: float) -> dict:
-    theta = OPEN_DEG * t
+def theta_for_drop(s: float) -> float:
+    """Fang angle (deg) that puts the hub pins `s` below their shut position."""
+    lo, hi = -10.0, 80.0
+    for _ in range(60):
+        mid = (lo + hi) / 2
+        if hub_drop(mid) < s:
+            lo = mid
+        else:
+            hi = mid
+    return (lo + hi) / 2
+
+
+OPEN_DEG = theta_for_drop(REST_DROP)     # about 51.5 degrees at rest
+
+
+def fang_turn(theta: float) -> np.ndarray:
+    """+X fang (and its lever) turned open by theta from the shut geometry."""
+    return about_axis((0, 0, 1), -theta, (P[0], P[1], 0))
+
+
+def link_move(theta: float) -> np.ndarray:
+    """+X link moved from its shut geometry to fang angle theta (hub pins s lower)."""
     s = hub_drop(theta)
     a = math.radians(theta)
     lx, ly = P[0] - LEVER * math.cos(a), P[1] + LEVER * math.sin(a)
     hx, hy = P[0] - LEVER, H_Y + s
     psi = math.degrees(math.atan2(lx - hx, ly - hy))
-    fang = about_axis((0, 0, 1), -theta, (P[0], P[1], 0))
-    link = translate(0, s, 0) @ about_axis((0, 0, 1), -psi, (hx, H_Y, 0))
-    out = {"hub": translate(0, s, 0)}
+    return translate(0, s, 0) @ about_axis((0, 0, 1), -psi, (hx, H_Y, 0))
+
+
+def pose(t: float) -> dict:
+    """t = 0 resting (as built), t = 1 pressed until the box's button bottoms out."""
+    d = PRESS * t
+    body = translate(0, d, 0)
+    theta = theta_for_drop(REST_DROP - d)
+    fang = fang_turn(theta) @ np.linalg.inv(fang_turn(OPEN_DEG))
+    link = link_move(theta) @ np.linalg.inv(link_move(OPEN_DEG))
+    out = {"body": body, "tube": body}
     for k in range(4):
         Q = quarter(k)
         Qi = np.linalg.inv(Q)
-        out[f"fang_{k}"] = Q @ fang @ Qi
-        out[f"link_{k}"] = Q @ link @ Qi
-    out["gear24"] = out["fang_0"]
-    worm = -24.0 * theta
-    out["worm"] = about_axis((0, 1, 0), worm, (WORM_X, 0, GEAR_Z))
-    out["knob"] = about_axis((0, 0, 1), KNOB_SENSE * worm, (WORM_X, KNOB_Y, 0))
+        out[f"fang_{k}"] = body @ Q @ fang @ Qi
+        out[f"link_{k}"] = body @ Q @ link @ Qi
     return out
 
 
@@ -104,23 +127,37 @@ def _rotate_cells(cells, k):
     return out
 
 
-LEAD_HOLE = {(i, k) for i in (-6, -5, -4) for k in (2, 3)}   # x -120..-60, z 40..80: the light
-                                                            # leads' plugs pass down to the stand
+LEAD_HOLE = {(i, k) for i in (3, 4) for k in (2, 3, 4)}   # x 60..100, z 40..100: the light
+                                                         # leads' plugs pass down to the stand
+CENTRE = {(i, k) for i in range(-2, 2) for k in range(-2, 2)
+          if math.hypot(i + .5, k + .5) < 2.0}                 # 4x4 round: the guide plate
+CENTRE_2X2 = {(-1, -1), (-1, 0), (0, -1), (0, 0)}
+CENTRE_4X4 = {(i, k) for i in range(-2, 2) for k in range(-2, 2)}  # the round plate's corners
+                                                                   # would clip plates there
 
 
 def hole_cells() -> set:
     links = set()
     for k in range(4):
         links |= _rotate_cells({(4, -2), (5, -2)}, k)       # link x 91..109, z -40..-20
-    worm = {(3, 3), (4, 3), (3, 4), (4, 4)}                  # vertical axle at (80, 80)
-    return links | worm
+    return links
+
+
+def arm_cells() -> set:
+    """Where the fixed hub's arms rest on the disc: tiles there, so they don't clutch."""
+    out = set()
+    for k in range(4):
+        out |= _rotate_cells({(2, -1), (3, -1), (4, -1), (5, -1)}, k)   # x 40..120, z -20..0
+    return out
 
 
 def disc(sub, color="skirt_accent") -> set:
     cells = ring_cells(DISC_R) - hole_cells() - LEAD_HOLE
     plates = {6: "3666", 4: "3710", 2: "3023b", 1: "3024"}
-    a = pack_cells(cells, lengths=(6, 4, 2, 1), offset=0, mode="x")
-    b = pack_cells(cells, lengths=(6, 4, 2, 1), offset=1, mode="z")
+    top_cells = cells - CENTRE_4X4 - arm_cells()
+    bottom_cells = cells - CENTRE_2X2
+    a = pack_cells(top_cells, lengths=(6, 4, 2, 1), offset=0, mode="x")
+    b = pack_cells(bottom_cells, lengths=(6, 4, 2, 1), offset=1, mode="z")
     # a 1x1 in both layers over the same cell would be a loose column: leave those cells out
     singles_a = {(i, k) for i, k, n, _ in a if n == 1}
     singles_b = {(i, k) for i, k, n, _ in b if n == 1}
@@ -135,6 +172,13 @@ def disc(sub, color="skirt_accent") -> set:
             sub.step(f"Base disc: {layer} layer, {side} half")
             for i, k, n, axis in half:
                 _place_run(sub, plates[n], color, i, k, n, axis, y, "disc")
+    sub.step("Guide plate in the middle (the stand's axle slides through its hole) and "
+             "smooth tiles where the hub's arms will rest")
+    sub.place("60474", color, (0, DISC_TOP, 0), tag="guide")
+    for k in range(4):
+        R = rot(y=QUARTERS[k])
+        c = R @ np.array([80.0, 0, -10.0])
+        sub.place("2431", color, (c[0], DISC_TOP, c[2]), R)             # 1x4 tile
     return cells - loose
 
 
@@ -148,13 +192,9 @@ def bearing_submodel(model):
     return b
 
 
-def fang_submodel(model, driven: bool):
-    name = "fang_driven" if driven else "fang"
-    f = model.submodel(name, "Fang with drive gear" if driven else "Fang")
-    if driven:
-        f.place("3706", "frame_dark", (P[0], P[1], 40), ALONG_Z)          # axle 6: z -20..100
-    else:
-        f.place("3705", "frame_dark", (P[0], P[1], 20), ALONG_Z)          # axle 4: z -20..60
+def fang_submodel(model):
+    f = model.submodel("fang", "Fang")
+    f.place("3705", "frame_dark", (P[0], P[1], 20), ALONG_Z)              # axle 4: z -20..60
     f.step("Bone-white fang")
     f.place("32348", "fang", (P[0], P[1], 0), HANG)                       # z -10..10
     tip = HANG @ np.array([48.0, 0, 96.0])
@@ -178,101 +218,65 @@ def link_submodel(model):
 
 
 def hub_submodel(model):
+    """Fixed hub: rides on top of the stand's centre axle (round plate with axle hole in the
+    middle), a 6x6 plate over it, and four Technic 1x4 arms whose outer holes carry the link
+    pins at H_REST. The back light's lead passes over it, clear even with the body pressed."""
     h = model.submodel("hub", "Hub")
-    h.place("3958", "frame_dark", (0, H_Y - 18, 0))                       # 6x6 plate, y 8..16
+    top = H_REST - 10                                                      # arms' top: 32
+    h.place("4032a", "frame_dark", (0, top - 8, 0))                        # axle hole, 24..32
+    for x, z in ((-40, 0), (40, 0), (0, -40), (0, 40)):
+        h.place("3022", "frame_dark", (x, top - 8, z))
+    h.step("6x6 plate on top")
+    h.place("3958", "frame_dark", (0, top - 16, 0))
     h.step("Four arms")
     for k in range(4):
         R = rot(y=QUARTERS[k])
-        c = R @ np.array([60.0, 0, -10.0])
-        h.place("3894", "frame_dark", (c[0], H_Y - 10, c[2]), R)          # hole at y=26
+        c = R @ np.array([80.0, 0, -10.0])
+        h.place("3701", "frame_dark", (c[0], top, c[2]), R)               # holes at x 60..100
     return h
 
 
 # ---------------------------------------------------------------------------- assembly
+def _world(M: np.ndarray):
+    return M[:3, 3].copy(), M[:3, :3].copy()
+
+
 def core(model, sub):
-    """Build order as a person would: bearings, worm, fangs, gears into mesh, knob drive,
-    links dropped in through the disc, hub on top, pins last."""
+    """Build order as a person would: bearings, fangs (set open), links dropped in through
+    the disc, hub on top, pins last."""
     bearing = bearing_submodel(model)
-    fang = fang_submodel(model, driven=False)
-    fang_d = fang_submodel(model, driven=True)
+    fang = fang_submodel(model)
     link = link_submodel(model)
     for k in range(4):
         sub.step(f"Fang bearing {k + 1}")
         sub.use(bearing, (0, 0, 0), quarter(k)[:3, :3], tag=f"bearing_{k}")
-    sub.step("Worm bearings")
-    sub.place("3709b", "frame_dark", (WORM_X, DISC_TOP - 8, GEAR_Z), rot(y=90))
-    sub.place("3709b", "frame_dark", (WORM_X, DISC_BOTTOM, GEAR_Z), rot(y=90))
-    sub.step("Worm on its axle, from below")
-    wr = spin((0, 1, 0), WORM_PHASE)
-    sub.place("3706", "frame_dark", (WORM_X, 90, GEAR_Z), wr @ ALONG_Y, tag="worm",
-              insert=(0, 1, 0))                                                  # y 30..150
-    sub.place("4716", "worm", (WORM_X, P[1], GEAR_Z), wr @ rot(x=90), tag="worm_gear",
-              insert=(0, 1, 0))
-    sub.place("3713", "frame", (WORM_X, P[1] + 30, GEAR_Z), wr @ rot(x=90), tag="worm",
-              insert=(0, 1, 0))
+    open_fang = fang_turn(OPEN_DEG)
+    open_link = link_move(OPEN_DEG)
     for k in range(4):
         Q = quarter(k)
-        sub.step(f"Fang {k + 1}: slide its axle through the bearing")
-        sub.use(fang_d if k == 0 else fang, (0, 0, 0), Q[:3, :3], tag=f"fang_{k}",
-                insert=tuple(Q[:3, :3] @ np.array([0.0, 0, -1])))
-    sub.step("Drive gear onto fang 1's axle")
-    sub.place("32123b", "frame", (P[0], P[1], 65), None, tag="gear24_bush", insert=(0, 0, 1))
-    sub.place("3648b", "gear_dark", (P[0], P[1], GEAR_Z), None, tag="gear24", insert=(0, 0, 1))
-    sub.step("Bevel gear on top of the worm axle")
-    sub.place("6589", "gear", (WORM_X, KNOB_Y + BEVEL_D, GEAR_Z), wr @ rot(x=90),
-              tag="worm_bevel", insert=(0, -1, 0))
-    sub.step("Knob bearing")
-    sub.place("3004", "frame_dark", (WORM_X, DISC_TOP - 24, 130))
-    sub.place("3700", "frame_dark", (WORM_X, KNOB_Y - 10, 130), tag="knob_bearing")
+        sub.step(f"Fang {k + 1}: slide its axle through the bearing, fang swung open")
+        pos, R = _world(Q @ open_fang)
+        sub.use(fang, pos, R, tag=f"fang_{k}", insert=tuple(Q[:3, :3] @ np.array([0.0, 0, -1])))
     for k in range(4):
         Q = quarter(k)
         sub.step(f"Link {k + 1}: drop it through the disc and pin it to the lever")
-        sub.use(link, (0, 0, 0), Q[:3, :3], tag=f"link_{k}", insert=(0, -1, 0))
+        pos, R = _world(Q @ open_link)
+        sub.use(link, pos, R, tag=f"link_{k}", insert=(0, -1, 0))
         # an axle as the pivot shaft: it slides through both round holes (a pin's collar can't)
-        c = Q[:3, :3] @ np.array([P[0] - LEVER, P[1], -20.0])
-        sub.place("32062", "frame_dark", c, Q[:3, :3] @ ALONG_Z, tag=f"link_{k}",
+        M = Q @ open_fang @ transform((P[0] - LEVER, P[1], -20.0), ALONG_Z)
+        pos, R = _world(M)
+        sub.place("32062", "frame_dark", pos, R, tag=f"link_{k}",
                   insert=tuple(Q[:3, :3] @ np.array([0.0, 0, -1])))
     sub.step("Hub on the four links, held by an axle through each")
     sub.use(hub_submodel(model), (0, 0, 0), None, tag="hub", insert=(0, -1, 0))
     for k in range(4):
         Q = quarter(k)
-        c = Q[:3, :3] @ np.array([P[0] - LEVER, H_Y, -20.0])
+        c = Q[:3, :3] @ np.array([P[0] - LEVER, H_REST, -20.0])
         sub.place("32062", "frame_dark", c, Q[:3, :3] @ ALONG_Z, tag=f"link_{k}",
                   insert=tuple(Q[:3, :3] @ np.array([0.0, 0, -1])))
-    sub.step("Stand socket")
-    sub.place("3941", "frame_dark", (0, DISC_BOTTOM, 0), tag="socket")
-    for g in ["hub", "gear24", "gear24_bush", "worm", "worm_gear", "worm_bevel", "knob",
-              "knob_bevel"] + [f"fang_{k}" for k in range(4)] + [f"link_{k}" for k in range(4)]:
-        model.moving_group(g, g)
+    for k in range(4):
+        model.moving_group(f"fang_{k}", f"fang_{k}")
+        model.moving_group(f"link_{k}", f"link_{k}")
+    model.moving_group("tube", "tube")
+    model.moving_group("body", "*", exclude={"stand", "hub"})
     model.pose = pose
-    model.gear_pair("gear24", "worm_gear", "worm")
-    model.gear_pair("worm_bevel", "knob_bevel", "bevel")
-
-
-def knob(model, sub):
-    """After the skirt: the bevel gear goes in from inside, then the knob axle slides in from
-    outside through the skirt's Technic bricks and the bearing, then the knob."""
-    kr = spin((0, 0, 1), KNOB_PHASE)
-    sub.step("Knob axle: gear inside, axle through the skirt")
-    sub.place("6589", "gear", (WORM_X, KNOB_Y, GEAR_Z + BEVEL_D), kr @ rot(y=180),
-              tag="knob_bevel", insert=(0, -1, 0))
-    sub.place("44294", "frame", (WORM_X, KNOB_Y, 160), kr @ ALONG_Z, tag="knob",
-              insert=(0, 0, 1))                                                  # z 90..230
-    sub.step("Knob")
-    sub.place("32072", "frame_dark", (WORM_X, KNOB_Y, 215), kr, tag="knob", insert=(0, 0, 1))
-
-
-def pose_groups(p: dict) -> dict:
-    """Expand group aliases: parts tagged worm_gear / worm_bevel move with the worm, etc."""
-    p = dict(p)
-    p["worm_gear"] = p["worm_bevel"] = p["worm"]
-    p["knob_bevel"] = p["knob"]
-    p["gear24_bush"] = p["gear24"]
-    return p
-
-
-_raw_pose = pose
-
-
-def pose(t: float) -> dict:  # noqa: F811  (final pose with aliases)
-    return pose_groups(_raw_pose(t))

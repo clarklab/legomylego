@@ -1,7 +1,7 @@
 [model]
 name = "Baby Metroid"
 design = "design.py"
-description = "The larval Metroid in real LEGO, about 18 cm across: a see-through dome over three glowing red nuclei, four fangs that open and close from a knob at the back, hovering on a clear stand."
+description = "The larval Metroid in real LEGO, about 18 cm across, as a tap lamp: press it down and its four fangs bite and its three red nuclei light up; press again and they go dark."
 notice = "Metroid is © Nintendo. This fan model is not affiliated with or endorsed by Nintendo."
 
 [palette]
@@ -21,24 +21,58 @@ stand_column = "Trans-Clear"
 stand_base = "Black"
 stand_top = "Dark Bluish Gray"
 battery = "Light Bluish Gray"
+belt = "Blue"
 
 [checks]
 enabled = ["real_elements", "connections", "collisions", "buildability", "stability",
            "mechanism", "electrics", "technique"]
 
 [booklet]
-subtitle = "The larval Metroid from Super Metroid, about 18 cm across and 29 cm tall on its clear hover stand. Turn the knob and the four fangs open and close; three red nuclei glow from inside."
-intro = "A hollow Trans-Light Blue dome over a Coral and Dark Red skirt, with three bumpy Trans-Red nuclei floating inside it. A Technic worm drive in the belly opens and closes all four fangs together from one knob at the back, and two Power Functions LEDs light the nuclei. The whole creature lifts off its stand."
+subtitle = "The larval Metroid from Super Metroid, about 18 cm across and 32 cm tall on its clear hover stand, made into a tap lamp: press it down and the fangs bite and the nuclei light up; press again to turn them off."
+intro = "A hollow Trans-Light Blue dome over a Coral and Dark Red skirt, with three bumpy Trans-Red nuclei floating inside it. The Metroid floats on a clear tube: press it down and the tube clicks the battery box's green on/off button, while the four fangs, linked to a hub held still by the stand's centre axle, snap shut. Rubber belts in the stand lift it back and the fangs open again. Two Power Functions LEDs light the nuclei. The Metroid lifts off its stand."
 you_will_need = [
   "2x LEGO Power Functions LED lights (8870). Each has two lamps on one lead: one lamp per nucleus, with one lamp to spare.",
   "6 AAA batteries for the Power Functions AAA battery box (set 88000, listed in the parts as 64228), which sits inside the stand.",
 ]
 notes = [
   "Lay the two light leads before the inner membrane (step shown): each plug goes down through the opening in the base, the lamps stay on top.",
-  "The fang drive has a worm gear, so the fangs stay where you leave them. Turn the knob gently: stop when the fangs are fully open or closed.",
+  "Tune the tap with the belts in the stand: add a belt if the Metroid sinks, take one out if the tap feels stiff. It should rest up against the top and move about 4 mm when tapped.",
+  "The battery box turns itself off after 2 hours. To leave the lights on, hold the Metroid down for 3 seconds when you switch on: the box's light blinks and it stays on.",
   "Power Functions was discontinued in 2018. The LEDs and the battery box are easy to find used on BrickLink.",
 ]
 works = [
-  { title = "Fangs that bite", text = "Turn the knob at the back: a worm drives a 24-tooth gear on one fang, and a hub under the body turns the other three with it. The worm locks the fangs in any position.", image = "hero_open/hero.png" },
-  { title = "Glowing nuclei", text = "Plug the two light leads onto the battery box through the hatch in the stand and switch it on: a Power Functions LED under each nucleus lights it from inside. Unplug the leads before lifting the Metroid off.", image = "hero_lit/hero.png" },
+  { title = "Tap to bite", text = "Press the Metroid down about 4 mm: the fangs' links meet a hub held still by the stand's axle, so all four fangs snap shut, and the tube underneath clicks the battery box's button. Let go and the belts lift it back up.", image = "hero_open/hero.png" },
+  { title = "A tap lamp", text = "The box's green button is push-on, push-off: one tap and a Power Functions LED under each nucleus lights it from inside; tap again and they go dark. Unplug the leads at the hatch before lifting the Metroid off.", image = "hero_lit/hero.png" },
 ]
+
+# Build video (brickkit video): theme, labels and callouts; see docs/brickkit-guide.md, "Video".
+# Callouts name parts by tag (globs allowed), part number or colour; ones that match nothing
+# are left out, so a changed mechanism only needs its new tags here.
+[video]
+theme = "scan"
+lights_label = "Nuclei light up"
+lift_label = "Lifts off its stand"
+# sections start at the first step whose caption begins with the text
+sections = [["Base disc", "Base disc and fangs"], ["Skirt ring", "Skirt"],
+            ["Three posts", "Nuclei"], ["Layer 1 (", "Dome"], ["Base plate", "Hover stand"]]
+
+[[video.callouts]]
+label = "Fangs"
+tag = "fang_*"
+
+[[video.callouts]]
+label = "Fixed hub"
+tag = "hub"
+xray = true
+sub = "held still while the body slides"
+
+[[video.callouts]]
+label = "Clear tube"
+tag = "tube"
+sub = "slides down when you tap"
+
+[[video.callouts]]
+label = "On/off button"
+tag = "battery"
+xray = true
+sub = "push on, push off"

@@ -21,7 +21,10 @@ def check_technique(ctx, cfg) -> CheckResult:
                           "problem": "geometry not BFC-certified; collision check less precise"})
     if ctx.model.groups:
         for p in ctx.placed:
-            if ctx.model.group_of(p) and p.color.is_trans:
+            g = ctx.model.group_of(p)
+            tag = ctx.model.groups.get(g)
+            # a whole moving body, or a captive clear slider, is meant to move as it is
+            if g and tag != "*" and tag not in ctx.model.captive_tags and p.color.is_trans:
                 items.append({"severity": "warn", "part": describe(p),
                               "problem": "transparent part in a moving group"})
     banned = set(cfg.get("banned_parts", []))

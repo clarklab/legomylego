@@ -109,6 +109,9 @@ class Model:
         self.submodels: dict[str, Submodel] = {}
         self.main = self.submodel(slug, name)
         self.groups: dict[str, str] = {}                 # group name -> tag
+        self.group_exclude: dict[str, set] = {}          # catch-all group -> excluded tags
+        self.contacts: list[tuple[str, str, str]] = []   # allowed touching tag pairs
+        self.captive_tags: dict[str, str] = {}           # tag -> why it's held without studs
         self.pose: Callable[[float], dict] | None = None  # t in [0,1] -> {group: 4x4 world}
         self.gear_pairs: list[tuple[str, str, str]] = []  # (tag path a, tag path b, kind)
         self.lights: list[dict] = []
@@ -135,15 +138,39 @@ class Model:
         return self.catalog.color(self.palette.get(key, key))
 
     # mechanisms and electrics -------------------------------------------------
-    def moving_group(self, name: str, tag: str) -> None:
+    def moving_group(self, name: str, tag: str, exclude=()) -> None:
+        """Parts tagged `tag` move together under pose[name]. tag "*" makes a catch-all group:
+        every part not in another group and not under any of the `exclude` tags (e.g. a whole
+        body that slides on a fixed stand)."""
         self.groups[name] = tag
+        if tag == "*":
+            self.group_exclude[name] = set(exclude)
 
     def group_of(self, p: PlacedPart) -> str | None:
         for t in reversed(p.tags):
             for g, tag in self.groups.items():
                 if t == tag:
                     return g
+        for g, ex in self.group_exclude.items():
+            if not (set(p.tags) & ex):
+                return g
         return None
+
+    def allow_contact(self, tag_a: str, tag_b: str, note: str = "") -> None:
+        """Let parts under these two tags touch or overlap slightly without failing the
+        collision checks, for contact the part geometry can't show: a presser pushing a
+        spring-loaded button, a pin riding on a lever."""
+        self.contacts.append((tag_a, tag_b, note))
+
+    def captive(self, tag: str, note: str = "") -> None:
+        """Parts under `tag` form a piece that is held in place by the parts around it without
+        being clicked on (a slider in its guide). Within their own sub-assembly the buildability
+        check doesn't count them as loose; the whole model must still join them up."""
+        self.captive_tags[tag] = note
+
+    def contact_ok(self, a: PlacedPart, b: PlacedPart) -> bool:
+        ta, tb = set(a.tags), set(b.tags)
+        return any((x in ta and y in tb) or (x in tb and y in ta) for x, y, _ in self.contacts)
 
     def gear_pair(self, a: str, b: str, kind: str = "spur") -> None:
         self.gear_pairs.append((a, b, kind))

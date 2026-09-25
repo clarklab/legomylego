@@ -24,6 +24,7 @@ class Unit:
     label: str
     parts: list          # [(part, M in submodel frame)]
     insert: tuple | None
+    tag: str = ""
 
 
 def _units(sub) -> list[Unit]:
@@ -31,10 +32,10 @@ def _units(sub) -> list[Unit]:
     for it in sub.items:
         if isinstance(it, Placement):
             units.append(Unit(it.step, f"{it.part[:-4]} {it.color.name}", [(it.part, it.M)],
-                              it.insert))
+                              it.insert, it.tag))
         else:
             parts = [(p, it.M @ M) for p, _, M in it.sub.flatten_local()]
-            units.append(Unit(it.step, f"sub-assembly {it.sub.name}", parts, it.insert))
+            units.append(Unit(it.step, f"sub-assembly {it.sub.name}", parts, it.insert, it.tag))
     return units
 
 
@@ -151,6 +152,11 @@ def check_buildability(ctx, cfg) -> CheckResult:
                 comps = [c for c in comps
                          if not any(abs(bottoms[built[i]] - table) < 0.5 for i in c)] or [[]]
                 comps = [[]] + [c for c in comps if c]
+            captive = ctx.model.captive_tags
+            if len(comps) > 1 and captive:
+                # a captive slider (held by its guide, not clicked on) isn't a loose piece
+                comps = [comps[0]] + [c for c in comps[1:]
+                                      if not all(units[built[i]].tag in captive for i in c)]
             if len(comps) > 1:
                 items.append({"submodel": sub.name, "step": s + 1,
                               "part": ", ".join(units[built[i]].label for i in comps[1][:5]),
