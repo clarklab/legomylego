@@ -27,9 +27,22 @@ class Project:
     def checks_config(self) -> dict:
         return self.config.get("checks", {})
 
-    def build(self, catalog) -> Model:
+    def variants(self) -> dict[str, dict]:
+        """Colourways: {name: full palette} (the default palette overridden by the variant)."""
+        base = self.config.get("palette", {})
+        out = {}
+        for name, over in self.config.get("variants", {}).items():
+            out[name] = {**base, **{k: v for k, v in over.items() if k != "title"}}
+        return out
+
+    def variant_title(self, name: str) -> str:
+        return self.config.get("variants", {}).get(name, {}).get("title", name.replace("_", " ").title())
+
+    def build(self, catalog, variant: str | None = None) -> Model:
         cfg = self.config["model"]
-        model = Model(cfg["name"], self.slug, self.config.get("palette", {}), catalog)
+        palette = self.variants()[variant] if variant else self.config.get("palette", {})
+        model = Model(cfg["name"], self.slug, palette, catalog)
+        model.variant = variant
         model.meta = dict(cfg)
         design = self.dir / cfg.get("design", "design.py")
         spec = importlib.util.spec_from_file_location(f"brickkit_model_{self.slug}", design)
