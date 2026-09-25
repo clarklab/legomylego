@@ -1,0 +1,20 @@
+{
+  "models": [
+    {
+      "slug": "baby_metroid",
+      "name": "Baby Metroid",
+      "description": "",
+      "parts": 2674,
+      "dims_mm": [
+        176.0,
+        292.8,
+        179.8
+      ],
+      "variants": [
+        "Standard"
+      ],
+      "thumbnail": "renders/renders_front.png",
+      "status": "pass"
+    }
+  ]
+}

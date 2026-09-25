@@ -81,6 +81,9 @@ def main(argv=None) -> int:
     p.add_argument("--lights", action="store_true")
     p.add_argument("--out", default="renders")
     p.add_argument("--variant")
+    p = sub.add_parser("viewer", help="export the model (and its colourways) to the viewer site")
+    p.add_argument("slug")
+    p.add_argument("--site", help="site directory (default: site/)")
     p = sub.add_parser("inspect", help="show a part's size and connection points")
     p.add_argument("parts", nargs="+")
     p = sub.add_parser("find", help="search real LEGO parts by name, optionally in a colour")
@@ -117,6 +120,11 @@ def main(argv=None) -> int:
             print(f"{sets:5d}  {part:12s} {'ldraw' if has_ld else '     '}  {name}")
         return 0
     proj, model = _build(engine, args.slug, getattr(args, "variant", None))
+    if args.cmd == "viewer":
+        from .viewer_export import export_model
+        dst = export_model(engine, proj, model, args.site)
+        print(f"viewer bundle -> {dst}")
+        return 0
     if args.cmd == "render":
         from .render.scene import render_model
         files = render_model(engine, model, _out(proj, model.variant) / args.out,
