@@ -9,11 +9,24 @@ hub = "White"                # reel hubs
 flange = "White"             # lower reel flanges
 tape = "Reddish Brown"       # the tape: packs on the reels and the run across the mouth
 label = "White"              # face label recess and spine label
-detail = "Dark Bluish Gray"  # insert arrows, write-protect tab
+detail = "Dark Bluish Gray"  # write-protect tab
+arrow = "Black"              # moulded insert arrows on the top
 metal = "Flat Silver"        # screws, metal tape guide pins
-spring = "Light Bluish Gray" # reel-spring holders and reel pins
+bore = "Black"               # pin holders over the hubs (read as the hub bore)
+spring = "Light Bluish Gray" # reel pins
 roller = "White"             # tape guide rollers
 button = "Light Bluish Gray" # door release button
+
+[variants.clear_window]
+title = "Clear window"
+window = "Trans-Clear"
+
+[variants.white]
+title = "White shell (head cleaner style)"
+shell = "White"
+arrow = "White"
+label = "Light Bluish Gray"
+window = "Trans-Clear"
 
 [checks]
 enabled = ["real_elements", "connections", "collisions", "buildability", "stability",

@@ -165,9 +165,13 @@ def n_pieces(parts: list[tuple]) -> int:
 
 
 class Batch:
-    """Collect placements (part, colour, M, category), then emit them as build steps: each
-    part joins onto what is already built, parts of one category share a step, and the next
-    part is the nearest ready one so steps stay local (good for instructions)."""
+    """Collect placements (part, colour, M, category), then emit them as build steps.
+
+    Parts are built in phases (lists of categories). Within a phase each step takes up to
+    `per_step` parts that join onto what is already built, grown outwards from the step's
+    first part so every step is one local cluster. A step is captioned by the first category
+    it introduces (in `captions` order); steps that only repeat known work stay uncaptioned,
+    as in a printed booklet."""
 
     def __init__(self):
         self.items = []
@@ -175,36 +179,54 @@ class Batch:
     def add(self, part, color, M, cat, tag=""):
         self.items.append((canon(part), color, np.asarray(M, float), cat, tag))
 
-    def parts(self):
-        return [(p, M) for p, _, M, _, _ in self.items]
+    def parts(self, cats=None):
+        return [(p, M) for p, _, M, cat, _ in self.items if cats is None or cat in cats]
 
-    def emit(self, sub, captions: dict, order: list, per_step: int = 8):
+    def phase_pieces(self, phases: list) -> int:
+        """Worst piece count over the cumulative phases: 1 means every phase can be built
+        onto the previous ones without leaving anything loose."""
+        done, worst = set(), 0
+        for cats in phases:
+            done |= set(cats)
+            worst = max(worst, n_pieces(self.parts(done)))
+        return worst
+
+    def emit(self, sub, phases: list, captions: dict, per_step: int = 6):
         prior = [(it.part, it.M) for it in sub.items if hasattr(it, "part")]
         adj = links(prior + self.parts())
         n0 = len(prior)
         built = set(range(n0))
-        rank = {c: r for r, c in enumerate(order)}
-        todo = sorted(range(len(self.items)), key=lambda j: (
-            rank.get(self.items[j][3], 99), -self.items[j][2][1, 3], self.items[j][2][2, 3],
-            self.items[j][2][0, 3]))
-        cur, count, last = None, 0, None
-        while todo:
-            ready = [j for j in todo if adj[n0 + j] & built or not built] or todo[:1]
-            best_rank = min(rank.get(self.items[j][3], 99) for j in ready)
-            same = [j for j in ready if self.items[j][3] == cur] if count < per_step else []
-            pool = same or [j for j in ready if rank.get(self.items[j][3], 99) == best_rank]
-            if last is not None:
-                pool.sort(key=lambda j: (-self.items[j][2][1, 3] // 8,
-                                         np.linalg.norm(self.items[j][2][:3, 3] - last)))
-            j = pool[0]
-            part, color, M, cat, tag = self.items[j]
-            if cat != cur or count >= per_step:
-                sub.step(captions.get(cat, ""))
-                cur, count = cat, 0
-            pl = sub.place(part, color, (0, 0, 0), tag=tag)
-            pl.M = M
-            built.add(n0 + j)
-            todo.remove(j)
-            count += 1
-            last = M[:3, 3]
+        told = set()
+        pos = {j: it[2][:3, 3] for j, it in enumerate(self.items)}
+        for cats in phases:
+            todo = [j for j, it in enumerate(self.items) if it[3] in cats]
+            # start at the back-left of the lowest layer
+            todo.sort(key=lambda j: (-pos[j][1] // 8, pos[j][2] * -1, pos[j][0]))
+            while todo:
+                step, anchor = [], None
+                while todo and len(step) < per_step:
+                    ready = [j for j in todo if adj[n0 + j] & built or not built]
+                    if not ready:
+                        if step:
+                            break
+                        ready = todo[:1]
+                    low = max(pos[j][1] // 8 for j in ready)      # lowest layer first
+                    ready = [j for j in ready if pos[j][1] // 8 == low]
+                    if anchor is None:
+                        j = ready[0]
+                        anchor = pos[j]
+                    else:
+                        j = min(ready, key=lambda j: np.linalg.norm(pos[j] - anchor))
+                        if np.linalg.norm(pos[j] - anchor) > 140 and len(step) >= 2:
+                            break
+                    step.append(j)
+                    built.add(n0 + j)
+                    todo.remove(j)
+                new = [c for c in captions if c not in told and
+                       any(self.items[j][3] == c for j in step)]
+                told.update(self.items[j][3] for j in step)
+                sub.step(captions[new[0]] if new else "")
+                for j in step:
+                    part, color, M, cat, tag = self.items[j]
+                    sub.place(part, color, (0, 0, 0), tag=tag).M = M
         self.items = []

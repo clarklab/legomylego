@@ -16,7 +16,7 @@ import numpy as np
 
 from brickkit.ldraw.matrix import rot, transform, translate
 from kit import (BIG_PLATES, BRICK, PLATE, S, TILE, TILES, Batch, cell_ids, line_rects,
-                 n_pieces, pack, quarter_M, rect_M)
+                 pack, quarter_M, rect_M)
 
 Y_BOTTOM, Y_FLOOR = -8, -16              # bottom plates [-8, 0], floor tiles [-16, -8]
 Y_C1, Y_C2, Y_C3 = -16, -40, -48          # wall courses: plate, brick, plate
@@ -38,22 +38,30 @@ def near(cells, x, z, r):
 
 
 # ------------------------------------------------------------------------------ bottom half
-SCREWS = [(-11, -6), (11, -6), (-11, 6), (11, 6), (0, 5)]
-ROUND_HOLES = [(0, -4), (0, 0)]           # lamp hole, reel-lock release hole
+SCREWS = [(-10, -2), (10, -2), (-9, 5), (9, 5), (0, 5)]   # screw heads, recessed in the floor
+ROUND_HOLES = [(0, -2), (0, 0)]           # lamp hole, reel-lock release hole
+# floor plates laid out by hand where the edge structure needs them to reach the floor tiles
+FIXED_FLOOR = [(-9, -2, -4, -3), (-1, 1, -4, -3), (2, 9, -4, -3)]     # under the front beam
+for _s in (-1, 1):
+    FIXED_FLOOR += [tuple(sorted((_s * 10, _s * 11))) + (-6, -6),       # front corner
+                    tuple(sorted((_s * 8, _s * 11))) + (-5, -5),        # mouth end + corner
+                    tuple(sorted((_s * 10, _s * 11))) + (-4, -3),       # behind the corner
+                    tuple(sorted((_s * 10, _s * 11))) + (4, 6)]         # back corner
 
 
 def bottom_layout(variant: int) -> Batch:
     b = Batch()
     spindle = set().union(*(near(CELLS, ax, az, 40) for ax, az in REEL_AXES.values()))
-    posts = {(0, -3), (0, 5)}
+    posts = {(0, 5)}                      # screw boss at the back centre
 
     # bottom plates
     cells = {(i, k) for i, k in CELLS
              if not (k == -6 and abs(i) <= 9) and not (k == -5 and abs(i) <= 7)}
     cells -= spindle | set(SCREWS) | set(ROUND_HOLES)
+    cells -= set(cell_ids(FIXED_FLOOR))
     order, prefer, shift = [("col", "z", 0), ("row", "x", 0), ("col", "z", 7), ("row", "x", 11),
                             ("col", "x", 3), ("row", "z", 5)][variant % 6]
-    base = pack(cells, BIG_PLATES, order, prefer, shift=shift + variant // 6 * 13)
+    base = FIXED_FLOOR + pack(cells, BIG_PLATES, order, prefer, shift=shift + variant // 6 * 13)
     below = cell_ids(base)
     for r in base:
         p, M = rect_M(PLATE, r, Y_BOTTOM)
@@ -64,11 +72,11 @@ def bottom_layout(variant: int) -> Batch:
         b.add("85861", "shell", transform((S * i, Y_BOTTOM, S * k)), "floor")
 
     # course 1 of the walls (level with the floor tiles)
-    c1 = [(10, 11, -6, -5), (-11, -10, -6, -5)]                       # front corners, 2 x 2
+    c1 = [(10, 11, -6, -4), (-11, -10, -6, -4)]                # front corners + beam ends
     for s in (-1, 1):
-        c1 += line_rects([(s * 11, k) for k in range(-4, 7)], phase=(3, 4)[variant % 2])
+        c1 += line_rects([(s * 11, k) for k in range(-3, 7)], phase=(3, 4)[variant % 2])
     c1 += [(-10, -9, 6, 6)] + line_rects([(i, 6) for i in range(-8, 9)], phase=4)
-    c1 += [(9, 9, 6, 6), (-10, -10, -4, -4), (10, 10, -4, -4), (0, 0, -3, -3), (0, 0, 4, 5)]
+    c1 += [(9, 9, 6, 6), (0, 0, 4, 5)]
     for r in c1:
         white = r[2] == r[3] == 6 and -8 <= r[0] and r[1] <= 8
         p, M = rect_M(PLATE, r, Y_C1)
@@ -125,7 +133,7 @@ def bottom_layout(variant: int) -> Batch:
               "tape")
 
     # course 3: plates tying the walls, the beam and the corners together
-    c3 = [(10, 11, -6, -5), (-11, -10, -6, -5), (0, 0, -4, -3), (0, 0, 5, 5)]
+    c3 = [(10, 11, -6, -5), (-11, -10, -6, -5), (0, 0, -4, -4), (0, 0, 5, 5)]
     c3 += line_rects([(i, -4) for i in range(-11, -2)], phase=4)
     c3 += line_rects([(i, -4) for i in range(3, 12)], phase=5)
     for s in (-1, 1):
@@ -142,31 +150,41 @@ def bottom_layout(variant: int) -> Batch:
     return b
 
 
-def bottom_half(model):
+BOTTOM_PHASES = [["floor", "screws", "floor_tiles", "spindle", "walls_1"],
+                 ["corners", "walls_2"], ["tape_path", "beam_top"], ["tape"], ["walls_3"],
+                 ["hinge_mounts"], ["hinges"]]
+
+
+def best_layout(layout, phases, tries=36):
+    """The first layout variant whose every build phase joins into one piece."""
     best = None
-    for v in range(24):
-        b = bottom_layout(v)
-        n = n_pieces(b.parts())
+    for v in range(tries):
+        b = layout(v)
+        n = b.phase_pieces(phases)
         if best is None or n < best[0]:
             best = (n, b)
         if n == 1:
             break
+    return best[1]
+
+
+def bottom_half(model):
     sub = model.submodel("bottom_half", "Bottom half")
-    best[1].emit(sub, {
-        "floor": "Bottom half: lay the floor plates",
-        "screws": "The five screw heads (silver) sit in the floor",
-        "floor_tiles": "Tile the floor so the reels can slide",
-        "spindle": "Round rims for the reel drive holes",
-        "walls_1": "First course of the walls",
-        "corners": "Front corners with the light-path holes and the door release button",
-        "walls_2": "Walls; the spine label is white",
-        "tape_path": "Tape path: backing bricks, silver guide pins, white rollers",
-        "beam_top": "Cap the front beam", "tape": "Stretch the tape across the mouth",
-        "walls_3": "Top course of the walls",
-        "hinge_mounts": "Mounts for the door hinges: plates with studs on the side",
-        "hinges": "Hinge bases, pushed onto the side studs"},
-        ["floor", "screws", "floor_tiles", "spindle", "walls_1", "corners", "walls_2",
-         "tape_path", "beam_top", "tape", "walls_3", "hinge_mounts", "hinges"])
+    best_layout(bottom_layout, BOTTOM_PHASES).emit(sub, BOTTOM_PHASES, {
+        "floor": "Bottom half: floor plates, tied together by the tiles and the first wall course",
+        "screws": "Silver screw heads sit in the floor: five of them, like the real thing",
+        "spindle": "Round rims around the two reel drive holes",
+        "floor_tiles": "Smooth floor tiles: the reels slide on these",
+        "walls_1": "First course of the walls; the spine label starts white at the back",
+        "corners": "Front corners: a hole through each side for the tape-end light path, "
+                   "and the grey door release button on the right",
+        "walls_2": "Walls",
+        "tape_path": "Tape path: backing bricks with side studs, silver guide pins, white rollers",
+        "beam_top": "Cap the front beam",
+        "tape": "Stretch the tape across the mouth",
+        "walls_3": "Top course: ties the walls, corners and front beam together",
+        "hinge_mounts": "Door hinge mounts: plates with studs on the side",
+        "hinges": "Hinge bases, pushed onto the side studs"})
     return sub
 
 
@@ -202,8 +220,9 @@ def door(model):
     sub.step("Lower edge of the door")
     for x0, x1 in ((-190, -30), (-30, 30), (30, 190)):
         run(P1, x0, x1, -10, -122)
-    sub.step("Top edge: fillers that swing up with the door")
-    for z in (-114, -106):
+    for z, caption in ((-114, "Top edge: fillers that swing up with the door"),
+                       (-106, "Second layer of fillers")):
+        sub.step(caption)
         for x0, x1 in ((-190, -110), (-110, -50), (-10, 10), (50, 110), (110, 190)):
             run(P1, x0, x1, -50, z)
     sub.step("Hinge tops")
@@ -264,7 +283,7 @@ def top_layout(variant: int) -> Batch:
         p, M = rect_M(PLATE, r, Y_TOP_PLATE)
         b.add(p, "window", M, "window")
     for ax, az in REEL_AXES.values():
-        b.add("4032a", "spring", transform((ax, Y_TOP_PLATE, az)), "window")
+        b.add("4032a", "bore", transform((ax, Y_TOP_PLATE, az)), "window")
     for k in range(-1, 3):                    # glass tiles run left-right, staggered by row
         cuts = [-7] + list(range(-6 if k % 2 == 0 else -5, 8, 2))
         edges = cuts + [8]
@@ -277,7 +296,7 @@ def top_layout(variant: int) -> Batch:
     for s in (-1, 1):
         for k in (-6, -5):
             b.add("2412b", "shell", transform((s * 210, Y_TOP_TILE, S * k)), "grip")
-        b.add("22385", "detail", transform((s * 50, Y_TOP_TILE, -60)), "arrows")
+        b.add("22385", "arrow", transform((s * 50, Y_TOP_TILE, -60)), "arrows")
     rest = top - win_tiles - label - grip - arrows
     for r in pack(rest, TILES, ("col", "row")[variant % 2], "z", below=below):
         p, M = rect_M(TILE, r, Y_TOP_TILE)
@@ -285,23 +304,20 @@ def top_layout(variant: int) -> Batch:
     return b
 
 
+TOP_PHASES = [["plates", "window", "tiles", "window_tiles", "label", "grip", "arrows"]]
+
+
 def top_half(model, reels):
-    best = None
-    for v in range(24):
-        b = top_layout(v)
-        n = n_pieces(b.parts())
-        if best is None or n < best[0]:
-            best = (n, b)
-        if n == 1:
-            break
     sub = model.submodel("top_half", "Top half")
-    best[1].emit(sub, {
-        "plates": "Top half, built window side up: the plate layer",
-        "window": "Smoked window plates and the grey reel-spring holders",
-        "tiles": "Smooth top", "window_tiles": "Window glass",
-        "label": "Face label recess", "grip": "Grip ridges on the front corners",
-        "arrows": "Moulded arrows pointing to the door"},
-        ["plates", "window", "tiles", "window_tiles", "label", "grip", "arrows"])
+    best_layout(top_layout, TOP_PHASES).emit(sub, TOP_PHASES,
+                 {"plates": "Top half, built face up: plates first",
+                  "window": "Smoked window: see-through plates, and black holders over the "
+                            "reel hubs",
+                  "window_tiles": "Window glass tiles",
+                  "tiles": "Smooth top tiles",
+                  "label": "White face label recess",
+                  "grip": "Grip ridges on the front corners",
+                  "arrows": "Moulded arrows pointing to the door"})
     sub.step("Turn the top half over and push in the two reel pins")
     for ax, az in REEL_AXES.values():
         sub.place("4274", "spring", (ax, -48, az), rot(z=-90))
