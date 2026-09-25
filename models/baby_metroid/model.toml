@@ -1,6 +1,8 @@
 [model]
 name = "Baby Metroid"
 design = "design.py"
+description = "A life-size larval Metroid in real LEGO: a see-through dome over three glowing red nuclei, four fangs that open and close from a knob at the back, hovering on a clear stand."
+notice = "Metroid is © Nintendo. This fan model is not affiliated with or endorsed by Nintendo."
 
 [palette]
 dome = "Trans-Light Blue"

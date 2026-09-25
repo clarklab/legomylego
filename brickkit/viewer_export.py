@@ -59,14 +59,14 @@ def export_glb(engine, placed, path: Path) -> None:
         if p.part not in cache:
             cache[p.part] = _part_meshes(engine, p.part)
             for code, tm in cache[p.part].items():
-                scene.add_geometry(tm, geom_name=f"{part_id(p.part)}__{code}")
+                scene.geometry[f"{part_id(p.part)}__{code}"] = tm     # no node of its own
         world = C @ p.M
         for code in cache[p.part]:
             name = f"p{p.index}" if code == 16 else f"p{p.index}c{code}"
             scene.graph.update(frame_to=name, frame_from=scene.graph.base_frame,
                                matrix=world, geometry=f"{part_id(p.part)}__{code}")
     path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_bytes(scene.export(file_type="glb"))
+    path.write_bytes(scene.export(file_type="glb", include_normals=True))
 
 
 def _colors(engine, codes) -> dict:
@@ -112,7 +112,9 @@ def model_json(engine, proj, model, placed, *, files: dict, variants: list[tuple
             pose = model.pose(t)
             poses.append({g: to_gltf(pose[g]).reshape(-1).round(6).tolist()
                           for g in model.groups if g in pose})
-        mech = {"groups": list(model.groups), "samples": samples, "poses": poses}
+        mech = {"groups": list(model.groups), "samples": samples, "poses": poses,
+                "name": model.meta.get("mechanism_name", "Mechanism"),
+                "labels": list(model.meta.get("mechanism_labels", ("start", "end")))}
     lights = []
     for light in model.lights:
         ldu = model.light_position(light, placed)
@@ -133,12 +135,17 @@ def model_json(engine, proj, model, placed, *, files: dict, variants: list[tuple
     checks = []
     if report_path.exists():
         rep = json.loads(report_path.read_text())
-        checks = [{"name": c["name"], "status": c["status"], "summary": c["summary"]}
+        checks = [{"name": c["name"], "status": c["status"], "summary": c["summary"],
+                   "details": [_item_text(i) for i in c.get("items", [])[:3]]}
                   for c in rep["checks"]]
+    cfg = proj.config.get("model", {})
+    bom = var_out[0]["bom"] if var_out else _bom_rows(engine, placed, model.extras)
     return {
         "slug": proj.slug, "name": model.name,
-        "description": proj.config.get("model", {}).get("description", ""),
-        "parts": len(placed), "dims_mm": dims,
+        "description": cfg.get("description", ""), "notice": cfg.get("notice", ""),
+        "parts": len(placed), "pieces": sum(r["qty"] for r in bom), "dims_mm": dims,
+        "price": _price(engine, placed, model.extras),
+        "features": {"mechanism": model.pose is not None, "lights": bool(model.lights)},
         "front_azimuth": float(model.meta.get("azimuth_offset", 0.0)),
         "colors": _colors(engine, codes), "variants": var_out,
         "nodes": nodes, "steps": steps, "mechanism": mech, "lights": lights,
@@ -146,11 +153,32 @@ def model_json(engine, proj, model, placed, *, files: dict, variants: list[tuple
     }
 
 
+def _item_text(item) -> str:
+    """One line for a check item: its part/colour and problem, else its values."""
+    if not isinstance(item, dict):
+        return str(item)
+    head = " ".join(str(item[k]) for k in ("part", "colour", "light", "cable", "submodel")
+                    if item.get(k) not in (None, ""))
+    tail = item.get("problem") or ", ".join(f"{k} {v}" for k, v in item.items()
+                                            if k not in ("part", "colour", "light", "cable",
+                                                         "submodel", "element_ids", "severity"))
+    return f"{head}: {tail}" if head else str(tail)
+
+
+def _price(engine, placed, extras) -> dict:
+    from .bom.price import estimate
+    priced = estimate(build_bom(placed, engine.catalog, extras), engine.catalog)
+    return {"low": round(sum(p.low * p.line.qty for p in priced), 2),
+            "high": round(sum(p.high * p.line.qty for p in priced), 2), "currency": "USD",
+            "note": "A rough range from typical BrickLink prices per part type, not live "
+                    "market data."}
+
+
 def _bom_rows(engine, placed, extras=()) -> list[dict]:
     return [{"qty": l.qty, "part": l.ldraw_part, "name": l.name, "colour": l.color.name,
              "hex": engine.lib.colors[l.color.ldraw].rgb if l.color.ldraw in engine.lib.colors else "",
              "element_id": l.element_id, "bricklink_part": l.bl_part,
-             "bricklink_colour": l.color.bl_id, "rare": l.rare}
+             "bricklink_colour": l.color.bl_id, "bricklink_type": l.bl_type, "rare": l.rare}
             for l in build_bom(placed, engine.catalog, extras)]
 
 
@@ -164,12 +192,14 @@ def export_model(engine, proj, model, site_dir: Path | None = None) -> Path:
     for name, src in [("mpd", proj.out / f"{proj.slug}.mpd"), ("booklet", proj.out / "booklet.pdf"),
                       ("video", proj.out / "video.mp4"), ("parts_csv", proj.out / "parts.csv"),
                       ("bricklink_xml", proj.out / "bricklink_wanted.xml"),
-                      ("pick_a_brick_csv", proj.out / "pick_a_brick.csv")]:
+                      ("pick_a_brick_csv", proj.out / "pick_a_brick.csv"),
+                      ("price_estimate", proj.out / "price_estimate.md")]:
         if src.exists():
             shutil.copy2(src, dst / src.name)
             files[name] = src.name
     renders = []
-    for d in ("renders", "hero"):
+    shutil.rmtree(dst / "renders", ignore_errors=True)
+    for d in ("hero", "hero_lit", "hero_open", "renders"):
         for png in sorted((proj.out / d).glob("*.png")) if (proj.out / d).exists() else []:
             target = dst / "renders" / f"{d}_{png.name}"
             target.parent.mkdir(exist_ok=True)
@@ -191,10 +221,14 @@ def update_index(site: Path) -> None:
         if mj.parent.name.startswith("_"):
             continue                                   # test models stay off the index
         d = json.loads(mj.read_text())
+        statuses = {c["status"] for c in d["checks"]}
+        status = ("fail" if "fail" in statuses else "warn" if "warn" in statuses else "pass"
+                  ) if statuses else "unknown"
         items.append({"slug": d["slug"], "name": d["name"], "description": d.get("description", ""),
-                      "parts": d["parts"], "dims_mm": d["dims_mm"],
+                      "notice": d.get("notice", ""), "parts": d["parts"],
+                      "pieces": d.get("pieces", d["parts"]), "dims_mm": d["dims_mm"],
+                      "price": d.get("price"), "features": d.get("features", {}),
                       "variants": [v["title"] for v in d["variants"]],
                       "thumbnail": (d["files"].get("renders") or [None])[0],
-                      "status": ("pass" if all(c["status"] != "fail" for c in d["checks"])
-                                 else "fail") if d["checks"] else "unknown"})
+                      "status": status})
     (site / "models.json").write_text(json.dumps({"models": items}, indent=2))

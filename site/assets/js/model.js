@@ -182,6 +182,7 @@ function renderChecks(d) {
       <div class="head"><h3>${esc(title)}</h3><span class="badge badge-${st}">${icon(bic[st] || 'info')}${label[st] || humanize(k.status)}</span></div>
       ${what ? `<p class="what">${esc(what)}</p>` : ''}
       <p class="summary">${esc(k.summary || '')}</p>
+      ${(k.details || []).length ? `<ul class="details">${k.details.map((x) => `<li>${esc(x)}</li>`).join('')}</ul>` : ''}
     </article>`;
   }).join('');
 }
@@ -194,7 +195,7 @@ function blobUrl(text, type) {
 
 function bomFiles(bom) {
   const xml = '<INVENTORY>\n' + bom.filter((r) => r.bricklink_part).map((r) =>
-    `<ITEM><ITEMTYPE>P</ITEMTYPE><ITEMID>${esc(r.bricklink_part)}</ITEMID>${r.bricklink_colour != null ? `<COLOR>${r.bricklink_colour}</COLOR>` : ''}<MINQTY>${r.qty}</MINQTY></ITEM>`).join('\n') + '\n</INVENTORY>\n';
+    `<ITEM><ITEMTYPE>${esc(r.bricklink_type || 'P')}</ITEMTYPE><ITEMID>${esc(r.bricklink_part)}</ITEMID>${r.bricklink_colour != null && (r.bricklink_type || 'P') === 'P' ? `<COLOR>${r.bricklink_colour}</COLOR>` : ''}<MINQTY>${r.qty}</MINQTY></ITEM>`).join('\n') + '\n</INVENTORY>\n';
   const pab = 'elementId,quantity\n' + bom.filter((r) => r.element_id).map((r) => `${r.element_id},${r.qty}`).join('\n') + '\n';
   const q = (s) => (/[",\n]/.test(String(s ?? '')) ? `"${String(s).replace(/"/g, '""')}"` : String(s ?? ''));
   const csv = 'qty,part,name,colour,bricklink_part,bricklink_colour,element_id,rare\n' +
@@ -477,12 +478,13 @@ function setupDock(d) {
     const mr = $('#mech-range');
     const mplay = $('#mech-play');
     const moving = d.nodes.filter((n) => n.group).length;
-    $('#mech-caption').innerHTML = `<span class="txt">${esc(plural(new Set(d.nodes.map((n) => n.group).filter(Boolean)).size, 'moving group'))}, ${esc(plural(moving, 'part'))} in motion. Drag the slider or press play.</span>`;
+    const [l0, l1] = mech.labels || ['start', 'end'];
+    $('#mech-caption').innerHTML = `<span class="txt">${mech.name ? `<b>${esc(mech.name)}</b>: ${esc(l0)} to ${esc(l1)}. ` : ''}${esc(plural(new Set(d.nodes.map((n) => n.group).filter(Boolean)).size, 'moving group'))}, ${esc(plural(moving, 'part'))} in motion. Drag the slider or press play.</span>`;
     let raf = 0, phase = 0, last = 0;
     const setT = (t) => {
       mr.value = String(Math.round(t * 1000));
       mr.style.setProperty('--p', `${t * 100}%`);
-      if (!$('#panel-mech').hidden) $('#dock-meta').innerHTML = `<b>${Math.round(t * 100)}</b>%`;
+      if (!$('#panel-mech').hidden) $('#dock-meta').innerHTML = `<b>${Math.round(t * 100)}</b>% ${esc(l1)}`;
       state.viewer?.setPose(t);
     };
     state.setMechT = setT;

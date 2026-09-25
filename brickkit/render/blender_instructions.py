@@ -21,6 +21,14 @@ def lifted(rgb):
     return rgb
 
 
+def _srgb(c):
+    return 12.92 * c if c <= 0.0031308 else 1.055 * c ** (1 / 2.4) - 0.055
+
+
+def _lin(c):
+    return c / 12.92 if c <= 0.04045 else ((c + 0.055) / 1.055) ** 2.4
+
+
 class Instr:
     def __init__(self, s):
         self.s = s
@@ -34,8 +42,8 @@ class Instr:
         info = self.s["colors"].get(str(code), {"rgb": "#888888", "alpha": 255})
         rgb = lifted(hex_to_linear(info["rgb"]))
         alpha = 0.5 if info["alpha"] < 255 else 1.0
-        if pale:
-            rgb = [c * 0.45 + 0.55 for c in rgb]
+        if pale:                          # mix toward white in sRGB so the hue survives
+            rgb = [_lin(_srgb(c) * 0.62 + 0.38) for c in rgb]
             alpha = min(alpha, 0.85) if info["alpha"] < 255 else 1.0
         m = bpy.data.materials.new(f"i{code}{'p' if pale else ''}")
         m.diffuse_color = (*rgb, alpha)
@@ -165,20 +173,29 @@ def main():
     colors_of = {name: [i["color"] for i in items] for name, items in s["sets"].items()}
     all_objs = [o for objs in sets.values() for o in objs if o is not None]
     W, H = s["size"]
+    visible = set()                             # objects currently shown, over all sets
     for job in s["jobs"]:
         objs = sets[job["set"]]
         cols = colors_of[job["set"]]
-        for ob in all_objs:                     # every set: earlier jobs may use other sets
-            ob.hide_render = True
         new = set(job["new"])
-        shown = []
+        shown, want = [], {}
         for n in job["visible"]:
             ob = objs[n]
             if ob is None:
                 continue
-            ob.hide_render = False
-            ob.material_slots[0].material = ins.material(cols[n], pale=not (n in new or job.get("all_full")))
+            want[ob] = ins.material(cols[n], pale=not (n in new or job.get("all_full")))
             shown.append(ob)
+        # touch only what changes: every property write re-tags the object for evaluation
+        for ob in list(visible):
+            if ob not in want:
+                ob.hide_render = True
+                visible.discard(ob)
+        for ob, mat in want.items():
+            if ob not in visible:
+                ob.hide_render = False
+                visible.add(ob)
+            if ob.material_slots[0].material != mat:
+                ob.material_slots[0].material = mat
         sc.render.resolution_x, sc.render.resolution_y = W, H
         sc.render.film_transparent = bool(job.get("transparent", job["name"].startswith("sub_")))
         if sc.render.film_transparent:

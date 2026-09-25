@@ -1341,6 +1341,7 @@ p { margin: 0; }
 .check-card h3 { font-size: 19px; }
 .check-card .what { font-size: 14px; color: var(--muted); }
 .check-card .summary { font-size: 15px; color: var(--ink-2); margin-top: 4px; font-variant-numeric: tabular-nums; }
+.check-card .details { margin: 6px 0 0; padding-left: 18px; font-size: 13px; color: var(--muted); overflow-wrap: anywhere; }
 
 .honest {
   display: flex;
