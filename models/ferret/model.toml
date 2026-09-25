@@ -56,3 +56,29 @@ enabled = ["real_elements", "connections", "collisions", "buildability", "stabil
 [checks.stability]
 min_margin = 0.25
 min_tilt_deg = 10
+
+# Build video (brickkit video): theme and callouts; see docs/brickkit-guide.md, "Video"
+[video]
+theme = "playful"
+facts = ["life-size"]
+
+[[video.callouts]]
+label = "Turntable"
+part = "3679"
+xray = true
+
+[[video.callouts]]
+label = "Eyes"
+tag = "eye_*"
+
+[[video.callouts]]
+label = "Ears"
+tag = "ear_*"
+
+[[video.callouts]]
+label = "Whiskers"
+tag = "whisker_*"
+
+[[video.callouts]]
+label = "Tongue"
+tag = "tongue"

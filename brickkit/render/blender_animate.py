@@ -3,7 +3,8 @@
     Blender -b --factory-startup -P blender_animate.py -- job.json
 
 job.json: {"timeline": "timeline.json", "frames": [[frame, "out.png"], ...],
-           "size": [w, h], "samples": n, "engine": "eevee" | "cycles"}
+           "size": [w, h], "samples": n, "engine": "eevee" | "cycles",
+           "variant": null | colourway name (timeline["variants"]: same parts, other colours)}
 
 The scene itself (LEGO plastic materials, studio lights, ground, LDraw -> Blender) comes from
 blender_scene.SceneBuilder. This script adds what moves: parts dropping in (build), moving groups
@@ -97,8 +98,10 @@ def cycles_settings(sc, job):
 
 def eevee_glass(mat):
     """SceneBuilder's translucent plastic relies on Cycles volume absorption; EEVEE turns that
-    into fog. Rebuild it as blended glass: a tinted see-through layer plus glossy reflections
-    that get stronger at grazing angles. Returns the emission input (for glowing parts)."""
+    into fog. Rebuild it as blended glass: a tinted see-through layer, glossy reflections that
+    get stronger at grazing angles, and (for coloured plastic) a touch of body colour. No
+    diffuse white: that is what made stacked clear parts milky. Returns the emission input
+    (for glowing parts)."""
     nt = mat.node_tree
     vol = next((n for n in nt.nodes if n.type == "VOLUME_ABSORPTION"), None)
     if vol is None:
@@ -110,24 +113,41 @@ def eevee_glass(mat):
     for sock in ("Volume", "Surface"):
         for link in list(out.inputs[sock].links):
             nt.links.remove(link)
+    lum = 0.2126 * rgb[0] + 0.7152 * rgb[1] + 0.0722 * rgb[2]
+    sat = max(rgb) - min(rgb)                      # 0 for clear, up to 1 for vivid colours
     bsdf.inputs["Base Color"].default_value = (*rgb, 1)
     bsdf.inputs["Transmission Weight"].default_value = 0.0
-    bsdf.inputs["Roughness"].default_value = 0.05
+    bsdf.inputs["Roughness"].default_value = 0.25
     bsdf.inputs["Coat Weight"].default_value = 0.0
     bsdf.inputs["Emission Strength"].default_value = 0.0
+    _try(bsdf.inputs["Specular IOR Level"], "default_value", 0.0)
     tr = nt.nodes.new("ShaderNodeBsdfTransparent")
-    tr.inputs["Color"].default_value = (*[1 - 0.35 * (1 - c) for c in rgb], 1)
+    # each layer absorbs like a thin wall: light colours stay light, dark ones smoke
+    tr.inputs["Color"].default_value = (*[max(c, 0.0) ** 0.38 for c in rgb], 1)
+    gl = None
+    for idname in ("ShaderNodeBsdfGlossy", "ShaderNodeBsdfAnisotropic"):
+        try:
+            gl = nt.nodes.new(idname)
+            break
+        except RuntimeError:
+            continue
+    gl.inputs["Color"].default_value = (1, 1, 1, 1)
+    gl.inputs["Roughness"].default_value = 0.04
+    body = nt.nodes.new("ShaderNodeMixShader")        # see-through, with a little colour
+    body.inputs["Fac"].default_value = min(0.1, 0.07 * (1 - lum) + 0.05 * sat)
+    nt.links.new(tr.outputs[0], body.inputs[1])
+    nt.links.new(bsdf.outputs[0], body.inputs[2])
     fr = nt.nodes.new("ShaderNodeLayerWeight")
-    fr.inputs["Blend"].default_value = 0.3
+    fr.inputs["Blend"].default_value = 0.22
     fac = nt.nodes.new("ShaderNodeMath")
     fac.operation = "MULTIPLY_ADD"
     nt.links.new(fr.outputs["Fresnel"], fac.inputs[0])
-    fac.inputs[1].default_value = 0.6
-    fac.inputs[2].default_value = 0.08
+    fac.inputs[1].default_value = 0.55
+    fac.inputs[2].default_value = 0.035
     mix = nt.nodes.new("ShaderNodeMixShader")
     nt.links.new(fac.outputs[0], mix.inputs["Fac"])
-    nt.links.new(tr.outputs[0], mix.inputs[1])
-    nt.links.new(bsdf.outputs[0], mix.inputs[2])
+    nt.links.new(body.outputs[0], mix.inputs[1])
+    nt.links.new(gl.outputs[0], mix.inputs[2])
     final, emission = mix, None
     if glow > 0:
         em = nt.nodes.new("ShaderNodeEmission")
@@ -230,6 +250,12 @@ class Animator:
         self.tl = tl
         self.job = job
         scene = dict(tl["scene"])
+        variant = job.get("variant")
+        if variant:                  # a colourway: same parts, other colours
+            v = tl["variants"][variant]
+            scene["instances"] = [dict(inst, color=int(c)) for inst, c in
+                                  zip(scene["instances"], v["instance_colors"])]
+            scene["colors"] = {**scene["colors"], **v["colors"]}
         scene["engine"] = job.get("engine", "eevee")
         scene["size"] = job["size"]
         scene["samples"] = int(job["samples"])

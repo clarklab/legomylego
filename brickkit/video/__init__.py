@@ -1,18 +1,34 @@
-"""Build video: `brickkit video SLUG` -> models/SLUG/out/video.mp4 (1080x1080 H.264, 30 fps).
+"""Build video: `brickkit video SLUG` -> models/SLUG/out/video.mp4 (1080x1080 H.264 + AAC, 30 fps).
 
-Pipeline (see timeline.py for the storyboard):
-  1. timeline.build_timeline plans every frame (engine side, no Blender);
-  2. title and end cards are drawn with Pillow;
-  3. the model-scene segments render in Blender EEVEE (render/blender_animate.py, which builds
-     the scene with render/blender_scene.py's SceneBuilder);
-  4. the booklet flip renders in its own Blender scene (booklet_flip.py) if out/booklet.pdf exists;
-  5. crossfades are blended in and ffmpeg encodes.
+A showreel of the model, cut to a beat and driven by the model's own data:
 
-Frames are cached per segment in out/video_frames/<full|preview>/<segment>/ with a hash of
-everything that segment depends on (its slice of the timeline, render settings, the code), so a
-re-run only renders what changed. `--preview` renders 540x540 at low samples, every 2nd frame
-(-> out/video_preview.mp4); `--segments build,lift` renders and encodes just those segments
-(-> out/video_build+lift.mp4)."""
+    open        a brick drops and snaps; stud wipe; REAL LEGO PIECES. / CHECKED BY COMPUTER.
+    title       the name in kinetic type over the hero still; piece counter; stat chips
+    palette     colour swatches turn into a bar chart of pieces per colour; parts rain
+    build       the time-lapse build (hero), section by section, with a HUD
+    scan        the finished model under a scanner: x-ray lines, the eight checks tick in
+    mechanism   the moving parts, slow, with callouts tracked on real parts     (model.pose)
+    lights      the set goes dark, the lights switch on                        (lights/glow)
+    lift        it lifts off its stand                                          ([video] lift)
+    colourways  wipes between the colourways                                    (variants)
+    booklet     the instruction booklet's pages turn                            (booklet.pdf)
+    outro       logo, the model's URL, the small print
+
+Pipeline:
+  1. timeline.py plans the 3D shots frame by frame; reel.py plans the graphics and the sound
+     from the model's data (themes.py skins it: model.toml [video] theme = ...);
+  2. the model-scene plates render in Blender EEVEE (render/blender_animate.py), colourways
+     once per colour scheme, the booklet flip in its own scene (booklet_flip.py) - always under
+     render/scene.py's blender_slot, one chunk of frames per Blender process;
+  3. the compositor (web/, driven by compose.py in headless Chromium) draws every frame:
+     plates, type, HUD, data graphics, wipes, grading;
+  4. audio.py synthesises the music and effects from the cue sheet; ffmpeg encodes.
+
+Plates are cached per segment in out/video_frames/<full|preview>/<segment>/ with a hash of
+everything they depend on, so a re-run only renders what changed. `--preview` is 540x540 at
+low samples and 15 fps (-> out/video_preview.mp4); `--segments build,scan` makes just those
+(-> out/video_build+scan.mp4); `--no-render` composes from whatever plates exist (grey where
+missing) to iterate on graphics; `--stills 120,480` writes single composed frames as PNGs."""
 from __future__ import annotations
 
 import collections
@@ -26,28 +42,21 @@ from pathlib import Path
 import numpy as np
 
 from .. import paths
+from . import reel as R
+from . import themes
 from . import timeline as T
 
 ANIMATE = Path(__file__).resolve().parent.parent / "render" / "blender_animate.py"
 SCENE_SCRIPT = ANIMATE.with_name("blender_scene.py")
 FLIP = Path(__file__).resolve().with_name("booklet_flip.py")
 LOGO = paths.ROOT / "logo.png"
-URL = "lego.superfun.games"
-YELLOW = (255, 219, 6)          # the logo's background
-RED = (226, 21, 42)
-INK = (22, 22, 24)
 QUALITY = {   # samples per engine
-    "full": {"size": 1080, "samples": {"eevee": 48, "cycles": 24}, "step": 1, "page_px": 2048},
-    "preview": {"size": 540, "samples": {"eevee": 12, "cycles": 8}, "step": 2, "page_px": 1024},
+    "full": {"size": 1080, "samples": {"eevee": 48, "cycles": 24}, "step": 1, "page_px": 2048,
+             "crf": 18, "maxrate": "4600k"},
+    "preview": {"size": 540, "samples": {"eevee": 12, "cycles": 8}, "step": 2, "page_px": 1024,
+                "crf": 22, "maxrate": "2000k"},
 }
-FONTS = {
-    "heavy": ["/Library/Fonts/SF-Pro-Rounded-Heavy.otf", "/Library/Fonts/SF-Pro-Rounded-Black.otf",
-              "/System/Library/Fonts/Supplemental/Arial Rounded Bold.ttf",
-              "/System/Library/Fonts/Supplemental/Arial Black.ttf", "DejaVuSans-Bold.ttf"],
-    "bold": ["/Library/Fonts/SF-Pro-Rounded-Bold.otf",
-             "/System/Library/Fonts/Supplemental/Arial Rounded Bold.ttf",
-             "/System/Library/Fonts/Supplemental/Arial Bold.ttf", "DejaVuSans-Bold.ttf"],
-}
+MAX_MB = 40.0
 
 
 def _digest(obj) -> str:
@@ -61,104 +70,6 @@ def _file_hash(*files: Path) -> str:
     return h.hexdigest()
 
 
-# ---------------------------------------------------------------------------- cards (Pillow)
-def _font(kind: str, size: int):
-    from PIL import ImageFont
-    for f in FONTS[kind]:
-        try:
-            return ImageFont.truetype(f, size)
-        except OSError:
-            continue
-    return ImageFont.load_default(size)
-
-
-def _ease(x: float) -> float:
-    x = min(1.0, max(0.0, x))
-    return 1 - (1 - x) ** 3
-
-
-def _text_layer(size: int, text: str, font, fill, max_w: int):
-    """RGBA layer with centred text, shrunk to fit max_w."""
-    from PIL import Image, ImageDraw
-    while True:
-        box = font.getbbox(text)
-        if box[2] - box[0] <= max_w or font.size <= 12:
-            break
-        font = font.font_variant(size=int(font.size * 0.94))
-    w, h = box[2] - box[0], box[3] - box[1]
-    im = Image.new("RGBA", (w + 8, h + 8), (0, 0, 0, 0))
-    ImageDraw.Draw(im).text((4 - box[0], 4 - box[1]), text, font=font, fill=fill)
-    return im
-
-
-def _paste(canvas, layer, cx, cy, alpha=1.0, scale=1.0):
-    from PIL import Image
-    if alpha <= 0:
-        return
-    if scale != 1.0:
-        layer = layer.resize((max(1, int(layer.width * scale)), max(1, int(layer.height * scale))),
-                             Image.LANCZOS)
-    if alpha < 1.0:
-        a = layer.getchannel("A").point(lambda v: int(v * alpha))
-        layer = layer.copy()
-        layer.putalpha(a)
-    canvas.alpha_composite(layer, (int(round(cx - layer.width / 2)), int(round(cy - layer.height / 2))))
-
-
-def _pill(text, font, s):
-    from PIL import Image, ImageDraw
-    box = font.getbbox(text)
-    tw, th = box[2] - box[0], box[3] - box[1]
-    pw, ph = int(tw + 64 * s), int(th + 38 * s)
-    im = Image.new("RGBA", (pw, ph), (0, 0, 0, 0))
-    d = ImageDraw.Draw(im)
-    d.rounded_rectangle((0, 0, pw - 1, ph - 1), radius=ph // 2, fill=RED + (255,))
-    d.text(((pw - tw) / 2 - box[0], (ph - th) / 2 - box[1]), text, font=font, fill=(255, 255, 255))
-    return im
-
-
-def _logo(width: int):
-    from PIL import Image
-    with Image.open(LOGO) as im:
-        im = im.convert("RGBA")
-        return im.resize((width, int(im.height * width / im.width)), Image.LANCZOS)
-
-
-def title_frames(name: str, pieces: int, frames: list[int], n: int, size: int, out: Path):
-    """Model name and piece count on the brand yellow; the text eases up into place."""
-    from PIL import Image
-    s = size / 1080
-    title = _text_layer(size, name, _font("heavy", int(150 * s)), INK, int(900 * s))
-    pill = _pill(f"{pieces:,} real LEGO pieces", _font("bold", int(50 * s)), s)
-    logo = _logo(int(250 * s)) if LOGO.exists() else None
-    for f in frames:
-        t = f / max(1, n - 1)
-        im = Image.new("RGBA", (size, size), YELLOW + (255,))
-        a1, a2, a3 = _ease(f / 16), _ease((f - 6) / 16), _ease((f - 2) / 18)
-        zoom = 1.0 + 0.025 * t
-        if logo is not None:
-            _paste(im, logo, size / 2, size * 0.8, a3, zoom)
-        _paste(im, title, size / 2, size * 0.4 + (1 - a1) * 40 * s, a1, zoom)
-        _paste(im, pill, size / 2, size * 0.4 + title.height / 2 + 80 * s + (1 - a2) * 30 * s,
-               a2, zoom)
-        im.convert("RGB").save(out / f"{f:05d}.png")
-
-
-def end_frames(frames: list[int], n: int, size: int, out: Path):
-    """Logo and the site URL."""
-    from PIL import Image
-    s = size / 1080
-    logo = _logo(int(600 * s)) if LOGO.exists() else None
-    url = _text_layer(size, URL, _font("heavy", int(62 * s)), INK, int(900 * s))
-    for f in frames:
-        im = Image.new("RGBA", (size, size), YELLOW + (255,))
-        a1, a2 = _ease((f - 2) / 20), _ease((f - 12) / 16)
-        if logo is not None:
-            _paste(im, logo, size / 2, size * 0.43, 1.0, 0.93 + 0.07 * a1)
-        _paste(im, url, size / 2, size * 0.8 + (1 - a2) * 24 * s, a2)
-        im.convert("RGB").save(out / f"{f:05d}.png")
-
-
 # ---------------------------------------------------------------------------- Blender runs
 CHUNK = 40      # frames per Blender process: the GPU lock is released between chunks
 
@@ -166,9 +77,9 @@ CHUNK = 40      # frames per Blender process: the GPU lock is released between c
 def _run_blender(script: Path, job: dict, job_path: Path, label: str, log) -> float:
     """Render the job's missing frames, CHUNK frames per Blender process. GPU jobs take the
     machine-wide Blender lock (render/scene.py's blender_slot) one chunk at a time, so other
-    agents' renders queue in between instead of thrashing the GPU alongside a long video; a
-    CPU-only Cycles job leaves the GPU alone and skips the lock. Returns render seconds (not
-    counting time spent waiting for the lock)."""
+    renders queue in between instead of thrashing the GPU alongside a long video; a CPU-only
+    Cycles job leaves the GPU alone and skips the lock. Returns render seconds (not counting
+    time spent waiting for the lock)."""
     from contextlib import nullcontext
 
     from ..render.scene import BLENDER, blender_slot
@@ -219,13 +130,10 @@ def _keyed(block, f):
     return frames[k]
 
 
-def segment_digest(tl: dict, seg: dict, q: dict, extra=None) -> str:
-    """Hash of everything the frames of one segment depend on."""
-    base = {"seg": seg, "q": q, "extra": extra}
-    if seg["kind"] == "card":
-        base.update(model=tl["model"], code=_file_hash(Path(__file__)),
-                    logo=LOGO.stat().st_mtime_ns if LOGO.exists() else 0)
-        return _digest(base)
+def segment_digest(tl: dict, seg: dict, q: dict, extra=None, variant: str | None = None) -> str:
+    """Hash of everything the plates of one segment depend on."""
+    base = {"seg": {k: seg[k] for k in ("name", "start", "end", "kind")}, "q": q,
+            "extra": extra}
     if seg["kind"] == "booklet":
         base.update(code=_file_hash(FLIP, SCENE_SCRIPT))
         return _digest(base)
@@ -240,11 +148,11 @@ def segment_digest(tl: dict, seg: dict, q: dict, extra=None) -> str:
                           _keyed(tl["lift"], f)])
     appear = np.asarray(tl["build"]["appear"])
     building = bool(((appear + tl["build"]["drop"]) > a).any())
-    scene = {k: v for k, v in tl["scene"].items()}
-    base.update(frames=_digest(per_frame), scene=_digest(scene),
-                build=_digest(tl["build"]) if building else None,
+    base.update(frames=_digest(per_frame), scene=_digest(tl["scene"]),
+                build=_digest([tl["build"]["appear"], tl["build"]["offset"]]) if building else None,
                 groups=[tl["groups"]["names"], tl["groups"]["instance"]],
                 lift=tl["lift"]["instance"], leds=lt["leds"],
+                variant=tl["variants"].get(variant) if variant else None,
                 code=_file_hash(ANIMATE, SCENE_SCRIPT))
     return _digest(base)
 
@@ -258,57 +166,89 @@ def _prepare_dir(d: Path, digest: str, force: bool) -> None:
 
 
 # ---------------------------------------------------------------------------- encode
-def encode(sequence, out: Path, fps: float, size: int, log) -> None:
-    """sequence: [(png, None) | (png, (prev_png, weight))]; pipes raw RGB into ffmpeg."""
-    from PIL import Image
-    ffmpeg = shutil.which("ffmpeg")
-    if ffmpeg is None:
-        raise RuntimeError("ffmpeg not found on PATH")
-    tmp = out.with_name(out.stem + ".tmp.mp4")
-    cmd = [ffmpeg, "-y", "-loglevel", "error", "-f", "rawvideo", "-pix_fmt", "rgb24",
-           "-s", f"{size}x{size}", "-r", f"{fps:g}", "-i", "-",
-           "-vf", "scale=out_color_matrix=bt709:out_range=tv",
-           "-c:v", "libx264", "-preset", "slow", "-crf", "18", "-pix_fmt", "yuv420p",
-           "-colorspace", "bt709", "-color_primaries", "bt709", "-color_trc", "bt709",
-           "-color_range", "tv", "-movflags", "+faststart", str(tmp)]
-    proc = subprocess.Popen(cmd, stdin=subprocess.PIPE)
-    cache: dict[str, np.ndarray] = {}
+class Encoder:
+    """Raw RGB frames into ffmpeg: H.264 (capped CRF so the file stays small), yuv420p,
+    bt709, faststart; the audio track muxed in as AAC 192k."""
 
-    def load(p):
-        if p not in cache:
-            with Image.open(p) as im:
-                a = np.asarray(im.convert("RGB"), np.float32)
-            if a.shape[:2] != (size, size):
-                a = np.asarray(Image.fromarray(a.astype(np.uint8)).resize((size, size),
-                                                                          Image.LANCZOS),
-                               np.float32)
-            cache.clear() if len(cache) > 4 else None
-            cache[p] = a
-        return cache[p]
+    def __init__(self, out: Path, fps: float, size: int, q: dict, audio: Path | None,
+                 audio_offset: float = 0.0):
+        ffmpeg = shutil.which("ffmpeg")
+        if ffmpeg is None:
+            raise RuntimeError("ffmpeg not found on PATH")
+        self.out = out
+        self.tmp = out.with_name(out.stem + ".tmp.mp4")
+        cmd = [ffmpeg, "-y", "-loglevel", "error", "-f", "rawvideo", "-pix_fmt", "rgb24",
+               "-s", f"{size}x{size}", "-r", f"{fps:g}", "-i", "-"]
+        if audio is not None:
+            cmd += ["-ss", f"{audio_offset:.4f}", "-i", str(audio)]
+        cmd += ["-map", "0:v"] + (["-map", "1:a"] if audio is not None else [])
+        cmd += ["-vf", "scale=out_color_matrix=bt709:out_range=tv",
+                "-c:v", "libx264", "-preset", "slow", "-crf", str(q["crf"]),
+                "-maxrate", q["maxrate"], "-bufsize", str(int(q["maxrate"][:-1]) * 2) + "k",
+                "-pix_fmt", "yuv420p", "-colorspace", "bt709", "-color_primaries", "bt709",
+                "-color_trc", "bt709", "-color_range", "tv"]
+        if audio is not None:
+            cmd += ["-c:a", "aac", "-b:a", "192k", "-shortest"]
+        cmd += ["-movflags", "+faststart", str(self.tmp)]
+        self.proc = subprocess.Popen(cmd, stdin=subprocess.PIPE)
+        self.n = 0
 
-    try:
-        for png, fade in sequence:
-            a = load(str(png))
-            if fade is not None:
-                prev, w = fade
-                a = load(str(prev)) * (1 - w) + a * w
-            proc.stdin.write(np.clip(a + 0.5, 0, 255).astype(np.uint8).tobytes())
-        proc.stdin.close()
-    except BrokenPipeError:
-        pass
-    if proc.wait() != 0:
-        raise RuntimeError("ffmpeg failed")
-    tmp.replace(out)
-    log(f"encoded {len(sequence)} frames at {fps:g} fps -> {out}")
+    def write(self, rgb: np.ndarray) -> None:
+        self.proc.stdin.write(np.ascontiguousarray(rgb, np.uint8).tobytes())
+        self.n += 1
+
+    def close(self) -> None:
+        self.proc.stdin.close()
+        if self.proc.wait() != 0:
+            raise RuntimeError("ffmpeg failed")
+        self.tmp.replace(self.out)
+
+
+def contact_sheet(thumbs: list[tuple[int, np.ndarray]], path: Path, fps: int, cols: int = 8):
+    """Frames sampled through the video, labelled with their time."""
+    from PIL import Image, ImageDraw
+    if not thumbs:
+        return
+    w = thumbs[0][1].shape[1]
+    rows = (len(thumbs) + cols - 1) // cols
+    sheet = Image.new("RGB", (cols * w, rows * w), (0, 0, 0))
+    for k, (f, a) in enumerate(thumbs):
+        im = Image.fromarray(a)
+        ImageDraw.Draw(im).text((6, 4), f"{f / fps:5.1f}s", fill=(255, 255, 255))
+        sheet.paste(im, ((k % cols) * w, (k // cols) * w))
+    path.parent.mkdir(parents=True, exist_ok=True)
+    sheet.save(path, quality=88)
+
+
+# ---------------------------------------------------------------------------- hero cutout
+def hero_cutout(engine, model, out_dir: Path, shape: dict, render: bool, log) -> Path | None:
+    """A transparent Cycles still of the finished model (shadow kept) for the title: the site
+    hero's angle, turned towards broadside for long models. Cached by the model's MPD."""
+    from ..render.scene import render_model
+    d = out_dir / "video_frames" / "hero_cut"
+    az = T.avoid_end_on(-35.0, shape, 58.0)
+    view = {"name": "hero", "azimuth": az, "elevation": 20, "lens": 60}
+    mpd = next(iter(sorted(out_dir.glob("*.mpd"))), None)
+    stamp = _digest([view, _file_hash(mpd) if mpd else model.slug, 2])
+    f = d / "hero.png"
+    if f.exists() and (d / ".hash").exists() and (d / ".hash").read_text() == stamp:
+        return f
+    if not render:
+        return f if f.exists() else None
+    log("title still: rendering a transparent hero in Cycles")
+    render_model(engine, model, d, views=[view], size=1200, samples=96, transparent=True,
+                 lens=60)
+    (d / ".hash").write_text(stamp)
+    return f
 
 
 # ---------------------------------------------------------------------------- main entry
 def make_video(engine, proj, model, out_dir: Path, *, preview: bool = False,
                segments: list[str] | None = None, force: bool = False,
-               render_engine: str = "eevee", device: str = "gpu", log=None) -> Path:
-    """Render and encode the build video; returns the .mp4 path. `render_engine` is "eevee"
-    (default, fast) or "cycles" (the stills' renderer, slower); `device` "gpu" or "cpu" (Cycles
-    only; useful when other renders are hogging the GPU)."""
+               render_engine: str = "eevee", device: str = "gpu", audio: bool = True,
+               render: bool = True, stills: list[int] | None = None, workers: int = 4,
+               log=None) -> Path:
+    """Render and encode the showreel; returns the .mp4 path (or the stills' directory)."""
     log = log or (lambda msg: print(msg, flush=True))
     t_start = time.time()
     qname = "preview" if preview else "full"
@@ -318,17 +258,33 @@ def make_video(engine, proj, model, out_dir: Path, *, preview: bool = False,
     work = out_dir / "video_frames" / qname
     work.mkdir(parents=True, exist_ok=True)
 
-    # booklet (optional)
+    cfg = R.configure(proj, model)
+    theme = themes.theme_for(cfg)
+    beat = int(theme["beat"])
+    variants = R.colourway_variants(engine, proj, model, log)
+
+    # booklet (optional): its pages are rendered to PNG for the flip
     pdf = next((p for p in (out_dir / "booklet.pdf", proj.out / "booklet.pdf") if p.exists()), None)
+    segs = T.plan_segments(model, booklet=pdf is not None, beat=beat, variants=list(variants),
+                           cfg=cfg)
     plan = None
     if pdf is not None:
         from .booklet_flip import prepare
-        secs = {**T.SECONDS, **T.video_config(model).get("seconds", {})}
-        plan = prepare(pdf, out_dir / "video_frames" / "pages", int(round(secs["booklet"] * T.FPS)),
+        bseg = next(s for s in segs if s["name"] == "booklet")
+        plan = prepare(pdf, out_dir / "video_frames" / "pages", bseg["end"] - bseg["start"],
                        T.FPS, q["page_px"])
-
-    tl = T.build_timeline(engine, model, booklet=plan is not None)
+        if plan is None:
+            segs = T.plan_segments(model, booklet=False, beat=beat, variants=list(variants),
+                                   cfg=cfg)
+    tl = T.build_timeline(engine, model, segs, beat=beat, variants=variants,
+                          backdrop=theme.get("backdrop"))
     (work / "timeline.json").write_text(json.dumps(tl))
+    bplan = out_dir / "booklet" / "plan.json"
+    bsteps = len(json.loads(bplan.read_text())["steps"]) if bplan.exists() else None
+    cut = hero_cutout(engine, model, out_dir, tl["model"]["shape"], render, log)
+    reel = R.plan_reel(engine, proj, model, tl, theme, out_dir, work, booklet_plan=plan,
+                       booklet_steps=bsteps, hero_file=cut, log=log)
+
     names = [s["name"] for s in tl["segments"]]
     if segments:
         unknown = [s for s in segments if s not in T.ORDER]
@@ -340,77 +296,121 @@ def make_video(engine, proj, model, out_dir: Path, *, preview: bool = False,
     chosen = [s for s in tl["segments"] if not segments or s["name"] in segments]
     if not chosen:
         raise SystemExit("nothing to render")
-    log(f"{model.name}: {tl['model']['parts']} parts placed, {tl['model']['pieces']} pieces "
-        f"on the parts list, {tl['model']['steps']} build steps; "
+    log(f"{model.name}: {tl['model']['parts']} parts placed, {reel['model']['pieces']} pieces, "
+        f"{reel['model']['steps']} steps; theme {theme['name']} at {60 * T.FPS / beat:.1f} BPM; "
         f"video {tl['frames'] / tl['fps']:.1f} s: " +
         ", ".join(f"{s['name']} {(s['end'] - s['start']) / tl['fps']:.1f}s" for s in tl["segments"]))
 
-    def frames_of(seg):
-        return [f for f in range(seg["start"], seg["end"]) if f % step == 0]
+    def frames_of(seg, a=None, b=None):
+        a = seg["start"] if a is None else a
+        b = seg["end"] if b is None else b
+        return [f for f in range(a, b) if f % step == 0]
 
+    # -- 3D plates --------------------------------------------------------------------------
     render_q = {"size": size, "samples": samples, "engine": render_engine, "device": device}
-    scene_jobs, book_job = [], None
+    plates = {"step": step}
+    jobs: dict[str | None, list] = collections.OrderedDict()
+    book_job = None
     for seg in chosen:
-        d = work / seg["name"]
-        extra = plan if seg["kind"] == "booklet" else None
-        _prepare_dir(d, segment_digest(tl, seg, render_q, extra), force)
-        fr = frames_of(seg)
-        if seg["kind"] == "card":
-            todo = [f for f in fr if not (d / f"{f:05d}.png").exists()]
-            if todo:
-                local = [f - seg["start"] for f in todo]
-                n = seg["end"] - seg["start"]
-                tmp = d / "_tmp"
-                tmp.mkdir(exist_ok=True)
-                if seg["name"] == "title":
-                    title_frames(model.name, tl["model"]["pieces"], local, n, size, tmp)
-                else:
-                    end_frames(local, n, size, tmp)
-                for f in todo:
-                    (tmp / f"{f - seg['start']:05d}.png").replace(d / f"{f:05d}.png")
-                tmp.rmdir()
-                log(f"{seg['name']} card: {len(todo)} frames")
-        elif seg["kind"] == "scene":
-            scene_jobs += [[f, str(d / f"{f:05d}.png")] for f in fr]
-        else:
-            book_job = [[f - seg["start"], str(d / f"{f:05d}.png")] for f in fr]
-
+        if seg["kind"] == "gfx":
+            continue
+        if seg["kind"] == "booklet":
+            d = work / "booklet"
+            _prepare_dir(d, segment_digest(tl, seg, render_q, plan), force)
+            plates["booklet"] = "frames/booklet"
+            book_job = [[f - seg["start"], str(d / f"{f:05d}.png")] for f in frames_of(seg)]
+            continue
+        vlist = [None]
+        if seg["name"] == "colourways" and tl.get("colourways"):
+            vlist = [None] + tl["colourways"]["order"][1:]
+        for v in vlist:
+            key = seg["name"] + (f"@{v}" if v else "")
+            d = work / key
+            _prepare_dir(d, segment_digest(tl, seg, render_q, variant=v), force)
+            plates[key] = f"frames/{key}"
+            a, b = seg["start"], seg["end"]
+            if seg["name"] == "colourways" and tl.get("colourways"):
+                a, b = tl["colourways"]["frames"][v or tl["colourways"]["order"][0]]
+            jobs.setdefault(v, []).extend([f, str(d / f"{f:05d}.png")] for f in frames_of(seg, a, b))
+    reel["plates"] = plates
     timings = {}
-    if scene_jobs:
-        job = {"timeline": str(work / "timeline.json"), "frames": scene_jobs,
-               "size": [size, size], "samples": samples, "engine": render_engine,
-               "device": device}
-        timings["scene"] = _run_blender(ANIMATE, job, work / "scene_job.json", "model scene", log)
-    if book_job:
-        job = {"plan": plan, "frames": book_job, "size": [size, size], "samples": samples,
-               "engine": render_engine, "device": device}
-        timings["booklet"] = _run_blender(FLIP, job, work / "booklet_job.json", "booklet", log)
+    if render:
+        for v, fr in jobs.items():
+            job = {"timeline": str(work / "timeline.json"), "frames": fr, "size": [size, size],
+                   "samples": samples, "engine": render_engine, "device": device, "variant": v}
+            timings[f"scene{'@' + v if v else ''}"] = _run_blender(
+                ANIMATE, job, work / "scene_job.json", f"model scene{' (' + v + ')' if v else ''}",
+                log)
+        if book_job:
+            job = {"plan": plan, "frames": book_job, "size": [size, size], "samples": samples,
+                   "engine": render_engine, "device": device}
+            timings["booklet"] = _run_blender(FLIP, job, work / "booklet_job.json", "booklet", log)
+    (work / "reel.json").write_text(json.dumps(reel))
 
-    # compose: crossfade into a segment from the previous segment's last frame
-    sequence, prev_seg = [], None
-    for seg in chosen:
-        d = work / seg["name"]
-        fr = frames_of(seg)
-        prev_last = None
-        if prev_seg is not None and seg["fade_in"] and prev_seg["end"] == seg["start"]:
-            pf = frames_of(prev_seg)
-            prev_last = work / prev_seg["name"] / f"{pf[-1]:05d}.png"
-        for f in fr:
-            png = d / f"{f:05d}.png"
-            if not png.exists():
-                raise RuntimeError(f"missing frame {png}")
-            k = f - seg["start"]
-            if prev_last is not None and k < seg["fade_in"]:
-                w = float(T.smootherstep((k + 1) / (seg["fade_in"] + 1)))
-                sequence.append((png, (prev_last, w)))
-            else:
-                sequence.append((png, None))
-        prev_seg = seg
+    roots = {"out": out_dir, "frames": work, "cut": out_dir / "video_frames" / "hero_cut",
+             "logo.png": LOGO}
 
+    # -- stills -------------------------------------------------------------------------------
+    from PIL import Image
+    if stills:
+        from .compose import compose
+        d = work / "stills"
+        d.mkdir(exist_ok=True)
+        compose(sorted(stills), size, reel, roots,
+                lambda f, a: Image.fromarray(a).save(d / f"{f:05d}.png"), workers=workers, log=log)
+        log(f"stills -> {d}")
+        return d
+
+    # -- sound --------------------------------------------------------------------------------
+    wav, offset = None, 0.0
+    frames = [f for seg in chosen for f in frames_of(seg)]
+    if audio:
+        from .audio import render_audio
+        wav = work / "audio.wav"
+        cues_digest = _digest([reel["cues"], _file_hash(Path(__file__).with_name("audio.py"))])
+        stamp = work / "audio.hash"
+        if not wav.exists() or not stamp.exists() or stamp.read_text() != cues_digest:
+            t0 = time.time()
+            stats = render_audio(reel["cues"], wav)
+            stamp.write_text(cues_digest)
+            log(f"sound: {stats['seconds']:.1f} s at {stats['lufs']:.1f} LUFS, true peak "
+                f"{stats['true_peak_db']:.1f} dBTP ({time.time() - t0:.0f} s)")
+        contiguous = all(b["start"] == a["end"] for a, b in zip(chosen, chosen[1:]))
+        if not contiguous:
+            wav = None                          # a partial, non-contiguous cut: no sound
+        else:
+            offset = chosen[0]["start"] / T.FPS
+
+    # -- compose + encode ---------------------------------------------------------------------
+    from .compose import compose
     tag = "" if not segments else "_" + "+".join(s["name"] for s in chosen)
     out = out_dir / f"video{tag}{'_preview' if preview else ''}.mp4"
-    encode(sequence, out, T.FPS / step, size, log)
+    enc = Encoder(out, T.FPS / step, size, q, wav, offset)
+    thumbs = []
+    every = int(T.FPS)
+    poster_f = reel["marks"]["title"]["chips"][-1] + beat if "title" in reel["marks"] else frames[0]
+    poster = {}
+
+    def sink(f, a):
+        enc.write(a)
+        if (f - frames[0]) % every < step:
+            thumbs.append((f, np.asarray(Image.fromarray(a).resize((270, 270), Image.LANCZOS))))
+        if abs(f - poster_f) < step and "a" not in poster:
+            poster["a"] = a.copy()
+
+    t0 = time.time()
+    compose(frames, size, reel, roots, sink, workers=workers, log=log)
+    enc.close()
+    timings["compose"] = time.time() - t0
+    contact_sheet(thumbs, out_dir / "video_frames" / f"contact_sheet{tag}{'_preview' if preview else ''}.jpg",
+                  T.FPS)
+    if not segments and not preview and "a" in poster:
+        Image.fromarray(poster["a"]).save(out_dir / "video_poster.jpg", quality=90)
+    mb = out.stat().st_size / 1e6
+    log(f"encoded {len(frames)} frames at {T.FPS / step:g} fps -> {out} ({mb:.1f} MB)")
+    if mb > MAX_MB and not preview:
+        log(f"warning: {out.name} is {mb:.1f} MB (over {MAX_MB:.0f} MB)")
     total = time.time() - t_start
     log(f"done in {total / 60:.1f} min" +
-        "".join(f"; {k} render {v / 60:.1f} min" for k, v in timings.items() if v))
+        "".join(f"; {k} {v / 60:.1f} min" for k, v in timings.items() if v))
     return out

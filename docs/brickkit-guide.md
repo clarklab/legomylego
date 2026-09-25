@@ -148,6 +148,77 @@ and `"bricklink_type": "S"` for items BrickLink sells as sets.
 4. `brickkit render SLUG --size 700 --samples 48` → look at the PNGs, compare with references.
 5. Record decisions and any deviations in `models/SLUG/NOTES.md`. Commit.
 
+## Video
+`brickkit video SLUG` makes `out/video.mp4`: a square 1080×1080, 30 fps showreel of the model
+(H.264 + AAC, under 40 MB) and `out/video_poster.jpg`. Everything on screen comes from the
+model: the parts list, `out/report.json`, the booklet, the poses, lights and colourways.
+It needs Blender, ffmpeg and Playwright's Chromium (`.venv/bin/python -m playwright install
+chromium`). A full render takes roughly an hour of GPU time per model; iterate with `--preview`.
+
+| Flag | What it does |
+|---|---|
+| `--preview` | 540×540, low samples, 15 fps → `out/video_preview.mp4` (iterate with this) |
+| `--segments build,scan` | only those segments → `out/video_build+scan.mp4` |
+| `--no-render` | no Blender: compose from the plates already rendered (grey where missing) |
+| `--stills 120,480` | write single composed frames to `out/video_frames/<q>/stills/`, no video |
+| `--no-audio` | no music or sound effects |
+| `--force` | re-render cached plates; `--engine cycles` / `--device cpu` as for stills |
+
+**Segments** (beat-aligned; ones that don't apply are skipped):
+
+| Segment | Beats | Shows | When |
+|---|---:|---|---|
+| open | 6 | a brick drops and snaps, stud wipe, REAL LEGO PIECES. / CHECKED BY COMPUTER. | always |
+| title | 8 | the name in kinetic type over a transparent Cycles hero, piece counter, stat chips | always |
+| palette | 8 | colour swatches turn into bars of pieces per colour; part pictures fall behind | always |
+| build | 32 | the time-lapse build, one orbiting shot per section, HUD, speed ramps | always |
+| scan | 12 | a scan line sweeps the model: x-ray of its LDraw edges and connection points; the eight checks tick in with their numbers | always |
+| mechanism | 12 | `model.pose`: build pose → 0 → 1 → back, with callouts tracked on real parts and a gauge | pose + groups |
+| lights | 8 | the set goes dark, the lights switch on with a bloom flash | lights / glow |
+| lift | 6 | everything but `exclude_tag` rises and hovers | `[video] lift` |
+| colourways | 4 per colourway | wipes between colourways that share the parts, with swatches | variants |
+| booklet | 8 | the instruction booklet's pages turn | `out/booklet.pdf` |
+| outro | 8 | logo, `lego.superfun.games/m/SLUG`, the small print and the model's notice | always |
+
+**Config** in model.toml (all optional; `model.meta["video"]` from design.py wins key by key):
+```toml
+[video]
+theme = "tape"                  # brand (default) | scan | tape | playful
+beats = { build = 28 }          # segment lengths in beats
+skip = ["palette"]              # leave segments out
+facts = ["1:1 scale"]           # extra title chips (words from the model's own docs)
+default_title = "Black"         # name of the default colourway (else [model] palette_title)
+sections = [[1, "Base"], ["Layer 1 (", "Dome"]]   # build sections: step number or caption start
+lift = { exclude_tag = "stand", height = 80 }
+lift_label = "Lifts off its stand"
+lights_label = "Nuclei light up"
+lights_tap = true               # the mechanism presses as the lights switch on (a tap lamp)
+drop = 24                       # LDU a part falls as it lands
+[video.theme_overrides]         # any theme token, e.g. accent = "#FF3EA5"
+
+[[video.callouts]]              # mechanism callouts; without any, one per moving group
+label = "Dust door"
+tag = "flap"                    # parts under a tag; globs make one anchor each: "fang_*"
+part = "3937"                   # or a part number (one anchor per part), or color = "..."
+sub = "Swings 90°"              # second line; default: how far its group turns, or its name
+xray = true                     # also draw the parts' outlines (for parts hidden inside)
+```
+Callout anchors are the centres of the matched parts, moved by their group's pose every
+frame and projected through the video camera, so the lines follow the real parts. Callouts
+that match nothing are left out (with a note in the log).
+
+**Themes** (`brickkit/video/themes.py`) set the tempo, colours, fonts, wipes and overlay:
+`brand` (cream and yellow, stud wipes), `scan` (teal HUD, scan lines, blast-door wipes),
+`tape` (VCR on-screen display, tracking glitches, chroma bleed), `playful` (bouncy type,
+bubble wipes, paw prints). Fonts are bundled OFL fonts in `brickkit/video/web/fonts/`.
+
+**How it's made:** `video/timeline.py` plans the 3D shots (no Blender), `video/reel.py` the
+graphics and the cue sheet from the model's data, `render/blender_animate.py` renders the
+plates (EEVEE, always under the machine-wide `blender_slot()` lock, 40 frames per process),
+`video/web/` is the compositor (a canvas `renderFrame(f)` run in headless Chromium by
+`video/compose.py`) and `video/audio.py` synthesises the music and effects (numpy, mastered to
+-16 LUFS). Plates are cached per segment with a hash, so editing graphics never re-renders 3D.
+
 ## Shape helpers
 `brickkit.shapes.rings`: `ring_cells(r_out, r_in)`, `pack_cells(cells, lengths, offset, mode)`
 (bonded 1xN runs), `exposed(lower, upper)` (step cells for slopes, with outward direction),

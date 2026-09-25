@@ -20,7 +20,8 @@ build-backend = "setuptools.build_meta"
 include = ["brickkit*"]
 
 [tool.setuptools.package-data]
-brickkit = ["data/*.json", "templates/model/*"]
+brickkit = ["data/*.json", "templates/model/*", "video/web/*.html", "video/web/*.js",
+            "video/web/fonts/*"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

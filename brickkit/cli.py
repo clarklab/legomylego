@@ -96,6 +96,11 @@ def main(argv=None) -> int:
     p.add_argument("--force", action="store_true", help="re-render cached frames")
     p.add_argument("--engine", choices=("eevee", "cycles"), default="eevee")
     p.add_argument("--device", choices=("gpu", "cpu"), default="gpu", help="Cycles only")
+    p.add_argument("--no-audio", action="store_true", help="no music or sound effects")
+    p.add_argument("--no-render", action="store_true",
+                   help="compose from the plates already rendered (grey where missing)")
+    p.add_argument("--stills", help="comma list of frames: write composed PNGs, no video")
+    p.add_argument("--workers", type=int, default=4, help="parallel compositor pages")
     p = sub.add_parser("viewer", help="export the model (and its colourways) to the viewer site")
     p.add_argument("slug")
     p.add_argument("--site", help="site directory (default: site/)")
@@ -144,9 +149,11 @@ def main(argv=None) -> int:
     if args.cmd == "video":
         from .video import make_video
         segs = [s.strip() for s in args.segments.split(",") if s.strip()] if args.segments else None
+        stills = [int(x) for x in args.stills.split(",") if x.strip()] if args.stills else None
         out = make_video(engine, proj, model, _out(proj, model.variant), preview=args.preview,
                          segments=segs, force=args.force, render_engine=args.engine,
-                         device=args.device)
+                         device=args.device, audio=not args.no_audio,
+                         render=not args.no_render, stills=stills, workers=args.workers)
         print(f"video -> {out}")
         return 0
     if args.cmd == "viewer":

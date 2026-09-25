@@ -45,3 +45,25 @@ works = [
 [checks]
 enabled = ["real_elements", "connections", "collisions", "buildability", "stability",
            "mechanism", "electrics", "technique"]
+
+# Build video (brickkit video): theme and callouts; see docs/brickkit-guide.md, "Video"
+[video]
+theme = "tape"
+default_title = "Black"
+facts = ["1:1 scale"]
+
+[[video.callouts]]
+label = "Dust door"
+tag = "flap"
+
+[[video.callouts]]
+label = "Click hinges"
+part = "3937"
+
+[[video.callouts]]
+label = "Supply reel"
+tag = "reel_l"
+
+[[video.callouts]]
+label = "Take-up reel"
+tag = "reel_r"

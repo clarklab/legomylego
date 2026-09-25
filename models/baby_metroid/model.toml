@@ -50,7 +50,8 @@ works = [
 # are left out, so a changed mechanism only needs its new tags here.
 [video]
 theme = "scan"
-lights_label = "Nuclei light up"
+lights_label = "Tap: the nuclei light up"
+lights_tap = true                  # the lights toggle with a press: the video presses as they come on
 lift_label = "Lifts off its stand"
 # sections start at the first step whose caption begins with the text
 sections = [["Base disc", "Base disc and fangs"], ["Skirt ring", "Skirt"],
