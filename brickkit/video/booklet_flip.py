@@ -92,12 +92,39 @@ def _ease_gaps(n: int, lo: float, hi: float, power: float) -> list[float]:
     return [lo + (hi - lo) * (k / max(1, n - 1)) ** power for k in range(n)]
 
 
-def flip_schedule(n_pages: int, first: int, last: int, end: int, turns: int = TURNS) -> dict:
+def outline_spread(render, first: int, last: int, samples: int = 16) -> int | None:
+    """The mid-book step spread whose pages show the most yellow new-part outline (the section
+    tag in the top corner is left out): where the thumb-flip lands, so the outlines read."""
+    import numpy as np
+    lo, hi = max(1, (first + 1) // 2), max(1, (last - 1) // 2)
+    if hi <= lo:
+        return None
+    a, b = lo + round(0.3 * (hi - lo)), lo + round(0.8 * (hi - lo))
+    cands = sorted({round(a + (b - a) * k / max(1, samples - 1)) for k in range(samples)})
+    best, score = None, -1
+    for m in cands:
+        total = 0
+        for page in (2 * m, 2 * m + 1):
+            if not first <= page <= last:
+                continue
+            im = np.asarray(render(page - 1, 240), np.int16)
+            im = im[int(0.2 * im.shape[0]):]             # below the section tag
+            r, g, bl = im[..., 0], im[..., 1], im[..., 2]
+            total += int(((r > 200) & (g > 150) & (bl < 90) & (r - bl > 130)).sum())
+        if total > score:
+            best, score = m, total
+    return best
+
+
+def flip_schedule(n_pages: int, first: int, last: int, end: int, turns: int = TURNS,
+                  final: int | None = None) -> dict:
     """Leaves to turn ([{front, back, start, dur}], 1-based pages, 0 = blank): the cover, then
     `turns` leaves riffling through the step pages - quick at first, slowing - so the last
     one lands on a step spread by frame `end`. A spread m shows pages (2m, 2m+1)."""
     lo, hi = max(1, (first + 1) // 2), max(1, (last - 1) // 2)       # step spreads
-    final = min(hi, max(lo, lo + round(0.55 * (hi - lo))))
+    if final is None:
+        final = lo + round(0.55 * (hi - lo))
+    final = min(hi, max(lo, final))
     turns = max(1, min(turns, final - lo + 1 if final > lo else 1))
     ms = sorted({lo + round(j * (final - lo) / max(1, turns - 1)) for j in range(turns)})
     if ms[-1] != final:
@@ -197,7 +224,8 @@ def prepare(pdf: Path, work: Path, frames: int, fps: int = 30, page_px: int = 20
         return None
     first, last = step_pages([text(i) for i in range(n_pages)])
     flip_end = max(beat * 2, round(frames * FLIP_SHARE / beat) * beat)
-    flip = flip_schedule(n_pages, first, last, flip_end)
+    flip = flip_schedule(n_pages, first, last, flip_end,
+                         final=outline_spread(render, first, last))
     books = {"": (pdf, render, first, last)}
     for name, vp in (variant_pdfs or {}).items():
         vr = _rasterizer(Path(vp))
