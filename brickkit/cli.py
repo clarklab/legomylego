@@ -62,6 +62,14 @@ def main(argv=None) -> int:
     p.add_argument("--name")
     for c in ("build", "verify", "bom", "all"):
         sub.add_parser(c).add_argument("slug")
+    p = sub.add_parser("render", help="render stills with Blender")
+    p.add_argument("slug")
+    p.add_argument("--views", default="three_quarter,front,side,top")
+    p.add_argument("--size", type=int, default=900)
+    p.add_argument("--samples", type=int, default=64)
+    p.add_argument("--pose", type=float)
+    p.add_argument("--lights", action="store_true")
+    p.add_argument("--out", default="renders")
     p = sub.add_parser("find", help="search real LEGO parts by name, optionally in a colour")
     p.add_argument("text")
     p.add_argument("--color")
@@ -82,6 +90,14 @@ def main(argv=None) -> int:
             print(f"{sets:5d}  {part:12s} {'ldraw' if has_ld else '     '}  {name}")
         return 0
     proj, model = _build(engine, args.slug)
+    if args.cmd == "render":
+        from .render.scene import render_model
+        files = render_model(engine, model, proj.out / args.out, views=args.views.split(","),
+                             size=args.size, samples=args.samples, pose_t=args.pose,
+                             lights_on=args.lights)
+        for f in files:
+            print(f"rendered {f}")
+        return 0
     code = 0
     if args.cmd in ("verify", "all"):
         code = _verify(engine, proj, model)

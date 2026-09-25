@@ -110,6 +110,8 @@ class Model:
         self.lights: list[dict] = []
         self.cables: list[dict] = []
         self.extra_checks: list[Callable] = []           # fn(ctx) -> list of issue dicts
+        self.glow_tags: dict[str, float] = {}
+        self.variant: str | None = None
         self.meta: dict = {}
 
     def submodel(self, name: str, title: str = "") -> Submodel:
@@ -141,8 +143,13 @@ class Model:
     def gear_pair(self, a: str, b: str, kind: str = "spur") -> None:
         self.gear_pairs.append((a, b, kind))
 
-    def light(self, name: str, tag_path: str) -> None:
-        self.lights.append({"name": name, "part": tag_path})
+    def light(self, name: str, tag_path: str, color: str = "#FF3A1A", power: float = 1.5) -> None:
+        """A light source at a part (for the electrics check and lit renders)."""
+        self.lights.append({"name": name, "part": tag_path, "color": color, "power": power})
+
+    def glow(self, tag: str, strength: float = 2.0) -> None:
+        """Parts under this tag glow when the lights are on (renders only)."""
+        self.glow_tags[tag] = strength
 
     def cable(self, name: str, start: str, end: str, length: float, route=()) -> None:
         self.cables.append({"name": name, "from": start, "to": end, "length": float(length),
