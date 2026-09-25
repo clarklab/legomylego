@@ -1,0 +1,25 @@
+[project]
+name = "brickkit"
+version = "0.1.0"
+description = "Design, verify and document buildable LEGO models"
+requires-python = ">=3.12"
+dependencies = ["numpy", "scipy", "trimesh", "python-fcl", "jinja2", "playwright"]
+
+[project.optional-dependencies]
+dev = ["pytest"]
+
+[project.scripts]
+brickkit = "brickkit.cli:main"
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+include = ["brickkit*"]
+
+[tool.setuptools.package-data]
+brickkit = ["data/*.json", "templates/model/*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
