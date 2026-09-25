@@ -364,6 +364,8 @@ def pose(t: float) -> dict:
 
 
 def build(model):
+    model.meta["mechanism_name"] = "Dust door and reels"
+    model.meta["mechanism_labels"] = ["closed", "open"]
     reels = {"reel_l": reel(model, "reel_full", "Supply reel (full)", True),
              "reel_r": reel(model, "reel_empty", "Take-up reel (nearly empty)", False)}
     bottom = bottom_half(model)

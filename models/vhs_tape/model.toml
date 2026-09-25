@@ -1,6 +1,8 @@
 [model]
 name = "VHS Cassette"
 design = "design.py"
+description = "A 1:1 VHS video cassette in real LEGO, 184 x 104 x 26 mm: the dust door flips up on click hinges and both reels spin behind a smoked window."
+notice = "VHS is a trademark of JVC KENWOOD Corporation."
 
 [palette]
 shell = "Black"              # top and bottom halves, dust door
@@ -27,6 +29,18 @@ shell = "White"
 arrow = "White"
 label = "Light Bluish Gray"
 window = "Trans-Clear"
+
+[booklet]
+subtitle = "A 1:1 VHS tape, within a few millimetres of the real 187 x 103 x 25 mm cassette. Flip the dust door open; spin the reels through the window or from underneath."
+intro = "Two black halves close around two reels: a full supply reel and a nearly empty take-up reel, each spinning on its own pin behind a smoked window. The dust door clicks onto two hinges and swings up like the real flap. Look underneath for the drive holes, the screws, the write-protect tab and the open mouth where the head drum goes in."
+notes = [
+  "The dust door hangs on two click hinges: press it on firmly until both hinges click.",
+  "The reels sit loose on their pins until the top half closes over them. Keep the halves level while you lower the top.",
+]
+works = [
+  { title = "Dust door", text = "The door swings up 90 degrees on two click hinges, over the tape run across the mouth.", image = "renders/open.png" },
+  { title = "Spinning reels", text = "Each reel turns on its own pin. Push the white flange through the round drive hole underneath and watch the tape pack turn in the window.", image = "renders/three_quarter.png" },
+]
 
 [checks]
 enabled = ["real_elements", "connections", "collisions", "buildability", "stability",
