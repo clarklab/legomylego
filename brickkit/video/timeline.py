@@ -57,7 +57,7 @@ ORDER = ("open", "title", "palette", "build", "scan", "mechanism", "lights", "li
          "colourways", "booklet", "outro")
 KIND = {"open": "gfx", "title": "gfx", "palette": "gfx", "outro": "gfx", "booklet": "booklet"}
 BEATS = {"open": 6, "title": 8, "palette": 8, "build": 32, "scan": 12, "mechanism": 12,
-         "lights": 8, "lift": 6, "colourway": 4, "booklet": 8, "outro": 8}
+         "lights": 8, "lift": 6, "colourway": 4, "booklet": 12, "outro": 8}
 MAX_SECTIONS = 6
 LIGHTS_DIM = 0.16         # studio light level with the LEDs on
 DARK = 0.035              # the blackout before the LEDs switch on

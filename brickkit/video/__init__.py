@@ -119,6 +119,24 @@ def _run_blender(script: Path, job: dict, job_path: Path, label: str, log) -> fl
     return busy
 
 
+def merge_subframes(merges) -> None:
+    """Average rendered sub-frames into their frame (motion blur) and drop the parts."""
+    from PIL import Image
+    for out, parts in merges:
+        if out.exists() or not all(Path(p).exists() for p in parts):
+            continue
+        acc = None
+        for pth in parts:
+            with Image.open(pth) as im:
+                a = np.asarray(im.convert("RGB"), np.float32)
+            acc = a if acc is None else acc + a
+        tmp = out.with_suffix(".tmp.png")
+        Image.fromarray(np.clip(acc / len(parts) + 0.5, 0, 255).astype(np.uint8)).save(tmp)
+        tmp.replace(out)
+        for pth in parts:
+            Path(pth).unlink(missing_ok=True)
+
+
 # ---------------------------------------------------------------------------- caching
 def _keyed(block, f):
     frames = block["frames"]
@@ -271,8 +289,10 @@ def make_video(engine, proj, model, out_dir: Path, *, preview: bool = False,
     if pdf is not None:
         from .booklet_flip import prepare
         bseg = next(s for s in segs if s["name"] == "booklet")
+        vpdfs = {v: out_dir / "variants" / v / "booklet.pdf" for v in variants}
         plan = prepare(pdf, out_dir / "video_frames" / "pages", bseg["end"] - bseg["start"],
-                       T.FPS, q["page_px"])
+                       T.FPS, q["page_px"], beat,
+                       {k: f for k, f in vpdfs.items() if f.exists()})
         if plan is None:
             segs = T.plan_segments(model, booklet=False, beat=beat, variants=list(variants),
                                    cfg=cfg)
@@ -310,7 +330,7 @@ def make_video(engine, proj, model, out_dir: Path, *, preview: bool = False,
     render_q = {"size": size, "samples": samples, "engine": render_engine, "device": device}
     plates = {"step": step}
     jobs: dict[str | None, list] = collections.OrderedDict()
-    book_job = None
+    book_job, book_merge = None, []
     for seg in chosen:
         if seg["kind"] == "gfx":
             continue
@@ -318,7 +338,17 @@ def make_video(engine, proj, model, out_dir: Path, *, preview: bool = False,
             d = work / "booklet"
             _prepare_dir(d, segment_digest(tl, seg, render_q, plan), force)
             plates["booklet"] = "frames/booklet"
-            book_job = [[f - seg["start"], str(d / f"{f:05d}.png")] for f in frames_of(seg)]
+            # fast page turns are rendered as sub-frames and averaged (motion blur)
+            book_job, book_merge = [], []
+            for f in frames_of(seg):
+                k, out = f - seg["start"], d / f"{f:05d}.png"
+                subs = plan["blur"].get(str(k)) if plan else None
+                if subs and not out.exists():
+                    parts = [str(d / f"{f:05d}.s{j}.png") for j in range(len(subs))]
+                    book_job += [[k + dt, pth] for dt, pth in zip(subs, parts)]
+                    book_merge.append((out, parts))
+                else:
+                    book_job.append([k, str(out)])
             continue
         vlist = [None]
         if seg["name"] == "colourways" and tl.get("colourways"):
@@ -345,6 +375,7 @@ def make_video(engine, proj, model, out_dir: Path, *, preview: bool = False,
             job = {"plan": plan, "frames": book_job, "size": [size, size], "samples": samples,
                    "engine": render_engine, "device": device}
             timings["booklet"] = _run_blender(FLIP, job, work / "booklet_job.json", "booklet", log)
+            merge_subframes(book_merge)
     (work / "reel.json").write_text(json.dumps(reel))
 
     roots = {"out": out_dir, "frames": work, "cut": out_dir / "video_frames" / "hero_cut",

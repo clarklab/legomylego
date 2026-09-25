@@ -11,7 +11,7 @@ from brickkit.project import Project
 from brickkit.video import reel as R
 from brickkit.video import themes
 from brickkit.video import timeline as T
-from brickkit.video.booklet_flip import page_curve, schedule
+from brickkit.video.booklet_flip import BLUR, blur_frames, fan_plan, flip_schedule, page_curve, step_pages
 
 BEAT = 15
 
@@ -302,13 +302,38 @@ def test_themes():
         themes.theme_for({"theme": "nope"})
 
 
-def test_booklet_schedule():
-    leaves = schedule(40, 150)
-    assert leaves[0]["front"] == 1 and leaves[0]["back"] == 2
+def test_booklet_step_pages():
+    texts = ["Cover", "Before you start", "How to read the steps", "Build overview\nx",
+             "Base\n1", "Base\n3", "Dome\n5", "It works!\n", "Parts inventory", "About this model"]
+    assert step_pages(texts) == (5, 7)
+    assert step_pages(["a", "b", "c", "d"]) == (2, 3)          # no markers: all but the ends
+
+
+def test_booklet_flip_and_fan():
+    fl = flip_schedule(n_pages=118, first=5, last=114, end=90)
+    leaves = fl["leaves"]
+    assert leaves[0]["front"] == 1 and leaves[0]["back"] == 2          # opens on the cover
+    assert len(leaves) - 1 >= 10                                       # a real thumb-flip
     for a, b in zip(leaves, leaves[1:]):
-        assert b["start"] > a["start"] and b["front"] == a["back"] + 1
-    assert leaves[-1]["start"] + 30 <= 150
-    assert schedule(1, 150) == []
+        assert b["start"] >= a["start"] and b["front"] == a["back"] + 1   # real spreads
+    gaps = [b["start"] - a["start"] for a, b in zip(leaves[1:], leaves[2:])]
+    assert gaps[0] < gaps[-1]                                          # fast, then slowing
+    assert leaves[-1]["start"] + leaves[-1]["dur"] <= 90
+    left, right = fl["final"]
+    assert 5 <= left < right <= 114                                    # lands on step pages
+    fan = fan_plan(5, 114, {left, right}, 90, 180, 15, ["", "albino", "cinnamon"])
+    sheets = fan["sheets"]
+    assert len(sheets) == 6 and fan["settle"] <= 180
+    assert [s["page"].split(":")[0] if ":" in s["page"] else "" for s in sheets][:3] == ["", "albino", "cinnamon"]
+    angles = [s["angle"] for s in sheets]
+    assert angles == sorted(angles) and angles[0] < 0 < angles[-1]
+    plan = {"frames": 180, "flip": fl, "fan": fan}
+    blur = blur_frames(plan)
+    assert blur and all(len(v) == len(BLUR) for v in blur.values())
+    assert min(blur) >= leaves[0]["start"]                              # not on the still cover
+
+
+def test_page_curve():
     x, z = page_curve(0.0, 1.0)
     assert np.allclose(z, 0) and np.isclose(x[-1], 1.0)
     x, z = page_curve(1.0, 1.0)

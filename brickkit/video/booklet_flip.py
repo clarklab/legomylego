@@ -1,17 +1,22 @@
-"""Booklet flip for the build video: the instruction booklet lies on a table and its pages turn.
+"""Booklet beat of the build video: the printed instruction booklet, as a hero moment.
+
+A saddle-stitched landscape booklet lies across the table (its stacks as thick as its page
+count makes them, sheet edges, satin paper, staples in the gutter). It starts closed on its
+real cover; the cover opens and a thumb-flip riffles through the real step pages, fast then
+slowing, the last turns landing on a clear step spread. Then loose step sheets are dealt
+into a fan like a hand of cards (for a model with colourways, from every colourway's
+booklet). Motion blur comes from averaging sub-frames where pages move fast.
 
 Two halves in one file:
-  * engine side  `prepare(pdf, work, frames, fps, page_px)` picks the spreads to show, renders
-                 those PDF pages to PNG (pypdfium2, else PyMuPDF) and returns the flip plan;
-  * Blender side `main()` builds the book scene and renders the frames:
+  * engine side  `prepare(pdf, work, frames, fps, page_px, beat, variant_pdfs)` finds the
+                 cover and the step pages, plans the turns and the fan, renders the pages it
+                 needs to PNG (pypdfium2, else PyMuPDF) and returns the plan;
+  * Blender side `main()` builds the scene and renders frames (local frame numbers may be
+                 fractional: sub-frames for motion blur):
         Blender -b --factory-startup -P booklet_flip.py -- job.json
     job.json: {"plan": {...}, "frames": [[local_frame, "out.png"], ...], "size": [w, h],
                "samples": n}
-
-The book opens from the cover. Leaf j carries pages (front F_j, back B_j); after it turns the
-spread (B_j, F_j+1) shows. The spreads are spread evenly through the booklet so the flip shows
-the cover, the first steps and the finished model. Pages bend as they turn (the free edge leads
-while lifting and lands first)."""
+"""
 from __future__ import annotations
 
 import json
@@ -21,16 +26,19 @@ import sys
 import time
 from pathlib import Path
 
-HOLD_START = 14          # frames the closed booklet rests before the first turn
-TURN = 30                # frames per page turn
-STAGGER = 13             # frames between the starts of two turns
-HOLD_END = 18
-MAX_TURNS = 8
+HOLD = 6                 # frames on the closed cover
+COVER_TURN = 16          # the cover's turn (slower than the riffle)
+TURNS = 14               # leaves turned in the thumb-flip (after the cover)
+FAN_SHEETS = 6
+FLIP_SHARE = 0.58        # of the segment: the flip, then the fan
+LEAF = 0.00012           # m per leaf (two pages) of 80 gsm paper
+BLUR = (-0.4, -0.2, 0.0, 0.2, 0.4)   # sub-frames averaged where pages move fast
+FAST = 0.1               # radians per frame a page must turn to be motion-blurred
 
 
 # ============================================================================ engine side
 def _rasterizer(pdf: Path):
-    """(page count, render(i, px) -> PIL image) or None when no PDF library is installed."""
+    """(page count, render(i, px) -> PIL image, text(i) -> str) or None."""
     try:
         import pypdfium2 as pdfium
         doc = pdfium.PdfDocument(str(pdf))
@@ -39,7 +47,13 @@ def _rasterizer(pdf: Path):
             page = doc[i]
             w, h = page.get_size()
             return page.render(scale=px / max(w, h)).to_pil().convert("RGB")
-        return len(doc), render
+
+        def text(i):
+            try:
+                return doc[i].get_textpage().get_text_range()
+            except Exception:              # noqa: BLE001 - text only helps find the steps
+                return ""
+        return len(doc), render, text
     except ImportError:
         pass
     try:
@@ -52,87 +66,91 @@ def _rasterizer(pdf: Path):
             s = px / max(page.rect.width, page.rect.height)
             pix = page.get_pixmap(matrix=fitz.Matrix(s, s), alpha=False)
             return Image.frombytes("RGB", (pix.width, pix.height), pix.samples)
-        return doc.page_count, render
+
+        def text(i):
+            return doc[i].get_text()
+        return doc.page_count, render, text
     except ImportError:
         return None
 
 
-def schedule(n_pages: int, frames: int) -> list[dict]:
-    """Leaves to turn: [{front, back, start}] with 1-based page numbers (0 = blank)."""
-    spreads = (n_pages - 1) // 2                    # spread m = pages (2m, 2m+1)
-    fit = (frames - HOLD_START - TURN - HOLD_END) // STAGGER + 1
-    n = max(0, min(MAX_TURNS, fit, spreads))
-    if n == 0:
-        return []
-    ms = [1 + round(j * (spreads - 1) / (n - 1)) if n > 1 else 1 for j in range(n)]
-    ms = sorted(set(ms))
-    # a short booklet turns its few pages more slowly, over the same time
-    span = frames - HOLD_START - TURN - HOLD_END
-    stagger = STAGGER if len(ms) < 2 else min(max(STAGGER, span // (len(ms) - 1)), TURN)
-    leaves, front = [], 1
-    for j, m in enumerate(ms):
-        leaves.append({"front": front, "back": 2 * m, "start": HOLD_START + j * stagger})
-        front = 2 * m + 1 if 2 * m + 1 <= n_pages else 0
-    leaves[-1]["next"] = front
-    return leaves
+def step_pages(texts: list[str]) -> tuple[int, int]:
+    """(first, last) 1-based step pages: after the build overview, before 'It works!' / the
+    parts inventory / 'About this model'. Falls back to everything but the first and last."""
+    n = len(texts)
+    heads = [t.strip().split("\n", 1)[0].strip().lower() for t in texts]
+    first = next((i + 2 for i, h in enumerate(heads) if h.startswith("build overview")), None)
+    ends = [i + 1 for i, h in enumerate(heads)
+            if h.startswith(("it works", "parts inventory", "about this model"))]
+    last = (min(e for e in ends if first is None or e > first) - 1) if ends else None
+    first = first or min(2, n)
+    last = last if last and last >= first else max(first, n - 1)
+    return first, last
 
 
-def prepare(pdf: Path, work: Path, frames: int, fps: int = 30, page_px: int = 2048) -> dict | None:
-    """Render the pages the flip needs; None if the PDF can't be read or is too short."""
-    pdf = Path(pdf)
-    r = _rasterizer(pdf)
-    if r is None:
-        print("booklet flip skipped: install pypdfium2 (or PyMuPDF) to read the booklet PDF")
-        return None
-    n_pages, render = r
-    leaves = schedule(n_pages, frames)
-    if not leaves:
-        return None
-    work.mkdir(parents=True, exist_ok=True)
-    need = {1} | {x for lf in leaves for x in (lf["front"], lf["back"], lf.get("next", 0))}
-    stamp = f"{pdf.stat().st_mtime_ns}-{pdf.stat().st_size}-{page_px}"
-    pages, aspect = {}, None
-    for n in sorted(x for x in need if 1 <= x <= n_pages):
-        f = work / f"page{n:03d}_{page_px}.png"
-        meta = f.with_suffix(".stamp")
-        if not f.exists() or not meta.exists() or meta.read_text() != stamp:
-            render(n - 1, page_px).save(f)
-            meta.write_text(stamp)
-        pages[str(n)] = str(f)
-        if aspect is None:
-            from PIL import Image
-            with Image.open(f) as im:
-                aspect = im.width / im.height
-    return {"pdf": str(pdf), "stamp": stamp, "n_pages": n_pages, "pages": pages,
-            "aspect": aspect or 297 / 210, "leaves": leaves, "turn": TURN, "frames": frames,
-            "fps": fps}
+def _ease_gaps(n: int, lo: float, hi: float, power: float) -> list[float]:
+    return [lo + (hi - lo) * (k / max(1, n - 1)) ** power for k in range(n)]
 
 
-# ============================================================================ Blender side
-def _blender():
-    import bpy
-    import numpy as np
-    from mathutils import Vector
-    sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "render"))
-    import blender_scene as bs
-    return bpy, np, Vector, bs
+def flip_schedule(n_pages: int, first: int, last: int, end: int, turns: int = TURNS) -> dict:
+    """Leaves to turn ([{front, back, start, dur}], 1-based pages, 0 = blank): the cover, then
+    `turns` leaves riffling through the step pages - quick at first, slowing - so the last
+    one lands on a step spread by frame `end`. A spread m shows pages (2m, 2m+1)."""
+    lo, hi = max(1, (first + 1) // 2), max(1, (last - 1) // 2)       # step spreads
+    final = min(hi, max(lo, lo + round(0.55 * (hi - lo))))
+    turns = max(1, min(turns, final - lo + 1 if final > lo else 1))
+    ms = sorted({lo + round(j * (final - lo) / max(1, turns - 1)) for j in range(turns)})
+    if ms[-1] != final:
+        ms.append(final)
+    leaves = [{"front": 1, "back": 2, "start": HOLD, "dur": COVER_TURN}]
+    front = 3
+    gaps = _ease_gaps(len(ms), 2.4, 11.0, 2.2)
+    durs = _ease_gaps(len(ms), 10.0, 21.0, 1.4)
+    t = HOLD + 9.0
+    starts = []
+    for g in gaps:
+        starts.append(t)
+        t += g
+    # fit: the last turn ends a few frames before `end`
+    last_end = starts[-1] + durs[-1]
+    room = end - 5 - (HOLD + 9.0)
+    if last_end - (HOLD + 9.0) > room > 0:
+        k = room / (last_end - (HOLD + 9.0))
+        starts = [HOLD + 9.0 + (s - HOLD - 9.0) * k for s in starts]
+        durs = [d * max(k, 0.7) for d in durs]
+    for m, s, d in zip(ms, starts, durs):
+        leaves.append({"front": front if front <= n_pages else 0, "back": 2 * m,
+                       "start": round(s, 2), "dur": round(d, 2)})
+        front = 2 * m + 1
+    leaves[-1]["next"] = front if front <= n_pages else 0
+    return {"leaves": leaves, "final": [leaves[-1]["back"], leaves[-1]["next"]],
+            "spreads": [0] + ms}
 
 
-PAGE_H = 0.21            # metres (A4 short side); the width follows the PDF's aspect
-STACK = 0.0022           # thickness of each half of the booklet
-NX = 48                  # page mesh segments across the page
-CURL = 1.5               # radians of bend at mid-turn
-TABLE = "#FFDB06"        # brand yellow
-KEY = 13.0               # key light (W); fill and rim follow
-WORLD = 0.2
+def fan_plan(first: int, last: int, avoid: set, start: int, frames: int, beat: int,
+             books: list[str], n: int = FAN_SHEETS) -> dict:
+    """Loose step sheets dealt into a fan: [{page key, t0, dur, angle}]. Keys are "12" for
+    the booklet's page 12 or "albino:12" for a colourway booklet's."""
+    pool = [p for p in range(first, last + 1) if p not in avoid] or list(range(first, last + 1))
+    picks = [pool[round((k + 0.5) * (len(pool) - 1) / n)] for k in range(n)]
+    step = max(3, min(beat // 3, (frames - start - 26) // max(1, n)))
+    sheets = []
+    for k, p in enumerate(picks):
+        book = books[k % len(books)]
+        key = f"{book}:{p}" if book else str(p)
+        ang = -24.0 + 48.0 * k / max(1, n - 1)
+        # the first sheet is already in the air at the cut
+        sheets.append({"page": key, "t0": start - 3 + k * step, "dur": 13, "angle": ang})
+    return {"start": start, "sheets": sheets,
+            "settle": sheets[-1]["t0"] + sheets[-1]["dur"] if sheets else start}
 
 
-def page_curve(u: float, width: float, nx: int = NX):
+def page_curve(u: float, width: float, nx: int = 40, curl: float = 1.5):
     """(x, z) along a turning page from the spine (x=0) to the free edge. u: 0 flat on the
     right .. 1 flat on the left; the free edge leads while lifting and lands first."""
     import numpy as np
     s = (np.arange(nx) + 0.5) / nx
-    c = CURL * math.sin(math.pi * u)
+    c = curl * math.sin(math.pi * u)
     phi = np.clip(math.pi * u - c / 2 + c * s, 0.0, math.pi)
     ds = width / nx
     x = np.concatenate([[0.0], np.cumsum(np.cos(phi) * ds)])
@@ -140,10 +158,113 @@ def page_curve(u: float, width: float, nx: int = NX):
     return x, z
 
 
+def turn_u(leaf: dict, f: float) -> float:
+    """How far a leaf has turned at (local) frame f, eased: 0 .. 1."""
+    u = min(1.0, max(0.0, (f - leaf["start"]) / leaf["dur"]))
+    return u * u * (3 - 2 * u)
+
+
+def blur_frames(plan: dict) -> dict[int, list[float]]:
+    """Local frames whose pages move fast enough to be rendered as averaged sub-frames."""
+    out = {}
+    for f in range(plan["frames"]):
+        fast = False
+        for lf in plan["flip"]["leaves"]:
+            a, b = turn_u(lf, f - 0.5), turn_u(lf, f + 0.5)
+            if abs(b - a) * math.pi > FAST:
+                fast = True
+                break
+        if not fast:
+            for sh in plan["fan"]["sheets"]:
+                if sh["t0"] <= f < sh["t0"] + sh["dur"] * 0.7:
+                    fast = True
+                    break
+        if fast:
+            out[f] = list(BLUR)
+    return out
+
+
+def prepare(pdf: Path, work: Path, frames: int, fps: int = 30, page_px: int = 2048,
+            beat: int = 15, variant_pdfs: dict | None = None) -> dict | None:
+    """Render the pages the beat needs and plan it; None if the PDF can't be read."""
+    pdf = Path(pdf)
+    r = _rasterizer(pdf)
+    if r is None:
+        print("booklet beat skipped: install pypdfium2 (or PyMuPDF) to read the booklet PDF")
+        return None
+    n_pages, render, text = r
+    if n_pages < 4:
+        return None
+    first, last = step_pages([text(i) for i in range(n_pages)])
+    flip_end = max(beat * 2, round(frames * FLIP_SHARE / beat) * beat)
+    flip = flip_schedule(n_pages, first, last, flip_end)
+    books = {"": (pdf, render, first, last)}
+    for name, vp in (variant_pdfs or {}).items():
+        vr = _rasterizer(Path(vp))
+        if vr is not None:
+            vf, vl = step_pages([vr[2](i) for i in range(vr[0])])
+            if vl - vf == last - first:            # the same steps, maybe other end matter
+                books[name] = (Path(vp), vr[1], vf, vl)
+    fan = fan_plan(first, last, set(flip["final"]), flip_end, frames, beat, list(books))
+    for sh in fan["sheets"]:                        # into each colourway booklet's numbering
+        book, _, num = sh["page"].rpartition(":")
+        if book:
+            sh["page"] = f"{book}:{int(num) - first + books[book][2]}"
+    work.mkdir(parents=True, exist_ok=True)
+    need = {str(x) for lf in flip["leaves"] for x in (lf["front"], lf["back"], lf.get("next", 0))
+            if x} | {"1"} | {s["page"] for s in fan["sheets"]}
+    pages, aspect, stamp = {}, None, []
+    for key in sorted(need):
+        book, _, num = key.rpartition(":")
+        src, rend = books[book][:2]
+        st = f"{src.stat().st_mtime_ns}-{src.stat().st_size}-{page_px}"
+        stamp.append(st)
+        f = work / f"{book + '_' if book else ''}page{int(num):03d}_{page_px}.png"
+        meta = f.with_suffix(".stamp")
+        if not f.exists() or not meta.exists() or meta.read_text() != st:
+            rend(int(num) - 1, page_px).save(f)
+            meta.write_text(st)
+        pages[key] = str(f)
+        if aspect is None:
+            from PIL import Image
+            with Image.open(f) as im:
+                aspect = im.width / im.height
+    plan = {"pdf": str(pdf), "stamp": "|".join(sorted(set(stamp))), "n_pages": n_pages,
+            "step_pages": [first, last], "pages": pages, "aspect": aspect or 297 / 210,
+            "flip": {**flip, "end": flip_end}, "fan": fan, "frames": frames, "fps": fps,
+            "leaves_total": (n_pages + 1) // 2, "books": list(books)}
+    plan["blur"] = {str(k): v for k, v in blur_frames(plan).items()}
+    # the old keys the video's graphics and sound read
+    plan["leaves"] = flip["leaves"]
+    plan["turn"] = COVER_TURN
+    return plan
+
+
+# ============================================================================ Blender side
+def _blender():
+    import bpy
+    import numpy as np
+    from mathutils import Matrix, Vector
+    sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "render"))
+    import blender_scene as bs
+    return bpy, np, Matrix, Vector, bs
+
+
+PAGE_H = 0.21            # metres (A4 short side); the width follows the PDF's aspect
+NX, NY = 40, 10          # turning page mesh segments (across, along the spine)
+CURL = 1.5               # radians of bend at mid-turn
+TWIST = 0.07             # the lower corner leads the turn by this much at mid-turn
+TABLE = "#FFDB06"        # brand yellow
+BOOK_ROT = 30.0          # degrees: the booklet lies diagonally across the square frame
+KEY = 16.0               # key light (W); fill and rim follow
+WORLD = 0.22
+AIR = 8                  # page meshes (pages in the air at once)
+
+
 class Book:
     def __init__(self, plan, job):
-        bpy, np, Vector, bs = _blender()
-        self.bpy, self.np, self.Vector, self.bs = bpy, np, Vector, bs
+        bpy, np, Matrix, Vector, bs = _blender()
+        self.bpy, self.np, self.Matrix, self.Vector, self.bs = bpy, np, Matrix, Vector, bs
         self.plan = plan
         for ob in list(bpy.data.objects):
             bpy.data.objects.remove(ob, do_unlink=True)
@@ -171,8 +292,9 @@ class Book:
             sc.render.engine = "BLENDER_EEVEE"
             ee = sc.eevee
             for k, v in (("taa_render_samples", int(job["samples"])), ("use_raytracing", True),
-                         ("use_fast_gi", True), ("use_shadows", True), ("shadow_ray_count", 2),
-                         ("shadow_step_count", 8)):
+                         ("use_fast_gi", True), ("fast_gi_method", "GLOBAL_ILLUMINATION"),
+                         ("use_shadows", True), ("shadow_ray_count", 3),
+                         ("shadow_step_count", 10)):
                 try:
                     setattr(ee, k, v)
                 except (AttributeError, TypeError):
@@ -183,23 +305,28 @@ class Book:
         sc.render.image_settings.file_format = "PNG"
         sc.render.image_settings.color_mode = "RGB"
         sc.render.image_settings.compression = 15
-        # Standard keeps the table the brand yellow of the title and end cards
+        # Standard keeps the table the brand yellow of the cards
         sc.view_settings.view_transform = "Standard"
         sc.view_settings.look = "None"
         sc.view_settings.exposure = float(job.get("exposure", 0.0))
         self.H = PAGE_H
         self.W = PAGE_H * float(plan["aspect"])
         self.images = {}
+        self.root = bpy.data.objects.new("book", None)
+        sc.collection.objects.link(self.root)
+        self.root.rotation_euler = (0, 0, math.radians(BOOK_ROT))
         self._world()
         self._table()
         self._stacks()
         self._pages()
+        self._staples()
+        self._fan()
         self._lights()
         self._camera()
 
     # materials -------------------------------------------------------------------------------
-    def image(self, n):
-        path = self.plan["pages"].get(str(n)) if n else None
+    def image(self, key):
+        path = self.plan["pages"].get(str(key)) if key else None
         if path is None:
             return None
         if path not in self.images:
@@ -208,12 +335,20 @@ class Book:
             self.images[path] = img
         return self.images[path]
 
-    def page_material(self, name, two_sided):
+    def paper(self, b, gloss=False):
+        """Satin paper: a little sheen, soft highlights."""
+        b.inputs["Roughness"].default_value = 0.3 if gloss else 0.46
+        for name, v in (("Specular IOR Level", 0.45 if gloss else 0.32), ("Sheen Weight", 0.25),
+                        ("Coat Weight", 0.15 if gloss else 0.0), ("Coat Roughness", 0.2)):
+            if name in b.inputs:
+                b.inputs[name].default_value = v
+
+    def page_material(self, name, two_sided, gloss=False):
         bpy = self.bpy
         m = bpy.data.materials.new(name)
         b = self.bs.principled(m)
         nt = m.node_tree
-        b.inputs["Roughness"].default_value = 0.55
+        self.paper(b, gloss)
         uv = nt.nodes.new("ShaderNodeTexCoord")
         front = nt.nodes.new("ShaderNodeTexImage")
         front.extension = "EXTEND"
@@ -222,7 +357,7 @@ class Book:
         tint.data_type = "RGBA"
         tint.blend_type = "MULTIPLY"
         tint.inputs["Factor"].default_value = 1.0
-        tint.inputs["B"].default_value = (0.92, 0.92, 0.9, 1)
+        tint.inputs["B"].default_value = (0.93, 0.93, 0.91, 1)
         col = front.outputs["Color"]
         back = None
         if two_sided:
@@ -250,8 +385,33 @@ class Book:
         nt.links.new(tint.outputs["Result"], b.inputs["Base Color"])
         return m, front, back
 
-    def set_image(self, node, n):
-        img = self.image(n)
+    def edge_material(self):
+        """The side of a stack of sheets: fine lines, one per sheet or so."""
+        bpy, bs = self.bpy, self.bs
+        m = bpy.data.materials.new("paper_edge")
+        b = bs.principled(m)
+        nt = m.node_tree
+        b.inputs["Roughness"].default_value = 0.7
+        co = nt.nodes.new("ShaderNodeTexCoord")
+        sep = nt.nodes.new("ShaderNodeSeparateXYZ")
+        nt.links.new(co.outputs["Object"], sep.inputs[0])
+        k = nt.nodes.new("ShaderNodeMath")
+        k.operation = "MULTIPLY"
+        k.inputs[1].default_value = 1.0 / LEAF * 0.5            # a line every two leaves
+        nt.links.new(sep.outputs["Z"], k.inputs[0])
+        fr = nt.nodes.new("ShaderNodeMath")
+        fr.operation = "FRACT"
+        nt.links.new(k.outputs[0], fr.inputs[0])
+        ramp = nt.nodes.new("ShaderNodeValToRGB")
+        ramp.color_ramp.elements[0].color = (*bs.hex_to_linear("#D6D2C8"), 1)
+        ramp.color_ramp.elements[1].position = 0.35
+        ramp.color_ramp.elements[1].color = (*bs.hex_to_linear("#F4F2EC"), 1)
+        nt.links.new(fr.outputs[0], ramp.inputs[0])
+        nt.links.new(ramp.outputs["Color"], b.inputs["Base Color"])
+        return m
+
+    def set_image(self, node, key):
+        img = self.image(key)
         if img is None:                      # a blank page when the booklet has no such page
             if "blank_page" not in self.bpy.data.images:
                 blank = self.bpy.data.images.new("blank_page", 4, 4)
@@ -261,6 +421,12 @@ class Book:
             node.image = img
 
     # scene -----------------------------------------------------------------------------------
+    def link(self, ob, parent=True):
+        self.sc.collection.objects.link(ob)
+        if parent:
+            ob.parent = self.root
+        return ob
+
     def _world(self):
         bpy = self.bpy
         w = bpy.data.worlds.new("book_world")
@@ -271,85 +437,111 @@ class Book:
 
     def _table(self):
         bpy, bs = self.bpy, self.bs
-        bpy.ops.mesh.primitive_plane_add(size=8.0, location=(0, 0, 0))
-        t = bpy.context.object
+        me = bpy.data.meshes.new("table")
+        me.from_pydata([(-4, -4, 0), (4, -4, 0), (4, 4, 0), (-4, 4, 0)], [], [(0, 1, 2, 3)])
         m = bpy.data.materials.new("table")
         b = bs.principled(m)
         b.inputs["Base Color"].default_value = (*bs.hex_to_linear(TABLE), 1)
-        b.inputs["Roughness"].default_value = 0.7
-        t.data.materials.append(m)
+        b.inputs["Roughness"].default_value = 0.72
+        me.materials.append(m)
+        self.link(bpy.data.objects.new("table", me), parent=False)
 
-    def _box(self, name, x0, x1, z1, mat):
+    def _box(self, name, x0, x1, mat):
         bpy = self.bpy
         me = bpy.data.meshes.new(name)
         H = self.H / 2
         v = [(x0, -H, 0), (x1, -H, 0), (x1, H, 0), (x0, H, 0),
-             (x0, -H, z1), (x1, -H, z1), (x1, H, z1), (x0, H, z1)]
+             (x0, -H, 1), (x1, -H, 1), (x1, H, 1), (x0, H, 1)]
         f = [(0, 3, 2, 1), (4, 5, 6, 7), (0, 1, 5, 4), (1, 2, 6, 5), (2, 3, 7, 6), (3, 0, 4, 7)]
         me.from_pydata(v, [], f)
         me.materials.append(mat)
-        ob = bpy.data.objects.new(name, me)
-        self.sc.collection.objects.link(ob)
-        return ob
+        return self.link(bpy.data.objects.new(name, me))
 
-    def _plane(self, name, x0, x1, z, mat):
+    def _plane(self, name, x0, x1, mat, parent=True):
         bpy = self.bpy
         me = bpy.data.meshes.new(name)
         H = self.H / 2
-        me.from_pydata([(x0, -H, z), (x1, -H, z), (x1, H, z), (x0, H, z)], [], [(0, 1, 2, 3)])
+        me.from_pydata([(x0, -H, 0), (x1, -H, 0), (x1, H, 0), (x0, H, 0)], [], [(0, 1, 2, 3)])
         uv = me.uv_layers.new()
         for li, (u, v) in enumerate([(0, 0), (1, 0), (1, 1), (0, 1)]):
             uv.data[li].uv = (u, v)
         me.materials.append(mat)
-        ob = self.bpy.data.objects.new(name, me)
-        self.sc.collection.objects.link(ob)
-        return ob
+        return self.link(bpy.data.objects.new(name, me), parent)
 
     def _stacks(self):
-        bpy, bs = self.bpy, self.bs
-        paper = bpy.data.materials.new("paper_edge")
-        b = bs.principled(paper)
-        b.inputs["Base Color"].default_value = (*bs.hex_to_linear("#EDEBE4"), 1)
-        b.inputs["Roughness"].default_value = 0.8
+        edge = self.edge_material()
         W = self.W
-        self.right_stack = self._box("right_stack", 0, W, STACK, paper)
-        self.left_stack = self._box("left_stack", -W, 0, STACK, paper)
+        self.right_stack = self._box("right_stack", 0, W, edge)
+        self.left_stack = self._box("left_stack", -W, 0, edge)
         mr, self.right_tex, _ = self.page_material("right_top", False)
         ml, self.left_tex, _ = self.page_material("left_top", False)
-        self.right_top = self._plane("right_top", 0, W, STACK + 0.00005, mr)
-        self.left_top = self._plane("left_top", -W, 0, STACK + 0.00005, ml)
+        self.right_top = self._plane("right_top", 0, W, mr)
+        self.left_top = self._plane("left_top", -W, 0, ml)
+
+    def _grid(self, name, nx, ny, mat):
+        bpy, np = self.bpy, self.np
+        me = bpy.data.meshes.new(name)
+        verts = [(0.0, 0.0, 0.0)] * ((nx + 1) * (ny + 1))
+        faces = [(j * (nx + 1) + i, j * (nx + 1) + i + 1, (j + 1) * (nx + 1) + i + 1,
+                  (j + 1) * (nx + 1) + i) for j in range(ny) for i in range(nx)]
+        me.from_pydata(verts, [], faces)
+        uv = me.uv_layers.new()
+        for poly in me.polygons:
+            for li in poly.loop_indices:
+                vi = me.loops[li].vertex_index
+                i, j = vi % (nx + 1), vi // (nx + 1)
+                uv.data[li].uv = (i / nx, j / ny)
+        me.polygons.foreach_set("use_smooth", np.ones(len(me.polygons), bool))
+        me.materials.append(mat)
+        return me
 
     def _pages(self):
-        """Three reusable page meshes (at most three pages are in the air at once)."""
+        """Reusable page meshes for the leaves in the air."""
         bpy, np = self.bpy, self.np
         self.turners = []
-        ny = 2
-        for k in range(3):
-            me = bpy.data.meshes.new(f"page{k}")
-            verts = [(0.0, 0.0, 0.0)] * ((NX + 1) * (ny + 1))
-            faces = [(j * (NX + 1) + i, j * (NX + 1) + i + 1, (j + 1) * (NX + 1) + i + 1,
-                      (j + 1) * (NX + 1) + i) for j in range(ny) for i in range(NX)]
-            me.from_pydata(verts, [], faces)
-            uv = me.uv_layers.new()
-            for poly in me.polygons:
-                for li in poly.loop_indices:
-                    vi = me.loops[li].vertex_index
-                    i, j = vi % (NX + 1), vi // (NX + 1)
-                    uv.data[li].uv = (i / NX, j / ny)
-            me.polygons.foreach_set("use_smooth", np.ones(len(me.polygons), bool))
-            mat, front, back = self.page_material(f"turn{k}", True)
-            me.materials.append(mat)
-            ob = bpy.data.objects.new(f"page{k}", me)
-            self.sc.collection.objects.link(ob)
+        for k in range(AIR):
+            mat, front, back = self.page_material(f"turn{k}", True, gloss=(k == 0))
+            me = self._grid(f"page{k}", NX, NY, mat)
+            ob = self.link(bpy.data.objects.new(f"page{k}", me))
             ob.hide_render = True
             self.turners.append((ob, front, back))
-        self.ys = np.linspace(-self.H / 2, self.H / 2, ny + 1)
+        self.ys = np.linspace(-self.H / 2, self.H / 2, NY + 1)
+
+    def _staples(self):
+        """Two staples down the gutter: saddle-stitched."""
+        bpy, bs = self.bpy, self.bs
+        m = bpy.data.materials.new("staple")
+        b = bs.principled(m)
+        b.inputs["Base Color"].default_value = (0.8, 0.8, 0.82, 1)
+        b.inputs["Metallic"].default_value = 1.0
+        b.inputs["Roughness"].default_value = 0.25
+        self.staples = []
+        for y in (-self.H / 4, self.H / 4):
+            bpy.ops.mesh.primitive_cylinder_add(radius=0.00035, depth=0.013, vertices=10,
+                                                location=(0, y, 0))
+            ob = bpy.context.object
+            ob.rotation_euler = (math.radians(90), 0, 0)
+            ob.data.materials.append(m)
+            ob.parent = self.root
+            self.staples.append(ob)
+
+    def _fan(self):
+        """The loose sheets for the fan."""
+        bpy = self.bpy
+        self.fan = []
+        for k, sh in enumerate(self.plan["fan"]["sheets"]):
+            mat, front, _ = self.page_material(f"sheet{k}", False)
+            self.set_image(front, sh["page"])
+            me = self._grid(f"sheet{k}", 20, 2, mat)
+            ob = self.link(bpy.data.objects.new(f"sheet{k}", me), parent=False)
+            ob.hide_render = True
+            self.fan.append(ob)
 
     def _lights(self):
         bpy, Vector = self.bpy, self.Vector
-        for name, loc, energy, size in (("key", (-0.55, -0.7, 1.1), KEY, 0.9),
-                                        ("fill", (0.9, -0.3, 0.6), KEY * 0.25, 1.2),
-                                        ("rim", (0.2, 0.9, 0.8), KEY * 0.2, 0.8)):
+        for name, loc, energy, size in (("key", (-0.6, -0.55, 1.15), KEY, 1.2),
+                                        ("fill", (0.9, -0.3, 0.7), KEY * 0.22, 1.4),
+                                        ("rim", (0.25, 0.95, 0.85), KEY * 0.2, 0.9)):
             ld = bpy.data.lights.new(name, "AREA")
             ld.energy = energy
             ld.size = size
@@ -370,47 +562,130 @@ class Book:
         self.sc.camera = self.cam
 
     # per frame -------------------------------------------------------------------------------
+    def leaf_mesh(self, ob, u, lift):
+        """Bend a page mesh for turn progress u; the lower corner leads (a diagonal curl)."""
+        np = self.np
+        co = np.zeros((NY + 1, NX + 1, 3))
+        for j, y in enumerate(self.ys):
+            lead = TWIST * math.sin(math.pi * u) * (0.5 - (y / self.H + 0.5))
+            uj = min(1.0, max(0.0, u + lead))
+            x, z = page_curve(uj, self.W, NX, CURL * (1 + 0.15 * (0.5 - y / self.H)))
+            co[j, :, 0] = x
+            co[j, :, 1] = y
+            co[j, :, 2] = z + lift
+        ob.data.vertices.foreach_set("co", co.reshape(-1))
+        ob.data.update()
+
     def apply(self, f):
         np, Vector = self.np, self.Vector
         plan = self.plan
-        leaves, turn = plan["leaves"], plan["turn"]
+        flip, fan = plan["flip"], plan["fan"]
+        in_flip = f < fan["start"]
+        # --- the booklet
+        for ob in (self.right_stack, self.left_stack, self.right_top, self.left_top,
+                   *self.staples):
+            ob.hide_render = not in_flip
+        leaves = flip["leaves"]
         started = [lf for lf in leaves if lf["start"] <= f]
-        finished = [lf for lf in leaves if lf["start"] + turn <= f]
+        finished = [lf for lf in leaves if lf["start"] + lf["dur"] <= f]
         flying = [lf for lf in started if lf not in finished]
-        nxt = leaves[len(started)]["front"] if len(started) < len(leaves) else leaves[-1]["next"]
+        total = plan["leaves_total"]
+        # how many leaves lie on each side: the spread reached by the last finished leaf
+        spread = (finished[-1]["back"] // 2) if finished else 0
+        left_n = min(total, max(0, spread))
+        right_n = max(1, total - left_n)
+        hl, hr = max(LEAF, left_n * LEAF), right_n * LEAF
+        self.left_stack.scale = (1, 1, hl)
+        self.right_stack.scale = (1, 1, hr)
+        self.left_top.location.z = hl + 0.00004
+        self.right_top.location.z = hr + 0.00004
+        for st in self.staples:
+            st.location.z = max(hl, hr) * 0.5 + 0.0004
+            st.hide_render = not (in_flip and finished)
+        nxt = leaves[len(started)]["front"] if len(started) < len(leaves) else leaves[-1].get("next", 0)
         self.set_image(self.right_tex, nxt)
         opened = bool(finished)
-        self.left_stack.hide_render = not opened
-        self.left_top.hide_render = not opened
+        self.left_stack.hide_render = not (in_flip and opened)
+        self.left_top.hide_render = not (in_flip and opened)
         if opened:
             self.set_image(self.left_tex, finished[-1]["back"])
         for k, (ob, front, back) in enumerate(self.turners):
-            if k >= len(flying):
+            if not in_flip or k >= len(flying):
                 ob.hide_render = True
                 continue
             lf = flying[k]
-            j = leaves.index(lf)
-            u = (f - lf["start"]) / turn
+            u = min(1.0, max(0.0, (f - lf["start"]) / lf["dur"]))
             u = u * u * (3 - 2 * u)
-            x, z = page_curve(u, self.W)
-            lift = STACK + 0.0002 * (1 + (len(leaves) - j) * (1 - u) + j * u)
-            co = np.zeros((len(self.ys), NX + 1, 3))
-            co[:, :, 0] = x[None, :]
-            co[:, :, 1] = self.ys[:, None]
-            co[:, :, 2] = z[None, :] + lift
-            ob.data.vertices.foreach_set("co", co.reshape(-1))
-            ob.data.update()
+            lift = (1 - u) * hr + u * (hl + LEAF) + 0.00015 * (k + 1)
+            self.leaf_mesh(ob, u, lift)
             self.set_image(front, lf["front"])
             self.set_image(back, lf["back"])
             ob.hide_render = False
-        # camera: a slow push-in over the open booklet, turned a little for a diagonal layout
-        n = plan["frames"]
-        k = f / max(1, n - 1)
-        ease = k * k * (3 - 2 * k)
-        dist = (1.02 - 0.08 * ease) * (self.W / 0.297)
-        az = math.radians(-12 + 6 * ease)
-        el = math.radians(50 + 5 * ease)
-        tgt = Vector((self.W * (0.18 * (1 - ease)), 0.0, 0.03))
+        # --- the fan
+        W, H = self.W, self.H
+        R = 0.36                                        # pivot below the fan
+        for k, (ob, sh) in enumerate(zip(self.fan, fan["sheets"])):
+            q = (f - sh["t0"]) / sh["dur"]
+            if in_flip or q < 0:
+                ob.hide_render = True
+                continue
+            ob.hide_render = False
+            q = min(1.0, q)
+            e = 1 - (1 - q) ** 3
+            a_end = math.radians(sh["angle"])
+            a0 = a_end + math.radians(55 + 12 * k)
+            a = a0 + (a_end - a0) * e
+            # the sheet's centre: on its arc round the pivot, arriving from the lower right
+            cx, cy = R * math.sin(-a), -R + R * math.cos(a)
+            sx, sy = 0.55 + 0.1 * k, -0.62
+            px = sx + (cx - sx) * e
+            py = sy + (cy - sy) * e
+            pz = 0.13 * math.sin(math.pi * min(1.0, q * 1.15)) * (1 - e) + 0.00022 * (k + 1)
+            # bend while it flies, flat when it lands
+            nx_, ny_ = 20, 2
+            s = np.linspace(-W / 2, W / 2, nx_ + 1)
+            bend = 0.035 * (1 - e) * math.sin(math.pi * min(1.0, q * 1.3))
+            zz = bend * (1 - (s / (W / 2)) ** 2)
+            co = np.zeros((ny_ + 1, nx_ + 1, 3))
+            for j, y in enumerate(np.linspace(-H / 2, H / 2, ny_ + 1)):
+                co[j, :, 0] = s
+                co[j, :, 1] = y
+                co[j, :, 2] = zz
+            ob.data.vertices.foreach_set("co", co.reshape(-1))
+            ob.data.update()
+            ob.location = (px, py, pz)
+            ob.rotation_euler = (0.0, 0.0, a)
+        # --- the camera
+        self.camera_at(f)
+
+    def camera_at(self, f):
+        """Flip: from the closed cover the camera dollies across to the open spread, then
+        pushes in slowly. Fan: a slow push-in on the fanned sheets."""
+        Vector = self.Vector
+        plan = self.plan
+        fan = plan["fan"]
+        rot = math.radians(BOOK_ROT)
+
+        def world(x, y):
+            return Vector((x * math.cos(rot) - y * math.sin(rot), x * math.sin(rot) + y * math.cos(rot), 0))
+
+        def ease(x):
+            x = min(1.0, max(0.0, x))
+            return x * x * (3 - 2 * x)
+        W = self.W
+        if f < fan["start"]:
+            open_q = ease((f - HOLD) / (COVER_TURN + 6))
+            push = ease((f - HOLD) / max(1.0, fan["start"] - HOLD))
+            land = ease((f - (fan["start"] - 26)) / 20)        # close in on the final spread
+            tgt = world(W * (0.5 - 0.46 * open_q + 0.12 * land), 0.0)
+            tgt.z = 0.01
+            dist = (0.64 + 0.32 * open_q - 0.1 * push - 0.2 * land) * (W / 0.297)
+            az, el = math.radians(-6 + 4 * push), math.radians(56 + 4 * push)
+        else:
+            q = ease((f - fan["start"]) / max(1.0, plan["frames"] - fan["start"]))
+            tgt = Vector((0.0, 0.0, 0.0))
+            dist = (1.22 - 0.1 * q) * (W / 0.297)
+            az, el = math.radians(-4 + 3 * q), math.radians(62 + 3 * q)
         d = Vector((math.sin(az) * math.cos(el), -math.cos(az) * math.cos(el), math.sin(el)))
         self.cam.location = tgt + d * dist
         self.cam.rotation_euler = (tgt - self.cam.location).to_track_quat("-Z", "Y").to_euler()
@@ -421,7 +696,7 @@ class Book:
             if os.path.exists(path) and os.path.getsize(path) > 0:
                 continue
             t = time.time()
-            self.apply(int(f))
+            self.apply(float(f))
             tmp = path + ".tmp.png"
             self.sc.render.filepath = tmp
             bpy.ops.render.render(write_still=True)

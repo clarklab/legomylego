@@ -485,7 +485,11 @@ def marks(tl, extras: dict) -> dict:
             out[name] = {"wipes": cw["wipes"],
                          "labels": [a + B // 2] + [w[1] - B // 2 for w in cw["wipes"]]}
         elif name == "booklet":
-            out[name] = {"head": a + B // 2, "chips": [a + 2 * B + k * B // 2 for k in range(3)]}
+            bk = extras.get("booklet") or {}
+            fan0 = a + bk.get("fan_start", 6 * B)
+            settle = a + bk.get("settle", 9 * B)
+            out[name] = {"head": fan0 + 4, "fan": fan0,
+                         "chips": [min(s["end"] - B, settle + k * B // 3) for k in range(3)]}
         elif name == "outro":
             out[name] = {"logo": a + B // 2, "url": a + 3 * B // 2, "fine": a + 5 * B // 2}
     return out
@@ -620,14 +624,18 @@ def plan_reel(engine, proj, model, tl, theme, out_dir: Path, work: Path, *,
     if tl.get("colourways"):
         reel["colourways"] = colourway_items(engine, proj, model, placed, tl, cfg)
     if booklet_plan:
+        fan = booklet_plan["fan"]
         reel["booklet"] = {"pages": booklet_plan["n_pages"], "leaves": booklet_plan["leaves"],
-                           "turn": booklet_plan["turn"],
+                           "turn": booklet_plan["turn"], "flip_end": booklet_plan["flip"]["end"],
+                           "fan_start": fan["start"], "settle": fan["settle"],
+                           "sheets": [sh["t0"] + sh["dur"] for sh in fan["sheets"]],
                            "files": [n for n, f in (("Instructions", "booklet.pdf"),
                                                     ("Parts list", "parts.csv"),
                                                     ("BrickLink list", "bricklink_wanted.xml"))
                                      if (out_dir / f).exists()]}
     extras = {"chips": len(reel["chips"]), "checks": len(chk["rows"]),
-              "callouts": len(reel.get("mechanism", {}).get("callouts", []))}
+              "callouts": len(reel.get("mechanism", {}).get("callouts", [])),
+              "booklet": reel.get("booklet")}
     reel["marks"] = marks(tl, extras)
     reel["transitions"] = transitions(tl, theme)
     reel["cues"] = cue_sheet(reel, tl, theme)
@@ -753,8 +761,18 @@ def cue_sheet(reel, tl, theme) -> dict:
             add(f, "pop", gain=0.6)
     if "booklet" in reel and "booklet" in mk:
         s = next(x for x in tl["segments"] if x["name"] == "booklet")
-        for lf in reel["booklet"]["leaves"]:
-            add(s["start"] + lf["start"] + reel["booklet"]["turn"] * 0.3, "page", gain=0.6)
+        bk = reel["booklet"]
+        lv = bk["leaves"]
+        add(s["start"] + lv[0]["start"], "page", gain=0.7)            # the cover opens
+        if len(lv) > 1:                                             # the thumb-flip
+            r0 = s["start"] + lv[1]["start"]
+            r1 = s["start"] + lv[-1]["start"] + lv[-1]["dur"]
+            add(r0, "riffle", dur=r1 - r0, gain=0.8)
+            for k, lf in enumerate(lv[1:]):
+                add(s["start"] + lf["start"] + 0.35 * lf["dur"], "flick",
+                    gain=0.35 + 0.35 * k / max(1, len(lv) - 2), pitch=k)
+        for k, f in enumerate(bk.get("sheets", [])):                # sheets dealt into the fan
+            add(s["start"] + f, "slap", gain=0.3 if k < len(bk["sheets"]) - 1 else 0.75)
         for f in mk["booklet"]["chips"]:
             add(f, "blip", pitch=3, gain=0.5)
     if "outro" in mk:

@@ -778,11 +778,12 @@ class SFX:
     LEVEL = {"snap": -6.0, "click": -17.0, "whoosh": -14.0, "riser": -16.0, "hit": -6.0,
              "blip": -19.0, "tick": -21.0, "warn": -22.0, "pass": -16.0, "scan": -20.0,
              "power": -11.0, "motor": -19.0, "glitch": -17.0, "boing": -16.0, "page": -16.0,
-             "type": -21.0, "pop": -17.0}
-    DUR = {"whoosh": 8, "riser": 30, "scan": 30, "power": 36, "motor": 30, "glitch": 6}
+             "type": -21.0, "pop": -17.0, "riffle": -17.0, "flick": -19.0, "slap": -12.0}
+    DUR = {"whoosh": 8, "riser": 30, "scan": 30, "power": 36, "motor": 30, "glitch": 6,
+           "riffle": 60}
     DUCK = {"hit": (7.0, 0.7), "power": (5.0, 0.9), "snap": (4.0, 0.35)}   # dB, release s
     ROOM = {"snap": 0.12, "blip": 0.25, "pass": 0.35, "type": 0.15, "pop": 0.2, "warn": 0.2,
-            "boing": 0.2, "tick": 0.1, "click": 0.08}
+            "boing": 0.2, "tick": 0.1, "click": 0.08, "slap": 0.18, "flick": 0.08}
 
     def __init__(self, sr: int, fps: float, seed: int):
         self.sr, self.fps, self.seed = sr, float(fps), int(seed) % (2 ** 63)
@@ -1031,6 +1032,43 @@ class SFX:
         y = _norm(_norm(rustle) + 0.5 * _norm(swish))
         th = (np.clip(0.5 - 1.0 * np.clip(t / 0.4, 0, 1), -1, 1) + 1) * np.pi / 4
         return _norm(_fade(np.stack([y * np.cos(th), y * np.sin(th)], axis=1), sr, 0.005, 0.05))
+
+    def fx_riffle(self, ev, rng):
+        """A thumb-flip: paper flutter whose rate falls from fast to slow over `dur`, as the
+        pages slow down; soft swell in, quick tail out."""
+        sr = self.sr
+        dur = self._dur(ev)
+        n, t = self._t(dur + 0.25)
+        x = np.clip(t / dur, 0.0, 1.0)
+        rate = 26.0 * (1 - x) ** 1.3 + 6.0                    # flicks per second
+        ph = np.cumsum(rate) / sr
+        flut = 0.5 + 0.5 * np.cos(2 * np.pi * ph) ** 7        # sharp paper edges
+        noise = bw(rng.standard_normal(n), "band", (1500.0, 8000.0), sr)
+        body = filt(rng.standard_normal(n), "bp", 700.0, sr, 0.8)
+        swell = np.clip(t / 0.12, 0, 1) * np.where(t < dur, 1.0, np.exp(-(t - dur) / 0.06))
+        y = (_norm(noise) * (0.25 + 0.75 * flut) + 0.35 * _norm(body) * flut) * swell
+        pan = 0.3 * np.sin(2 * np.pi * 0.7 * t)
+        th = (pan + 1) * np.pi / 4
+        return _norm(_fade(np.stack([y * np.cos(th), y * np.sin(th)], axis=1), sr, 0.01, 0.05))
+
+    def fx_flick(self, ev, rng):
+        """One page flicking over in the riffle: a short papery snap."""
+        sr = self.sr
+        n, t = self._t(0.09)
+        f = 3200.0 * 2 ** rng.normal(0, 0.15)
+        y = bw(rng.standard_normal(n), "band", (f * 0.5, f * 2.0), sr) * np.exp(-t / 0.012)
+        y += 0.4 * filt(rng.standard_normal(n), "bp", 900.0, sr, 1.0) * np.exp(-t / 0.02)
+        return _norm(_fade(y, sr, 0.0008, 0.01))
+
+    def fx_slap(self, ev, rng):
+        """A sheet of paper landing flat on the table: a soft slap with a papery top."""
+        sr = self.sr
+        n, t = self._t(0.35)
+        f = 150.0 * np.exp(-t / 0.03) + 70.0
+        thump = np.sin(2 * np.pi * np.cumsum(f) / sr) * env_perc(n, sr, 0.05, 0.001)
+        slap = bw(rng.standard_normal(n), "band", (500.0, 3500.0), sr) * np.exp(-t / 0.018)
+        air = bw(rng.standard_normal(n), "band", (3000.0, 9000.0), sr) * np.exp(-t / 0.035)
+        return _norm(_fade(0.8 * _norm(thump) + _norm(slap) + 0.3 * _norm(air), sr, 0.0005, 0.02))
 
     def fx_type(self, ev, rng):
         """OSD typing blip."""
