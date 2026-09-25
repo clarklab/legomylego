@@ -6,6 +6,7 @@ Heights are counted in plates (8 LDU) above the ground; a brick band k spans pla
 LDraw: -Y is up, so a part whose top is at plate level p sits at y = -8p."""
 from __future__ import annotations
 
+from collections import Counter
 from dataclasses import dataclass, field
 
 import numpy as np
@@ -40,6 +41,7 @@ class Piece:
     band: int = 0
     note: str = ""
     idx: int = -1
+    hang: bool = False          # set by plan_steps: pushed up into what it hangs from
 
     @property
     def top_anti(self):
@@ -515,6 +517,111 @@ def plan(pieces, key, seed=None) -> Plan:
         built[best] = True
         remaining.discard(best)
     return Plan([pieces[m] for m in order])
+
+
+def plan_steps(pieces, key, max_parts: int = 8, seed=None):
+    """Group the build into instruction steps of up to `max_parts` parts.
+
+    Each step is one course (height band) and one kind of part (plain parts, or the edge slopes
+    marked note="cap"). Every part in a step either sits on / hangs from what earlier steps built,
+    or sits on a part placed earlier in the same step, and slides in without hitting anything
+    built. A part is never chosen if it would shut another part in (blocked from above and
+    below). The first part of a step has the lowest `key`; the rest follow it around the course
+    by distance, so each step shows one tidy stretch of the model.
+    Returns (steps, stuck)."""
+    n = len(pieces)
+    if n == 0:
+        return [], []
+    below, above, over, under = relations(pieces)
+    keys = [key(p) for p in pieces]
+    kind = [p.note == "cap" for p in pieces]
+    built = np.zeros(n, bool)
+    remaining = set(range(n))
+    if seed is None:
+        # start with the lowest-key part of the biggest cluster
+        from brickkit.checks.base import components
+        comp = components(n, [(a, b) for a in range(n) for b in below[a]])[0]
+        seed = min(comp, key=lambda m: keys[m])
+    blocks = [set() for _ in range(n)]
+    for x in range(n):
+        for m in over[x] | under[x]:
+            blocks[m].add(x)
+    centre = [np.mean([c for c in p.cells], axis=0) for p in pieces]
+
+    def kills(m) -> int:
+        built[m] = True
+        dead = sum(1 for x in blocks[m] if not built[x]
+                   and any(built[o] for o in over[x]) and any(built[u] for u in under[x]))
+        built[m] = False
+        return dead
+
+    hang = [False] * n
+
+    def how(m, prev, in_step):
+        """'down' if m can be pushed down onto what it sits on, 'up' if pushed up into what it
+        hangs from, None if it can't go in now."""
+        if (any(prev[b] or b in in_step for b in below[m])
+                and not any(built[o] for o in over[m])):
+            return "down"
+        if any(prev[a] for a in above[m]) and not any(built[u] for u in under[m]):
+            return "up"
+        return None
+
+    out = []
+    first = True
+    last_group = None
+    while remaining:
+        prev = built.copy()
+        step: list[int] = []
+        group = None
+        while len(step) < max_parts:
+            in_step = set(step)
+            cands = []
+            for m in remaining:
+                if m in in_step:
+                    continue
+                if first and not step:
+                    way = "down" if m == seed else None
+                else:
+                    way = how(m, prev, in_step)
+                if way and (group is None or (pieces[m].band, kind[m]) == group):
+                    cands.append((m, way))
+            if not cands:
+                break
+            if group is None:
+                # the course (and kind of part) that fills this step best; keep going with the
+                # previous step's course while it still has a fair amount to add
+                safe = [(m, w) for m, w in cands if not kills(m)] or cands
+                count = Counter((pieces[m].band, kind[m]) for m, _ in safe)
+                lowest = {}
+                for m, _ in safe:
+                    g = (pieces[m].band, kind[m])
+                    lowest[g] = min(lowest.get(g, keys[m]), keys[m])
+                # ties go to the group holding the lowest key (max() keeps the first maximum)
+                group = max(sorted(count, key=lambda g: lowest[g]),
+                            key=lambda g: min(count[g], max_parts) + (3 if g == last_group else 0))
+                pool = sorted((mw for mw in safe if (pieces[mw[0]].band, kind[mw[0]]) == group),
+                              key=lambda mw: keys[mw[0]])
+                pick, way = pool[0]
+            else:
+                safe = [(m, w) for m, w in cands if not kills(m)]
+                if not safe:
+                    break
+                last = centre[step[-1]]
+                pick, way = min(safe, key=lambda mw: (float(np.sum((centre[mw[0]] - last) ** 2)),
+                                                      keys[mw[0]]))
+            hang[pick] = way == "up"
+            step.append(pick)
+            built[pick] = True
+            remaining.discard(pick)
+        first = False
+        if not step:
+            break
+        last_group = group
+        out.append(step)
+    for m, p in enumerate(pieces):
+        p.hang = hang[m]
+    return [[pieces[m] for m in s] for s in out], [pieces[m] for m in sorted(remaining)]
 
 
 def steps(order, max_parts: int = 8):

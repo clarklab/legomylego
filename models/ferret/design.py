@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import sys
 import tomllib
+from collections import Counter
 from pathlib import Path
 
 import numpy as np
@@ -254,18 +255,20 @@ def build_leg(model, name: str, title: str, band: int, hind: bool):
     top = 3 * band                           # plates
     if hind:
         # long hind foot: 2x4 plate, toes (2x2 curved slope) in front of the column
+        leg.step("Hind foot: a long 2 x 4 plate with rounded toes in front")
         leg.place("3020", "dark", (0, -8, -20), sc.rot(y=90))
-        leg.step()
         leg.place("15068", "dark", (0, -8, -40))
+        level = 1
     else:
         # front paw: two 1x3 plates tied by the 2x2 plate above, a 1x2 cheese-slope toe row
+        leg.step("Front paw: two 1 x 3 plates held together by a 2 x 2 plate")
         leg.place("3623", "dark", (-10, -8, -10), sc.rot(y=90))
         leg.place("3623", "dark", (10, -8, -10), sc.rot(y=90))
         leg.place("3022", "dark", (0, -16, 0))
-        leg.step()
+        level = 2
+    leg.step("Toes and the leg" if not hind else "The leg")
+    if not hind:
         leg.place("85984", "dark", (0, -8, -30))
-    level = 2 if not hind else 1
-    leg.step()
     while level < top:
         if top - level >= 3:
             leg.place("3003", "dark", (0, -8 * (level + 3), 0))
@@ -273,8 +276,60 @@ def build_leg(model, name: str, title: str, band: int, hind: bool):
         else:
             leg.place("3022", "dark", (0, -8 * (level + 1), 0))
             level += 1
-        leg.step()
     return leg
+
+
+SOCKET_NOTES = {
+    "eye socket": "the round plates with a bar are the eye mounts: turn each bar 45 degrees "
+                  "outwards from straight ahead",
+    "ear socket": "the round plates with a bar on top are the ear mounts: turn each bar 55 "
+                  "degrees outwards",
+    "nose socket": "the brick with two side studs will hold the nose",
+    "tongue socket": "the brick with a side stud will hold the tongue",
+    "whisker clip": "clip tiles for the whiskers",
+    "tail socket": "the grey brick with four side studs faces backwards: the tail plugs in here",
+}
+
+
+def emit_planned(sub, pieces, key, label: str, unit: str, intro: str, cap_text: str,
+                 upside_down: bool = False):
+    """Plan the pieces into steps and place them with booklet captions.
+
+    Courses are numbered in the order the builder meets them physically: from the bottom up,
+    or from the top down for a sub-assembly built upside down. A step whose parts go on against
+    that direction (pushed up from underneath, or onto the far side of an upside-down build)
+    says so."""
+    steps, stuck = sc.plan_steps(pieces, key)
+    if stuck:
+        print(f"[ferret] {sub.name}: {len(stuck)} piece(s) could not be planned, e.g. "
+              f"{[(p.part, sorted(p.cells)[:2], p.p0) for p in stuck[:5]]}")
+        steps.append(stuck)
+    bands = sorted({p.band for p in pieces}, reverse=upside_down)
+    number = {b: n + 1 for n, b in enumerate(bands)}
+    total = Counter((st[0].band, st[0].note == "cap") for st in steps)
+    seen = Counter()
+    for n, st in enumerate(steps):
+        b, cap = st[0].band, st[0].note == "cap"
+        seen[(b, cap)] += 1
+        text = f"{label}, {unit} {number[b]} of {len(bands)}"
+        if cap:
+            text += f": {cap_text}"
+        if total[(b, cap)] > 1:
+            text += f" ({seen[(b, cap)]}/{total[(b, cap)]})"
+        against = [p for p in st if p.hang != upside_down]
+        if against:
+            where = "these parts go" if len(against) == len(st) else "some of these parts go"
+            text += (f"; {where} on the underside of the course above: push them up into it"
+                     if not upside_down else
+                     f"; {where} on the far side (the top of the {label.lower()})")
+        notes = [SOCKET_NOTES[p.note] for p in st if p.note in SOCKET_NOTES]
+        if notes:
+            text += "; " + "; ".join(dict.fromkeys(notes))
+        if n == 0:
+            text = f"{intro}. {text}"
+        sub.step(text)
+        for p in st:
+            sub.place(p.part, p.role, p.pos, p.rot, note=p.note)
 
 
 # ------------------------------------------------------------------------------------------
@@ -290,12 +345,10 @@ def build_head(model, av: Avail):
     pieces, n_clusters, _ = fh.pieces(lambda r: av.sizes(sc.PLATE, r))
     if n_clusters > 1:
         print(f"[ferret] head: packed into {n_clusters} separate clusters")
-    pl = sc.plan(pieces, lambda p: (p.p0, min(c[1] for c in p.cells), min(p.cells)))
-    if pl.stuck:
-        print(f"[ferret] head: {len(pl.stuck)} piece(s) could not be planned, e.g. "
-              f"{[(p.part, sorted(p.cells)[:2], p.p0) for p in pl.stuck[:5]]}")
     head = model.submodel("head", "Head")
-    sc.emit(head, sc.steps(pl.order + pl.stuck))
+    emit_planned(head, pieces, lambda p: (p.p0, min(c[1] for c in p.cells), min(p.cells)),
+                 "Head", "layer", "Build the head from the chin up, one plate layer at a time",
+                 "slopes and tiles round it off")
     nose = next(p for p in pieces if p.note == "nose socket")
     for kind, caption, role in (("eye", "Big shiny eyes", "eye"), ("ear", "Round ears", "face")):
         head.step(caption)
@@ -330,11 +383,10 @@ def build_tail(model, av: Avail):
     pieces, n_clusters = ft.pieces(lambda r: av.sizes(sc.BRICK, r) if r != "plate" else [])
     if n_clusters > 1:
         print(f"[ferret] tail: packed into {n_clusters} separate clusters")
-    pl = sc.plan(pieces, lambda p: (p.p0, min(p.cells)))
-    if pl.stuck:
-        print(f"[ferret] tail: {len(pl.stuck)} piece(s) could not be planned")
     tail = model.submodel("tail", "Tail")
-    sc.emit(tail, sc.steps(pl.order + pl.stuck))
+    emit_planned(tail, pieces, lambda p: (p.p0, min(p.cells)), "Tail", "slice",
+                 "Build the tail standing up, from its root to the tip",
+                 "curved slopes taper it")
     return tail
 
 
@@ -345,17 +397,22 @@ def build(model):
     S, secs = sculpt_pieces(av)
 
     subs = {}
-    for name, title, key in (
-            ("chest", "Chest and front legs", lambda p: (-p.band, p.p0, p.cells and min(p.cells)[1], min(p.cells))),
-            ("hips", "Hips and hind legs", lambda p: (-p.band, p.p0, -max(c[1] for c in p.cells), min(p.cells))),
-            ("back", "Arched back, neck and tail", lambda p: (p.band, p.p0, min(c[1] for c in p.cells), min(p.cells)))):
-        pieces = secs[name]
-        pl = sc.plan(pieces, key)
-        if pl.stuck:
-            print(f"[ferret] {name}: {len(pl.stuck)} piece(s) could not be planned, e.g. "
-                  f"{[(p.part, sorted(p.cells)[:2], p.p0) for p in pl.stuck[:5]]}")
+    for name, title, key, label, intro in (
+            ("chest", "Chest and front legs",
+             lambda p: (-p.band, p.p0, min(c[1] for c in p.cells), min(p.cells)),
+             "Chest", "Build the chest upside down: course 1 is the top of the chest, each "
+                      "further course goes on underneath, down to the shoulders"),
+            ("hips", "Hips and hind legs",
+             lambda p: (-p.band, p.p0, -max(c[1] for c in p.cells), min(p.cells)),
+             "Hips", "Build the hips upside down: course 1 is the top of the hips, each further "
+                     "course goes on underneath, down to the thighs"),
+            ("back", "Arched back, neck and rump",
+             lambda p: (p.band, p.p0, min(c[1] for c in p.cells), min(p.cells)),
+             "Back", "Build the arched back from the bottom up: the lowest courses are the "
+                     "belly under the arch and the underside of the neck and rump")):
         sub = model.submodel(name, title)
-        sc.emit(sub, sc.steps(pl.order + pl.stuck))
+        emit_planned(sub, secs[name], key, label, "course", intro,
+                     "curved slopes round off the edges", upside_down=(name != "back"))
         subs[name] = sub
 
     fl = build_leg(model, "front_leg", "Front leg", leg_top(S, FRONT_LEG), hind=False)
@@ -363,7 +420,8 @@ def build(model):
     for sub, leg, sockets, tag in ((subs["chest"], fl, FRONT_LEG, "front"),
                                    (subs["hips"], hl, HIND_LEG, "hind")):
         for n, (i0, j0) in enumerate(sockets):
-            sub.step(f"{tag.capitalize()} leg")
+            sub.step(f"Turn the {'chest' if tag == 'front' else 'hips'} over and push "
+                     f"{'a' if n == 0 else 'the second'} {tag} leg into the socket underneath")
             side = "l" if i0 > 0 else "r"
             sub.use(leg, (sc.STUD * (i0 + 1), 0, sc.STUD * (j0 + 1)), tag=f"{tag}_leg_{side}")
 
@@ -373,11 +431,12 @@ def build(model):
     main = model.main
     main.step("Stand the chest on its front legs")
     main.use(subs["chest"], tag="chest")
-    main.step("Set the hips beside it and lower the back onto both")
+    main.step("Stand the hips on their hind legs behind it, then lower the arched back onto "
+              "both")
     main.use(subs["back"], tag="back")
     main.use(subs["hips"], tag="hips")
-    main.step("Set the head on the throat")
+    main.step("Set the head on the white throat")
     main.use(head, tag="head")
-    main.step("Plug the tail into the rump")
+    main.step("Plug the tail onto the four side studs at the rump")
     F = ft.frame()
     main.use(tail, tuple(F[:3, 3]), F[:3, :3], tag="tail")
