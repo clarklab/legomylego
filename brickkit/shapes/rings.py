@@ -81,6 +81,76 @@ def pack_cells(cells, lengths: tuple[int, ...] = (2, 1), offset: int = 0,
     return runs
 
 
+def pair_unsupported(cells, support) -> tuple[list, set]:
+    """Pair every cell that has nothing under it with a free supported neighbour (1x2 run).
+    Most-constrained cells go first, and each takes the neighbour fewest others need, so
+    shared supported cells aren't used up greedily. Returns (runs, cells still free)."""
+    free, support, runs = set(cells), set(support), []
+    dirs = ((1, 0), (-1, 0), (0, 1), (0, -1))
+
+    def options(c):
+        return [(c[0] + d[0], c[1] + d[1]) for d in dirs
+                if (c[0] + d[0], c[1] + d[1]) in free and (c[0] + d[0], c[1] + d[1]) in support]
+
+    pending = {c for c in free if c not in support}
+    while pending:
+        c = min(pending, key=lambda c: (len(options(c)), -math.hypot(*cell_center(c)), c))
+        pending.discard(c)
+        opts = options(c)
+        if not opts:
+            continue
+        demand = lambda nb: sum(1 for o in pending if nb in options(o))
+        nb = min(opts, key=lambda nb: (demand(nb), nb))
+        free -= {c, nb}
+        a, b = min(c, nb), max(c, nb)
+        runs.append((a[0], a[1], 2, "x" if a[1] == b[1] else "z"))
+    return runs, free
+
+
+def pack_angular(cells, offset: int = 0, support=None) -> list[tuple[int, int, int, str]]:
+    """Pair neighbouring cells into 1x2 runs walking around the axis by angle (greedy
+    matching), leaving few 1x1s even on diagonal staircases. `offset` rotates the starting
+    angle so alternate layers get their seams in different places.
+
+    `support` (cells of the layer below) makes every run rest on at least one supported
+    cell: overhanging cells are first paired with a supported neighbour, preferring the one
+    toward the axis."""
+    cells = set(cells)
+    if not cells:
+        return []
+    runs = []
+    if support is not None:
+        runs, cells = pair_unsupported(cells, support)
+    def ang(c):
+        x, z = cell_center(c)
+        return math.atan2(z, x)
+    start = (offset % 2) * math.pi / max(len(cells), 1) * 1.0 + (offset % 4) * 0.0
+    order = sorted(cells, key=lambda c: ((ang(c) - start) % (2 * math.pi), math.hypot(*cell_center(c))))
+    if offset % 2:
+        order = order[1:] + order[:1]
+    rank = {c: n for n, c in enumerate(order)}
+    free = set(cells)
+    for c in order:
+        if c not in free:
+            continue
+        free.discard(c)
+        best = None
+        for d in ((1, 0), (-1, 0), (0, 1), (0, -1)):
+            nb = (c[0] + d[0], c[1] + d[1])
+            if nb in free:
+                gap = (rank[nb] - rank[c]) % len(order)
+                if best is None or gap < best[0]:
+                    best = (gap, nb, d)
+        if best is None:
+            runs.append((c[0], c[1], 1, "x"))
+            continue
+        _, nb, d = best
+        free.discard(nb)
+        a = min(c, nb)
+        runs.append((a[0], a[1], 2, "x" if d[1] == 0 else "z"))
+    return runs
+
+
 def exposed(lower, upper) -> list[tuple[Cell, tuple[int, int]]]:
     """Cells of `lower` not covered by `upper`, with their outward direction."""
     upper = set(upper)

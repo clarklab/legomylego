@@ -1,0 +1,23 @@
+[model]
+name = "Baby Metroid"
+design = "design.py"
+
+[palette]
+dome = "Trans-Light Blue"
+nucleus = "Trans-Red"
+nucleus_core = "Dark Red"
+skirt = "Coral"
+skirt_accent = "Dark Red"
+fang = "White"
+fang_base = "Tan"
+mouth = "Dark Red"
+ribs = "Tan"
+frame = "Light Bluish Gray"
+frame_dark = "Black"
+stand_column = "Trans-Clear"
+stand_base = "Black"
+stand_top = "Dark Bluish Gray"
+
+[checks]
+enabled = ["real_elements", "connections", "collisions", "buildability", "stability",
+           "mechanism", "electrics", "technique"]

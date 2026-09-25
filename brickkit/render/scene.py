@@ -102,7 +102,7 @@ def run_blender(scene: dict, work_dir: Path, script: Path = SCRIPT, timeout: int
 
 
 def render_model(engine, model, out_dir, *, views=("three_quarter",), size=900, samples=64,
-                 pose_t: float | None = None, lights_on: bool = False, background="#E9ECEF",
+                 pose_t: float | None = None, lights_on: bool = False, background="#F7F8FA",
                  ground: bool = True, transparent: bool = False, lens: float = 70.0,
                  placed=None) -> list[Path]:
     out_dir = Path(out_dir).resolve()
