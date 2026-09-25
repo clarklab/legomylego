@@ -1,7 +1,7 @@
 [model]
 name = "Baby Metroid"
 design = "design.py"
-description = "A life-size larval Metroid in real LEGO: a see-through dome over three glowing red nuclei, four fangs that open and close from a knob at the back, hovering on a clear stand."
+description = "The larval Metroid in real LEGO, about 18 cm across: a see-through dome over three glowing red nuclei, four fangs that open and close from a knob at the back, hovering on a clear stand."
 notice = "Metroid is © Nintendo. This fan model is not affiliated with or endorsed by Nintendo."
 
 [palette]
@@ -27,7 +27,7 @@ enabled = ["real_elements", "connections", "collisions", "buildability", "stabil
            "mechanism", "electrics", "technique"]
 
 [booklet]
-subtitle = "The larval Metroid from Super Metroid, life-sized at about 25 cm across, hovering on a clear stand. Turn the knob and the four fangs open and close; three red nuclei glow from inside."
+subtitle = "The larval Metroid from Super Metroid, about 18 cm across and 29 cm tall on its clear hover stand. Turn the knob and the four fangs open and close; three red nuclei glow from inside."
 intro = "A hollow Trans-Light Blue dome over a Coral and Dark Red skirt, with three bumpy Trans-Red nuclei floating inside it. A Technic worm drive in the belly opens and closes all four fangs together from one knob at the back, and two Power Functions LEDs light the nuclei. The whole creature lifts off its stand."
 you_will_need = [
   "2x LEGO Power Functions LED lights (8870). Each has two lamps on one lead: one lamp per nucleus, with one lamp to spare.",

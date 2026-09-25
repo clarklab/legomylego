@@ -1,6 +1,7 @@
 # Baby Metroid: design notes
 
-Life-size larval Metroid (Super Metroid), about 25 cm across, hovering on a clear stand.
+The larval Metroid from Super Metroid, about 18 cm across (17.6 x 18 cm) and 29 cm tall on
+its clear hover stand.
 2,679 pieces in 64 part/colour lines, about 1.5 kg (estimated). Every check passes except one
 warning: the Power Functions battery box is rare (last in a set in 2015).
 
@@ -48,6 +49,9 @@ warning: the Power Functions battery box is rare (last in a set in 2015).
 - Not built with real bricks. The checks cover part existence, connections, collisions,
   every insertion, balance, the mechanism sweep and lead lengths. They cannot judge clutch,
   part tolerances, how stiff the axle-16 column is, or how the dome survives handling.
+- **Smaller than agreed.** The spec aimed for a body about 25 cm across (30-32 studs). The
+  dome was shrunk while the part count was brought down, so the body is about 18 cm across.
+  Scaling it back up to 25 cm would take roughly twice the parts (about 5,000).
 - The part count is well above the 900-1,400 first estimated. The woven dome and the stand
   base account for most of it. A lower count would need a coarser dome.
 - Power Functions was discontinued in 2018. The 8870 lights and the 64228 AAA battery box
