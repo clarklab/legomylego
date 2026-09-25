@@ -1,4 +1,4 @@
-# Baby Metroid: price estimate
+# Baby Metroid Lamp: price estimate
 
 **Roughly $134 - $428** for 2,903 pieces in 61 lines, new parts on BrickLink, before shipping.
 

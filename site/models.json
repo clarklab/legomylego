@@ -26,8 +26,8 @@
         "Standard"
       ],
       "thumbnail": "renders/hero_lit_hero.png",
-      "video": null,
-      "poster": null,
+      "video": "video.mp4",
+      "poster": "video_poster.jpg",
       "status": "warn"
     },
     {
@@ -58,8 +58,8 @@
         "Cinnamon"
       ],
       "thumbnail": "renders/hero_hero.png",
-      "video": null,
-      "poster": null,
+      "video": "video.mp4",
+      "poster": "video_poster.jpg",
       "status": "pass"
     },
     {
@@ -90,8 +90,8 @@
         "White shell (head cleaner style)"
       ],
       "thumbnail": "renders/hero_hero.png",
-      "video": null,
-      "poster": null,
+      "video": "video.mp4",
+      "poster": "video_poster.jpg",
       "status": "pass"
     }
   ]
