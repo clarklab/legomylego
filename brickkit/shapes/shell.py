@@ -34,8 +34,8 @@ class Layer:
 
 
 def plan_layers(profile, top: float, *, thickness: float = 1.0, max_step: float = 1.0,
-                bricks_only: bool = False, closed_top: bool = True, reach: float = 0.7
-                ) -> list[Layer]:
+                bricks_only: bool = False, closed_top: bool = True, reach: float = 0.7,
+                max_flare: float = 0.5) -> list[Layer]:
     """Walk up from height 0 to `top` (LDU above the base). `profile(h)` gives the outer radius
     in studs at h. Uses a brick layer when the radius changes by at most `max_step` studs over
     a brick height, otherwise a plate layer. Inner radii make every layer overlap its
@@ -50,6 +50,10 @@ def plan_layers(profile, top: float, *, thickness: float = 1.0, max_step: float 
         kinds.append(kind)
         h += HEIGHT[kind]
     radii = [profile(h + HEIGHT[k] / 2) for h, k in zip(hs, kinds)]
+    # a layer can overhang the one below by at most ~one stud (its overhanging cells pair with
+    # a supported neighbour); where the profile flares faster, follow it as closely as allowed
+    for n in range(1, len(radii)):
+        radii[n] = min(radii[n], radii[n - 1] + max_flare)
     r_in = []
     for n, r in enumerate(radii):
         v = r - thickness
@@ -67,9 +71,9 @@ def plan_layers(profile, top: float, *, thickness: float = 1.0, max_step: float 
     return [Layer(k, r, max(0.0, v)) for k, r, v in zip(kinds, radii, r_in)]
 
 
-def _place_run(sub, part, color, i, k, n, axis, y, tag):
-    cx = (i + (n / 2 if axis == "x" else 0.5)) * 20
-    cz = (k + (n / 2 if axis == "z" else 0.5)) * 20
+def _place_run(sub, part, color, i, k, n, axis, y, tag, origin=(0.0, 0.0)):
+    cx = (i + (n / 2 if axis == "x" else 0.5)) * 20 + origin[0]
+    cz = (k + (n / 2 if axis == "z" else 0.5)) * 20 + origin[1]
     return sub.place(part, color, (cx, y, cz), rot(y=90) if axis == "z" and n > 1 else None,
                      tag=tag)
 
@@ -77,7 +81,7 @@ def _place_run(sub, part, color, i, k, n, axis, y, tag):
 def build_shell(sub, layers: list[Layer], color, *, y_base: float = 0.0,
                 vocab: ShellVocab | None = None, smooth: bool = True, tag: str = "",
                 quadrant_steps: bool = True, caption: str = "Layer {n}",
-                integrated: bool = True, base_cells=None) -> dict:
+                integrated: bool = True, base_cells=None, origin=(0.0, 0.0)) -> dict:
     """Place the shell into `sub`, one instruction step per layer quadrant. `y_base` is the
     LDraw y of the surface the first layer sits on. With `integrated`, a brick layer's outermost
     cells over a one-stud step become 45-degree slope bricks (one part covering the step and the
@@ -113,7 +117,7 @@ def build_shell(sub, layers: list[Layer], color, *, y_base: float = 0.0,
                     leftovers.append((e, d))
             cells -= used
         if leftovers:
-            placed += _smooth_cells(sub, leftovers, L.kind, color, y, vocab, tag, n)
+            placed += _smooth_cells(sub, leftovers, L.kind, color, y, vocab, tag, n, origin)
         runs = pre_runs + (pack_angular(cells, offset=n) if tuple(sorted(parts)) == (1, 2)
                            else pack_cells(cells, lengths=tuple(parts), offset=n))
         quads = ([[r for r in runs if (r[0] >= 0) == qx and (r[1] >= 0) == qz]
@@ -123,19 +127,20 @@ def build_shell(sub, layers: list[Layer], color, *, y_base: float = 0.0,
                 continue
             sub.step(caption.format(n=n + 1) + (f" ({q + 1}/4)" if quadrant_steps else ""))
             for i, k, length, axis in qruns:
-                _place_run(sub, parts[length], color, i, k, length, axis, y - h + 0, tag)
+                _place_run(sub, parts[length], color, i, k, length, axis, y - h, tag, origin)
                 placed += 1
         if slopes:
             sub.step(caption.format(n=n + 1) + " slopes")
             for (i, k), d in slopes:
-                sub.place(vocab.slope45, color, ((i + .5) * 20, y - h, (k + .5) * 20),
+                sub.place(vocab.slope45, color,
+                          ((i + .5) * 20 + origin[0], y - h, (k + .5) * 20 + origin[1]),
                           rot(y=FACING[d]), tag=tag)
                 placed += 1
         y = y - h
     return {"layers": len(layers), "parts": placed, "top_y": y}
 
 
-def _smooth_cells(sub, ex, kind, color, surface_y, vocab, tag, n) -> int:
+def _smooth_cells(sub, ex, kind, color, surface_y, vocab, tag, n, origin=(0.0, 0.0)) -> int:
     """Exposed step cells (of the layer below) covered with parts as tall as this layer."""
     exd = dict(ex)
     used, count = set(), 0
@@ -143,7 +148,7 @@ def _smooth_cells(sub, ex, kind, color, surface_y, vocab, tag, n) -> int:
     for c, d in ex:
         if c in used:
             continue
-        x, z = (c[0] + .5) * 20, (c[1] + .5) * 20
+        x, z = (c[0] + .5) * 20 + origin[0], (c[1] + .5) * 20 + origin[1]
         if kind == "plate":
             if vocab.tile1:
                 sub.place(vocab.tile1, color, (x, surface_y - 8, z), tag=tag)
@@ -152,7 +157,8 @@ def _smooth_cells(sub, ex, kind, color, surface_y, vocab, tag, n) -> int:
             continue
         inner = (c[0] - d[0], c[1] - d[1])
         if vocab.slope2 and inner in exd and exd[inner] == d and inner not in used:
-            mx, mz = (c[0] + inner[0] + 1) * 10, (c[1] + inner[1] + 1) * 10
+            mx = (c[0] + inner[0] + 1) * 10 + origin[0]
+            mz = (c[1] + inner[1] + 1) * 10 + origin[1]
             sub.place(vocab.plate[2], color, (mx, surface_y - 8, mz),
                       rot(y=90) if d[0] == 0 else None, tag=tag)
             sub.place(vocab.slope2, color, (mx, surface_y - 8, mz), rot(y=FACING[d]), tag=tag)
@@ -166,7 +172,7 @@ def _smooth_cells(sub, ex, kind, color, surface_y, vocab, tag, n) -> int:
     return count
 
 
-def _smooth_cells(sub, ex, kind, color, surface_y, vocab, tag, n) -> int:
+def _smooth_cells(sub, ex, kind, color, surface_y, vocab, tag, n, origin=(0.0, 0.0)) -> int:
     """Exposed step cells (of the layer below) covered with parts as tall as this layer."""
     exd = dict(ex)
     used, count = set(), 0
@@ -174,7 +180,7 @@ def _smooth_cells(sub, ex, kind, color, surface_y, vocab, tag, n) -> int:
     for c, d in ex:
         if c in used:
             continue
-        x, z = (c[0] + .5) * 20, (c[1] + .5) * 20
+        x, z = (c[0] + .5) * 20 + origin[0], (c[1] + .5) * 20 + origin[1]
         if kind == "plate":
             if vocab.tile1:
                 sub.place(vocab.tile1, color, (x, surface_y - 8, z), tag=tag)
@@ -183,7 +189,8 @@ def _smooth_cells(sub, ex, kind, color, surface_y, vocab, tag, n) -> int:
             continue
         inner = (c[0] - d[0], c[1] - d[1])
         if vocab.slope2 and inner in exd and exd[inner] == d and inner not in used:
-            mx, mz = (c[0] + inner[0] + 1) * 10, (c[1] + inner[1] + 1) * 10
+            mx = (c[0] + inner[0] + 1) * 10 + origin[0]
+            mz = (c[1] + inner[1] + 1) * 10 + origin[1]
             sub.place(vocab.plate[2], color, (mx, surface_y - 8, mz),
                       rot(y=90) if d[0] == 0 else None, tag=tag)
             sub.place(vocab.slope2, color, (mx, surface_y - 8, mz), rot(y=FACING[d]), tag=tag)
@@ -236,7 +243,7 @@ def _smooth(sub, lower, upper, next_kind, color, top_y, vocab, tag, n) -> int:
 
 
 def woven_disc(sub, cells, color, *, surface_y: float, plate: dict | None = None,
-               tag: str = "", caption: str = "Cap") -> dict:
+               tag: str = "", caption: str = "Cap", origin=(0.0, 0.0)) -> dict:
     """Two plate layers over `cells` with runs crossing at right angles (x then z), so the disc
     is one rigid sheet that can bridge a hole in the ring below. `surface_y` is the LDraw y of
     the surface under the first layer. Both layers go in one step (the first layer is only
@@ -263,7 +270,7 @@ def woven_disc(sub, cells, color, *, surface_y: float, plate: dict | None = None
     y = surface_y
     for runs in best[1:]:
         for i, k, n, axis in runs:
-            _place_run(sub, plate[n], color, i, k, n, axis, y - 8, tag)
+            _place_run(sub, plate[n], color, i, k, n, axis, y - 8, tag, origin)
             count += 1
         y -= 8
     covered = {c for run in best[2] for c in _run_cells(run)}

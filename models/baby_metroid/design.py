@@ -2,6 +2,7 @@
 Front of the model is the diagonal between -X and -Z (the fangs sit on the grid axes)."""
 import core
 import dome as dome_mod
+import nuclei as nuclei_mod
 import skirt as skirt_mod
 import stand as stand_mod
 
@@ -13,6 +14,7 @@ def build(model):
     core.core(model, main)
     top_cells = skirt_mod.skirt(main, disc_cells)
     core.knob(model, main)
+    nuclei_mod.nuclei(model, main)
     dome_mod.dome(model, main, base_cells=top_cells)
     stand = stand_mod.stand(model)
     main.step("Put the Metroid on its stand")

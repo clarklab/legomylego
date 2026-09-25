@@ -5,7 +5,7 @@
     {
       "name": "real_elements",
       "status": "warn",
-      "summary": "52 part/colour combinations: 0 not real, 1 rare",
+      "summary": "63 part/colour combinations: 0 not real, 1 rare",
       "items": [
         {
           "part": "64228",
@@ -22,7 +22,7 @@
         }
       ],
       "stats": {
-        "combinations": 52,
+        "combinations": 63,
         "not_real": 0,
         "rare": 1
       }
@@ -30,12 +30,13 @@
     {
       "name": "connections",
       "status": "pass",
-      "summary": "3154 connections (3083 stud, 71 axle); 1 separate piece(s)",
+      "summary": "3892 connections (3770 stud, 71 axle, 51 pin); 1 separate piece(s)",
       "items": [],
       "stats": {
-        "connections": 3154,
+        "connections": 3892,
         "by_kind": {
-          "stud": 3083,
+          "stud": 3770,
+          "pin": 51,
           "axle": 71
         },
         "pieces": 1
@@ -44,7 +45,7 @@
     {
       "name": "collisions",
       "status": "pass",
-      "summary": "0 overlapping pair(s) among 1924 parts",
+      "summary": "0 overlapping pair(s) among 2389 parts",
       "items": [],
       "stats": {
         "pairs": 0
@@ -53,28 +54,28 @@
     {
       "name": "buildability",
       "status": "pass",
-      "summary": "1907 insertions tried across 7 submodel(s); 0 problem(s)",
+      "summary": "2179 insertions tried across 7 submodel(s); 0 problem(s)",
       "items": [],
       "stats": {
-        "insertions": 1907
+        "insertions": 2179
       }
     },
     {
       "name": "stability",
       "status": "pass",
-      "summary": "about 1318 g; centre of mass inside the base (105% margin); tips at 21.2 deg",
+      "summary": "about 1557 g; centre of mass inside the base (104% margin); tips at 20.4 deg",
       "items": [],
       "stats": {
-        "mass_g": 1317.7132971167725,
+        "mass_g": 1556.5192459055665,
         "com": [
-          0.2714803664514261,
-          13.806161357442823,
-          1.2453009120588265
+          -2.9291293757979333,
+          1.458297221427731,
+          -2.0679884715376513
         ],
         "approx_parts": 0,
-        "margin": 1.0536816311146537,
-        "tip_angle_deg": 21.15761387636345,
-        "com_height_ldu": 410.1938386425572
+        "margin": 1.0425057784792173,
+        "tip_angle_deg": 20.391544220936204,
+        "com_height_ldu": 422.54170277857224
       }
     },
     {
@@ -89,7 +90,7 @@
     {
       "name": "electrics",
       "status": "pass",
-      "summary": "no electrics in this model",
+      "summary": "3 light(s), 0 cable run(s); 0 problem(s)",
       "items": [],
       "stats": {}
     },
