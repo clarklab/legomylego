@@ -531,9 +531,11 @@ def main() -> int:
 
     write_if_changed(SITE / "assets" / "media.json", json.dumps(media, indent=1) + "\n")
     home_day = max([day(SITE / "index.html")] + [e[1] for e in entries])
-    write_if_changed(SITE / "sitemap.xml", sitemap([(f"{ORIGIN}/", home_day)] + entries))
+    extra = [(f"{ORIGIN}/videos/", max(home_day, day(SITE / "videos" / "index.html")))] \
+        if (SITE / "videos" / "index.html").exists() else []
+    write_if_changed(SITE / "sitemap.xml", sitemap([(f"{ORIGIN}/", home_day)] + extra + entries))
 
-    for name in ("index.html", "model.html", "404.html"):
+    for name in ("index.html", "model.html", "404.html", "videos/index.html"):
         p = SITE / name
         if p.exists():
             write_if_changed(p, stamp(p.read_text()))

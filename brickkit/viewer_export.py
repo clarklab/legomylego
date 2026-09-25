@@ -240,7 +240,8 @@ def export_model(engine, proj, model, site_dir: Path | None = None) -> Path:
                       ("video", proj.out / "video.mp4"), ("parts_csv", proj.out / "parts.csv"),
                       ("bricklink_xml", proj.out / "bricklink_wanted.xml"),
                       ("pick_a_brick_csv", proj.out / "pick_a_brick.csv"),
-                      ("price_estimate", proj.out / "price_estimate.md")]:
+                      ("price_estimate", proj.out / "price_estimate.md"),
+                      ("video_poster", proj.out / "video_poster.jpg")]:
         if src.exists():
             shutil.copy2(src, dst / src.name)
             files[name] = src.name
@@ -282,5 +283,6 @@ def update_index(site: Path) -> None:
                       "price": d.get("price"), "features": d.get("features", {}),
                       "variants": [v["title"] for v in d["variants"]],
                       "thumbnail": (d["files"].get("renders") or [None])[0],
+                      "video": d["files"].get("video"), "poster": d["files"].get("video_poster"),
                       "status": status})
     (site / "models.json").write_text(json.dumps({"models": items}, indent=2))
