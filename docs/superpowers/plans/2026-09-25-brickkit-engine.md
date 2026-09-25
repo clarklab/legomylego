@@ -13,7 +13,7 @@
 ## Follow-up plans (written after this one lands, because they depend on its interfaces)
 - **Plan 2 — Baby Metroid design:** `models/baby_metroid/` (design.py, model.toml, NOTES.md), PF electrics data, mechanism kinematics; iterate until all checks pass; hero render review gate.
 - **Plan 3 — Render, booklet, video, prices:** Blender scene/materials/instruction-style renders, photoreal hero shots, HTML→PDF booklet, animation + ffmpeg video, BrickLink price estimate.
-- **Plan 4 — Viewer site:** static three.js site reading `models/*/out/viewer/` bundles; `brickkit viewer` / `brickkit serve`; branded with `logo.png` ("L'Eggo my LEGO"); deployed on Netlify from GitHub `clarklab/legomylego` (`netlify.toml`, static publish dir, no build step).
+- **Plan 4 — Viewer site:** static three.js site reading `models/*/out/viewer/` bundles; `brickkit viewer` / `brickkit serve`; branded with `logo.png` ("L'Eggo my LEGO"); deployed on Netlify from GitHub `clarklab/legomylego` (`netlify.toml`, static publish dir, no build step). Final URL **https://lego.superfun.games**: full `<meta>` (description, theme-color, canonical), Open Graph + Twitter cards with a generated 1200x630 og:image per page, `site.webmanifest`, favicons (ico/svg/png 16-512, apple-touch-icon) generated from `logo.png`.
 
 ---
 

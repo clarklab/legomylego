@@ -102,14 +102,20 @@ def run_blender(scene: dict, work_dir: Path, script: Path = SCRIPT, timeout: int
 
 
 def render_model(engine, model, out_dir, *, views=("three_quarter",), size=900, samples=64,
-                 pose_t: float | None = None, lights_on: bool = False, background="#E9ECEF",
+                 pose_t: float | None = None, lights_on: bool = False, background="#F7F8FA",
                  ground: bool = True, transparent: bool = False, lens: float = 70.0,
                  placed=None) -> list[Path]:
     out_dir = Path(out_dir).resolve()
     scene = model_scene(engine, model, pose_t=pose_t, lights_on=lights_on, placed=placed)
     w, h = (size, size) if isinstance(size, int) else size
+    offset = float(model.meta.get("azimuth_offset", 0.0))   # where the model's front faces
+    specs = []
+    for v in views:
+        spec = dict(v) if isinstance(v, dict) else view_spec(v, lens)
+        spec["azimuth"] = spec["azimuth"] + offset
+        specs.append(spec)
     scene.update({
-        "views": [v if isinstance(v, dict) else view_spec(v, lens) for v in views],
+        "views": specs,
         "size": [w, h], "samples": samples, "background": background, "ground": ground,
         "transparent": transparent, "out_dir": str(out_dir),
     })

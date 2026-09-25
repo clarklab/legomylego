@@ -68,10 +68,29 @@ class SceneBuilder:
         _set(b, "Coat Weight", 0.15)
         _set(b, "Coat Roughness", 0.1)
         if info["alpha"] < 255:
+            # clear surfaces; the colour comes from absorption inside the plastic, so thin walls
+            # stay light and thick stacks get richer, like real translucent LEGO
+            tint = [min(1.0, c * 0.35 + 0.65) for c in rgb]
+            _set(b, "Base Color", (*tint, 1.0))
             _set(b, "Transmission Weight", 1.0)
-            _set(b, "Roughness", 0.03)
+            _set(b, "Roughness", 0.02)
             _set(b, "IOR", 1.58)
             _set(b, "Coat Weight", 0.0)
+            nt = m.node_tree
+            out = next(n for n in nt.nodes if n.type == "OUTPUT_MATERIAL")
+            vol = nt.nodes.new("ShaderNodeVolumeAbsorption")
+            vol.inputs["Color"].default_value = (*rgb, 1.0)
+            vol.inputs["Density"].default_value = float(self.s.get("trans_density", 18.0))
+            nt.links.new(vol.outputs[0], out.inputs["Volume"])
+            # let light through for shadow rays (tinted), so the inside isn't in darkness
+            lp = nt.nodes.new("ShaderNodeLightPath")
+            tr = nt.nodes.new("ShaderNodeBsdfTransparent")
+            tr.inputs["Color"].default_value = (*[min(1.0, c * 0.5 + 0.5) for c in rgb], 1.0)
+            mix = nt.nodes.new("ShaderNodeMixShader")
+            nt.links.new(lp.outputs["Is Shadow Ray"], mix.inputs["Fac"])
+            nt.links.new(b.outputs[0], mix.inputs[1])
+            nt.links.new(tr.outputs[0], mix.inputs[2])
+            nt.links.new(mix.outputs[0], out.inputs["Surface"])
         kind = info.get("material", "")
         if kind in ("chrome", "metal", "matte_metallic"):
             _set(b, "Metallic", 1.0)
@@ -170,20 +189,20 @@ class SceneBuilder:
         world = bpy.data.worlds.new("world")
         sc.world = world
         bg = principled_world(world)
-        bg.inputs[0].default_value = (*hex_to_linear(s.get("background", "#E9ECEF")), 1.0)
-        bg.inputs[1].default_value = s.get("world_strength", 0.35)
+        bg.inputs[0].default_value = (*hex_to_linear(s.get("background", "#F7F8FA")), 1.0)
+        bg.inputs[1].default_value = s.get("world_strength", 1.2)
         if s.get("ground", True):
             bpy.ops.mesh.primitive_plane_add(size=radius * 40, location=(center.x, center.y, mn.z - 0.0002))
             ground = bpy.context.object
             gm = bpy.data.materials.new("ground")
             gb = principled(gm)
-            _set(gb, "Base Color", (*hex_to_linear(s.get("ground_color", s.get("background", "#E9ECEF"))), 1))
+            _set(gb, "Base Color", (*hex_to_linear(s.get("ground_color", s.get("background", "#F7F8FA"))), 1))
             _set(gb, "Roughness", 0.6)
             ground.data.materials.append(gm)
             if s.get("transparent"):
                 ground.is_shadow_catcher = True
         d = radius * 6.0
-        key_power = s.get("light_power", 1.6) * d * d * 4
+        key_power = s.get("light_power", 1.3) * d * d * 4
         for name, direction, power, size in (
                 ("key", (-1.1, -1.5, 1.7), 1.0, 2.2),
                 ("fill", (1.6, -0.9, 0.7), 0.35, 3.0),
@@ -247,9 +266,10 @@ class SceneBuilder:
                 pass
             sc.cycles.samples = int(s.get("samples", 64))
             sc.cycles.use_denoising = True
-            sc.cycles.max_bounces = 16
-            sc.cycles.transmission_bounces = 16
-            sc.cycles.transparent_max_bounces = 16
+            sc.cycles.max_bounces = 48
+            sc.cycles.transmission_bounces = 48
+            sc.cycles.transparent_max_bounces = 48
+            sc.cycles.volume_bounces = 0
             sc.cycles.caustics_reflective = False
             sc.cycles.caustics_refractive = False
             sc.cycles.blur_glossy = 1.0
