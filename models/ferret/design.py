@@ -19,6 +19,7 @@ if str(HERE) not in sys.path:
 import ferret_head as fh  # noqa: E402
 import ferret_sculpt as sc  # noqa: E402
 import ferret_shape as fs  # noqa: E402
+import ferret_tail as ft  # noqa: E402
 from brickkit.ldraw.matrix import rot, transform  # noqa: E402
 
 # grid extent (cells) and the sculpt origin in LDU
@@ -27,7 +28,7 @@ ZS = np.arange(-1, 66)
 KS = np.arange(0, 18)
 SEAM = 8                    # brick band where the back starts (chest and hips below it)
 SOCKET = 2                  # band of the leg sockets (lower legs + paws are sub-assemblies)
-TORSO = (11, 64)            # z cells of the brick-built body and tail (the head is built apart)
+TORSO = (11, 49)            # z cells of the brick-built body and tail (the head is built apart)
 FRONT_LEG = ((-3, 19), (1, 19))   # lower-left cell (i, j) of each 2x2 front-leg socket
 HIND_LEG = ((-3, 43), (1, 43))
 
@@ -105,33 +106,7 @@ def centre_mm(c, k):
     return (c[0] + 0.5) * fs.STUD, (k + 0.5) * fs.BRICK, (c[1] + 0.5) * fs.STUD
 
 
-def ramps_of(T: set, dirs: dict) -> list[tuple[list, tuple]]:
-    """Group exposed cells into straight runs along their outward direction, outer end first."""
-    out = []
-    seen = set()
-    for c in sorted(T):
-        if c in seen:
-            continue
-        d = dirs[c]
-        # walk inward to the start of the run, then outward
-        step_in = (-d[0], -d[1])
-        inner = c
-        while True:
-            n = (inner[0] + step_in[0], inner[1] + step_in[1])
-            if n in T and dirs[n] == d and n not in seen:
-                inner = n
-            else:
-                break
-        run = [inner]
-        while True:
-            n = (run[-1][0] + d[0], run[-1][1] + d[1])
-            if n in T and dirs[n] == d and n not in seen:
-                run.append(n)
-            else:
-                break
-        seen.update(run)
-        out.append((run[::-1], d))
-    return out
+ramps_of = sc.ramps_of
 
 
 def smooth_layers(S: dict) -> dict:
@@ -209,10 +184,17 @@ def sections_of(S: dict) -> dict:
 
 def sculpt_pieces(av: Avail):
     S = smooth_layers(body_layers())
+    # the tail socket in the rump: its cells are taken by a 22885 and a plate
+    socket, socket_cells, socket_bands = ft.socket_pieces()
+    for k in socket_bands:
+        S[k] |= socket_cells
+    S[max(socket_bands) + 1] |= socket_cells        # a course over the socket ties it in
     sec = sections_of(S)
     legs = {(i + 1, j + 1) for i, j in FRONT_LEG + HIND_LEG}     # socket centres (cells)
     ks = sorted(k for k in S if S[k])
     sections: dict[str, list] = {"back": [], "chest": [], "hips": []}
+    reserved = {(c, k) for k in socket_bands for c in socket_cells}
+    fixed = {"back": {k: [(p, socket_cells)] for k, p in zip(socket_bands, socket)}}
     role_of = {}
     for k in ks:
         cells = S[k]
@@ -224,12 +206,14 @@ def sculpt_pieces(av: Avail):
     for name in sections:
         order = ks if name == "back" else ks[::-1]
         layers = []
+        fx = fixed.get(name, {})
         for k in order:
-            mine = {c for c in S[k] if sec[(c, k)] == name}
-            if mine:
+            mine = {c for c in S[k] if sec[(c, k)] == name and (c, k) not in reserved}
+            if mine or k in fx:
                 layers.append((k, mine, {c: role_of[(c, k)] for c in mine},
                                "z" if k % 2 == 0 else "x"))
-        pieces, n_clusters = sc.pack_section(layers, lambda r: av.sizes(sc.BRICK, r))
+        pieces, n_clusters = sc.pack_section(layers, lambda r: av.sizes(sc.BRICK, r),
+                                             fixed=fx)
         if n_clusters > 1:
             print(f"[ferret] {name}: packed into {n_clusters} separate clusters")
         sections[name] += pieces
@@ -331,6 +315,18 @@ def build_head(model, av: Avail):
     return head
 
 
+def build_tail(model, av: Avail):
+    pieces, n_clusters = ft.pieces(lambda r: av.sizes(sc.BRICK, r) if r != "plate" else [])
+    if n_clusters > 1:
+        print(f"[ferret] tail: packed into {n_clusters} separate clusters")
+    pl = sc.plan(pieces, lambda p: (p.p0, min(p.cells)))
+    if pl.stuck:
+        print(f"[ferret] tail: {len(pl.stuck)} piece(s) could not be planned")
+    tail = model.submodel("tail", "Tail")
+    sc.emit(tail, sc.steps(pl.order + pl.stuck))
+    return tail
+
+
 # ------------------------------------------------------------------------------------------
 
 def build(model):
@@ -361,6 +357,7 @@ def build(model):
             sub.use(leg, (sc.STUD * (i0 + 1), 0, sc.STUD * (j0 + 1)), tag=f"{tag}_leg_{side}")
 
     head = build_head(model, av)
+    tail = build_tail(model, av)
 
     main = model.main
     main.step("Stand the chest on its front legs")
@@ -370,3 +367,6 @@ def build(model):
     main.use(subs["hips"], tag="hips")
     main.step("Set the head on the throat")
     main.use(head, tag="head")
+    main.step("Plug the tail into the rump")
+    F = ft.frame()
+    main.use(tail, tuple(F[:3, 3]), F[:3, :3], tag="tail")

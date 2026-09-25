@@ -126,6 +126,35 @@ def ramp_pieces(ramp: list, d: tuple, p0: int, role: str, band: int) -> list[Pie
     return [base, top]
 
 
+def ramps_of(T: set, dirs: dict) -> list[tuple[list, tuple]]:
+    """Group exposed cells into straight runs along their outward direction, outer end first."""
+    out = []
+    seen = set()
+    for c in sorted(T):
+        if c in seen:
+            continue
+        d = dirs[c]
+        # walk inward to the start of the run, then outward
+        step_in = (-d[0], -d[1])
+        inner = c
+        while True:
+            n = (inner[0] + step_in[0], inner[1] + step_in[1])
+            if n in T and dirs[n] == d and n not in seen:
+                inner = n
+            else:
+                break
+        run = [inner]
+        while True:
+            n = (run[-1][0] + d[0], run[-1][1] + d[1])
+            if n in T and dirs[n] == d and n not in seen:
+                run.append(n)
+            else:
+                break
+        seen.update(run)
+        out.append((run[::-1], d))
+    return out
+
+
 # --------------------------------------------------------------------------------------------
 # packing
 
@@ -225,14 +254,17 @@ def _rect_role(r, role_of):
     return vis.pop() if vis else "core"
 
 
-def pack_section(layers, sizes_of, height: int = 3):
+def pack_section(layers, sizes_of, height: int = 3, fixed=None):
     """Pack the layers of one sub-assembly so it holds together as one piece.
 
     `layers` = [(band, cells, role_of, axis)] in build order (each layer is stacked on, or hung
     from, the previous one). The first layer is packed with long bricks; every later layer is
     packed greedily with the brick that bridges the most still-separate clusters of the previous
     layer (then the biggest), so the bonds knit the whole section together.
+    `fixed` = {band: [(piece, cells)]}: pieces placed beforehand (their cells must not be in
+    `layers`); they take part in the bonding and are returned with the rest.
     Returns (pieces, number of separate clusters left)."""
+    fixed = fixed or {}
     table = BRICK if height == 3 else PLATE
     all_sizes = sorted({s for r in ("core",) for s in sizes_of(r)} |
                        {s for _, _, ro, _ in layers for r in set(ro.values()) for s in sizes_of(r)},
@@ -253,24 +285,40 @@ def pack_section(layers, sizes_of, height: int = 3):
         """Greedy cover; rim cells (no neighbour layer) first, then bricks bridging the most
         separate clusters below. Unions the bridged clusters in `u`. -> [(rect, role)]"""
         left = set(cells)
-        rim = sorted(c for c in cells if c not in touch)
+
+        def options(c):
+            return sum(1 for r in _rects_containing(c, all_sizes)
+                       if r <= left and (r & touch) and ok_rect(r, role_of))
+        # the most constrained rim cells first, so each still finds a brick reaching a bond
+        rim = sorted((c for c in cells if c not in touch), key=lambda c: (options(c), c))
         out = []
         while left:
-            cand = [c for c in rim if c in left][:1] or sorted(left)
+            rim_left = [c for c in rim if c in left][:1]
+            cand = rim_left or sorted(left)
             best = None
-            for c in cand:
-                for r in _rects_containing(c, all_sizes):
-                    if not r <= left:
-                        continue
-                    role = ok_rect(r, role_of)
-                    if role is None:
-                        continue
-                    comps = {u.find(prev_owner[x]) for x in r if x in prev_owner}
-                    ni = len({x[0] for x in r})
-                    along = (ni > len(r) // ni) == (axis == "x")
-                    score = (bool(r & touch), len(comps), len(r), along)
-                    if best is None or score > best[0]:
-                        best = (score, r, role, comps)
+            for relax in (False, True):
+                for c in cand:
+                    for r in _rects_containing(c, all_sizes):
+                        if not r <= left:
+                            continue
+                        role = ok_rect(r, role_of)
+                        if role is None and relax:
+                            # bonding beats a colour edge: the brick takes the rim cell's colour
+                            ni = len({x[0] for x in r})
+                            nj = len(r) // ni
+                            if role_of[c] != "core" and (min(ni, nj), max(ni, nj)) in \
+                                    sizes_of(role_of[c]):
+                                role = role_of[c]
+                        if role is None:
+                            continue
+                        comps = {u.find(prev_owner[x]) for x in r if x in prev_owner}
+                        ni = len({x[0] for x in r})
+                        along = (ni > len(r) // ni) == (axis == "x")
+                        score = (bool(r & touch), len(comps), len(r), along)
+                        if best is None or score > best[0]:
+                            best = (score, r, role, comps)
+                if best[0][0] or not rim_left:
+                    break
             _, r, role, comps = best
             comps = list(comps)
             for cp in comps[1:]:
@@ -288,9 +336,23 @@ def pack_section(layers, sizes_of, height: int = 3):
                 u.union(cp, comps[0])
         return u, len({u.find(i) for i in set(prev_owner.values())})
 
+    placed_fixed: dict = {}
     for t, (band, cells, role_of, axis) in enumerate(layers):
         p1 = height * (band + 1)
         nxt = layers[t + 1][1] if t + 1 < len(layers) else set()
+        fixed_owner: dict = {}
+        for fp, fcells in fixed.get(band, ()):
+            if id(fp) not in placed_fixed:
+                fp.idx = len(pieces)
+                pieces.append(fp)
+                placed_fixed[id(fp)] = fp.idx
+                uf.find(fp.idx)
+            for x in fcells:
+                fixed_owner[x] = fp.idx
+                if x in prev_owner:
+                    uf.union(prev_owner[x], fp.idx)
+        nxt = set(nxt) | {x for fp, fc in fixed.get(layers[t + 1][0] if t + 1 < len(layers)
+                                                     else None, ()) for x in fc}
         touch = set(prev_owner) | set(nxt)          # cells that bond to a neighbouring layer
         base = _UF()
         base.p = dict(uf.p)
@@ -335,7 +397,7 @@ def pack_section(layers, sizes_of, height: int = 3):
                 rects, u, n_roots = cand, u2, n2
             else:
                 failed.add(pair)
-        owner: dict = {}
+        owner: dict = dict(fixed_owner)
         for r, role in rects:
             p = block(table, r, p1, role, height, band=band)
             p.idx = len(pieces)
@@ -347,6 +409,13 @@ def pack_section(layers, sizes_of, height: int = 3):
                 owner[x] = p.idx
         # pieces of the previous layer under/over the same cells are connected to these
         prev_owner = owner
+    for band, entries in fixed.items():
+        for fp, _ in entries:
+            if id(fp) not in placed_fixed:          # a fixed piece in a band with no layer
+                fp.idx = len(pieces)
+                pieces.append(fp)
+                placed_fixed[id(fp)] = fp.idx
+                uf.find(fp.idx)
     roots = {uf.find(p.idx) for p in pieces}
     return pieces, len(roots)
 
