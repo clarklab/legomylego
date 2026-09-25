@@ -39,13 +39,16 @@ def _verify(engine, proj, model, names=None) -> int:
 
 def _bom(engine, proj, model) -> None:
     from .bom.bom import build_bom, write_bricklink_xml, write_parts_csv, write_pick_a_brick_csv
-    lines = build_bom(model.flatten(), engine.catalog)
+    lines = build_bom(model.flatten(), engine.catalog, model.extras)
     out = _out(proj, model.variant)
     write_parts_csv(lines, out / "parts.csv")
     write_bricklink_xml(lines, out / "bricklink_wanted.xml")
     write_pick_a_brick_csv(lines, out / "pick_a_brick.csv")
+    from .bom.price import estimate, write_estimate_md
+    low, high = write_estimate_md(model.name, estimate(lines, engine.catalog),
+                                  out / "price_estimate.md")
     print(f"parts list: {sum(l.qty for l in lines)} pieces in {len(lines)} lines "
-          f"-> {out / 'parts.csv'}")
+          f"-> {out / 'parts.csv'}; rough price ${low:,.0f}-${high:,.0f}")
 
 
 def _new(slug: str, name: str | None) -> int:
@@ -81,6 +84,19 @@ def main(argv=None) -> int:
     p.add_argument("--lights", action="store_true")
     p.add_argument("--out", default="renders")
     p.add_argument("--variant")
+    p = sub.add_parser("booklet", help="instruction booklet PDF")
+    p.add_argument("slug")
+    p.add_argument("--variant")
+    p.add_argument("--no-render", action="store_true", help="reuse existing pictures")
+    p = sub.add_parser("video", help="build video (out/video.mp4) rendered with Blender")
+    p.add_argument("slug")
+    p.add_argument("--variant")
+    p.add_argument("--preview", action="store_true", help="540x540, low samples, every 2nd frame")
+    p.add_argument("--segments", help="comma list, e.g. build,mechanism (default: all)")
+    p.add_argument("--force", action="store_true", help="re-render cached frames")
+    p = sub.add_parser("viewer", help="export the model (and its colourways) to the viewer site")
+    p.add_argument("slug")
+    p.add_argument("--site", help="site directory (default: site/)")
     p = sub.add_parser("inspect", help="show a part's size and connection points")
     p.add_argument("parts", nargs="+")
     p = sub.add_parser("find", help="search real LEGO parts by name, optionally in a colour")
@@ -117,6 +133,23 @@ def main(argv=None) -> int:
             print(f"{sets:5d}  {part:12s} {'ldraw' if has_ld else '     '}  {name}")
         return 0
     proj, model = _build(engine, args.slug, getattr(args, "variant", None))
+    if args.cmd == "booklet":
+        from .booklet.booklet import make_booklet
+        pdf = make_booklet(engine, proj, model, rerender=not args.no_render)
+        print(f"booklet -> {pdf}")
+        return 0
+    if args.cmd == "video":
+        from .video import make_video
+        segs = [s.strip() for s in args.segments.split(",") if s.strip()] if args.segments else None
+        out = make_video(engine, proj, model, _out(proj, model.variant), preview=args.preview,
+                         segments=segs, force=args.force)
+        print(f"video -> {out}")
+        return 0
+    if args.cmd == "viewer":
+        from .viewer_export import export_model
+        dst = export_model(engine, proj, model, args.site)
+        print(f"viewer bundle -> {dst}")
+        return 0
     if args.cmd == "render":
         from .render.scene import render_model
         files = render_model(engine, model, _out(proj, model.variant) / args.out,

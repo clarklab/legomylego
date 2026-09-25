@@ -1,0 +1,129 @@
+{
+  "_about": "Rough per-piece price ranges in USD for new parts bought on BrickLink, by part type. Hand-set from typical listings, not live market data. Order matters: the first matching rule wins. 'match' is a case-insensitive substring of the part name.",
+  "overrides": {
+    "62501c01": {
+      "low": 8.0,
+      "high": 18.0,
+      "note": "8870 light unit, used"
+    },
+    "64228": {
+      "low": 9.0,
+      "high": 20.0,
+      "note": "AAA battery box (88000), used"
+    },
+    "58118": {
+      "low": 3.0,
+      "high": 8.0,
+      "note": "PF extension wire 50 cm"
+    },
+    "60656": {
+      "low": 2.5,
+      "high": 6.0,
+      "note": "PF extension wire 20 cm"
+    }
+  },
+  "rules": [
+    {
+      "match": "power functions",
+      "low": 5.0,
+      "high": 20.0
+    },
+    {
+      "match": "dish",
+      "low": 0.15,
+      "high": 0.6
+    },
+    {
+      "match": "worm",
+      "low": 0.15,
+      "high": 0.5
+    },
+    {
+      "match": "gear",
+      "low": 0.1,
+      "high": 0.5
+    },
+    {
+      "match": "slope",
+      "low": 0.05,
+      "high": 0.15
+    },
+    {
+      "match": "axle",
+      "low": 0.03,
+      "high": 0.2
+    },
+    {
+      "match": "technic",
+      "low": 0.05,
+      "high": 0.25
+    },
+    {
+      "match": "liftarm",
+      "low": 0.05,
+      "high": 0.25
+    },
+    {
+      "match": "pin",
+      "low": 0.02,
+      "high": 0.1
+    },
+    {
+      "match": " 6 x 6",
+      "low": 0.2,
+      "high": 0.6
+    },
+    {
+      "match": " 4 x 4",
+      "low": 0.1,
+      "high": 0.35
+    },
+    {
+      "match": " 2 x 6",
+      "low": 0.06,
+      "high": 0.2
+    },
+    {
+      "match": " 1 x 6",
+      "low": 0.05,
+      "high": 0.15
+    },
+    {
+      "match": "tile",
+      "low": 0.03,
+      "high": 0.1
+    },
+    {
+      "match": "brick",
+      "low": 0.04,
+      "high": 0.12
+    },
+    {
+      "match": "plate",
+      "low": 0.02,
+      "high": 0.08
+    },
+    {
+      "match": "",
+      "low": 0.05,
+      "high": 0.25
+    }
+  ],
+  "colour_factor": {
+    "trans": 1.25
+  },
+  "scarcity": [
+    {
+      "max_sets": 3,
+      "factor": 4.0
+    },
+    {
+      "max_sets": 10,
+      "factor": 2.0
+    },
+    {
+      "max_sets": 30,
+      "factor": 1.4
+    }
+  ]
+}

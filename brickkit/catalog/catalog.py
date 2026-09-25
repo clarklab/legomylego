@@ -94,6 +94,9 @@ class Catalog:
     def bl_part(self, part: str) -> str:
         return self._pm(part).get("bricklink", self.rb_part(part))
 
+    def bl_type(self, part: str) -> str:
+        return self._pm(part).get("bricklink_type", "P")
+
     def in_bom(self, part: str) -> bool:
         return self._pm(part).get("bom", True)
 

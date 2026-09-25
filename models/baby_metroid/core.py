@@ -104,6 +104,10 @@ def _rotate_cells(cells, k):
     return out
 
 
+LEAD_HOLE = {(i, k) for i in (-6, -5, -4) for k in (2, 3)}   # x -120..-60, z 40..80: the light
+                                                            # leads' plugs pass down to the stand
+
+
 def hole_cells() -> set:
     links = set()
     for k in range(4):
@@ -113,7 +117,7 @@ def hole_cells() -> set:
 
 
 def disc(sub, color="skirt_accent") -> set:
-    cells = ring_cells(DISC_R) - hole_cells()
+    cells = ring_cells(DISC_R) - hole_cells() - LEAD_HOLE
     plates = {6: "3666", 4: "3710", 2: "3023b", 1: "3024"}
     a = pack_cells(cells, lengths=(6, 4, 2, 1), offset=0, mode="x")
     b = pack_cells(cells, lengths=(6, 4, 2, 1), offset=1, mode="z")

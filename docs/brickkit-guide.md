@@ -19,9 +19,12 @@ The cache location can be overridden with `BRICKKIT_CACHE` (useful in git worktr
 | `brickkit new SLUG --name "Name"` | scaffold `models/SLUG/` (model.toml + design.py) |
 | `brickkit build SLUG` | run design.py, write `out/SLUG.mpd` |
 | `brickkit verify SLUG` | run all checks, write `out/report.{json,html}`; exit 1 on any FAIL |
-| `brickkit bom SLUG` | `out/parts.csv`, `out/bricklink_wanted.xml`, `out/pick_a_brick.csv` |
+| `brickkit bom SLUG` | `out/parts.csv`, `out/bricklink_wanted.xml`, `out/pick_a_brick.csv`, `out/price_estimate.md` (rough range from `brickkit/data/price_bands.json`) |
 | `brickkit all SLUG` | build + verify + bom, then each colourway (variant) |
 | `brickkit render SLUG [--views a,b] [--size N] [--samples N] [--pose T] [--lights] [--variant V]` | Blender stills in `out/renders/` |
+| `brickkit booklet SLUG [--no-render]` | instruction booklet `out/booklet.pdf` (pictures in `out/booklet/`) |
+| `brickkit viewer SLUG` | export `site/models/SLUG/` (GLB + model.json + files) for the viewer site |
+| `python tools/hero.py SLUG` | hero stills: `out/hero/`, `out/hero_lit/` (lights), `out/hero_open/` (pose 1) |
 | `brickkit find "words" [--color C]` | search real LEGO parts by name, ranked by how many sets used them in that colour |
 
 Views: `front, three_quarter, three_quarter_right, side, back, top, low`.
@@ -46,6 +49,13 @@ fang = "White"
 [variants.sable]     # optional colourways: override any roles
 title = "Sable"
 coat = "Reddish Brown"
+
+[booklet]           # optional text for the instruction booklet
+subtitle = "One line under the title on the cover"
+intro = "A paragraph for 'Before you start' and 'About this model'"
+you_will_need = ["Things besides the bricks, e.g. batteries"]
+notes = ["Extra tips"]
+works = [{ title = "Fangs that bite", text = "...", image = "hero_open/hero.png" }]  # under out/
 
 [checks]
 enabled = ["real_elements", "connections", "collisions", "buildability", "stability",
@@ -95,10 +105,17 @@ module 1: pitch radius = 1.25 LDU per tooth).
 
 ### Electrics and lights
 ```python
-model.light("nucleus_1", "nucleus_l/led", color="#FF3A1A", power=1.5)
-model.cable("led_run", "battery/box", "nucleus_l/led", length=1250, route=[(x, y, z), ...])
+model.light("nucleus_1", "nucleus_l/led", color="#FF3A1A", power=1.5,
+            offset=(0, 0, -70))            # render light 70 LDU along the part's -Z
+model.cable("led_run", "nucleus_l/led", "battery", length=1000, route=[(x, y, z), ...])
 model.glow("nucleus_l", strength=2.0)     # parts under this tag glow in `--lights` renders
+model.extra("62501c01", "led", 2, "8870 light unit")   # on the parts lists, not placed in 3D
 ```
+Cable ends are tag paths (a part's tags joined by `/`, matched at the end). The electrics check
+adds up the straight segments lamp → route points → end and compares with `length` (LDU).
+Use `model.extra` for bought items whose geometry is only partly placed (a light unit's lead
+and plug); `data/part_map.json` sets `"bom": false` on the placed head so nothing counts twice,
+and `"bricklink_type": "S"` for items BrickLink sells as sets.
 
 ## The checks
 | Check | Fails when |

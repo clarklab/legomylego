@@ -12,7 +12,7 @@ TABLE_Y = 424
 COLUMN_BRICKS = 8
 WALL_IN = 6.6
 CENTRE = {(-1, -1), (-1, 0), (0, -1), (0, 0)}
-SWITCH_OPENING = {(i, k) for i in range(-2, 4) for k in (2, 3)}   # switch and PF plug hatch
+SWITCH_OPENING = {(i, k) for i in range(-3, 4) for k in (2, 3)}   # PF plug (x -60..-20), switch
 PLUG_OPENING = set()
 
 
@@ -22,7 +22,7 @@ def stand(model):
     bottom = woven_disc(s, disc, "stand_base", surface_y=TABLE_Y, caption="Base plate",
                         plate={6: "3666", 4: "3710", 2: "3023b", 1: "3024"})
     y = bottom["top_y"]                                                    # 408
-    s.step("Battery box (switch and plug face up)")
+    s.step("Battery box, switch and plug facing up")
     s.place("64228", "battery", (0, y - 96, 60), tag="battery")
     s.step("Centre post")
     for n in range(4):

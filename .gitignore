@@ -8,3 +8,10 @@ models/*/out/tmp/
 .DS_Store
 models/_sample/out/
 *.egg-info/
+models/*/out/video_frames/
+models/*/out/variants/*/video_frames/
+# render intermediates (deliverables in out/ stay tracked)
+models/*/out/**/scene.json
+models/*/out/booklet/
+models/*/out/**/booklet/
+models/*/out/**/cover_render/
