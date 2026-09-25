@@ -12,7 +12,7 @@ from brickkit.shapes.shell import Layer, ShellVocab, build_shell, pack_cells, pl
 PLATFORM_R = 8.0
 PLATFORM_TOP = -24
 POSTS = [(-100, -100), (100, -100), (-100, 100)]
-BALL_R = 60.0                     # LDU (3 studs)
+BALL_R = 68.0                     # LDU (3.4 studs)
 FRONT = [(-120, -20), (-20, -120)]
 BACK = (40, 40)
 BACK_RISER = 56                   # 2 bricks + a 4x4 round plate
@@ -59,7 +59,7 @@ def _led_post(model, sub, cx, cz, base_y, name, tag):
     sub.place("3023b", "nucleus_core", (cx, base_y - 8, cz + 10))
     sub.place("3700", "nucleus_core", (cx, base_y - 32, cz + 10))
     sub.place("62498c01", "led", (cx, base_y - 22, cz), rot(y=180), tag=tag, insert=(0, 0, -1))
-    model.light(name, tag, color="#FF2A12", power=1.2)
+    model.light(name, tag, color="#FF2A12", power=0.2)
 
 
 def ball(model, sub, cx, cz, base_y, base_cells, name, tag):
@@ -77,7 +77,7 @@ def ball(model, sub, cx, cz, base_y, base_cells, name, tag):
     for i, k in sorted(cap["cells"]):
         sub.place("98138", "nucleus", ((i + .5) * 20 + cx, cap["top_y"] - 8, (k + .5) * 20 + cz),
                   tag=tag)
-    model.glow(tag, 1.5)
+    model.glow(tag, 4.0)
 
 
 def nuclei(model, sub):

@@ -153,9 +153,11 @@ def fang_submodel(model, driven: bool):
     tip = HANG @ np.array([48.0, 0, 96.0])
     tx, ty = P[0] + tip[0], P[1] + tip[1]
     ang = math.degrees(math.atan2(0.6, -0.8))
-    f.place("32062", "frame_dark", (tx, ty, 10), spin((0, 0, 1), ang) @ ALONG_Z)
+    f.place("4519", "frame", (tx, ty, 0), spin((0, 0, 1), ang) @ ALONG_Z)   # axle 3: z -30..30
     d = np.array([0.8, -0.6, 0.0])
-    f.place("41669", "fang", (tx, ty, 20), np.array([[0.6, 0.8, 0.0], [0, 0, 1.0], d]).T)
+    tooth = np.array([[0.6, 0.8, 0.0], [0, 0, 1.0], d]).T
+    f.place("41669", "fang", (tx, ty, 20), tooth)                             # z 10..30
+    f.place("41669", "fang", (tx, ty, -20), tooth)                            # z -30..-10
     f.step("Lever and spacer")
     f.place("6632", "frame_dark", (P[0], P[1], -15), INWARD)              # z -20..-10
     f.place("32123b", "frame", (P[0], P[1], 15), None)                    # half bush z 10..20

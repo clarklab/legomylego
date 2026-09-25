@@ -8,7 +8,7 @@ qty,part,name,colour,ldraw_colour,rebrickable_part,rebrickable_colour,bricklink_
 52,3024,Plate 1 x 1,Black,0,3024,0,3024,11,302426,0
 13,3069b,Tile 1 x 2 with Groove,Black,0,3069b,0,3069b,11,306926,0
 13,3070b,Tile 1 x 1 with Groove,Black,0,3070b,0,3070b,11,307026,0
-12,32062,Technic Axle 2 Notched,Black,0,32062,0,32062,11,4109810,0
+8,32062,Technic Axle 2 Notched,Black,0,32062,0,32062,11,4109810,0
 1,32072,Technic Knob Wheel,Black,0,32072,0,32072,11,6284188,0
 4,32316,Technic Beam 1 x 5 Thick,Black,0,32316,0,32316,11,4142135,0
 95,3666,Plate 1 x 6,Black,0,3666,0,3666,11,366626,0
@@ -40,24 +40,25 @@ qty,part,name,colour,ldraw_colour,rebrickable_part,rebrickable_colour,bricklink_
 5,32123b,Technic Bush 1/2 Smooth with Axle Hole Semi-Reduced,Light Bluish Gray,71,32123b,71,32123b,86,6271165,0
 1,3713,Technic Bush,Light Bluish Gray,71,3713,71,3713,86,6275844,0
 1,44294,Technic Axle 7,Light Bluish Gray,71,44294,71,44294,86,44294194,0
+4,4519,Technic Axle 3,Light Bluish Gray,71,4519,71,4519,86,4211815,0
 1,64228,"Battery Box, Power Functions, with Dark Bluish Gray Bottom [Non-Rechargeable]",Light Bluish Gray,71,64228,71,64228,86,6197414,1
 2,6589,Technic Gear 12 Tooth Bevel,Tan,19,6589,19,6589,2,4565452,0
 8,3941,Brick Round 2 x 2 with Axle Hole,Trans-Clear,47,3941,47,3941,12,6514281,0
-84,3005,Brick 1 x 1,Trans-Light Blue,43,3005,41,3005,15,6514210,0
-121,3023b,Plate 1 x 2,Trans-Light Blue,43,3023,41,3023,15,6514007,0
-124,3024,Plate 1 x 1,Trans-Light Blue,43,3024,41,3024,15,6513964,0
-156,3040b,Brick Sloped 45° 2 x 1 with Bottom Pin,Trans-Light Blue,43,3040b,41,3040b,15,6507937,0
-420,3065,Brick 1 x 2 without Bottom Tube,Trans-Light Blue,43,3065,41,3065,15,6514268,0
-18,3069b,Tile 1 x 2 with Groove,Trans-Light Blue,43,3069b,41,3069b,15,6514224,0
-121,3070b,Tile 1 x 1 with Groove,Trans-Light Blue,43,3070b,41,3070b,15,6514261,0
+72,3005,Brick 1 x 1,Trans-Light Blue,43,3005,41,3005,15,6514210,0
+391,3023b,Plate 1 x 2,Trans-Light Blue,43,3023,41,3023,15,6514007,0
+162,3024,Plate 1 x 1,Trans-Light Blue,43,3024,41,3024,15,6513964,0
+60,3040b,Brick Sloped 45° 2 x 1 with Bottom Pin,Trans-Light Blue,43,3040b,41,3040b,15,6507937,0
+252,3065,Brick 1 x 2 without Bottom Tube,Trans-Light Blue,43,3065,41,3065,15,6514268,0
+23,3069b,Tile 1 x 2 with Groove,Trans-Light Blue,43,3069b,41,3069b,15,6514224,0
+262,3070b,Tile 1 x 1 with Groove,Trans-Light Blue,43,3070b,41,3070b,15,6514261,0
 1,4285b,"Dish 6 x 6 Inverted, Radar / Webbed [Anti-studs at 90°]",Trans-Light Blue,43,4285b,41,4285b,15,6509243,0
-96,54200,Brick Sloped 30° 1 x 1 x 2/3 (Cheese Slope),Trans-Light Blue,43,54200,41,54200,15,6245277,0
-120,3023b,Plate 1 x 2,Trans-Red,36,3023,36,3023,17,6514003,0
+88,54200,Brick Sloped 30° 1 x 1 x 2/3 (Cheese Slope),Trans-Light Blue,43,54200,41,54200,15,6245277,0
+213,3023b,Plate 1 x 2,Trans-Red,36,3023,36,3023,17,6514003,0
 12,3024,Plate 1 x 1,Trans-Red,36,3024,36,3024,17,6513963,0
-18,3062b,Brick Round 1 x 1 Open Stud,Trans-Red,36,3062b,36,3062b,17,6514235,0
+6,3062b,Brick Round 1 x 1 Open Stud,Trans-Red,36,3062b,36,3062b,17,6514235,0
 51,3065,Brick 1 x 2 without Bottom Tube,Trans-Red,36,3065,36,3065,17,6514263,0
-24,54200,Brick Sloped 30° 1 x 1 x 2/3 (Cheese Slope),Trans-Red,36,54200,36,54200,17,6245252,0
-48,6141,Plate Round 1 x 1 with Solid Stud,Trans-Red,36,6141,36,6141,17,6514051,0
+36,54200,Brick Sloped 30° 1 x 1 x 2/3 (Cheese Slope),Trans-Red,36,54200,36,54200,17,6245252,0
+66,6141,Plate Round 1 x 1 with Solid Stud,Trans-Red,36,6141,36,6141,17,6514051,0
 90,98138,Tile Round 1 x 1,Trans-Red,36,98138,36,98138,17,6514189,0
 4,32348,Technic Beam 1 x 7 Bent (4 - 4) Thick,White,15,32348,15,32348,1,6278132,0
-4,41669,Technic Tooth 1 x 3 with Axle Hole [Rounded Underside],White,15,41669,15,41669,1,4173941,0
+8,41669,Technic Tooth 1 x 3 with Axle Hole [Rounded Underside],White,15,41669,15,41669,1,4173941,0

@@ -6,10 +6,10 @@ from brickkit.ldraw.matrix import rot
 from brickkit.shapes.rings import cell_center, pack_cells, ring_cells
 from brickkit.shapes.shell import Layer, _place_run, build_shell, plan_layers, woven_disc
 
-R = 11.0      # widest outer radius, studs
-R0 = 9.2      # radius at the rim where the dome meets the skirt
-H1 = 60       # height of the widest point above the rim, LDU
-H = 312       # nominal dome height (profile reaches 0 here), LDU
+R = 11.5      # widest outer radius, studs
+R0 = 9.6      # radius at the rim where the dome meets the skirt
+H1 = 50       # height of the widest point above the rim, LDU
+H = 280       # nominal dome height (profile reaches 0 here), LDU
 R_CAP = 4.5   # radius where the rings stop and the woven cap takes over
 
 
@@ -25,7 +25,7 @@ def ring_layers() -> list[Layer]:
     """Rings from the rim up to the height where the profile reaches R_CAP: bricks where the
     curve is steep, plates where it flattens toward the top."""
     h_cap = H1 + (H - H1) * math.sqrt(1 - (R_CAP / R) ** 2)
-    return plan_layers(profile, h_cap, max_step=1.5, closed_top=False)
+    return plan_layers(profile, h_cap, max_step=0.8, closed_top=False)
 
 
 def dome(model, sub, y_base=0.0, base_cells=None):
