@@ -470,6 +470,8 @@ def build(model):
                 @ translate(0, 0, -fh.PIVOT_Z)}
     model.moving_group("head", "head")
     model.pose = pose
+    model.meta["mechanism_name"] = "Head"
+    model.meta["mechanism_labels"] = ["turned away", "turned to you"]
     main.step("Plug the tail onto the eight side studs at the rump")
     F = ft.frame()
     main.use(tail, tuple(F[:3, 3]), F[:3, :3], tag="tail")

@@ -1,6 +1,8 @@
 [model]
 name = "Ferret"
 design = "design.py"
+description = "A curious, life-size ferret mid-bounce in real LEGO: arched back, bandit mask, tongue out, and a head that turns on a turntable. Three coats: sable, albino and cinnamon."
+palette_title = "Sable"
 
 # Default colourway: sable (cream/tan body, dark brown legs, tail and bandit mask).
 [palette]
@@ -36,6 +38,17 @@ mask = "Reddish Brown"
 face = "White"
 nose = "Dark Pink"
 eye = "Black"
+
+[booklet]
+subtitle = "Life-size (51 cm nose to tail) and mid-bounce, with the arched back ferrets run with. Build it in sable, albino or cinnamon: the same pieces, different colours."
+intro = "The body is a sculpture of bonded bricks, built in three parts: the chest with the front legs, the hips with the hind legs, and the arched back that joins them. The head sits on a turntable so the ferret can look at you, and the round tail plugs onto studs at the rump."
+notes = [
+  "The chest and the hips are built upside down, then turned over.",
+  "The head turns on a 2x2 turntable: set it to look at you after the last step.",
+]
+works = [
+  { title = "A head that turns", text = "The head sits on a 2x2 turntable, so the ferret can look at you or away.", image = "renders/three_quarter.png" },
+]
 
 [checks]
 enabled = ["real_elements", "connections", "collisions", "buildability", "stability",
