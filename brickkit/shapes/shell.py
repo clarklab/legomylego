@@ -242,11 +242,19 @@ def woven_disc(sub, cells, color, *, surface_y: float, plate: dict | None = None
     the surface under the first layer. Both layers go in one step (the first layer is only
     locked by the second). Returns stats and the top y."""
     plate = plate or {2: "3023b", 1: "3024"}
+    lengths = tuple(sorted(plate, reverse=True))
     best = None
     for oa in range(2):
         for ob in range(2):
-            a = pack_parity(cells, "x", oa)
-            b = pack_parity(cells, "z", ob)
+            if lengths == (2, 1):
+                a, b = pack_parity(cells, "x", oa), pack_parity(cells, "z", ob)
+            else:
+                a = pack_cells(cells, lengths=lengths, offset=oa, mode="x")
+                b = pack_cells(cells, lengths=lengths, offset=ob, mode="z")
+            # a 1x1 in both layers over the same cell can't lock to anything: leave it out
+            loose = ({r[:2] for r in a if r[2] == 1} & {r[:2] for r in b if r[2] == 1})
+            a = [r for r in a if not (r[2] == 1 and r[:2] in loose)]
+            b = [r for r in b if not (r[2] == 1 and r[:2] in loose)]
             pieces = _sheet_pieces(a, b)
             if best is None or pieces < best[0]:
                 best = (pieces, a, b)
@@ -258,7 +266,8 @@ def woven_disc(sub, cells, color, *, surface_y: float, plate: dict | None = None
             _place_run(sub, plate[n], color, i, k, n, axis, y - 8, tag)
             count += 1
         y -= 8
-    return {"parts": count, "top_y": y, "pieces": best[0]}
+    covered = {c for run in best[2] for c in _run_cells(run)}
+    return {"parts": count, "top_y": y, "pieces": best[0], "cells": covered}
 
 
 def pack_parity(cells, axis: str, parity: int) -> list[tuple[int, int, int, str]]:

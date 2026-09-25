@@ -1,19 +1,19 @@
-"""Baby Metroid (prototype stage: dome on a simple ring)."""
-from brickkit.shapes.rings import pack_cells, ring_cells
-from brickkit.ldraw.matrix import rot
-
+"""Baby Metroid: base disc and fang mechanism, skirt, nuclei, dome, hover stand.
+Front of the model is the diagonal between -X and -Z (the fangs sit on the grid axes)."""
+import core
 import dome as dome_mod
+import skirt as skirt_mod
+import stand as stand_mod
 
 
 def build(model):
+    model.meta["azimuth_offset"] = -45     # the Metroid faces the -X/-Z diagonal
     main = model.main
-    L0 = dome_mod.ring_layers()[0]
-    cells = ring_cells(L0.r_out, L0.r_in)
-    for i, k, n, axis in pack_cells(cells, (2, 1)):
-        part = {2: "3004", 1: "3005"}[n]
-        x = (i + (n / 2 if axis == "x" else .5)) * 20
-        z = (k + (n / 2 if axis == "z" else .5)) * 20
-        main.place(part, "skirt", (x, 0, z), rot(y=90) if axis == "z" and n > 1 else None)
-    sub, layers, stats = dome_mod.dome(model, main, base_cells=cells)
-    print("dome layers:", [(L.kind, round(L.r_out, 1), round(L.r_in, 1)) for L in layers])
-    print("dome stats:", stats)
+    disc_cells = core.disc(main)
+    core.core(model, main)
+    top_cells = skirt_mod.skirt(main, disc_cells)
+    core.knob(model, main)
+    dome_mod.dome(model, main, base_cells=top_cells)
+    stand = stand_mod.stand(model)
+    main.step("Put the Metroid on its stand")
+    main.use(stand, (0, 0, 0), None, tag="stand", insert=(0, 1, 0))

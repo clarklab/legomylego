@@ -1,12 +1,53 @@
 qty,part,name,colour,ldraw_colour,rebrickable_part,rebrickable_colour,bricklink_part,bricklink_colour,element_id,rare
-22,3004,Brick 1 x 2,Coral,353,3004,1050,3004,220,6258572,0
-20,3005,Brick 1 x 1,Coral,353,3005,1050,3005,220,6422915,0
+37,2431,Tile 1 x 4 with Groove,Black,0,2431,0,2431,11,243126,0
+4,3003,Brick 2 x 2,Black,0,3003,0,3003,11,4103587,0
+127,3004,Brick 1 x 2,Black,0,3004,0,3004,11,300426,0
+20,3005,Brick 1 x 1,Black,0,3005,0,3005,11,300526,0
+27,3023b,Plate 1 x 2,Black,0,3023,0,3023,11,302326,0
+52,3024,Plate 1 x 1,Black,0,3024,0,3024,11,302426,0
+13,3069b,Tile 1 x 2 with Groove,Black,0,3069b,0,3069b,11,306926,0
+13,3070b,Tile 1 x 1 with Groove,Black,0,3070b,0,3070b,11,307026,0
+12,32062,Technic Axle 2 Notched,Black,0,32062,0,32062,11,4109810,0
+1,32072,Technic Knob Wheel,Black,0,32072,0,32072,11,6284188,0
+4,32316,Technic Beam 1 x 5 Thick,Black,0,32316,0,32316,11,4142135,0
+95,3666,Plate 1 x 6,Black,0,3666,0,3666,11,366626,0
+9,3700,Technic Brick 1 x 2 [1 Pin Hole],Black,0,3700,0,3700,11,370026,0
+3,3705,Technic Axle 4,Black,0,3705,0,3705,11,370526,0
+2,3706,Technic Axle 6,Black,0,3706,0,3706,11,370626,0
+2,3709b,Technic Plate 2 x 4 [3 Holes],Black,0,3709,0,3709,11,370926,0
+26,3710,Plate 1 x 4,Black,0,3710,0,3710,11,371026,0
+4,3894,Technic Brick 1 x 6 [5 Pin Holes],Black,0,3894,0,3894,11,389426,0
+1,3941,Brick Round 2 x 2 with Axle Hole,Black,0,3941,0,3941,11,614376,0
+1,3958,Plate 6 x 6,Black,0,3958,0,3958,11,395826,0
+1,4716,Technic Worm Gear,Black,0,4716,0,4716,11,6037533,0
+1,50451,Technic Axle 16,Black,0,50451,0,50451,11,6317564,0
+4,6632,Technic Beam 1 x 3 Thin,Black,0,6632,0,6632,11,6331723,0
+59,3004,Brick 1 x 2,Coral,353,3004,1050,3004,220,6258572,0
+15,3005,Brick 1 x 1,Coral,353,3005,1050,3005,220,6422915,0
+37,3023b,Plate 1 x 2,Coral,353,3023,1050,3023,220,6258094,0
+2,3024,Plate 1 x 1,Coral,353,3024,1050,3024,220,6258091,0
+1,3648b,Technic Gear 24 Tooth [New Style with Single Axle Hole],Dark Bluish Gray,72,3648b,72,3648b,85,6133119,0
+4,3941,Brick Round 2 x 2 with Axle Hole,Dark Bluish Gray,72,3941,72,3941,85,4249139,0
+3,4032a,Plate Round 2 x 2 with Axle Hole Type 1 (+ Opening),Dark Bluish Gray,72,4032a,72,4032a,85,4211042,0
+22,3023b,Plate 1 x 2,Dark Red,320,3023,320,3023,59,4539097,0
+44,3024,Plate 1 x 1,Dark Red,320,3024,320,3024,59,4539114,0
+74,3666,Plate 1 x 6,Dark Red,320,3666,320,3666,59,4539062,0
+1,3700,Technic Brick 1 x 2 [1 Pin Hole],Dark Red,320,3700,320,3700,59,6212010,0
+16,3710,Plate 1 x 4,Dark Red,320,3710,320,3710,59,4539061,0
+5,32123b,Technic Bush 1/2 Smooth with Axle Hole Semi-Reduced,Light Bluish Gray,71,32123b,71,32123b,86,6271165,0
+1,3713,Technic Bush,Light Bluish Gray,71,3713,71,3713,86,6275844,0
+1,44294,Technic Axle 7,Light Bluish Gray,71,44294,71,44294,86,44294194,0
+1,64228,"Battery Box, Power Functions, with Dark Bluish Gray Bottom [Non-Rechargeable]",Light Bluish Gray,71,64228,71,64228,86,6197414,1
+2,6589,Technic Gear 12 Tooth Bevel,Tan,19,6589,19,6589,2,4565452,0
+8,3941,Brick Round 2 x 2 with Axle Hole,Trans-Clear,47,3941,47,3941,12,6514281,0
 92,3005,Brick 1 x 1,Trans-Light Blue,43,3005,41,3005,15,6514210,0
 121,3023b,Plate 1 x 2,Trans-Light Blue,43,3023,41,3023,15,6514007,0
-138,3024,Plate 1 x 1,Trans-Light Blue,43,3024,41,3024,15,6513964,0
+132,3024,Plate 1 x 1,Trans-Light Blue,43,3024,41,3024,15,6513964,0
 156,3040b,Brick Sloped 45° 2 x 1 with Bottom Pin,Trans-Light Blue,43,3040b,41,3040b,15,6507937,0
 416,3065,Brick 1 x 2 without Bottom Tube,Trans-Light Blue,43,3065,41,3065,15,6514268,0
-19,3069b,Tile 1 x 2 with Groove,Trans-Light Blue,43,3069b,41,3069b,15,6514224,0
-122,3070b,Tile 1 x 1 with Groove,Trans-Light Blue,43,3070b,41,3070b,15,6514261,0
+18,3069b,Tile 1 x 2 with Groove,Trans-Light Blue,43,3069b,41,3069b,15,6514224,0
+121,3070b,Tile 1 x 1 with Groove,Trans-Light Blue,43,3070b,41,3070b,15,6514261,0
 1,4285b,"Dish 6 x 6 Inverted, Radar / Webbed [Anti-studs at 90°]",Trans-Light Blue,43,4285b,41,4285b,15,6509243,0
 104,54200,Brick Sloped 30° 1 x 1 x 2/3 (Cheese Slope),Trans-Light Blue,43,54200,41,54200,15,6245277,0
+4,32348,Technic Beam 1 x 7 Bent (4 - 4) Thick,White,15,32348,15,32348,1,6278132,0
+4,41669,Technic Tooth 1 x 3 with Axle Hole [Rounded Underside],White,15,41669,15,41669,1,4173941,0

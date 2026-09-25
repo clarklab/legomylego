@@ -92,7 +92,10 @@ def check_buildability(ctx, cfg) -> CheckResult:
             pending = [ui for ui, u in enumerate(units) if u.step == s]
             while pending:
                 bset = set(built)
-                attached = [ui for ui in pending if any(o in bset for o, _, _ in links[ui])]
+                # units already attached to the build, or with an explicit insertion direction,
+                # are tried in the order they are listed; others wait until nothing else fits
+                attached = [ui for ui in pending if any(o in bset for o, _, _ in links[ui])
+                            or units[ui].insert is not None]
                 progress = False
                 for ui in attached:
                     tried += 1

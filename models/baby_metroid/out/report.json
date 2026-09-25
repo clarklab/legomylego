@@ -1,27 +1,42 @@
 {
   "title": "Baby Metroid",
-  "status": "fail",
+  "status": "warn",
   "checks": [
     {
       "name": "real_elements",
-      "status": "pass",
-      "summary": "11 part/colour combinations: 0 not real, 0 rare",
-      "items": [],
+      "status": "warn",
+      "summary": "52 part/colour combinations: 0 not real, 1 rare",
+      "items": [
+        {
+          "part": "64228",
+          "name": "Battery Box, Power Functions, with Dark Bluish Gray Bottom [Non-Rechargeable]",
+          "colour": "Light Bluish Gray",
+          "severity": "warn",
+          "problem": "rare: in 7 set(s), last seen 2015",
+          "element_ids": [
+            "4578042",
+            "4638959",
+            "6116239",
+            "6197414"
+          ]
+        }
+      ],
       "stats": {
-        "combinations": 11,
+        "combinations": 52,
         "not_real": 0,
-        "rare": 0
+        "rare": 1
       }
     },
     {
       "name": "connections",
       "status": "pass",
-      "summary": "1524 connections (1524 stud); 1 separate piece(s)",
+      "summary": "3154 connections (3083 stud, 71 axle); 1 separate piece(s)",
       "items": [],
       "stats": {
-        "connections": 1524,
+        "connections": 3154,
         "by_kind": {
-          "stud": 1524
+          "stud": 3083,
+          "axle": 71
         },
         "pieces": 1
       }
@@ -29,7 +44,7 @@
     {
       "name": "collisions",
       "status": "pass",
-      "summary": "0 overlapping pair(s) among 1211 parts",
+      "summary": "0 overlapping pair(s) among 1924 parts",
       "items": [],
       "stats": {
         "pairs": 0
@@ -37,506 +52,39 @@
     },
     {
       "name": "buildability",
-      "status": "fail",
-      "summary": "1169 insertions tried across 1 submodel(s); 78 problem(s)",
-      "items": [
-        {
-          "submodel": "baby_metroid",
-          "step": 1,
-          "part": "3004 Coral",
-          "problem": "step leaves 42 loose pieces"
-        },
-        {
-          "submodel": "baby_metroid",
-          "step": 2,
-          "part": "3005 Coral, 3005 Coral, 3065 Trans-Light Blue",
-          "problem": "step leaves 40 loose pieces"
-        },
-        {
-          "submodel": "baby_metroid",
-          "step": 3,
-          "part": "3005 Coral, 3005 Coral, 3065 Trans-Light Blue",
-          "problem": "step leaves 36 loose pieces"
-        },
-        {
-          "submodel": "baby_metroid",
-          "step": 4,
-          "part": "3005 Coral, 3004 Coral, 3004 Coral, 3065 Trans-Light Blue, 3065 Trans-Light Blue",
-          "problem": "step leaves 32 loose pieces"
-        },
-        {
-          "submodel": "baby_metroid",
-          "step": 5,
-          "part": "3005 Coral, 3004 Coral, 3004 Coral, 3004 Coral, 3005 Coral",
-          "problem": "step leaves 26 loose pieces"
-        },
-        {
-          "submodel": "baby_metroid",
-          "step": 6,
-          "part": "3005 Coral, 3004 Coral, 3004 Coral, 3004 Coral, 3005 Coral",
-          "problem": "step leaves 26 loose pieces"
-        },
-        {
-          "submodel": "baby_metroid",
-          "step": 7,
-          "part": "3005 Coral, 3004 Coral, 3004 Coral, 3004 Coral, 3005 Coral",
-          "problem": "step leaves 26 loose pieces"
-        },
-        {
-          "submodel": "baby_metroid",
-          "step": 8,
-          "part": "3005 Coral, 3004 Coral, 3004 Coral, 3004 Coral, 3005 Coral",
-          "problem": "step leaves 26 loose pieces"
-        },
-        {
-          "submodel": "baby_metroid",
-          "step": 9,
-          "part": "3005 Coral, 3004 Coral, 3004 Coral, 3004 Coral, 3005 Coral",
-          "problem": "step leaves 26 loose pieces"
-        },
-        {
-          "submodel": "baby_metroid",
-          "step": 10,
-          "part": "3005 Coral, 3004 Coral, 3004 Coral, 3004 Coral, 3005 Coral",
-          "problem": "step leaves 26 loose pieces"
-        },
-        {
-          "submodel": "baby_metroid",
-          "step": 11,
-          "part": "3005 Coral, 3004 Coral, 3004 Coral, 3004 Coral, 3005 Coral",
-          "problem": "step leaves 20 loose pieces"
-        },
-        {
-          "submodel": "baby_metroid",
-          "step": 12,
-          "part": "3004 Coral, 3005 Coral, 3005 Coral, 3004 Coral, 3004 Coral",
-          "problem": "step leaves 17 loose pieces"
-        },
-        {
-          "submodel": "baby_metroid",
-          "step": 13,
-          "part": "3005 Coral, 3005 Coral, 3004 Coral, 3005 Coral, 3004 Coral",
-          "problem": "step leaves 14 loose pieces"
-        },
-        {
-          "submodel": "baby_metroid",
-          "step": 14,
-          "part": "3005 Coral, 3005 Coral, 3004 Coral, 3005 Coral, 3004 Coral",
-          "problem": "step leaves 12 loose pieces"
-        },
-        {
-          "submodel": "baby_metroid",
-          "step": 15,
-          "part": "3005 Coral, 3005 Coral, 3005 Coral, 3005 Coral, 3004 Coral",
-          "problem": "step leaves 10 loose pieces"
-        },
-        {
-          "submodel": "baby_metroid",
-          "step": 16,
-          "part": "3005 Coral, 3005 Coral, 3005 Coral, 3005 Coral, 3004 Coral",
-          "problem": "step leaves 10 loose pieces"
-        },
-        {
-          "submodel": "baby_metroid",
-          "step": 17,
-          "part": "3004 Coral, 3005 Coral, 3005 Coral, 3004 Coral, 3004 Coral",
-          "problem": "step leaves 8 loose pieces"
-        },
-        {
-          "submodel": "baby_metroid",
-          "step": 18,
-          "part": "3004 Coral, 3005 Coral, 3005 Coral, 3004 Coral, 3004 Coral",
-          "problem": "step leaves 8 loose pieces"
-        },
-        {
-          "submodel": "baby_metroid",
-          "step": 19,
-          "part": "3005 Coral, 3005 Coral, 3004 Coral, 3004 Coral, 3005 Coral",
-          "problem": "step leaves 4 loose pieces"
-        },
-        {
-          "submodel": "baby_metroid",
-          "step": 20,
-          "part": "3005 Coral, 3005 Coral, 3004 Coral, 3004 Coral, 3005 Coral",
-          "problem": "step leaves 4 loose pieces"
-        },
-        {
-          "submodel": "baby_metroid",
-          "step": 21,
-          "part": "3005 Coral, 3005 Coral, 3004 Coral, 3004 Coral, 3005 Coral",
-          "problem": "step leaves 4 loose pieces"
-        },
-        {
-          "submodel": "baby_metroid",
-          "step": 22,
-          "part": "3005 Coral, 3005 Coral, 3004 Coral, 3004 Coral, 3005 Coral",
-          "problem": "step leaves 4 loose pieces"
-        },
-        {
-          "submodel": "baby_metroid",
-          "step": 23,
-          "part": "3005 Coral, 3005 Coral, 3004 Coral, 3004 Coral, 3005 Coral",
-          "problem": "step leaves 4 loose pieces"
-        },
-        {
-          "submodel": "baby_metroid",
-          "step": 24,
-          "part": "3005 Coral, 3005 Coral, 3004 Coral, 3004 Coral, 3005 Coral",
-          "problem": "step leaves 4 loose pieces"
-        },
-        {
-          "submodel": "baby_metroid",
-          "step": 25,
-          "part": "3005 Coral, 3005 Coral, 3004 Coral, 3004 Coral, 3005 Coral",
-          "problem": "step leaves 4 loose pieces"
-        },
-        {
-          "submodel": "baby_metroid",
-          "step": 26,
-          "part": "3005 Coral, 3005 Coral, 3004 Coral, 3004 Coral, 3005 Coral",
-          "problem": "step leaves 4 loose pieces"
-        },
-        {
-          "submodel": "baby_metroid",
-          "step": 27,
-          "part": "3005 Coral, 3005 Coral, 3004 Coral, 3004 Coral, 3005 Coral",
-          "problem": "step leaves 4 loose pieces"
-        },
-        {
-          "submodel": "baby_metroid",
-          "step": 28,
-          "part": "3005 Coral, 3005 Coral, 3004 Coral, 3004 Coral, 3005 Coral",
-          "problem": "step leaves 4 loose pieces"
-        },
-        {
-          "submodel": "baby_metroid",
-          "step": 29,
-          "part": "3005 Coral, 3005 Coral, 3004 Coral, 3004 Coral, 3005 Coral",
-          "problem": "step leaves 2 loose pieces"
-        },
-        {
-          "submodel": "baby_metroid",
-          "step": 30,
-          "part": "3005 Coral, 3005 Coral, 3004 Coral, 3004 Coral, 3005 Coral",
-          "problem": "step leaves 2 loose pieces"
-        },
-        {
-          "submodel": "baby_metroid",
-          "step": 31,
-          "part": "3005 Coral, 3005 Coral, 3004 Coral, 3004 Coral, 3005 Coral",
-          "problem": "step leaves 2 loose pieces"
-        },
-        {
-          "submodel": "baby_metroid",
-          "step": 32,
-          "part": "3005 Coral, 3005 Coral, 3004 Coral, 3004 Coral, 3005 Coral",
-          "problem": "step leaves 2 loose pieces"
-        },
-        {
-          "submodel": "baby_metroid",
-          "step": 33,
-          "part": "3005 Coral, 3005 Coral, 3004 Coral, 3004 Coral, 3005 Coral",
-          "problem": "step leaves 2 loose pieces"
-        },
-        {
-          "submodel": "baby_metroid",
-          "step": 34,
-          "part": "3005 Coral, 3005 Coral, 3004 Coral, 3004 Coral, 3005 Coral",
-          "problem": "step leaves 2 loose pieces"
-        },
-        {
-          "submodel": "baby_metroid",
-          "step": 35,
-          "part": "3005 Coral, 3005 Coral, 3004 Coral, 3004 Coral, 3005 Coral",
-          "problem": "step leaves 2 loose pieces"
-        },
-        {
-          "submodel": "baby_metroid",
-          "step": 36,
-          "part": "3005 Coral, 3005 Coral, 3004 Coral, 3004 Coral, 3005 Coral",
-          "problem": "step leaves 2 loose pieces"
-        },
-        {
-          "submodel": "baby_metroid",
-          "step": 37,
-          "part": "3005 Coral, 3005 Coral, 3004 Coral, 3004 Coral, 3005 Coral",
-          "problem": "step leaves 2 loose pieces"
-        },
-        {
-          "submodel": "baby_metroid",
-          "step": 38,
-          "part": "3005 Coral, 3005 Coral, 3004 Coral, 3004 Coral, 3005 Coral",
-          "problem": "step leaves 2 loose pieces"
-        },
-        {
-          "submodel": "baby_metroid",
-          "step": 39,
-          "part": "3005 Coral, 3005 Coral, 3004 Coral, 3004 Coral, 3005 Coral",
-          "problem": "step leaves 2 loose pieces"
-        },
-        {
-          "submodel": "baby_metroid",
-          "step": 40,
-          "part": "3005 Coral, 3005 Coral, 3004 Coral, 3004 Coral, 3005 Coral",
-          "problem": "step leaves 2 loose pieces"
-        },
-        {
-          "submodel": "baby_metroid",
-          "step": 41,
-          "part": "3005 Coral, 3005 Coral, 3004 Coral, 3004 Coral, 3005 Coral",
-          "problem": "step leaves 2 loose pieces"
-        },
-        {
-          "submodel": "baby_metroid",
-          "step": 42,
-          "part": "3005 Coral, 3005 Coral, 3004 Coral, 3004 Coral, 3005 Coral",
-          "problem": "step leaves 2 loose pieces"
-        },
-        {
-          "submodel": "baby_metroid",
-          "step": 43,
-          "part": "3005 Coral, 3005 Coral, 3004 Coral, 3004 Coral, 3005 Coral",
-          "problem": "step leaves 2 loose pieces"
-        },
-        {
-          "submodel": "baby_metroid",
-          "step": 44,
-          "part": "3005 Coral, 3005 Coral, 3004 Coral, 3004 Coral, 3005 Coral",
-          "problem": "step leaves 2 loose pieces"
-        },
-        {
-          "submodel": "baby_metroid",
-          "step": 45,
-          "part": "3005 Coral, 3005 Coral, 3004 Coral, 3004 Coral, 3005 Coral",
-          "problem": "step leaves 2 loose pieces"
-        },
-        {
-          "submodel": "baby_metroid",
-          "step": 46,
-          "part": "3005 Coral, 3005 Coral, 3004 Coral, 3004 Coral, 3005 Coral",
-          "problem": "step leaves 2 loose pieces"
-        },
-        {
-          "submodel": "baby_metroid",
-          "step": 47,
-          "part": "3005 Coral, 3005 Coral, 3004 Coral, 3004 Coral, 3005 Coral",
-          "problem": "step leaves 2 loose pieces"
-        },
-        {
-          "submodel": "baby_metroid",
-          "step": 48,
-          "part": "3005 Coral, 3005 Coral, 3004 Coral, 3004 Coral, 3005 Coral",
-          "problem": "step leaves 2 loose pieces"
-        },
-        {
-          "submodel": "baby_metroid",
-          "step": 49,
-          "part": "3005 Coral, 3005 Coral, 3004 Coral, 3004 Coral, 3005 Coral",
-          "problem": "step leaves 2 loose pieces"
-        },
-        {
-          "submodel": "baby_metroid",
-          "step": 50,
-          "part": "3005 Coral, 3005 Coral, 3004 Coral, 3004 Coral, 3005 Coral",
-          "problem": "step leaves 2 loose pieces"
-        },
-        {
-          "submodel": "baby_metroid",
-          "step": 51,
-          "part": "3005 Coral, 3005 Coral, 3004 Coral, 3004 Coral, 3005 Coral",
-          "problem": "step leaves 2 loose pieces"
-        },
-        {
-          "submodel": "baby_metroid",
-          "step": 52,
-          "part": "3005 Coral, 3005 Coral, 3004 Coral, 3004 Coral, 3005 Coral",
-          "problem": "step leaves 2 loose pieces"
-        },
-        {
-          "submodel": "baby_metroid",
-          "step": 53,
-          "part": "3005 Coral, 3005 Coral, 3004 Coral, 3004 Coral, 3005 Coral",
-          "problem": "step leaves 2 loose pieces"
-        },
-        {
-          "submodel": "baby_metroid",
-          "step": 54,
-          "part": "3005 Coral, 3005 Coral, 3004 Coral, 3004 Coral, 3005 Coral",
-          "problem": "step leaves 2 loose pieces"
-        },
-        {
-          "submodel": "baby_metroid",
-          "step": 55,
-          "part": "3005 Coral, 3005 Coral, 3004 Coral, 3004 Coral, 3005 Coral",
-          "problem": "step leaves 2 loose pieces"
-        },
-        {
-          "submodel": "baby_metroid",
-          "step": 56,
-          "part": "3005 Coral, 3005 Coral, 3004 Coral, 3004 Coral, 3005 Coral",
-          "problem": "step leaves 2 loose pieces"
-        },
-        {
-          "submodel": "baby_metroid",
-          "step": 57,
-          "part": "3005 Coral, 3005 Coral, 3004 Coral, 3004 Coral, 3005 Coral",
-          "problem": "step leaves 2 loose pieces"
-        },
-        {
-          "submodel": "baby_metroid",
-          "step": 58,
-          "part": "3005 Coral, 3005 Coral, 3004 Coral, 3004 Coral, 3005 Coral",
-          "problem": "step leaves 2 loose pieces"
-        },
-        {
-          "submodel": "baby_metroid",
-          "step": 59,
-          "part": "3005 Coral, 3005 Coral, 3004 Coral, 3004 Coral, 3005 Coral",
-          "problem": "step leaves 2 loose pieces"
-        },
-        {
-          "submodel": "baby_metroid",
-          "step": 60,
-          "part": "3005 Coral, 3005 Coral, 3004 Coral, 3004 Coral, 3005 Coral",
-          "problem": "step leaves 2 loose pieces"
-        },
-        {
-          "submodel": "baby_metroid",
-          "step": 61,
-          "part": "3005 Coral, 3005 Coral, 3004 Coral, 3004 Coral, 3005 Coral",
-          "problem": "step leaves 2 loose pieces"
-        },
-        {
-          "submodel": "baby_metroid",
-          "step": 62,
-          "part": "3005 Coral, 3005 Coral, 3004 Coral, 3004 Coral, 3005 Coral",
-          "problem": "step leaves 2 loose pieces"
-        },
-        {
-          "submodel": "baby_metroid",
-          "step": 63,
-          "part": "3005 Coral, 3005 Coral, 3004 Coral, 3004 Coral, 3005 Coral",
-          "problem": "step leaves 2 loose pieces"
-        },
-        {
-          "submodel": "baby_metroid",
-          "step": 64,
-          "part": "3005 Coral, 3005 Coral, 3004 Coral, 3004 Coral, 3005 Coral",
-          "problem": "step leaves 2 loose pieces"
-        },
-        {
-          "submodel": "baby_metroid",
-          "step": 65,
-          "part": "3005 Coral, 3005 Coral, 3004 Coral, 3004 Coral, 3005 Coral",
-          "problem": "step leaves 2 loose pieces"
-        },
-        {
-          "submodel": "baby_metroid",
-          "step": 66,
-          "part": "3005 Coral, 3005 Coral, 3004 Coral, 3004 Coral, 3005 Coral",
-          "problem": "step leaves 2 loose pieces"
-        },
-        {
-          "submodel": "baby_metroid",
-          "step": 67,
-          "part": "3005 Coral, 3005 Coral, 3004 Coral, 3004 Coral, 3005 Coral",
-          "problem": "step leaves 2 loose pieces"
-        },
-        {
-          "submodel": "baby_metroid",
-          "step": 68,
-          "part": "3005 Coral, 3005 Coral, 3004 Coral, 3004 Coral, 3005 Coral",
-          "problem": "step leaves 2 loose pieces"
-        },
-        {
-          "submodel": "baby_metroid",
-          "step": 69,
-          "part": "3005 Coral, 3005 Coral, 3004 Coral, 3004 Coral, 3005 Coral",
-          "problem": "step leaves 2 loose pieces"
-        },
-        {
-          "submodel": "baby_metroid",
-          "step": 70,
-          "part": "3005 Coral, 3005 Coral, 3004 Coral, 3004 Coral, 3005 Coral",
-          "problem": "step leaves 2 loose pieces"
-        },
-        {
-          "submodel": "baby_metroid",
-          "step": 71,
-          "part": "3005 Coral, 3005 Coral, 3004 Coral, 3004 Coral, 3005 Coral",
-          "problem": "step leaves 2 loose pieces"
-        },
-        {
-          "submodel": "baby_metroid",
-          "step": 72,
-          "part": "3005 Coral, 3005 Coral, 3004 Coral, 3004 Coral, 3005 Coral",
-          "problem": "step leaves 2 loose pieces"
-        },
-        {
-          "submodel": "baby_metroid",
-          "step": 73,
-          "part": "3005 Coral, 3005 Coral, 3004 Coral, 3004 Coral, 3005 Coral",
-          "problem": "step leaves 2 loose pieces"
-        },
-        {
-          "submodel": "baby_metroid",
-          "step": 74,
-          "part": "3005 Coral, 3005 Coral, 3004 Coral, 3004 Coral, 3005 Coral",
-          "problem": "step leaves 2 loose pieces"
-        },
-        {
-          "submodel": "baby_metroid",
-          "step": 75,
-          "part": "3005 Coral, 3005 Coral, 3004 Coral, 3004 Coral, 3005 Coral",
-          "problem": "step leaves 2 loose pieces"
-        },
-        {
-          "submodel": "baby_metroid",
-          "step": 76,
-          "part": "3005 Coral, 3005 Coral, 3004 Coral, 3004 Coral, 3005 Coral",
-          "problem": "step leaves 2 loose pieces"
-        },
-        {
-          "submodel": "baby_metroid",
-          "step": 77,
-          "part": "3005 Coral, 3005 Coral, 3004 Coral, 3004 Coral, 3005 Coral",
-          "problem": "step leaves 2 loose pieces"
-        },
-        {
-          "submodel": "baby_metroid",
-          "step": 78,
-          "part": "3005 Coral, 3005 Coral, 3004 Coral, 3004 Coral, 3005 Coral",
-          "problem": "step leaves 2 loose pieces"
-        }
-      ],
+      "status": "pass",
+      "summary": "1907 insertions tried across 7 submodel(s); 0 problem(s)",
+      "items": [],
       "stats": {
-        "insertions": 1169
+        "insertions": 1907
       }
     },
     {
       "name": "stability",
       "status": "pass",
-      "summary": "about 746 g; centre of mass inside the base (100% margin); tips at 47.7 deg",
+      "summary": "about 1318 g; centre of mass inside the base (105% margin); tips at 21.2 deg",
       "items": [],
       "stats": {
-        "mass_g": 745.5769807964568,
+        "mass_g": 1317.7132971167725,
         "com": [
-          -0.07467455646528375,
-          -157.84234860595035,
-          0.015392238959375639
+          0.2714803664514261,
+          13.806161357442823,
+          1.2453009120588265
         ],
         "approx_parts": 0,
-        "margin": 0.9996266272176736,
-        "tip_angle_deg": 47.71187039689769,
-        "com_height_ldu": 181.84234860595035
+        "margin": 1.0536816311146537,
+        "tip_angle_deg": 21.15761387636345,
+        "com_height_ldu": 410.1938386425572
       }
     },
     {
       "name": "mechanism",
       "status": "pass",
-      "summary": "no moving parts defined",
+      "summary": "24 poses swept for 16 moving group(s); 2 gear pair(s); 0 problem(s)",
       "items": [],
-      "stats": {}
+      "stats": {
+        "poses": 24
+      }
     },
     {
       "name": "electrics",

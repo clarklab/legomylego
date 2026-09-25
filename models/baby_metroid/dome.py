@@ -41,7 +41,7 @@ def dome(model, sub, y_base=0.0, base_cells=None):
     centre = {(-1, -1), (-1, 0), (0, -1), (0, 0)}
     sub.step("Tiles")
     tiles = 0
-    for i, k, n, axis in pack_cells(cap_cells - centre, lengths=(2, 1), mode="x"):
+    for i, k, n, axis in pack_cells(cap["cells"] - centre, lengths=(2, 1), mode="x"):
         _place_run(sub, {2: "3069b", 1: "3070b"}[n], "dome", i, k, n, axis, y - 8, "")
         tiles += 1
     sub.step("Dish")

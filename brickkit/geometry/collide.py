@@ -28,9 +28,11 @@ def shrink_tris(T: np.ndarray, d: float) -> np.ndarray:
 
 
 class CollisionEngine:
-    def __init__(self, geom: GeometryCache, shrink: float = 0.25):
+    def __init__(self, geom: GeometryCache, shrink: float = 0.25, skip_pair=None):
         self.geom = geom
         self.shrink = shrink
+        self.skip_pair = skip_pair      # callable(part_a, part_b) -> True to ignore contact
+        self.skipped = 0
         self._bvh: dict[str, object] = {}
         self._corners: dict[str, np.ndarray] = {}
 
@@ -64,6 +66,9 @@ class CollisionEngine:
         return np.stack([self.world_aabb(p, M) for p, M in items])
 
     def collide_pair(self, pa: str, Ma: np.ndarray, pb: str, Mb: np.ndarray) -> bool:
+        if self.skip_pair is not None and self.skip_pair(pa, pb):
+            self.skipped += 1
+            return False
         a, b = self._model(pa), self._model(pb)
         if a is None or b is None:
             return False
