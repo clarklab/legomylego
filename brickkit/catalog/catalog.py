@@ -1,10 +1,11 @@
 from __future__ import annotations
 
 import json
+import re
 from dataclasses import dataclass
 
 from .. import paths
-from ..ldraw.library import LDrawLibrary, part_id
+from ..ldraw.library import LDrawLibrary, normalize, part_id
 from .colors import Color, ColorTable
 from .rebrickable import RBIndex, load_index
 
@@ -47,8 +48,48 @@ class Catalog:
     def _pm(self, part: str) -> dict:
         return self.part_map.get(part_id(part), {})
 
+    def canonical(self, part: str) -> str:
+        """Follow LDraw '~Moved to X' aliases to the current file name."""
+        name = normalize(part)
+        for _ in range(5):
+            m = re.match(r"~Moved to\s+(\S+)", self.ldraw.description(name))
+            if not m:
+                break
+            name = normalize(m.group(1))
+        return name
+
     def rb_part(self, part: str) -> str:
-        return self._pm(part).get("rebrickable", part_id(part))
+        pm = self._pm(part)
+        if "rebrickable" in pm:
+            return pm["rebrickable"]
+        pid = part_id(part)
+        if pid in self.rb.parts:
+            return pid
+        m = re.match(r"^(\d+)[a-z]$", pid)
+        if m and m.group(1) in self.rb.parts:
+            return m.group(1)
+        return pid
+
+    def search(self, text: str, color=None, limit: int = 40) -> list[tuple]:
+        """(sets, part, name, has_ldraw) for Rebrickable parts whose name contains every word."""
+        words = text.lower().split()
+        c = self.color(color) if color else None
+        rows = []
+        for pnum, (name, _) in self.rb.parts.items():
+            low = name.lower()
+            if not all(w in low for w in words):
+                continue
+            if c is not None:
+                key = (pnum, c.rb_id)
+                sets = self.rb.set_count.get(key, 0)
+                if not sets and key not in self.rb.elements:
+                    continue
+            else:
+                sets = max((self.rb.set_count.get((pnum, cid), 0)
+                            for cid in self.rb.part_colors.get(pnum, ())), default=0)
+            rows.append((sets, pnum, name, self.ldraw.resolve(pnum) is not None))
+        rows.sort(key=lambda r: -r[0])
+        return rows[:limit]
 
     def bl_part(self, part: str) -> str:
         return self._pm(part).get("bricklink", self.rb_part(part))

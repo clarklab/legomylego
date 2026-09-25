@@ -62,6 +62,10 @@ def main(argv=None) -> int:
     p.add_argument("--name")
     for c in ("build", "verify", "bom", "all"):
         sub.add_parser(c).add_argument("slug")
+    p = sub.add_parser("find", help="search real LEGO parts by name, optionally in a colour")
+    p.add_argument("text")
+    p.add_argument("--color")
+    p.add_argument("--limit", type=int, default=40)
     args = ap.parse_args(argv)
 
     if args.cmd == "fetch":
@@ -73,6 +77,10 @@ def main(argv=None) -> int:
 
     from .engine import Engine
     engine = Engine()
+    if args.cmd == "find":
+        for sets, part, name, has_ld in engine.catalog.search(args.text, args.color, args.limit):
+            print(f"{sets:5d}  {part:12s} {'ldraw' if has_ld else '     '}  {name}")
+        return 0
     proj, model = _build(engine, args.slug)
     code = 0
     if args.cmd in ("verify", "all"):

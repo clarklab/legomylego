@@ -75,7 +75,7 @@ class Submodel:
 
     def place(self, part: str, color, pos=(0, 0, 0), rot=None, *, tag: str = "",
               note: str = "", insert=None) -> Placement:
-        p = Placement(normalize(part), self.model.resolve_color(color), transform(pos, rot),
+        p = Placement(self.model.canonical(part), self.model.resolve_color(color), transform(pos, rot),
                       self.current_step, tag, note, insert)
         self.items.append(p)
         return p
@@ -118,6 +118,9 @@ class Model:
         s = Submodel(self, name, title)
         self.submodels[name] = s
         return s
+
+    def canonical(self, part: str) -> str:
+        return self.catalog.canonical(part) if self.catalog is not None else normalize(part)
 
     def resolve_color(self, key) -> Color:
         if isinstance(key, Color):

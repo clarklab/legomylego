@@ -7,3 +7,4 @@ models/*/out/frames/
 models/*/out/tmp/
 .DS_Store
 models/_sample/out/
+*.egg-info/
