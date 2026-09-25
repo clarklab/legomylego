@@ -11,6 +11,7 @@ def build(model):
     model.meta["azimuth_offset"] = -45     # the Metroid faces the -X/-Z diagonal
     model.meta["mechanism_name"] = "Fangs"
     model.meta["mechanism_labels"] = ["closed", "open"]
+    model.meta["hero_open_elevation"] = -6          # from below: the open fangs
     model.meta["video"] = {"lift": {"exclude_tag": "stand", "height": 80}}
     main = model.main
     disc_cells = core.disc(main)

@@ -210,6 +210,11 @@ def export_model(engine, proj, model, site_dir: Path | None = None) -> Path:
     for name in proj.variants():
         variants.append((name, proj.variant_title(name), proj.build(engine.catalog, name)))
     data = model_json(engine, proj, model, placed, files=files, variants=variants)
+    for v in data["variants"][1:]:                    # a colourway's own booklet, if made
+        src = proj.out / "variants" / v["name"] / "booklet.pdf"
+        if src.exists():
+            shutil.copy2(src, dst / f"booklet_{v['name']}.pdf")
+            v["files"] = {"booklet": f"booklet_{v['name']}.pdf"}
     (dst / "model.json").write_text(json.dumps(data, separators=(",", ":")))
     update_index(site)
     return dst

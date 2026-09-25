@@ -21,7 +21,7 @@ function card(m, media) {
       <h3>${esc(m.name)}</h3>
       ${m.description ? `<p class="desc">${esc(m.description)}</p>` : ''}
       <div class="meta">
-        <span class="chip">${icon('brick')}${fmtInt(m.parts)} parts</span>
+        <span class="chip">${icon('brick')}${fmtInt(m.pieces ?? m.parts)} parts</span>
         <span class="chip">${icon('ruler')}${h} cm tall</span>
         <span class="chip">${icon('palette')}${plural(nv || 1, 'colourway')}</span>
       </div>
@@ -41,11 +41,11 @@ function hero(m, media) {
   const b = statusBadge(m.status);
   const img = media.image(m.thumbnail, 'lg');
   $('#hero-art').innerHTML = `
-    <span class="sticker sticker-parts" aria-hidden="true"><span><b>${fmtInt(m.parts)}</b><small>REAL PARTS</small></span></span>
+    <span class="sticker sticker-parts" aria-hidden="true"><span><b>${fmtInt(m.pieces ?? m.parts)}</b><small>REAL PARTS</small></span></span>
     ${m.status === 'pass' ? `<span class="sticker sticker-check" aria-hidden="true">${icon('checkCircle')}${esc(b.text)}</span>` : ''}
     <a class="hero-card" href="${modelUrl(m.slug)}">
       <img src="${img}" alt="${esc(m.name)}, rendered" width="800" height="800" fetchpriority="high">
-      <span class="hero-card-label"><span><strong>${esc(m.name)}</strong><br><span>${fmtInt(m.parts)} parts · ${fmtCm(m.dims_mm?.[1] || 0)} cm tall</span></span><span class="go">${icon('arrowRight')}</span></span>
+      <span class="hero-card-label"><span><strong>${esc(m.name)}</strong><br><span>${fmtInt(m.pieces ?? m.parts)} parts · ${fmtCm(m.dims_mm?.[1] || 0)} cm tall</span></span><span class="go">${icon('arrowRight')}</span></span>
     </a>`;
 }
 

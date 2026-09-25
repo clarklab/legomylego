@@ -3,32 +3,48 @@
   "baby_metroid": {
    "files": {
     "baby_metroid.mpd": {
-     "v": "e7178731dc",
-     "size": 127121
+     "v": "1b03eca1a4",
+     "size": 128124
+    },
+    "booklet.pdf": {
+     "v": "18080ed606",
+     "size": 27261170
     },
     "bricklink_wanted.xml": {
-     "v": "0787a73fd0",
-     "size": 5882
+     "v": "0b5e6c4307",
+     "size": 6050
     },
     "model.glb": {
-     "v": "5b2103414a",
-     "size": 1134984
+     "v": "a60f471e0b",
+     "size": 1510436
     },
     "model.json": {
-     "v": "f15e15f88f",
-     "size": 363039
+     "v": "c900a8b82b",
+     "size": 367724
     },
     "parts.csv": {
-     "v": "24b2ccdbbe",
-     "size": 4669
+     "v": "e52762cb0c",
+     "size": 4850
     },
     "pick_a_brick.csv": {
-     "v": "d893aef431",
-     "size": 735
+     "v": "e96c9daa76",
+     "size": 757
     },
-    "renders/hero_three_quarter.png": {
-     "v": "2cf0f0c9e4",
-     "size": 1169399
+    "price_estimate.md": {
+     "v": "9190aff1fc",
+     "size": 6334
+    },
+    "renders/hero_hero.png": {
+     "v": "769362c51c",
+     "size": 1168607
+    },
+    "renders/hero_lit_hero.png": {
+     "v": "b3a9f62bad",
+     "size": 1276488
+    },
+    "renders/hero_open_hero.png": {
+     "v": "0d7e665d78",
+     "size": 1190095
     },
     "renders/renders_front.png": {
      "v": "f963e94d54",
@@ -44,6 +60,24 @@
     }
    },
    "images": {
+    "renders/hero_lit_hero.png": {
+     "w": 1000,
+     "h": 1000,
+     "lg": "/assets/img/baby_metroid/hero_lit_hero.webp?v=f95a1b0a78",
+     "sm": "/assets/img/baby_metroid/hero_lit_hero-480.webp?v=3a789a106b"
+    },
+    "renders/hero_hero.png": {
+     "w": 1000,
+     "h": 1000,
+     "lg": "/assets/img/baby_metroid/hero_hero.webp?v=ad1c9e2fc4",
+     "sm": "/assets/img/baby_metroid/hero_hero-480.webp?v=d39b20bb18"
+    },
+    "renders/hero_open_hero.png": {
+     "w": 1000,
+     "h": 1000,
+     "lg": "/assets/img/baby_metroid/hero_open_hero.webp?v=c1ae332fa2",
+     "sm": "/assets/img/baby_metroid/hero_open_hero-480.webp?v=3e44588623"
+    },
     "renders/renders_front.png": {
      "w": 800,
      "h": 800,
@@ -61,12 +95,200 @@
      "h": 800,
      "lg": "/assets/img/baby_metroid/renders_three_quarter.webp?v=b0c9dde3d1",
      "sm": "/assets/img/baby_metroid/renders_three_quarter-480.webp?v=dc8f4aabcb"
+    }
+   }
+  },
+  "ferret": {
+   "files": {
+    "booklet.pdf": {
+     "v": "9408b0178f",
+     "size": 21321250
     },
-    "renders/hero_three_quarter.png": {
+    "booklet_albino.pdf": {
+     "v": "582a40c2b0",
+     "size": 21760180
+    },
+    "booklet_cinnamon.pdf": {
+     "v": "add1e49c87",
+     "size": 21449556
+    },
+    "bricklink_wanted.xml": {
+     "v": "6168173973",
+     "size": 6671
+    },
+    "ferret.mpd": {
+     "v": "a094532a5a",
+     "size": 55165
+    },
+    "model.glb": {
+     "v": "d93a4425e5",
+     "size": 665224
+    },
+    "model.json": {
+     "v": "876a93ab3b",
+     "size": 167021
+    },
+    "parts.csv": {
+     "v": "9559bb7d7b",
+     "size": 4859
+    },
+    "pick_a_brick.csv": {
+     "v": "eec178f5af",
+     "size": 834
+    },
+    "price_estimate.md": {
+     "v": "3c5a9c314b",
+     "size": 6101
+    },
+    "renders/hero_hero.png": {
+     "v": "95fb83fa3f",
+     "size": 1019554
+    },
+    "renders/hero_open_hero.png": {
+     "v": "c96eec5b33",
+     "size": 1013973
+    },
+    "renders/renders_front.png": {
+     "v": "88cc303614",
+     "size": 642064
+    },
+    "renders/renders_side.png": {
+     "v": "417c9b8a6b",
+     "size": 657639
+    },
+    "renders/renders_three_quarter.png": {
+     "v": "bf9b1cf403",
+     "size": 829110
+    }
+   },
+   "images": {
+    "renders/hero_hero.png": {
      "w": 1000,
      "h": 1000,
-     "lg": "/assets/img/baby_metroid/hero_three_quarter.webp?v=1b9220b789",
-     "sm": "/assets/img/baby_metroid/hero_three_quarter-480.webp?v=b2293f03fd"
+     "lg": "/assets/img/ferret/hero_hero.webp?v=6a7f8c542c",
+     "sm": "/assets/img/ferret/hero_hero-480.webp?v=3857b8aee2"
+    },
+    "renders/hero_open_hero.png": {
+     "w": 1000,
+     "h": 1000,
+     "lg": "/assets/img/ferret/hero_open_hero.webp?v=356a788973",
+     "sm": "/assets/img/ferret/hero_open_hero-480.webp?v=418f46a3bd"
+    },
+    "renders/renders_front.png": {
+     "w": 800,
+     "h": 800,
+     "lg": "/assets/img/ferret/renders_front.webp?v=b08884e7d1",
+     "sm": "/assets/img/ferret/renders_front-480.webp?v=fef4ed1e3a"
+    },
+    "renders/renders_side.png": {
+     "w": 800,
+     "h": 800,
+     "lg": "/assets/img/ferret/renders_side.webp?v=9619c90485",
+     "sm": "/assets/img/ferret/renders_side-480.webp?v=386abfe9f8"
+    },
+    "renders/renders_three_quarter.png": {
+     "w": 900,
+     "h": 900,
+     "lg": "/assets/img/ferret/renders_three_quarter.webp?v=aa1a5713d7",
+     "sm": "/assets/img/ferret/renders_three_quarter-480.webp?v=332f73c994"
+    }
+   }
+  },
+  "vhs_tape": {
+   "files": {
+    "booklet.pdf": {
+     "v": "c6d6738cc1",
+     "size": 10394601
+    },
+    "bricklink_wanted.xml": {
+     "v": "1c35e2bf9c",
+     "size": 6056
+    },
+    "model.glb": {
+     "v": "4c26a84d03",
+     "size": 984656
+    },
+    "model.json": {
+     "v": "0e311eb43c",
+     "size": 93832
+    },
+    "parts.csv": {
+     "v": "1db45b516c",
+     "size": 4476
+    },
+    "pick_a_brick.csv": {
+     "v": "43ad5c4292",
+     "size": 730
+    },
+    "price_estimate.md": {
+     "v": "df233e0aa3",
+     "size": 5756
+    },
+    "renders/hero_hero.png": {
+     "v": "b98d989797",
+     "size": 1014076
+    },
+    "renders/hero_open_hero.png": {
+     "v": "6b3d25c8af",
+     "size": 1004291
+    },
+    "renders/renders_back.png": {
+     "v": "827aeaed21",
+     "size": 653150
+    },
+    "renders/renders_clear_window.png": {
+     "v": "ef1457ba5c",
+     "size": 823415
+    },
+    "renders/renders_open.png": {
+     "v": "0cc692a845",
+     "size": 666404
+    },
+    "renders/renders_three_quarter.png": {
+     "v": "8f0a566430",
+     "size": 662596
+    },
+    "vhs_tape.mpd": {
+     "v": "7ebf4409c8",
+     "size": 18339
+    }
+   },
+   "images": {
+    "renders/hero_hero.png": {
+     "w": 1000,
+     "h": 1000,
+     "lg": "/assets/img/vhs_tape/hero_hero.webp?v=39266a89c6",
+     "sm": "/assets/img/vhs_tape/hero_hero-480.webp?v=f95400b1c3"
+    },
+    "renders/hero_open_hero.png": {
+     "w": 1000,
+     "h": 1000,
+     "lg": "/assets/img/vhs_tape/hero_open_hero.webp?v=4637d8c28a",
+     "sm": "/assets/img/vhs_tape/hero_open_hero-480.webp?v=4cd16924bd"
+    },
+    "renders/renders_back.png": {
+     "w": 800,
+     "h": 800,
+     "lg": "/assets/img/vhs_tape/renders_back.webp?v=f239dac720",
+     "sm": "/assets/img/vhs_tape/renders_back-480.webp?v=97b29e5113"
+    },
+    "renders/renders_clear_window.png": {
+     "w": 900,
+     "h": 900,
+     "lg": "/assets/img/vhs_tape/renders_clear_window.webp?v=4baa5229ae",
+     "sm": "/assets/img/vhs_tape/renders_clear_window-480.webp?v=2cf9da7f9e"
+    },
+    "renders/renders_open.png": {
+     "w": 800,
+     "h": 800,
+     "lg": "/assets/img/vhs_tape/renders_open.webp?v=616dc66169",
+     "sm": "/assets/img/vhs_tape/renders_open-480.webp?v=0757a1c72a"
+    },
+    "renders/renders_three_quarter.png": {
+     "w": 800,
+     "h": 800,
+     "lg": "/assets/img/vhs_tape/renders_three_quarter.webp?v=5125a05f85",
+     "sm": "/assets/img/vhs_tape/renders_three_quarter-480.webp?v=9545da6be3"
     }
    }
   }

@@ -76,7 +76,7 @@ def lede(d: dict) -> str:
     """Same wording as ledeFor() in assets/js/model.js."""
     if d.get("description"):
         return d["description"]
-    s = f"{d['parts']:,} real LEGO parts, about {fmt_cm((d.get('dims_mm') or [0, 0, 0])[1])} cm tall"
+    s = f"{d.get('pieces', d['parts']):,} real LEGO parts, about {fmt_cm((d.get('dims_mm') or [0, 0, 0])[1])} cm tall"
     extras = []
     if d.get("mechanism"):
         extras.append("a working mechanism")
@@ -350,7 +350,7 @@ def og_model(m: dict, data: dict, slug_dir: Path) -> Path | None:
         y += int(size * 1.02)
     y += 22
     f2 = font(32, 600)
-    w = pill(d, (x, y), f"{data['parts']:,} real LEGO parts", f2, WHITE, RED)
+    w = pill(d, (x, y), f"{data.get('pieces', data['parts']):,} real LEGO parts", f2, WHITE, RED)
     h_cm = fmt_cm((data.get("dims_mm") or [0, 0, 0])[1])
     f3 = font(28, 500)
     d.text((x, y + 82), f"{h_cm} cm tall · checked by computer", font=f3, fill=(40, 34, 10))
@@ -434,7 +434,7 @@ def model_meta(m: dict, data: dict, og_v: str) -> str:
         f'<meta property="og:image" content="{attr(og)}">',
         '<meta property="og:image:width" content="1200">',
         '<meta property="og:image:height" content="630">',
-        f'<meta property="og:image:alt" content="{attr(f"{name}, a model built from {data["parts"]:,} real LEGO parts")}">',
+        f'<meta property="og:image:alt" content="{attr(f"{name}, a model built from {data.get("pieces", data["parts"]):,} real LEGO parts")}">',
         '<meta name="twitter:card" content="summary_large_image">',
         f'<meta name="twitter:title" content="{attr(og_title)}">',
         f'<meta name="twitter:description" content="{attr(desc)}">',

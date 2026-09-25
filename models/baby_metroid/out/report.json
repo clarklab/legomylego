@@ -5,7 +5,7 @@
     {
       "name": "real_elements",
       "status": "warn",
-      "summary": "64 part/colour combinations: 0 not real, 1 rare",
+      "summary": "65 part/colour combinations: 0 not real, 1 rare",
       "items": [
         {
           "part": "64228",
@@ -22,7 +22,7 @@
         }
       ],
       "stats": {
-        "combinations": 64,
+        "combinations": 65,
         "not_real": 0,
         "rare": 1
       }
@@ -45,7 +45,7 @@
     {
       "name": "collisions",
       "status": "pass",
-      "summary": "0 overlapping pair(s) among 2674 parts",
+      "summary": "0 overlapping pair(s) among 2682 parts",
       "items": [],
       "stats": {
         "pairs": 0
@@ -54,28 +54,28 @@
     {
       "name": "buildability",
       "status": "pass",
-      "summary": "2457 insertions tried across 7 submodel(s); 0 problem(s)",
+      "summary": "2462 insertions tried across 8 submodel(s); 0 problem(s)",
       "items": [],
       "stats": {
-        "insertions": 2457
+        "insertions": 2462
       }
     },
     {
       "name": "stability",
       "status": "pass",
-      "summary": "about 1520 g; centre of mass inside the base (104% margin); tips at 20.9 deg",
+      "summary": "about 1519 g; centre of mass inside the base (104% margin); tips at 20.9 deg",
       "items": [],
       "stats": {
-        "mass_g": 1520.3801726255992,
+        "mass_g": 1518.827264232537,
         "com": [
-          -3.7437766152489713,
-          14.332382089275553,
-          -3.0042043423365317
+          -3.4492504512938105,
+          13.320774332965826,
+          -3.0465102291480113
         ],
         "approx_parts": 0,
-        "margin": 1.0370988277748963,
-        "tip_angle_deg": 20.87794924500826,
-        "com_height_ldu": 409.66761791072446
+        "margin": 1.039053647447165,
+        "tip_angle_deg": 20.86682565839729,
+        "com_height_ldu": 410.6792256670342
       }
     },
     {
@@ -90,9 +90,27 @@
     {
       "name": "electrics",
       "status": "pass",
-      "summary": "3 light(s), 0 cable run(s); 0 problem(s)",
+      "summary": "3 light(s), 3 cable run(s); longest lead needs 23 of 40 cm; 0 problem(s)",
       "items": [],
-      "stats": {}
+      "stats": {
+        "runs": [
+          {
+            "cable": "Light lead to nucleus 1",
+            "need_cm": 18.9,
+            "length_cm": 40.0
+          },
+          {
+            "cable": "Light lead to nucleus 2",
+            "need_cm": 23.2,
+            "length_cm": 40.0
+          },
+          {
+            "cable": "Light lead to nucleus 3",
+            "need_cm": 22.7,
+            "length_cm": 40.0
+          }
+        ]
+      }
     },
     {
       "name": "technique",

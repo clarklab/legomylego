@@ -22,7 +22,7 @@ function getSlug() {
 export function ledeFor(d) {
   if (d.description) return d.description;
   const h = fmtCm(d.dims_mm?.[1] || 0);
-  let s = `${fmtInt(d.parts)} real LEGO parts, about ${h} cm tall`;
+  let s = `${fmtInt(d.pieces ?? d.parts)} real LEGO parts, about ${h} cm tall`;
   const extras = [];
   if (d.mechanism) extras.push('a working mechanism');
   if (d.lights?.length) extras.push(d.lights.length === 1 ? 'a built-in light' : 'built-in lights');
@@ -78,7 +78,7 @@ function renderStats(d) {
   const lots = variantBom().length;
   const stat = (ic, k, v, unit = '') => `<div class="stat"><div class="k">${icon(ic)}${k}</div><div class="v">${v}${unit ? `<small>${unit}</small>` : ''}</div></div>`;
   $('#stats').innerHTML =
-    stat('brick', 'Parts', fmtInt(d.parts)) +
+    stat('brick', 'Parts', fmtInt(d.pieces ?? d.parts)) +
     stat('ruler', 'Height', fmtCm(h), 'cm') +
     stat('steps', 'Steps', fmtInt(d.steps?.length || 0)) +
     stat('list', 'Part types', fmtInt(lots));
@@ -225,7 +225,10 @@ function renderDownloads() {
     return `<a class="dl ${tone}" href="${href}" ${dl}><span class="di">${icon(ic)}</span><span><strong>${esc(title)}</strong><span>${esc(desc)}</span></span><span class="go">${size ? `<span class="size">${fmtBytes(size)}</span>` : icon(opts.newTab ? 'external' : 'download')}</span></a>`;
   };
   const out = [];
-  out.push(item('booklet', 'book', 'Building instructions', `Step-by-step PDF, ${plural(d.steps?.length || 0, 'step')}`, 'red', { soon: true, newTab: true }));
+  const vb = custom && variant.files?.booklet;
+  out.push(vb
+    ? item(null, 'book', 'Building instructions', `${variant.title}: step-by-step PDF, ${plural(d.steps?.length || 0, 'step')}`, 'red', { href: media.url(vb), size: media.size(vb), newTab: true })
+    : item('booklet', 'book', 'Building instructions', `Step-by-step PDF, ${plural(d.steps?.length || 0, 'step')}`, 'red', { soon: true, newTab: true }));
   out.push(item('video', 'film', 'Build video', 'Watch it come together (MP4)', 'red', { soon: true }));
   out.push(item('mpd', 'cube', 'LDraw model (.mpd)', 'Opens in BrickLink Studio, LeoCAD or LDCad', 'dark'));
   if (custom) {
@@ -244,7 +247,7 @@ function renderDownloads() {
   $('#downloads-grid').innerHTML = out.join('');
   const def = d.variants?.[0]?.title || 'default';
   $('#downloads-intro').textContent = custom
-    ? `The shopping lists match the ${variant.title} colourway. The instructions and LDraw model use the ${def} colours.`
+    ? `The shopping lists${vb ? ' and instructions' : ''} match the ${variant.title} colourway. ${vb ? 'The' : 'The instructions and'} LDraw model use${vb ? 's' : ''} the ${def} colours.`
     : 'Instructions, the digital model and ready-made shopping lists.';
   $('#downloads').hidden = false;
 

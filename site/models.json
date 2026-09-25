@@ -3,17 +3,89 @@
     {
       "slug": "baby_metroid",
       "name": "Baby Metroid",
-      "description": "",
-      "parts": 2674,
+      "description": "The larval Metroid in real LEGO, about 18 cm across: a see-through dome over three glowing red nuclei, four fangs that open and close from a knob at the back, hovering on a clear stand.",
+      "notice": "Metroid is \u00a9 Nintendo. This fan model is not affiliated with or endorsed by Nintendo.",
+      "parts": 2682,
+      "pieces": 2681,
       "dims_mm": [
         176.0,
         292.8,
         179.8
       ],
+      "price": {
+        "low": 124.32,
+        "high": 396.11,
+        "currency": "USD",
+        "note": "A rough range from typical BrickLink prices per part type, not live market data."
+      },
+      "features": {
+        "mechanism": true,
+        "lights": true
+      },
       "variants": [
         "Standard"
       ],
-      "thumbnail": "renders/renders_front.png",
+      "thumbnail": "renders/hero_lit_hero.png",
+      "status": "warn"
+    },
+    {
+      "slug": "ferret",
+      "name": "Ferret",
+      "description": "A curious, life-size ferret mid-bounce in real LEGO: arched back, bandit mask, tongue out, and a head that turns on a turntable. Three coats: sable, albino and cinnamon.",
+      "notice": "",
+      "parts": 895,
+      "pieces": 895,
+      "dims_mm": [
+        93.4,
+        150.4,
+        513.2
+      ],
+      "price": {
+        "low": 36.73,
+        "high": 116.91,
+        "currency": "USD",
+        "note": "A rough range from typical BrickLink prices per part type, not live market data."
+      },
+      "features": {
+        "mechanism": true,
+        "lights": false
+      },
+      "variants": [
+        "Sable",
+        "Albino",
+        "Cinnamon"
+      ],
+      "thumbnail": "renders/hero_hero.png",
+      "status": "pass"
+    },
+    {
+      "slug": "vhs_tape",
+      "name": "VHS Cassette",
+      "description": "A 1:1 VHS video cassette in real LEGO, 184 x 104 x 26 mm: the dust door flips up on click hinges and both reels spin behind a smoked window.",
+      "notice": "VHS is a trademark of JVC KENWOOD Corporation.",
+      "parts": 348,
+      "pieces": 348,
+      "dims_mm": [
+        184.0,
+        25.6,
+        104.0
+      ],
+      "price": {
+        "low": 12.18,
+        "high": 43.38,
+        "currency": "USD",
+        "note": "A rough range from typical BrickLink prices per part type, not live market data."
+      },
+      "features": {
+        "mechanism": true,
+        "lights": false
+      },
+      "variants": [
+        "Standard",
+        "Clear window",
+        "White shell (head cleaner style)"
+      ],
+      "thumbnail": "renders/hero_hero.png",
       "status": "pass"
     }
   ]
