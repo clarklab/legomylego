@@ -1,6 +1,7 @@
 """Can every step be built? Each new part (or sub-assembly) must slide into place along one
 of its connection axes (or its insertion hint) without hitting what is already built, and
-each submodel must be one piece at the end of every step."""
+each submodel must be one piece at the end of every step. Clips and hinges snap on (their
+fingers flex), so the parts a unit clips or hinges onto never block its path."""
 from __future__ import annotations
 
 from collections import defaultdict
@@ -12,6 +13,8 @@ from ..ldraw.matrix import translate
 from ..model.builder import Placement
 from ..snaps.match import find_connections
 from .base import CheckResult, components, register
+
+SNAP_KINDS = ("clip", "hinge")   # connections pushed on across their axis (they flex and snap)
 
 
 @dataclass
@@ -73,11 +76,15 @@ def check_buildability(ctx, cfg) -> CheckResult:
         boxes_all = ctx.collide.aabbs(flat)
         wc = [[c.transformed(M) for c in ctx.shadow.connectors(part)] for part, M in flat]
         links: dict[int, list] = defaultdict(list)
+        snaps: dict[int, set] = defaultdict(set)     # unit -> parts it snaps onto
         for c in find_connections(wc):
             ua, ub = owner[c.a], owner[c.b]
             if ua != ub:
                 links[ua].append((ub, c.ca.axis, c.overlap))
                 links[ub].append((ua, c.ca.axis, c.overlap))
+                if c.kind in SNAP_KINDS:
+                    snaps[ua].add(c.b)
+                    snaps[ub].add(c.a)
         parts_of = defaultdict(list)
         for i, ui in enumerate(owner):
             parts_of[ui].append(i)
@@ -96,7 +103,8 @@ def check_buildability(ctx, cfg) -> CheckResult:
                 progress = False
                 for ui in attached:
                     tried += 1
-                    if _insertable(ctx, units[ui], ui, links, set(built), flat, built_parts,
+                    blockers = [i for i in built_parts if i not in snaps[ui]]
+                    if _insertable(ctx, units[ui], ui, links, set(built), flat, blockers,
                                    boxes_all, stride, min_travel):
                         pending.remove(ui)
                         add(ui)
