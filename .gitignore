@@ -18,3 +18,4 @@ models/*/out/booklet/
 models/*/out/**/booklet/
 models/*/out/**/cover_render/
 .claude/
+models/*/out/*.tmp.mp4
