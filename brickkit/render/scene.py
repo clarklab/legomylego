@@ -1,9 +1,12 @@
 """Export a model as a scene description and render it with Blender (headless)."""
 from __future__ import annotations
 
+import fcntl
 import json
 import os
 import subprocess
+import tempfile
+from contextlib import contextmanager
 from pathlib import Path
 
 import numpy as np
@@ -90,12 +93,34 @@ def model_scene(engine, model, *, pose_t: float | None = None, lights_on: bool =
             "bounds": bounds(engine, placed), "lights": lights}
 
 
+LOCK = Path(os.environ.get("BRICKKIT_BLENDER_LOCK",
+                          Path(tempfile.gettempdir()) / "brickkit-blender.lock"))
+
+
+@contextmanager
+def blender_slot():
+    """One Blender render at a time on this machine (every checkout and process shares the
+    lock file). Renders share one GPU: run side by side they thrash it and small Workbench
+    renders wait behind long Cycles kernels. Waiting here does not count toward timeouts.
+    Set BRICKKIT_BLENDER_LOCK=none to opt out."""
+    if str(LOCK) == "none":
+        yield
+        return
+    with open(LOCK, "a") as fh:
+        fcntl.flock(fh, fcntl.LOCK_EX)
+        try:
+            yield
+        finally:
+            fcntl.flock(fh, fcntl.LOCK_UN)
+
+
 def run_blender(scene: dict, work_dir: Path, script: Path = SCRIPT, timeout: int = 3600) -> str:
     work_dir.mkdir(parents=True, exist_ok=True)
     sf = work_dir / "scene.json"
     sf.write_text(json.dumps(scene))
     cmd = [BLENDER, "-b", "--factory-startup", "-P", str(script), "--", str(sf)]
-    r = subprocess.run(cmd, capture_output=True, text=True, timeout=timeout)
+    with blender_slot():
+        r = subprocess.run(cmd, capture_output=True, text=True, timeout=timeout)
     if r.returncode != 0 or "BRICKKIT_DONE" not in r.stdout:
         raise RuntimeError("Blender failed:\n" + r.stdout[-4000:] + "\n" + r.stderr[-4000:])
     return r.stdout
