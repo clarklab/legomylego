@@ -33,22 +33,69 @@ def to_gltf(M: np.ndarray) -> np.ndarray:
     return C @ M @ C_INV
 
 
+CREASE_DEG = 35.0      # corners smooth across faces closer than this, stay sharp beyond it
+GAP_LDU = 0.15         # each part is inset this much per side so seams read (as in Blender)
+
+
+def crease_normals(tris: np.ndarray, angle_deg: float = CREASE_DEG) -> np.ndarray:
+    """Per-corner normals for triangles (F, 3, 3): each corner averages the (area-weighted)
+    normals of every triangle touching the same position whose normal is within `angle_deg`
+    of its own. Matching by position, not by shared edges, matters for LDraw parts: they are
+    built from separate primitives, so a tile's top and sides meet at corners without sharing
+    an edge, and plain vertex smoothing bends every flat face ("bubbly" shading)."""
+    e1, e2 = tris[:, 1] - tris[:, 0], tris[:, 2] - tris[:, 0]
+    fn = np.cross(e1, e2)
+    area = np.linalg.norm(fn, axis=1)
+    fnu = np.divide(fn, area[:, None], out=np.zeros_like(fn), where=area[:, None] > 1e-12)
+    corners = tris.reshape(-1, 3)
+    cn = np.repeat(fnu, 3, axis=0)
+    cw = np.repeat(area, 3)
+    _, grp = np.unique(np.round(corners * 16).astype(np.int64), axis=0, return_inverse=True)
+    grp = grp.reshape(-1)
+    order = np.argsort(grp, kind="stable")
+    bounds = np.flatnonzero(np.diff(grp[order])) + 1
+    out = cn.copy()
+    cos_t = math.cos(math.radians(angle_deg))
+    for idx in np.split(order, bounds):
+        if len(idx) < 2:
+            continue
+        n = cn[idx]
+        s = ((n @ n.T) >= cos_t) * cw[idx][None, :]
+        acc = s @ n
+        ln = np.linalg.norm(acc, axis=1)
+        good = ln > 1e-12
+        out[idx[good]] = acc[good] / ln[good][:, None]
+    bad = np.linalg.norm(out, axis=1) < 0.5
+    out[bad] = (0.0, -1.0, 0.0)          # degenerate slivers: any unit normal will do
+    return out
+
+
+def _indexed(corners: np.ndarray, normals: np.ndarray) -> trimesh.Trimesh:
+    """Merge corners that share both position and normal into indexed vertices."""
+    key = np.hstack([np.round(corners * 64), np.round(normals * 1000)]).astype(np.int64)
+    _, first, inv = np.unique(key, axis=0, return_index=True, return_inverse=True)
+    tm = trimesh.Trimesh(vertices=corners[first], faces=inv.reshape(-1, 3), process=False)
+    tm.vertex_normals = normals[first]
+    return tm
+
+
 def _part_meshes(engine, part: str) -> dict[int, trimesh.Trimesh]:
-    """{colour code (16 = main): mesh in LDU} with smooth normals split at 35 degrees."""
+    """{colour code (16 = main): mesh in LDU} with crease-angle normals, inset by GAP_LDU."""
     m = engine.geom.mesh(part)
+    if len(m.tris) == 0:
+        return {}
+    allv = m.tris.reshape(-1, 3).astype(np.float64)
+    lo, hi = allv.min(0), allv.max(0)
+    c, ext = (lo + hi) / 2, np.maximum(hi - lo, 1e-6)
+    shrink = np.clip((ext - 2 * GAP_LDU) / ext, 0.9, 1.0)
     out = {}
     for code in np.unique(m.colors):
-        tris = m.tris[m.colors == code]
+        tris = m.tris[m.colors == code].astype(np.float64)
         if len(tris) == 0:
             continue
-        v = tris.reshape(-1, 3)
-        f = np.arange(len(v)).reshape(-1, 3)
-        tm = trimesh.Trimesh(vertices=v, faces=f, process=True)
-        try:
-            tm = tm.smoothed(angle=math.radians(35))
-        except Exception:
-            pass
-        out[int(code)] = tm
+        normals = crease_normals(tris)
+        corners = c + (tris.reshape(-1, 3) - c) * shrink
+        out[int(code)] = _indexed(corners, normals)
     return out
 
 

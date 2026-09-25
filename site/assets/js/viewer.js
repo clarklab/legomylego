@@ -7,13 +7,52 @@
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
-import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
+import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
+import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
+import { GTAOPass } from 'three/addons/postprocessing/GTAOPass.js';
+import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
 
 const NODE_RE = /^p(\d+)(?:c(\d+))?$/;
 const DEG = Math.PI / 180;
 const LIGHT_SCALE = 0.22;    // model.json light "power" -> three.js candela
 const GLOW_SCALE = 0.55;    // glow "strength" -> emissiveIntensity
 const NIGHT = { a: '#2a1c1f', b: '#07070a' };
+
+// A soft photo-studio environment for reflections: a big bright softbox overhead, a gentler
+// fill in front, a warm bounce from the floor and a darker back, all heavily blurred. Hard
+// emitters (like three.js's RoomEnvironment) mirror as bright blobs on flat brick faces.
+function studioEnvironment() {
+  const scene = new THREE.Scene();
+  const dome = new THREE.Mesh(
+    new THREE.SphereGeometry(10, 48, 24),
+    new THREE.ShaderMaterial({
+      side: THREE.BackSide,
+      depthWrite: false,
+      uniforms: {},
+      vertexShader: 'varying vec3 vDir; void main(){ vDir = normalize(position); gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }',
+      fragmentShader: `varying vec3 vDir;
+        void main(){
+          float y = vDir.y;
+          vec3 top = vec3(0.92, 0.93, 0.95);
+          vec3 horizon = vec3(0.62, 0.61, 0.60);
+          vec3 floor = vec3(0.30, 0.27, 0.24);
+          vec3 c = y > 0.0 ? mix(horizon, top, smoothstep(0.0, 0.85, y)) : mix(horizon, floor, smoothstep(0.0, 0.5, -y));
+          gl_FragColor = vec4(c, 1.0);
+        }`,
+    }),
+  );
+  scene.add(dome);
+  const box = (w, h, pos, look, k) => {
+    const m = new THREE.Mesh(new THREE.PlaneGeometry(w, h), new THREE.MeshBasicMaterial({ color: new THREE.Color(k, k, k), side: THREE.DoubleSide }));
+    m.position.set(...pos);
+    m.lookAt(...look);
+    scene.add(m);
+  };
+  box(9, 9, [0, 9, 1], [0, 0, 0], 2.4);      // overhead softbox
+  box(7, 4, [-5, 3, 6], [0, 0, 0], 1.3);     // front-left fill
+  box(5, 3, [6, 2, -5], [0, 0, 0], 0.8);     // rim from behind
+  return scene;
+}
 
 const easeInOut = (t) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
 const easeOut = (t) => 1 - Math.pow(1 - t, 3);
@@ -104,7 +143,7 @@ export class ModelViewer {
 
     const renderer = (this.renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: 'high-performance', preserveDrawingBuffer: false }));
     renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, this.lowPower ? 1.6 : 2));
-    renderer.toneMapping = THREE.NeutralToneMapping;
+    renderer.toneMapping = THREE.NeutralToneMapping;      // colour-true, made for product views
     renderer.toneMappingExposure = 1.0;
     renderer.shadowMap.enabled = true;
     renderer.shadowMap.type = THREE.VSMShadowMap;
@@ -118,7 +157,7 @@ export class ModelViewer {
     this.camera = new THREE.PerspectiveCamera(30, 1, 0.005, 50);
 
     const pmrem = new THREE.PMREMGenerator(renderer);
-    this.envTex = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
+    this.envTex = pmrem.fromScene(studioEnvironment(), 0.06).texture;
     pmrem.dispose();
     this.scene.environment = this.envTex;
 
@@ -136,6 +175,28 @@ export class ModelViewer {
     this.key.shadow.blurSamples = 16;
     this.key.shadow.bias = -0.0005;
     this.scene.add(this.key, this.key.target);
+
+    // Ambient occlusion (GTAO) darkens the seams between bricks and the crevices, which is most
+    // of what makes the Blender renders read as real plastic. Off on low-power devices and in
+    // lite mode; the slow-frame fallback turns it off first.
+    this.aoOn = this.quality === 'high' || (this.quality === 'auto' && !this.lowPower);
+    if (this.aoOn) {
+      this.composer = new EffectComposer(renderer);
+      this.composer.addPass(new RenderPass(this.scene, this.camera));
+      this.ao = new GTAOPass(this.scene, this.camera, 512, 512);
+      this.ao.blendIntensity = 0.85;
+      // light halos are camera-facing sprites: keep them out of the AO's depth/normal pass or
+      // their quads shade the model like solid cards
+      const aoRender = this.ao.render.bind(this.ao);
+      this.ao.render = (...args) => {
+        const halos = (this.points || []).map(({ sprite }) => sprite).filter((sp) => sp.visible);
+        halos.forEach((sp) => { sp.visible = false; });
+        aoRender(...args);
+        halos.forEach((sp) => { sp.visible = true; });
+      };
+      this.composer.addPass(this.ao);
+      this.composer.addPass(new OutputPass());
+    }
 
     this.controls = new OrbitControls(this.camera, renderer.domElement);
     this.controls.enableDamping = true;
@@ -285,6 +346,10 @@ export class ModelViewer {
     const { size, center, bounds } = this;
     const s = Math.max(size.x, size.y, size.z);
     this.modelSize = s;
+    if (this.ao) {
+      this.ao.updateGtaoMaterial({ radius: s * 0.02, distanceExponent: 1.5, thickness: s * 0.01, scale: 1.1, samples: 16 });
+      this.ao.updatePdMaterial({ lumaPhi: 10, depthPhi: 2, normalPhi: 3, radius: 6, rings: 2, samples: 16 });
+    }
     this.camera.near = s / 200;
     this.camera.far = s * 40;
     this.camera.updateProjectionMatrix();
@@ -360,43 +425,42 @@ export class ModelViewer {
     const trans = (c.alpha ?? 255) < 255;
     const kind = String(c.material || '').toLowerCase();
     const white = new THREE.Color(1, 1, 1);
+    // ABS: satin, not glossy. A broad soft sheen from the studio, no clear coat.
     const p = {
       color,
-      roughness: 0.28,
+      roughness: 0.34,
       metalness: 0,
-      clearcoat: 0.3,
-      clearcoatRoughness: 0.16,
-      specularIntensity: 0.7,
+      specularIntensity: 0.65,
+      envMapIntensity: 0.9,
     };
     let glowBase = 0;
     if (trans && glow) {
       // Light-emitting translucent pieces (LED lenses, glowing cores) are drawn as luminous, non-
       // transmissive plastic: three.js transmission only shows opaque objects behind a surface,
       // so this keeps them visible through other translucent parts.
-      Object.assign(p, { roughness: 0.12, clearcoat: 0.8, clearcoatRoughness: 0.08, specularIntensity: 1 });
+      Object.assign(p, { roughness: 0.2, specularIntensity: 0.8 });
       glowBase = 0.35;
     } else if (trans) {
       Object.assign(p, {
         color: color.clone().lerp(white, 0.45),
-        roughness: 0.05,
-        clearcoat: 0,
+        roughness: 0.08,
         transmission: 1,
         thickness: this.modelSize * 0.01,
         ior: 1.58,
         attenuationColor: color.clone().lerp(white, 0.15),
         attenuationDistance: this.modelSize * 0.09,
-        specularIntensity: 1,
+        specularIntensity: 0.7,
         side: THREE.DoubleSide,
       });
       if (kind.includes('glitter') || kind.includes('speckle')) p.roughness = 0.2;
     } else if (kind === 'chrome') {
-      Object.assign(p, { metalness: 1, roughness: 0.1, clearcoat: 0 });
+      Object.assign(p, { metalness: 1, roughness: 0.12 });
     } else if (kind === 'metal' || kind === 'metallic') {
-      Object.assign(p, { metalness: 0.9, roughness: 0.32, clearcoat: 0 });
+      Object.assign(p, { metalness: 0.9, roughness: 0.35 });
     } else if (kind === 'pearlescent' || kind === 'pearl') {
-      Object.assign(p, { metalness: 0.45, roughness: 0.3, clearcoat: 0.6 });
+      Object.assign(p, { metalness: 0.45, roughness: 0.32 });
     } else if (kind === 'rubber') {
-      Object.assign(p, { roughness: 0.82, clearcoat: 0, specularIntensity: 0.3 });
+      Object.assign(p, { roughness: 0.82, specularIntensity: 0.3 });
     } else if (kind === 'glitter' || kind === 'speckle') {
       Object.assign(p, { roughness: 0.35, metalness: 0.15 });
     } else if (kind === 'milky' || kind === 'glow') {
@@ -428,6 +492,7 @@ export class ModelViewer {
 
   setLite(on) {
     this.lite = !!on;
+    if (this.lite) this.aoOn = false;
     for (const m of this.materials.values()) if (m.userData.trans) this._liteMaterial(m, this.lite);
     this.onQuality(this.lite ? 'lite' : 'full');
     this.requestRender();
@@ -443,7 +508,10 @@ export class ModelViewer {
     this._samples = [];
     if (median < 0.045) return;
     const pr = this.renderer.getPixelRatio();
-    if (pr > 1.01) {
+    if (this.aoOn) {
+      this.aoOn = false;                         // the cheapest big saving goes first
+      this.requestRender();
+    } else if (pr > 1.01) {
       this.renderer.setPixelRatio(Math.max(1, pr * 0.7));
       this.resize();
     } else if (!this.lite) {
@@ -788,6 +856,10 @@ export class ModelViewer {
   resize() {
     const { w, h, off } = this._viewOffset();
     this.renderer.setSize(w, h, false);
+    if (this.composer) {
+      this.composer.setPixelRatio(this.renderer.getPixelRatio());
+      this.composer.setSize(w, h);
+    }
     this.camera.aspect = w / h;
     this.camera.setViewOffset(w, h, 0, off, w, h);
     this.camera.updateProjectionMatrix();
@@ -874,7 +946,8 @@ export class ModelViewer {
     if (this.controls.update(dt)) active = true;
     if (this.controls.autoRotate) active = true;
     this._flush();
-    this.renderer.render(this.scene, this.camera);
+    if (this.aoOn && this.composer) this.composer.render(dt);
+    else this.renderer.render(this.scene, this.camera);
     if (active && this.visible) this.requestRender();
     else if (!this._raf) this._last = 0;
   }
