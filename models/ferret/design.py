@@ -195,7 +195,8 @@ def sculpt_pieces(av: Avail):
     ks = sorted(k for k in S if S[k])
     sections: dict[str, list] = {"back": [], "chest": [], "hips": []}
     reserved = {(c, k) for k in socket_bands for c in socket_cells}
-    fixed = {"back": {k: [(p, socket_cells)] for k, p in zip(socket_bands, socket)}}
+    fixed = {"back": {k: [(p, p.cells) for p in band_pieces]
+                      for k, band_pieces in zip(socket_bands, socket)}}
     role_of = {}
     for k in ks:
         cells = S[k]
@@ -304,7 +305,9 @@ SOCKET_NOTES = {
     "nose socket": "the brick with two side studs will hold the nose",
     "tongue socket": "the brick with a side stud will hold the tongue",
     "whisker clip": "clip tiles for the whiskers",
-    "tail socket": "the grey brick with four side studs faces backwards: the tail plugs in here",
+    "tail socket": "the two grey bricks with side studs face backwards: the tail plugs in here",
+    "turntable base": "the black turntable base in the throat is where the head turns",
+    "turntable top": "the grey turntable top is the pivot the head is built on",
 }
 
 
@@ -467,6 +470,6 @@ def build(model):
                 @ translate(0, 0, -fh.PIVOT_Z)}
     model.moving_group("head", "head")
     model.pose = pose
-    main.step("Plug the tail onto the four side studs at the rump")
+    main.step("Plug the tail onto the eight side studs at the rump")
     F = ft.frame()
     main.use(tail, tuple(F[:3, 3]), F[:3, :3], tag="tail")

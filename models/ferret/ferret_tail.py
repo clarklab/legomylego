@@ -44,8 +44,8 @@ def layers() -> dict[int, set]:
             break
         L[b] = cells
         b += 1
-    # the root slice must cover the socket's four studs
-    L[0] |= {(SOCKET_I, -1), (SOCKET_I, 0), (SOCKET_I + 1, -1), (SOCKET_I + 1, 0)}
+    # the root slice must cover the socket's eight studs
+    L[0] |= {(i, jz) for i in range(SOCKET_I - 1, SOCKET_I + 3) for jz in (-1, 0)}
     return L
 
 
@@ -77,11 +77,16 @@ def pieces(sizes_of, role: str = "dark"):
 
 
 def socket_pieces(role: str = "core"):
-    """The rump's socket: a 22885 facing backwards and a plate on top, in world coordinates."""
+    """The rump's socket: two 22885s side by side facing backwards (eight side studs for the
+    tail) and a 1 x 4 plate on top, in world coordinates. -> (pieces per band, cells, bands)"""
     j = ROOT_J - 1
-    cells = frozenset({(SOCKET_I, j), (SOCKET_I + 1, j)})
-    brick = sc.Piece("22885", role, cells, SOCKET_P, SOCKET_P + 5, cells, {SOCKET_P: cells},
-                     (20.0 * (SOCKET_I + 1), -8.0 * (SOCKET_P + 5), 20.0 * j + 10),
-                     rot(y=180), SOCKET_P // 3, "tail socket")
+    bricks = []
+    for i in (SOCKET_I - 1, SOCKET_I + 1):
+        cells = frozenset({(i, j), (i + 1, j)})
+        bricks.append(sc.Piece("22885", role, cells, SOCKET_P, SOCKET_P + 5, cells,
+                               {SOCKET_P: cells},
+                               (20.0 * (i + 1), -8.0 * (SOCKET_P + 5), 20.0 * j + 10),
+                               rot(y=180), SOCKET_P // 3, "tail socket"))
+    cells = frozenset(c for b in bricks for c in b.cells)
     cap = sc.plate(cells, SOCKET_P + 6, role, (SOCKET_P + 5) // 3)
-    return [brick, cap], cells, range(SOCKET_P // 3, (SOCKET_P + 6) // 3)
+    return [bricks, [cap]], cells, range(SOCKET_P // 3, (SOCKET_P + 6) // 3)
