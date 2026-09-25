@@ -177,7 +177,7 @@ chromium`). A full render takes roughly an hour of GPU time per model; iterate w
 | lights | 8 | the set goes dark, the lights switch on with a bloom flash | lights / glow |
 | lift | 6 | everything but `exclude_tag` rises and hovers | `[video] lift` |
 | colourways | 4 per colourway | wipes between colourways that share the parts, with swatches | variants |
-| booklet | 8 | the instruction booklet's pages turn | `out/booklet.pdf` |
+| booklet | 12 | the printed booklet: its real cover opens, a thumb-flip through the step pages (motion-blurred) lands on a step spread, then loose step sheets are dealt into a fan (from every colourway's booklet if there are any) | `out/booklet.pdf` |
 | outro | 8 | logo, `lego.superfun.games/m/SLUG`, the small print and the model's notice | always |
 
 **Config** in model.toml (all optional; `model.meta["video"]` from design.py wins key by key):
