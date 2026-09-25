@@ -21,7 +21,7 @@ import ferret_head as fh  # noqa: E402
 import ferret_sculpt as sc  # noqa: E402
 import ferret_shape as fs  # noqa: E402
 import ferret_tail as ft  # noqa: E402
-from brickkit.ldraw.matrix import rot, transform  # noqa: E402
+from brickkit.ldraw.matrix import rot, transform, translate  # noqa: E402
 
 # grid extent (cells) and the sculpt origin in LDU
 XS = np.arange(-6, 6)
@@ -218,15 +218,32 @@ def sculpt_pieces(av: Avail):
         if n_clusters > 1:
             print(f"[ferret] {name}: packed into {n_clusters} separate clusters")
         sections[name] += pieces
-    HL = fh.layers()
-    head_seat = {c for p in range(fh.SHELF_TOP, fh.SHELF_TOP + 3) for c in HL.get(p, set())}
+    # the throat shelf's top: the turntable base the head turns on, and smooth tiles round it
+    shelf_band = fh.SHELF_TOP // 3 - 1
+    shelf_top = {c for c in S[shelf_band] if fh.SHELF_ROW <= c[1] < TORSO[0]}
+    shelf_sec = sections[sec[(min(shelf_top), shelf_band)]]
+    (ti, tj), tp = fh.TURNTABLE
+    tt = frozenset(sc.rect(ti, tj, 2, 2))
+    shelf_sec.append(sc.Piece("3680", "Black", tt, tp, tp + 1, frozenset(), {tp: tt},
+                              (20.0 * (ti + 1), -8 * (tp + 1), 20.0 * (tj + 1)), None,
+                              tp // 3, "turntable base"))
+    rest = shelf_top - tt
+    for run in sorted({frozenset(c for c in rest if c[0] == i) for i in {c[0] for c in rest}},
+                      key=min):
+        cells = sorted(run, key=lambda c: c[1])
+        while cells:                                  # tiles along z, 1 x 2 then 1 x 1
+            n = 2 if len(cells) >= 2 and cells[1][1] == cells[0][1] + 1 else 1
+            t = sc.tile(cells[:n], tp + 1, "face", tp // 3)
+            t.note = "throat tile"
+            shelf_sec.append(t)
+            cells = cells[n:]
     for k in ks:
         cells = S[k]
         above = S.get(k + 1, set())
-        # caps on the exposed tops of this layer, in band k + 1 (not where the head sits)
+        # caps on the exposed tops of this layer, in band k + 1 (not on the throat shelf)
         T = cells - above
         if 3 * (k + 1) == fh.SHELF_TOP:
-            T -= head_seat
+            T -= shelf_top
         dirs = {c: grad_dir(*centre_mm(c, k + 1)) for c in T}
         for run, d in ramps_of(T, dirs):
             role = cell_role(run[-1], k, S, legs)
@@ -345,9 +362,12 @@ def build_head(model, av: Avail):
     pieces, n_clusters, _ = fh.pieces(lambda r: av.sizes(sc.PLATE, r))
     if n_clusters > 1:
         print(f"[ferret] head: packed into {n_clusters} separate clusters")
+    for p in pieces:                        # the head's own frame is centred on its pivot
+        p.pos = (p.pos[0], p.pos[1], p.pos[2] - fh.PIVOT_Z)
     head = model.submodel("head", "Head")
     emit_planned(head, pieces, lambda p: (p.p0, min(c[1] for c in p.cells), min(p.cells)),
-                 "Head", "layer", "Build the head from the chin up, one plate layer at a time",
+                 "Head", "layer", "Build the head on the grey turntable top, one plate layer "
+                 "at a time: the jaw hangs below it at the front",
                  "slopes and tiles round it off")
     nose = next(p for p in pieces if p.note == "nose socket")
     for kind, caption, role in (("eye", "Big shiny eyes", "eye"), ("ear", "Round ears", "face")):
@@ -435,8 +455,18 @@ def build(model):
               "both")
     main.use(subs["back"], tag="back")
     main.use(subs["hips"], tag="hips")
-    main.step("Set the head on the white throat")
-    main.use(head, tag="head")
+    main.step(f"Set the head on the turntable in the white throat and turn it "
+              f"{fh.TURN:.0f} degrees to look at you: it can be turned "
+              f"{-fh.TURN_RANGE[0]:.0f} degrees the other way or {fh.TURN_RANGE[1]:.0f} this way")
+    main.use(head, (0, 0, fh.PIVOT_Z), rot(y=fh.TURN), tag="head")
+
+    # posable head: sweep it through its range on the turntable
+    def pose(t: float) -> dict:
+        a = fh.TURN_RANGE[0] + t * (fh.TURN_RANGE[1] - fh.TURN_RANGE[0])
+        return {"head": translate(0, 0, fh.PIVOT_Z) @ transform((0, 0, 0), rot(y=a - fh.TURN))
+                @ translate(0, 0, -fh.PIVOT_Z)}
+    model.moving_group("head", "head")
+    model.pose = pose
     main.step("Plug the tail onto the four side studs at the rump")
     F = ft.frame()
     main.use(tail, tuple(F[:3, 3]), F[:3, :3], tag="tail")

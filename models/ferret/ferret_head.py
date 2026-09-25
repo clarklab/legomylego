@@ -23,19 +23,27 @@ PARTS = [
     ((-16.0, 90.0, 46.0), (12.5, 12.0, 16.0)),
 ]
 
-ROWS = range(0, 11)             # z cells of the head (the neck starts at row 11)
+ROWS = range(0, 10)             # z cells of the head (a clear row, then the neck at row 11)
 COLS = range(-5, 5)
-LEVELS = range(20, 44)
+LEVELS = range(20, 45)
 SHELF_ROW, SHELF_TOP = 8, 27    # the throat shelf (part of the chest) under rows 8-10
+SEAT = SHELF_TOP + 1            # the head rides on a turntable one plate above the shelf
+SEAT_ROW = SHELF_ROW - 1        # from this row back, the head stays above the seat, so the
+                                # jaw swings clear of the shelf when the head turns
+LIFT_MM = 3.2                   # the head shape sits this much higher (the turntable plate)
+TURNTABLE = ((-1, 8), SHELF_TOP)   # 2x2 turntable: lower-left cell, bottom plate
+PIVOT_Z = 20.0 * (TURNTABLE[0][1] + 1)   # LDU: the head turns about x = 0, z = PIVOT_Z
+TURN = 20.0                     # degrees the head is turned towards the viewer (nose to -X)
+TURN_RANGE = (-15.0, 30.0)      # how far it can be posed either way (mechanism sweep)
 
 # Eyes and ears: a round 1x1 plate with a side bar (32828), turned so the bar points out (and
 # forward), carrying a 2x2 dish: a glossy eye, or a round cupped ear.
 # (cell, plate level or None = on top of the head there, degrees from straight ahead, side)
 EYE_LOOK, EAR_LOOK = 45.0, 55.0
-EYES = [((-2, 4), 30, EYE_LOOK, -1), ((1, 4), 30, EYE_LOOK, 1)]
+EYES = [((-2, 4), 31, EYE_LOOK, -1), ((1, 4), 31, EYE_LOOK, 1)]
 EARS = [((-3, 7), None, EAR_LOOK, -1), ((2, 7), None, EAR_LOOK, 1)]
-NOSE = ((-1, 0), 27)            # 1x2 brick with two side studs: left cell, bottom plate
-TONGUE = ((-1, 0), 24)          # 1x1 brick with a side stud under the nose: the "blep"
+NOSE = ((-1, 0), 28)            # 1x2 brick with two side studs: left cell, bottom plate
+TONGUE = ((-1, 0), 25)          # 1x1 brick with a side stud under the nose: the "blep"
 WHISKERS = [(-2, 1), (1, 1)]    # clip tiles on the whisker pads (on top of the head there)
 
 
@@ -76,7 +84,7 @@ def dist(x, h, z):
     x, h, z = (np.asarray(v, float)[..., None] for v in (x, h, z))
     C = np.array([c for c, _ in PARTS])
     R = np.array([r for _, r in PARTS])
-    d = ((x - C[:, 0]) / R[:, 0]) ** 2 + ((h - C[:, 1]) / R[:, 1]) ** 2 + \
+    d = ((x - C[:, 0]) / R[:, 0]) ** 2 + ((h - LIFT_MM - C[:, 1]) / R[:, 1]) ** 2 + \
         ((z - C[:, 2]) / R[:, 2]) ** 2
     return d.min(-1)
 
@@ -91,7 +99,7 @@ def raw_layers() -> dict[int, set]:
         cells = set()
         for i in COLS:
             for j in ROWS:
-                if j >= SHELF_ROW and p < SHELF_TOP:
+                if j >= SEAT_ROW and p < SEAT:
                     continue
                 if dist(*centre((i, j), p)) <= 1.0:
                     cells.add((i, j))
@@ -148,6 +156,7 @@ def role(c, p) -> str:
     """Sable-style face: white muzzle, chin and cheeks, dark bandit mask round the eyes,
     body-coloured crown."""
     x, h, z = centre(c, p)
+    h -= LIFT_MM
     if z < 20 or h < 85:
         return "face"                                # muzzle, chin, throat
     if 90 <= h <= 105 and 20 <= z <= 58:
@@ -183,6 +192,12 @@ def pieces(sizes_of):
                             "tongue socket"))
     for p in range(p0, p0 + 3):
         reserved.setdefault(p, set()).add((i, j))
+    # the turntable top the head rides on (it nests in the base on the throat shelf)
+    (i, j), p0 = TURNTABLE
+    tt = frozenset(sc.rect(i, j, 2, 2))
+    sockets.append(sc.Piece("3679", "Light Bluish Gray", tt, p0, p0 + 1, tt, {},
+                            (20.0 * (i + 1), -8 * (p0 + 1), 20.0 * (j + 1)), None, p0,
+                            "turntable top"))
     for c in WHISKERS:
         top = max(p for p in L if c in L[p])
         cc = frozenset({c})
