@@ -3,48 +3,48 @@
   "baby_metroid": {
    "files": {
     "baby_metroid.mpd": {
-     "v": "1b03eca1a4",
-     "size": 128124
+     "v": "71458784c9",
+     "size": 138575
     },
     "booklet.pdf": {
-     "v": "18080ed606",
-     "size": 27261170
+     "v": "04b3aeef88",
+     "size": 26440435
     },
     "bricklink_wanted.xml": {
-     "v": "0b5e6c4307",
-     "size": 6050
+     "v": "8cc0908207",
+     "size": 5684
     },
     "model.glb": {
-     "v": "3b83ea7e15",
-     "size": 1807196
+     "v": "e7d059c06f",
+     "size": 1613884
     },
     "model.json": {
-     "v": "c900a8b82b",
-     "size": 367724
+     "v": "f7fd63d167",
+     "size": 377520
     },
     "parts.csv": {
-     "v": "e52762cb0c",
-     "size": 4850
+     "v": "810adee2b3",
+     "size": 4619
     },
     "pick_a_brick.csv": {
-     "v": "e96c9daa76",
-     "size": 757
+     "v": "14034c5607",
+     "size": 703
     },
     "price_estimate.md": {
-     "v": "9190aff1fc",
-     "size": 6334
+     "v": "b93f0dd30a",
+     "size": 6082
     },
     "renders/hero_hero.png": {
-     "v": "769362c51c",
-     "size": 1168607
+     "v": "08642f50d9",
+     "size": 1166994
     },
     "renders/hero_lit_hero.png": {
-     "v": "b3a9f62bad",
-     "size": 1276488
+     "v": "0f4894ff51",
+     "size": 1261400
     },
     "renders/hero_open_hero.png": {
-     "v": "0d7e665d78",
-     "size": 1190095
+     "v": "e961f04a5d",
+     "size": 1192745
     },
     "renders/renders_front.png": {
      "v": "f963e94d54",
@@ -57,26 +57,30 @@
     "renders/renders_three_quarter.png": {
      "v": "1ab024dbc9",
      "size": 813609
+    },
+    "video.mp4": {
+     "v": "bad3765e6e",
+     "size": 9758519
     }
    },
    "images": {
     "renders/hero_lit_hero.png": {
      "w": 1000,
      "h": 1000,
-     "lg": "/assets/img/baby_metroid/hero_lit_hero.webp?v=f95a1b0a78",
-     "sm": "/assets/img/baby_metroid/hero_lit_hero-480.webp?v=3a789a106b"
+     "lg": "/assets/img/baby_metroid/hero_lit_hero.webp?v=94e7b09d02",
+     "sm": "/assets/img/baby_metroid/hero_lit_hero-480.webp?v=0cffe61e00"
     },
     "renders/hero_hero.png": {
      "w": 1000,
      "h": 1000,
-     "lg": "/assets/img/baby_metroid/hero_hero.webp?v=ad1c9e2fc4",
-     "sm": "/assets/img/baby_metroid/hero_hero-480.webp?v=d39b20bb18"
+     "lg": "/assets/img/baby_metroid/hero_hero.webp?v=cf6b597b5b",
+     "sm": "/assets/img/baby_metroid/hero_hero-480.webp?v=8567e9c48f"
     },
     "renders/hero_open_hero.png": {
      "w": 1000,
      "h": 1000,
-     "lg": "/assets/img/baby_metroid/hero_open_hero.webp?v=c1ae332fa2",
-     "sm": "/assets/img/baby_metroid/hero_open_hero-480.webp?v=3e44588623"
+     "lg": "/assets/img/baby_metroid/hero_open_hero.webp?v=b9b362033d",
+     "sm": "/assets/img/baby_metroid/hero_open_hero-480.webp?v=b9fdd076a8"
     },
     "renders/renders_front.png": {
      "w": 800,

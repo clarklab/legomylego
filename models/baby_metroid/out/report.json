@@ -5,7 +5,7 @@
     {
       "name": "real_elements",
       "status": "warn",
-      "summary": "65 part/colour combinations: 0 not real, 1 rare",
+      "summary": "60 part/colour combinations: 0 not real, 1 rare",
       "items": [
         {
           "part": "64228",
@@ -22,7 +22,7 @@
         }
       ],
       "stats": {
-        "combinations": 65,
+        "combinations": 60,
         "not_real": 0,
         "rare": 1
       }
@@ -30,14 +30,14 @@
     {
       "name": "connections",
       "status": "pass",
-      "summary": "4201 connections (4057 stud, 75 axle, 69 pin); 1 separate piece(s)",
+      "summary": "4797 connections (4665 stud, 80 pin, 52 axle); 1 separate piece(s)",
       "items": [],
       "stats": {
-        "connections": 4201,
+        "connections": 4797,
         "by_kind": {
-          "stud": 4057,
-          "pin": 69,
-          "axle": 75
+          "stud": 4665,
+          "pin": 80,
+          "axle": 52
         },
         "pieces": 1
       }
@@ -45,7 +45,7 @@
     {
       "name": "collisions",
       "status": "pass",
-      "summary": "0 overlapping pair(s) among 2682 parts",
+      "summary": "0 overlapping pair(s) among 2900 parts",
       "items": [],
       "stats": {
         "pairs": 0
@@ -54,34 +54,34 @@
     {
       "name": "buildability",
       "status": "pass",
-      "summary": "2462 insertions tried across 8 submodel(s); 0 problem(s)",
+      "summary": "2615 insertions tried across 11 submodel(s); 0 problem(s)",
       "items": [],
       "stats": {
-        "insertions": 2462
+        "insertions": 2615
       }
     },
     {
       "name": "stability",
       "status": "pass",
-      "summary": "about 1519 g; centre of mass inside the base (104% margin); tips at 20.9 deg",
+      "summary": "about 1690 g; centre of mass inside the base (104% margin); tips at 19.8 deg",
       "items": [],
       "stats": {
-        "mass_g": 1518.827264232537,
+        "mass_g": 1689.8139287684344,
         "com": [
-          -3.4492504512938105,
-          13.320774332965826,
-          -3.0465102291480113
+          -3.6347651968700925,
+          54.81703703588204,
+          -3.728111186420267
         ],
         "approx_parts": 0,
-        "margin": 1.039053647447165,
-        "tip_angle_deg": 20.86682565839729,
-        "com_height_ldu": 410.6792256670342
+        "margin": 1.0372028018600425,
+        "tip_angle_deg": 19.837041723289914,
+        "com_height_ldu": 433.18296296411796
       }
     },
     {
       "name": "mechanism",
       "status": "pass",
-      "summary": "24 poses swept for 16 moving group(s); 2 gear pair(s); 0 problem(s)",
+      "summary": "24 poses swept for 10 moving group(s); 0 gear pair(s); 0 problem(s)",
       "items": [],
       "stats": {
         "poses": 24
@@ -90,23 +90,23 @@
     {
       "name": "electrics",
       "status": "pass",
-      "summary": "3 light(s), 3 cable run(s); longest lead needs 23 of 40 cm; 0 problem(s)",
+      "summary": "3 light(s), 3 cable run(s); longest lead needs 28 of 40 cm; 0 problem(s)",
       "items": [],
       "stats": {
         "runs": [
           {
             "cable": "Light lead to nucleus 1",
-            "need_cm": 18.9,
+            "need_cm": 28.0,
             "length_cm": 40.0
           },
           {
             "cable": "Light lead to nucleus 2",
-            "need_cm": 23.2,
+            "need_cm": 27.8,
             "length_cm": 40.0
           },
           {
             "cable": "Light lead to nucleus 3",
-            "need_cm": 22.7,
+            "need_cm": 23.1,
             "length_cm": 40.0
           }
         ]

@@ -2,7 +2,7 @@
 
 The larval Metroid from Super Metroid, about 18 cm across and 32 cm tall on its clear hover
 stand, built as a **tap lamp**: press it down and its fangs bite and its nuclei light up;
-press again and they go dark. About 3,000 parts and 1.7 kg (estimated). Every check passes
+press again and they go dark. 2,903 pieces in 61 part/colour lines, about 1.7 kg (estimated). Every check passes
 except one warning: the Power Functions battery box is rare (last in a set in 2015).
 
 ## How the tap works

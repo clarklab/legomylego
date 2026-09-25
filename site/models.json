@@ -3,18 +3,18 @@
     {
       "slug": "baby_metroid",
       "name": "Baby Metroid",
-      "description": "The larval Metroid in real LEGO, about 18 cm across: a see-through dome over three glowing red nuclei, four fangs that open and close from a knob at the back, hovering on a clear stand.",
+      "description": "The larval Metroid in real LEGO, about 18 cm across, as a tap lamp: press it down and its four fangs bite and its three red nuclei light up; press again and they go dark.",
       "notice": "Metroid is \u00a9 Nintendo. This fan model is not affiliated with or endorsed by Nintendo.",
-      "parts": 2682,
-      "pieces": 2681,
+      "parts": 2900,
+      "pieces": 2903,
       "dims_mm": [
         176.0,
-        292.8,
-        179.8
+        318.4,
+        176.0
       ],
       "price": {
-        "low": 124.32,
-        "high": 396.11,
+        "low": 134.05,
+        "high": 428.1,
         "currency": "USD",
         "note": "A rough range from typical BrickLink prices per part type, not live market data."
       },
