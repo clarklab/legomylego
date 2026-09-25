@@ -24,7 +24,7 @@ dark = "White"
 mask = "White"
 face = "White"
 nose = "Bright Pink"
-eye = "Trans-Red"
+eye = "Red"
 whisker = "White"
 
 [variants.cinnamon]

@@ -339,7 +339,7 @@ def emit_planned(sub, pieces, key, label: str, unit: str, intro: str, cap_text: 
         against = [p for p in st if p.hang != upside_down]
         if against:
             where = "these parts go" if len(against) == len(st) else "some of these parts go"
-            text += (f"; {where} on the underside of the course above: push them up into it"
+            text += (f"; {where} on the underside of the {unit} above: push them up into it"
                      if not upside_down else
                      f"; {where} on the far side (the top of the {label.lower()})")
         notes = [SOCKET_NOTES[p.note] for p in st if p.note in SOCKET_NOTES]

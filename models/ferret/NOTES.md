@@ -113,7 +113,7 @@ in sets since 2016; `design.Avail` restricts the packer to such sizes):
 | mask (band over the eyes) | Dark Brown | White | Reddish Brown |
 | face (muzzle, cheeks, throat, ears) | White | White | White |
 | nose | Reddish Brown | Bright Pink | Dark Pink |
-| eye | Black | Trans-Red (ruby over a black mount) | Black |
+| eye | Black | Red | Black |
 | ear_inner | Bright Pink | Bright Pink | Bright Pink |
 | tongue | Coral | Coral | Coral |
 | whisker | Black | White | Black |
@@ -132,7 +132,9 @@ legs and tail use those; Medium Nougat has no 2 x 3 or 2 x 8 bricks, so the coat
 collisions, buildability, stability, mechanism with the 24-pose head sweep, electrics,
 technique), and real elements + technique pass for albino and cinnamon, with **no warnings**.
 The cinnamon nose had been Coral, which is rare on the 1 x 2 half-circle tile (1 set), so it
-became Dark Pink.
+became Dark Pink. The albino's eyes were Trans-Red at first; once the head became posable the
+technique check warned about transparent parts in a moving group (clear plastic is the brittle
+kind), so they are opaque Red.
 
 ## Known limitations
 
