@@ -199,7 +199,7 @@ def export_model(engine, proj, model, site_dir: Path | None = None) -> Path:
             files[name] = src.name
     renders = []
     shutil.rmtree(dst / "renders", ignore_errors=True)
-    for d in ("hero", "hero_lit", "hero_open", "renders"):
+    for d in ("hero_lit", "hero", "hero_open", "renders"):     # first one is the thumbnail
         for png in sorted((proj.out / d).glob("*.png")) if (proj.out / d).exists() else []:
             target = dst / "renders" / f"{d}_{png.name}"
             target.parent.mkdir(exist_ok=True)
