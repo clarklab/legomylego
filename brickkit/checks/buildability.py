@@ -38,6 +38,11 @@ def _units(sub) -> list[Unit]:
     return units
 
 
+def _lowest(unit: Unit) -> float:
+    """Largest y (LDraw +Y is down) of a unit's part origins: lower parts are built first."""
+    return max(M[1, 3] for _, M in unit.parts)
+
+
 def _unique(dirs):
     out, seen = [], set()
     for d in dirs:
@@ -98,26 +103,36 @@ def check_buildability(ctx, cfg) -> CheckResult:
 
         for s in range(sub.n_steps):
             pending = [ui for ui, u in enumerate(units) if u.step == s]
-            while pending:
+
+            def attached(ui):
                 bset = set(built)
-                attached = [ui for ui in pending if any(o in bset for o, _, _ in links[ui])]
+                return any(o in bset for o, _, _ in links[ui])
+
+            while pending:
                 progress = False
-                for ui in attached:
+                for ui in list(pending):                     # in the order they are listed
+                    u = units[ui]
+                    if u.insert is None and not attached(ui):
+                        continue                             # loose for now: set down later
+                    if u.insert is None and any(
+                            units[o].insert is None and not attached(o)
+                            and _lowest(units[o]) > _lowest(u) + 0.5 for o in pending if o != ui):
+                        continue                             # a lower loose part goes first
                     tried += 1
                     blockers = [i for i in built_parts if i not in snaps[ui]]
-                    if _insertable(ctx, units[ui], ui, links, set(built), flat, blockers,
-                                   boxes_all, stride, min_travel):
+                    if _insertable(ctx, u, ui, links, set(built), flat, blockers, boxes_all,
+                                   stride, min_travel):
                         pending.remove(ui)
                         add(ui)
                         progress = True
                 if progress:
                     continue
-                free = [ui for ui in pending if ui not in attached]
+                free = [ui for ui in pending if units[ui].insert is None and not attached(ui)]
                 if not free:
                     break
-                # nothing attached can go in yet: set down one unattached unit and retry
-                pending.remove(free[0])
-                add(free[0])
+                ui = max(free, key=lambda u: _lowest(units[u]))  # set down the lowest loose part
+                pending.remove(ui)
+                add(ui)
             for ui in pending:
                 items.append({"submodel": sub.name, "step": s + 1, "part": units[ui].label,
                               "problem": "no clear path to push it into place"})

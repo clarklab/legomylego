@@ -32,3 +32,12 @@ def test_mass_of_2x4_brick(engine):
     from brickkit.geometry.mass import part_mass
     g, cen, approx = part_mass(engine.geom.mesh("3001.dat"), is_trans=False)
     assert 2.0 < g < 3.2 and not approx
+
+
+def test_meshing_gears_may_touch(engine):
+    from brickkit.ldraw.matrix import rot, transform
+    # 24T and a worm at the right centre distance but out of phase: allowed to touch
+    g = transform((0, 0, 0))
+    w = transform((-40, 0, 0), rot(x=90))
+    assert engine.collide.collide_pair("3648b.dat", g, "4716.dat", w) is False
+    assert engine.is_gear("3648b.dat") and not engine.is_gear("3001.dat")

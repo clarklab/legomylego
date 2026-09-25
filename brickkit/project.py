@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import importlib.util
+import sys
 import tomllib
 from pathlib import Path
 
@@ -47,6 +48,10 @@ class Project:
         design = self.dir / cfg.get("design", "design.py")
         spec = importlib.util.spec_from_file_location(f"brickkit_model_{self.slug}", design)
         mod = importlib.util.module_from_spec(spec)
-        spec.loader.exec_module(mod)
-        mod.build(model)
+        sys.path.insert(0, str(self.dir))      # lets design.py import sibling modules
+        try:
+            spec.loader.exec_module(mod)
+            mod.build(model)
+        finally:
+            sys.path.remove(str(self.dir))
         return model

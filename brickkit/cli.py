@@ -81,6 +81,8 @@ def main(argv=None) -> int:
     p.add_argument("--lights", action="store_true")
     p.add_argument("--out", default="renders")
     p.add_argument("--variant")
+    p = sub.add_parser("inspect", help="show a part's size and connection points")
+    p.add_argument("parts", nargs="+")
     p = sub.add_parser("find", help="search real LEGO parts by name, optionally in a colour")
     p.add_argument("text")
     p.add_argument("--color")
@@ -96,6 +98,20 @@ def main(argv=None) -> int:
 
     from .engine import Engine
     engine = Engine()
+    if args.cmd == "inspect":
+        import numpy as np
+        for part in args.parts:
+            part = engine.catalog.canonical(part)
+            lo, hi = engine.geom.mesh(part).bbox
+            print(f"{part}: {engine.lib.description(part)}")
+            print(f"  bbox x[{lo[0]:.0f},{hi[0]:.0f}] y[{lo[1]:.0f},{hi[1]:.0f}] z[{lo[2]:.0f},{hi[2]:.0f}]")
+            for c in engine.shadow.connectors(part):
+                o = np.round(c.origin, 1).tolist()
+                a = np.round(c.axis, 2).tolist()
+                shape = " ".join(f"{s}{r:g}x{ln:g}" for s, r, ln in c.secs) or f"r{c.radius:g}"
+                print(f"  {c.kind} {c.gender} {shape:18s} at {o} axis {a}"
+                      f"{' centred' if c.center else ''}{' group=' + c.group if c.group else ''}")
+        return 0
     if args.cmd == "find":
         for sets, part, name, has_ld in engine.catalog.search(args.text, args.color, args.limit):
             print(f"{sets:5d}  {part:12s} {'ldraw' if has_ld else '     '}  {name}")

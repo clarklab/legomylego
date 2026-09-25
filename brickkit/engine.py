@@ -33,8 +33,21 @@ class Engine:
 
     @cached_property
     def collide(self):
+        """Collision engine. Meshing gear teeth are allowed to touch (they are put into mesh
+        with a slight turn, which a straight insertion sweep can't model); gear spacing is
+        checked separately by the mechanism check."""
         from .geometry.collide import CollisionEngine
-        return CollisionEngine(self.geom)
+        return CollisionEngine(self.geom, skip_pair=self.gears_touch)
+
+    def is_gear(self, part: str) -> bool:
+        cache = self.__dict__.setdefault("_gear_cache", {})
+        if part not in cache:
+            name = self.catalog.part_name(part).lower()
+            cache[part] = ("gear" in name or "worm" in name) and "technic" in name
+        return cache[part]
+
+    def gears_touch(self, pa: str, pb: str) -> bool:
+        return self.is_gear(pa) and self.is_gear(pb)
 
     def context(self, model, config: dict | None = None):
         from .checks.base import CheckContext

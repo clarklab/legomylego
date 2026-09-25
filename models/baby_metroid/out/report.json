@@ -1,0 +1,105 @@
+{
+  "title": "Baby Metroid",
+  "status": "warn",
+  "checks": [
+    {
+      "name": "real_elements",
+      "status": "warn",
+      "summary": "64 part/colour combinations: 0 not real, 1 rare",
+      "items": [
+        {
+          "part": "64228",
+          "name": "Battery Box, Power Functions, with Dark Bluish Gray Bottom [Non-Rechargeable]",
+          "colour": "Light Bluish Gray",
+          "severity": "warn",
+          "problem": "rare: in 7 set(s), last seen 2015",
+          "element_ids": [
+            "4578042",
+            "4638959",
+            "6116239",
+            "6197414"
+          ]
+        }
+      ],
+      "stats": {
+        "combinations": 64,
+        "not_real": 0,
+        "rare": 1
+      }
+    },
+    {
+      "name": "connections",
+      "status": "pass",
+      "summary": "4201 connections (4057 stud, 75 axle, 69 pin); 1 separate piece(s)",
+      "items": [],
+      "stats": {
+        "connections": 4201,
+        "by_kind": {
+          "stud": 4057,
+          "pin": 69,
+          "axle": 75
+        },
+        "pieces": 1
+      }
+    },
+    {
+      "name": "collisions",
+      "status": "pass",
+      "summary": "0 overlapping pair(s) among 2674 parts",
+      "items": [],
+      "stats": {
+        "pairs": 0
+      }
+    },
+    {
+      "name": "buildability",
+      "status": "pass",
+      "summary": "2457 insertions tried across 7 submodel(s); 0 problem(s)",
+      "items": [],
+      "stats": {
+        "insertions": 2457
+      }
+    },
+    {
+      "name": "stability",
+      "status": "pass",
+      "summary": "about 1520 g; centre of mass inside the base (104% margin); tips at 20.9 deg",
+      "items": [],
+      "stats": {
+        "mass_g": 1520.3801726255992,
+        "com": [
+          -3.7437766152489713,
+          14.332382089275553,
+          -3.0042043423365317
+        ],
+        "approx_parts": 0,
+        "margin": 1.0370988277748963,
+        "tip_angle_deg": 20.87794924500826,
+        "com_height_ldu": 409.66761791072446
+      }
+    },
+    {
+      "name": "mechanism",
+      "status": "pass",
+      "summary": "24 poses swept for 16 moving group(s); 2 gear pair(s); 0 problem(s)",
+      "items": [],
+      "stats": {
+        "poses": 24
+      }
+    },
+    {
+      "name": "electrics",
+      "status": "pass",
+      "summary": "3 light(s), 0 cable run(s); 0 problem(s)",
+      "items": [],
+      "stats": {}
+    },
+    {
+      "name": "technique",
+      "status": "pass",
+      "summary": "0 note(s)",
+      "items": [],
+      "stats": {}
+    }
+  ]
+}

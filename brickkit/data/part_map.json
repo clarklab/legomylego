@@ -1,1 +1,12 @@
-{}
+{
+  "62498c01": {
+    "bom": false,
+    "note": "LED head, counted with its 8870 light unit"
+  },
+  "62501c01": {
+    "rebrickable": "61930",
+    "bricklink": "8870",
+    "bricklink_type": "S",
+    "note": "Power Functions LED light unit 8870 (junction box + 2 LEDs + cable)"
+  }
+}
