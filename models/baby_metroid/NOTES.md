@@ -1,4 +1,4 @@
-# Baby Metroid: design notes
+# Baby Metroid Lamp: design notes
 
 The larval Metroid from Super Metroid, about 18 cm across and 32 cm tall on its clear hover
 stand, built as a **tap lamp**: press it down and its fangs bite and its nuclei light up;

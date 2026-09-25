@@ -3,12 +3,12 @@
   "baby_metroid": {
    "files": {
     "baby_metroid.mpd": {
-     "v": "71458784c9",
-     "size": 138575
+     "v": "8748e7dcdc",
+     "size": 138580
     },
     "booklet.pdf": {
-     "v": "04b3aeef88",
-     "size": 26440435
+     "v": "8f1427ad47",
+     "size": 26444432
     },
     "bricklink_wanted.xml": {
      "v": "8cc0908207",
@@ -19,8 +19,8 @@
      "size": 1613884
     },
     "model.json": {
-     "v": "e2aefe1e4f",
-     "size": 377500
+     "v": "10be893289",
+     "size": 377505
     },
     "parts.csv": {
      "v": "810adee2b3",

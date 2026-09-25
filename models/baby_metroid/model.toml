@@ -1,5 +1,5 @@
 [model]
-name = "Baby Metroid"
+name = "Baby Metroid Lamp"
 design = "design.py"
 description = "The larval Metroid in real LEGO, about 18 cm across, as a tap lamp: press it down and its four fangs bite and its three red nuclei light up; press again and they go dark."
 notice = "Metroid is © Nintendo. This fan model is not affiliated with or endorsed by Nintendo."
@@ -29,7 +29,7 @@ enabled = ["real_elements", "connections", "collisions", "buildability", "stabil
 
 [booklet]
 subtitle = "The larval Metroid from Super Metroid, about 18 cm across and 32 cm tall on its clear hover stand, made into a tap lamp: press it down and the fangs bite and the nuclei light up; press again to turn them off."
-intro = "A hollow Trans-Light Blue dome over a Coral and Dark Red skirt, with three bumpy Trans-Red nuclei floating inside it. The Metroid floats on a clear tube: press it down and the tube clicks the battery box's green on/off button, while the four fangs, linked to a hub held still by the stand's centre axle, snap shut. Rubber belts in the stand lift it back and the fangs open again. Two Power Functions LEDs light the nuclei. The Metroid lifts off its stand."
+intro = "A lamp shaped like the Baby Metroid: a hollow Trans-Light Blue dome over a Coral and Dark Red skirt, with three bumpy Trans-Red nuclei floating inside it. The Metroid floats on a clear tube: press it down and the tube clicks the battery box's green on/off button, while the four fangs, linked to a hub held still by the stand's centre axle, snap shut. Rubber belts in the stand lift it back and the fangs open again. Two Power Functions LEDs light the nuclei. The Metroid lifts off its stand."
 you_will_need = [
   "2x LEGO Power Functions LED lights (8870). Each has two lamps on one lead: one lamp per nucleus, with one lamp to spare.",
   "6 AAA batteries for the Power Functions AAA battery box (set 88000, listed in the parts as 64228), which sits inside the stand.",

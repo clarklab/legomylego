@@ -14,7 +14,7 @@ at **[lego.superfun.games](https://lego.superfun.games)**.
 
 | Model | Pieces | Size | Works | Rough cost* |
 |---|---:|---|---|---|
-| [Baby Metroid](models/baby_metroid/NOTES.md) | 2,903 | 18 cm across, 32 cm tall on its stand | a tap lamp: press it down and the fangs bite and the 3 nuclei light up (Power Functions), press again for off; lifts off its stand | $134-$428 |
+| [Baby Metroid Lamp](models/baby_metroid/NOTES.md) | 2,903 | 18 cm across, 32 cm tall on its stand | a tap lamp: press it down and the fangs bite and the 3 nuclei light up (Power Functions), press again for off; lifts off its stand | $134-$428 |
 | [VHS Cassette](models/vhs_tape/NOTES.md) | 348 | 184 x 104 x 26 mm (real tape: 187 x 103 x 25) | dust door flips up on click hinges; both reels spin | $12-$43 |
 | [Ferret](models/ferret/NOTES.md) | 895 | 51 cm nose to tail | head turns on a turntable; sable, albino and cinnamon coats | $37-$117 |
 

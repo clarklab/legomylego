@@ -39,7 +39,7 @@ applied X then Y then Z.
 ## model.toml
 ```toml
 [model]
-name = "Baby Metroid"
+name = "Baby Metroid Lamp"
 design = "design.py"
 
 [palette]            # role -> real colour name (Rebrickable/BrickLink naming)
@@ -113,7 +113,7 @@ body sliding on a fixed stand). `allow_contact` exempts pairs of tagged parts fr
 and mechanism checks, for contact the part geometry can't show (a presser on a spring-loaded
 button, a push rod riding on a lever). `captive` tells the buildability check that parts under
 a tag are held without studs (a slider in its guide); the whole model must still join them up.
-The Baby Metroid's tap mechanism (`models/baby_metroid/core.py`, `stand.py`) uses all three.
+The Baby Metroid Lamp's tap mechanism (`models/baby_metroid/core.py`, `stand.py`) uses all three.
 
 ### Electrics and lights
 ```python
