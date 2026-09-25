@@ -64,16 +64,9 @@ def stand(model):
         _place_run(s, {2: "3023b", 1: "3024"}[length], "stand_base", i, k, length, axis,
                    y - 8, "")
     y -= 8                                                                 # 368
-    holes = {_cell(x, z) for x, z in RODS} | {_cell(*PRESSER)} | HATCH
-    bridge = woven_disc(s, disc - holes, "stand_base", surface_y=y,
-                        caption="Bridge over the box, with holes for the push rods, the "
-                                "presser and the plug")
-    y = bridge["top_y"]                                                    # 352
-    s.step("Belt pins under the bridge, two each side (pin into the brick first)")
-    for sg in (1, -1):
-        post = _belt_post(model, sg)
-        for x in PULLEYS:
-            s.use(post, (x, PULLEY_Y - 10, 90 * sg), None, insert=(0, 1, 0))
+    s.step("Set the bridge on the walls, belt pins hanging down")
+    s.use(_bridge(model, disc, y), (0, 0, 0), None, insert=(0, -1, 0))
+    y -= 16                                                                # 352
     s.step("Anchor for the centre axle")
     s.place("3941", "frame_dark", (0, y - 24, 0), tag="anchor")
     s.place("3941", "frame_dark", (0, y - 48, 0), tag="anchor")
@@ -103,6 +96,23 @@ def stand(model):
         s.place("11833", "stand_column", (0, ring_y, 0), tag="tube")
     model.captive("tube", "the tube slides in the stand's top plate; its flange keeps it in")
     return s
+
+
+def _bridge(model, disc, surface_y):
+    """The plate bridge over the battery box, resting on the walls, with holes for the push
+    rods, the presser and the plug, and the four belt pins hanging under it."""
+    b = model.submodel("bridge", "Bridge")
+    holes = {_cell(x, z) for x, z in RODS} | {_cell(*PRESSER)} | HATCH
+    res = woven_disc(b, disc - holes, "stand_base", surface_y=surface_y, plate=PLATES,
+                     caption="Two crossed layers of plates, with holes for the push rods, the "
+                             "presser and the plug")
+    assert res["pieces"] == 1, f"bridge falls into {res['pieces']} pieces"
+    b.step("Belt pins under the bridge, two each side", view="below")
+    for sg in (1, -1):
+        post = _belt_post(model, sg)
+        for x in PULLEYS:
+            b.use(post, (x, PULLEY_Y - 10, 90 * sg), None, insert=(0, 1, 0))
+    return b
 
 
 def _belt_post(model, sg: int):
