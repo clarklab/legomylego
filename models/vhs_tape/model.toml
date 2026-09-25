@@ -1,0 +1,20 @@
+[model]
+name = "VHS Cassette"
+design = "design.py"
+
+[palette]
+shell = "Black"              # top and bottom halves, dust door
+window = "Trans-Brown"       # smoked reel window (LEGO 'transparent brown')
+hub = "White"                # reel hubs
+flange = "White"             # lower reel flanges
+tape = "Reddish Brown"       # the tape: packs on the reels and the run across the mouth
+label = "White"              # face label recess and spine label
+detail = "Dark Bluish Gray"  # insert arrows, write-protect tab
+metal = "Flat Silver"        # screws, metal tape guide pins
+spring = "Light Bluish Gray" # reel-spring holders and reel pins
+roller = "White"             # tape guide rollers
+button = "Light Bluish Gray" # door release button
+
+[checks]
+enabled = ["real_elements", "connections", "collisions", "buildability", "stability",
+           "mechanism", "electrics", "technique"]
