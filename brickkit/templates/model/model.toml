@@ -1,0 +1,10 @@
+[model]
+name = "{{name}}"
+design = "design.py"
+
+[palette]
+body = "Light Bluish Gray"
+
+[checks]
+enabled = ["real_elements", "connections", "collisions", "buildability", "stability",
+           "mechanism", "electrics", "technique"]

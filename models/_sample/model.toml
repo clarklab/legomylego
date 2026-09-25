@@ -1,0 +1,12 @@
+[model]
+name = "Sample Tower"
+design = "design.py"
+
+[palette]
+base = "Dark Bluish Gray"
+body = "White"
+roof = "Red"
+
+[checks]
+enabled = ["real_elements", "connections", "collisions", "buildability", "stability",
+           "mechanism", "electrics", "technique"]
