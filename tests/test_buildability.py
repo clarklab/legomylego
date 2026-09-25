@@ -1,4 +1,5 @@
 from brickkit.checks import run_checks
+from brickkit.ldraw.matrix import rot
 from brickkit.model.builder import Model
 from tests.test_builder import make
 
@@ -49,6 +50,18 @@ def test_click_hinge_snaps_on(engine):
     s.place("3937", "White", (-20, -24, -10))
     s.step()
     s.place("6134", "White", (-20, -24, -10))
+    assert check(engine, m).status == "pass"
+
+
+def test_pin_pushed_into_technic_brick(engine):
+    """A Technic pin's split tip is flared wider than the hole and compresses as it goes in."""
+    m = Model("P", "p", {}, engine.catalog)
+    s = m.main
+    s.place("3020", "White")
+    s.step()
+    s.place("3700", "White", (0, -24, -10))
+    s.step()
+    s.place("2780", "Black", (0, -14, -20), rot(y=90))
     assert check(engine, m).status == "pass"
 
 

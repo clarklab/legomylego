@@ -1,7 +1,8 @@
 """Can every step be built? Each new part (or sub-assembly) must slide into place along one
 of its connection axes (or its insertion hint) without hitting what is already built, and
 each submodel must be one piece at the end of every step. Clips and hinges snap on (their
-fingers flex), so the parts a unit clips or hinges onto never block its path."""
+fingers flex) and Technic pins click in (the split, flared tip compresses in the hole), so the
+parts a unit clips, hinges or pins onto never block its path."""
 from __future__ import annotations
 
 from collections import defaultdict
@@ -14,7 +15,7 @@ from ..model.builder import Placement
 from ..snaps.match import find_connections
 from .base import CheckResult, components, register
 
-SNAP_KINDS = ("clip", "hinge")   # connections pushed on across their axis (they flex and snap)
+SNAP_KINDS = ("clip", "hinge", "pin")   # connections that flex as they go on (see docstring)
 
 
 @dataclass
