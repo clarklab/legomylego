@@ -1,0 +1,16 @@
+{
+  "white": 1, "tan": 2, "yellow": 3, "orange": 4, "red": 5, "green": 6, "blue": 7,
+  "black": 11, "transclear": 12, "transblack": 13, "transdarkblue": 14,
+  "translightblue": 15, "transneongreen": 16, "transred": 17, "transneonorange": 18,
+  "transyellow": 19, "transgreen": 20, "chromegold": 21, "chromesilver": 22, "pink": 23,
+  "purple": 24, "nougat": 28, "mediumorange": 31, "lime": 34, "brightgreen": 36,
+  "darkturquoise": 39, "mediumblue": 42, "darkpink": 47, "sandgreen": 48,
+  "transdarkpink": 50, "transpurple": 51, "sandblue": 55, "darkred": 59, "darkblue": 63,
+  "darkorange": 68, "darktan": 69, "magenta": 71, "pearldarkgray": 77, "darkgreen": 80,
+  "darkbluishgray": 85, "lightbluishgray": 86, "reddishbrown": 88, "darkpurple": 89,
+  "lightnougat": 90, "flatsilver": 95, "transorange": 98, "brightlightyellow": 103,
+  "brightpink": 104, "brightlightblue": 105, "transbrightgreen": 108,
+  "brightlightorange": 110, "pearlgold": 115, "darkbrown": 120, "mediumnougat": 150,
+  "lightaqua": 152, "darkazure": 153, "lavender": 154, "olivegreen": 155,
+  "mediumazure": 156, "mediumlavender": 157, "yellowishgreen": 158, "coral": 220
+}
