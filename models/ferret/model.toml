@@ -1,0 +1,45 @@
+[model]
+name = "Ferret"
+design = "design.py"
+
+# Default colourway: sable (cream/tan body, dark brown legs, tail and bandit mask).
+[palette]
+coat = "Tan"                 # body
+belly = "Tan"                # underside
+dark = "Dark Brown"          # legs, tail, shoulders
+mask = "Dark Brown"          # bandit mask round the eyes
+face = "White"               # muzzle, chin, ear rims
+nose = "Reddish Brown"
+eye = "Black"
+ear_inner = "Bright Pink"
+tongue = "Coral"
+whisker = "Black"
+core = "Light Bluish Gray"   # hidden structure (same in every colourway)
+
+[variants.albino]
+title = "Albino"
+coat = "White"
+belly = "White"
+dark = "White"
+mask = "White"
+face = "White"
+nose = "Bright Pink"
+eye = "Red"
+whisker = "White"
+
+[variants.cinnamon]
+title = "Cinnamon"
+coat = "Medium Nougat"
+belly = "Tan"
+dark = "Reddish Brown"
+mask = "Reddish Brown"
+face = "White"
+nose = "Dark Pink"
+eye = "Black"
+
+[checks]
+enabled = ["real_elements", "connections", "collisions", "buildability", "stability",
+           "mechanism", "electrics", "technique"]
+[checks.stability]
+min_margin = 0.25
+min_tilt_deg = 10
