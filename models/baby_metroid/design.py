@@ -9,6 +9,7 @@ import stand as stand_mod
 
 def build(model):
     model.meta["azimuth_offset"] = -45     # the Metroid faces the -X/-Z diagonal
+    model.meta["video"] = {"lift": {"exclude_tag": "stand", "height": 80}}
     main = model.main
     disc_cells = core.disc(main)
     core.core(model, main)

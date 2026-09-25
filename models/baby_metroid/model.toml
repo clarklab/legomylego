@@ -9,9 +9,6 @@ nucleus_core = "Dark Red"
 skirt = "Coral"
 skirt_accent = "Dark Red"
 fang = "White"
-fang_base = "Tan"
-mouth = "Dark Red"
-ribs = "Tan"
 frame = "Light Bluish Gray"
 frame_dark = "Black"
 gear = "Tan"
@@ -26,3 +23,20 @@ battery = "Light Bluish Gray"
 [checks]
 enabled = ["real_elements", "connections", "collisions", "buildability", "stability",
            "mechanism", "electrics", "technique"]
+
+[booklet]
+subtitle = "The larval Metroid from Super Metroid, life-sized at about 25 cm across, hovering on a clear stand. Turn the knob and the four fangs open and close; three red nuclei glow from inside."
+intro = "A hollow Trans-Light Blue dome over a Coral and Dark Red skirt, with three bumpy Trans-Red nuclei floating inside it. A Technic worm drive in the belly opens and closes all four fangs together from one knob at the back, and two Power Functions LEDs light the nuclei. The whole creature lifts off its stand."
+you_will_need = [
+  "2x LEGO Power Functions LED lights (8870). Each has two lamps on one lead: one lamp per nucleus, with one lamp to spare.",
+  "6 AAA batteries for the Power Functions AAA battery box (set 88000, listed in the parts as 64228), which sits inside the stand.",
+]
+notes = [
+  "Lay the two light leads before the inner membrane (step shown): each plug goes down through the opening in the base, the lamps stay on top.",
+  "The fang drive has a worm gear, so the fangs stay where you leave them. Turn the knob gently: stop when the fangs are fully open or closed.",
+  "Power Functions was discontinued in 2018. The LEDs and the battery box are easy to find used on BrickLink.",
+]
+works = [
+  { title = "Fangs that bite", text = "Turn the knob at the back: a worm drives a 24-tooth gear on one fang, and a hub under the body turns the other three with it. The worm locks the fangs in any position.", image = "hero_open/hero.png" },
+  { title = "Glowing nuclei", text = "Plug the two light leads onto the battery box through the hatch in the stand and switch it on: a Power Functions LED under each nucleus lights it from inside. Unplug the leads before lifting the Metroid off.", image = "hero_lit/hero.png" },
+]

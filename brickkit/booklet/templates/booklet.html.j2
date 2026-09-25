@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><title>{{ name }} - building instructions</title>
+<link rel="stylesheet" href="booklet.css"></head><body>
+{% set ns = namespace(page=1) %}
+{% macro foot() %}<div class="foot"><span>Unofficial fan-made instructions · checked by computer, not yet built with real bricks · {{ site|replace("https://", "") }}</span><span class="num">{{ ns.page }}</span></div>{% endmacro %}
+
+<section class="page cover">
+  <div class="left">
+    <img class="logo" src="{{ logo }}">
+    <div class="kicker">A LEGO® brick model of</div>
+    <h1>{{ name }}</h1>
+    <div class="sub">{{ subtitle }}</div>
+    <div class="count">{{ pieces }} <small>pieces · {{ n_steps }} steps · {{ sections|length }} sections</small></div>
+    <div class="flag">Unofficial fan-made building instructions</div>
+    <div class="warn"><b>Not physically build-tested.</b> Every part is a real LEGO element and the model was checked on a computer (connections, collisions, every step, balance{% if has_mechanism %}, mechanism{% endif %}), but nobody has built it with real bricks yet.</div>
+    <div class="legal">Not produced, sponsored or endorsed by the LEGO Group. LEGO® is a trademark of the LEGO Group. {{ name }} and related names belong to their owners. Made with brickkit · {{ date }}</div>
+  </div>
+  <div class="right"><img src="{{ cover }}"></div>
+</section>
+{% set ns.page = ns.page + 1 %}
+
+<section class="page">
+  <h2>Before you start</h2>
+  <div class="grid2">
+    <div>
+      <div class="box"><h3>An unofficial fan-made manual</h3><p>This booklet is not a LEGO product. It was generated from the model file by a computer program and checked part by part.</p></div>
+      <div class="box red" style="margin-top:5mm"><h3>Not physically build-tested</h3><p>The model and these steps were checked on a computer only: every part/colour is a real LEGO element, all {{ connections or "the" }} connections between parts were matched in 3D, no two parts overlap, every part can be pushed into place in its step, and the model's balance was estimated{% if has_mechanism %}; the mechanism was swept through its whole range{% endif %}. Not tested: how firmly parts hold, part tolerances and how it copes with handling. Take your time and support the model while you work.</p></div>
+      <div class="box" style="margin-top:5mm"><h3>The finished model</h3><p>About {{ dims[0] }} × {{ dims[1] }} × {{ dims[2] }} cm{% if weight_text %}, about {{ weight_text }} (estimated){% endif %}.</p>{% if intro %}<p>{{ intro }}</p>{% endif %}</div>
+    </div>
+    <div>
+      <div class="box"><h3>You will need</h3><ul><li>The {{ pieces }} pieces in {{ colours|length }} colours listed at the back, with their LEGO element IDs and BrickLink numbers.</li>{% for n in you_will_need %}<li>{{ n }}</li>{% endfor %}<li>A brick separator for pieces that sit too deep for a finger.</li></ul></div>
+      <div class="box" style="margin-top:5mm"><h3>Tips</h3><ul><li>Sort the pieces by colour before you start.</li><li>Build the sections in order: each sub-assembly is finished before it is used.</li><li>New pieces in a step are drawn in full colour; earlier pieces are drawn paler.</li>{% for n in notes %}<li>{{ n }}</li>{% endfor %}</ul></div>
+      <div class="box" style="margin-top:5mm"><h3>The {{ colours|length }} colours</h3><div class="colours">{% for c in colours %}<div><span class="swatch" style="background:{{ c.hex }}"></span>{{ c.name }}: {{ c.qty }}</div>{% endfor %}</div></div>
+    </div>
+  </div>
+  {{ foot() }}
+</section>
+{% set ns.page = ns.page + 1 %}
+
+<section class="page legend">
+  <h2>How to read the steps</h2>
+  <div class="grid3">
+    <div class="box"><h3>Parts and step number</h3><div class="demo"><span class="bignum">7</span><span class="callout"><span class="item"><img src="{{ inventory[0].img }}">2x</span></span></div><p>The parts for the step and how many of each, then the step number. All parts are drawn at one scale.</p></div>
+    <div class="box"><h3>New parts</h3><p>The parts added in a step are drawn in full colour; the parts from earlier steps are drawn paler, so the new ones stand out.</p></div>
+    <div class="box"><h3>Sub-assemblies</h3><div class="demo"><span class="callout"><span class="item sub"><img src="sub_{{ sections[0].name }}.png">1x</span></span></div><p>A yellow-framed picture means: put in the sub-assembly you built in its own section. "Build 4x" means you need four of them.</p></div>
+    <div class="box"><h3>Sections</h3><p>Each section starts with its name at the top of the page. Sections are built in the order they appear.</p></div>
+    <div class="box"><h3>Seen from below</h3><p>When a step adds parts underneath, the picture shows the model from below. A small label says so.</p></div>
+    <div class="box"><h3>Insert direction</h3><p>Some parts slide in sideways (axles through bearings, gears onto axles). The picture shows where they end up; push them in along their axle.</p></div>
+  </div>
+  {{ foot() }}
+</section>
+{% set ns.page = ns.page + 1 %}
+
+<section class="page">
+  <h2>Build overview</h2>
+  <p style="margin-top:-3mm">The model is built in {{ sections|length }} sections. Each is finished before it is used.</p>
+  <div class="sections">
+  {% for s in sections %}<div class="section-card"><img src="{{ s.img }}"><div class="t">{{ loop.index }}. {{ s.title }}{% if s.repeat > 1 %} ×{{ s.repeat }}{% endif %}</div><div class="m">{{ "step" if s.steps == 1 else "steps" }} {{ s.ranges }}</div></div>{% endfor %}
+  </div>
+  {{ foot() }}
+</section>
+{% set ns.page = ns.page + 1 %}
+
+{% for pair in steps|batch(2) %}
+<section class="page">
+  <div class="badge">{{ pair[-1].title }}</div>
+  <div class="steps">
+  {% for s in pair %}
+    <div class="step">
+      {% if s.section_start %}<div class="section-banner">{{ s.title }}{% if s.repeat > 1 %} · build {{ s.repeat }}x{% endif %}</div>{% endif %}
+      {% if s.view == "below" %}<div class="below">seen from below</div>{% endif %}
+      <div class="top"><div class="n">{{ s.number }}</div>
+        {% if s.parts or s.subs %}<div class="callout">
+          {% for sa in s.subs %}<div class="item sub"><img src="{{ sa.img }}">{{ sa.qty }}x</div>{% endfor %}
+          {% for p in s.parts %}<div class="item"><img src="{{ p.img }}" title="{{ p.name }} ({{ p.colour }})">{{ p.qty }}x</div>{% endfor %}
+        </div>{% endif %}
+      </div>
+      <div class="cap">{{ s.caption }}</div>
+      <div class="img"><img src="{{ s.image }}"></div>
+    </div>
+  {% endfor %}
+  </div>
+  {{ foot() }}
+</section>
+{% set ns.page = ns.page + 1 %}
+{% endfor %}
+
+{% if works %}
+<section class="page">
+  <h2>It works!</h2>
+  <div class="works">
+  {% for w in works %}<div><img src="{{ w.image }}"><h3 style="margin-top:3mm">{{ w.title }}</h3><p>{{ w.text }}</p></div>{% endfor %}
+  </div>
+  {{ foot() }}
+</section>
+{% set ns.page = ns.page + 1 %}
+{% endif %}
+
+{% for chunk in inventory|batch(40) %}
+<section class="page">
+  <h2>Parts inventory{% if not loop.first %} (continued){% endif %}</h2>
+  <p style="margin-top:-3mm;font-size:8pt">{{ pieces }} pieces in {{ lines }} part/colour lines. Bold: the LEGO element ID (what LEGO Pick a Brick sells); below: the colour and the BrickLink part number.</p>
+  <div class="inv">
+  {% for c in chunk %}<div class="cell"><img src="{{ c.img }}"><div class="q">{{ c.qty }}x</div><div class="e">{{ c.element or "—" }}</div><div><span class="swatch" style="background:{{ c.hex }}"></span>{{ c.colour }}</div><div>BrickLink {{ c.bl_part }}</div>{% if c.rare %}<div class="rare">rare / discontinued</div>{% endif %}</div>{% endfor %}
+  </div>
+  {{ foot() }}
+</section>
+{% set ns.page = ns.page + 1 %}
+{% endfor %}
+
+<section class="page">
+  <h2>About this model</h2>
+  <div class="grid2">
+    <div>
+      {% if intro %}<p>{{ intro }}</p>{% endif %}
+      <h3 style="margin-top:4mm">Checked on a computer</h3>
+      <table class="checks">{% for c in checks %}<tr><td style="width:24mm"><span class="st {{ c.status }}">{{ c.status }}</span></td><td style="width:34mm;font-weight:700">{{ c.name }}</td><td>{{ c.summary }}</td></tr>{% endfor %}</table>
+    </div>
+    <div>
+      <div class="box red"><h3>Not yet built with real bricks</h3><p>These checks catch most mistakes a designer can make, but not all: clutch power, part tolerances, how stiff a long axle is and how the model survives handling can only be judged with real bricks. If you build it, we would love to hear how it went.</p></div>
+      <div class="box" style="margin-top:5mm"><h3>Files</h3><p>3D model (LDraw, opens in BrickLink Studio, LeoCAD and LDCad), parts lists for BrickLink and LEGO Pick a Brick, and an interactive 3D viewer:<br><b>{{ url|replace("https://", "") }}</b></p></div>
+      <div class="box" style="margin-top:5mm"><h3>Trademarks</h3><p style="font-size:8pt">LEGO® is a trademark of the LEGO Group, which does not sponsor, authorize or endorse this booklet. Other names belong to their owners. Part geometry from the LDraw library (CC BY 4.0); connection data from the LDCad shadow library; element data from Rebrickable.</p></div>
+    </div>
+  </div>
+  {{ foot() }}
+</section>
+</body></html>

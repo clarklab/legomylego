@@ -20,10 +20,14 @@ class BomLine:
     qty: int
     element_id: str
     rare: bool
+    bl_type: str = "P"          # BrickLink item type: P part, S set (e.g. 8870 light unit)
 
 
-def build_bom(placed, catalog) -> list[BomLine]:
+def build_bom(placed, catalog, extras=()) -> list[BomLine]:
+    """Parts list from placed parts plus a model's `extras` [(part, Color, qty, note)]."""
     counts = Counter((p.part, p.color.ldraw) for p in placed if catalog.in_bom(p.part))
+    for part, color, qty, _ in extras:
+        counts[(part, color.ldraw)] += qty
     lines = []
     for (part, code), qty in counts.items():
         c = catalog.color(code)
@@ -31,7 +35,7 @@ def build_bom(placed, catalog) -> list[BomLine]:
         lines.append(BomLine(part_id(part), catalog.rb_part(part), catalog.bl_part(part),
                              catalog.part_name(part), c, qty,
                              e.element_ids[-1] if e and e.element_ids else "",
-                             bool(e is None or e.rare)))
+                             bool(e is None or e.rare), catalog.bl_type(part)))
     lines.sort(key=lambda l: (l.color.name, l.ldraw_part))
     return lines
 
@@ -50,8 +54,10 @@ def write_parts_csv(lines: list[BomLine], path) -> None:
 def write_bricklink_xml(lines: list[BomLine], path) -> None:
     out = ["<INVENTORY>"]
     for l in lines:
-        colour = f"<COLOR>{l.color.bl_id}</COLOR>" if l.color.bl_id is not None else ""
-        out.append(f"<ITEM><ITEMTYPE>P</ITEMTYPE><ITEMID>{escape(l.bl_part)}</ITEMID>{colour}"
+        colour = (f"<COLOR>{l.color.bl_id}</COLOR>"
+                  if l.color.bl_id is not None and l.bl_type == "P" else "")
+        out.append(f"<ITEM><ITEMTYPE>{l.bl_type}</ITEMTYPE><ITEMID>{escape(l.bl_part)}</ITEMID>"
+                   f"{colour}"
                    f"<MINQTY>{l.qty}</MINQTY></ITEM>")
     out.append("</INVENTORY>")
     Path(path).write_text("\n".join(out) + "\n")

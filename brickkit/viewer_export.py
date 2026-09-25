@@ -115,9 +115,9 @@ def model_json(engine, proj, model, placed, *, files: dict, variants: list[tuple
         mech = {"groups": list(model.groups), "samples": samples, "poses": poses}
     lights = []
     for light in model.lights:
-        found = model.find(light["part"], placed)
-        if found:
-            pos = (C @ np.append(found[0].M[:3, 3], 1.0))[:3]
+        ldu = model.light_position(light, placed)
+        if ldu is not None:
+            pos = (C @ np.append(ldu, 1.0))[:3]
             lights.append({"name": light["name"], "pos": pos.round(5).tolist(),
                            "color": light["color"], "power": light["power"]})
     glow = [{"tag": t, "strength": s} for t, s in model.glow_tags.items()]
@@ -128,7 +128,7 @@ def model_json(engine, proj, model, placed, *, files: dict, variants: list[tuple
         vplaced = vmodel.flatten()
         codes |= {p.color.ldraw for p in vplaced}
         var_out.append({"name": name, "title": title, "colors": [p.color.ldraw for p in vplaced],
-                        "bom": _bom_rows(engine, vplaced)})
+                        "bom": _bom_rows(engine, vplaced, vmodel.extras)})
     report_path = proj.out / "report.json"
     checks = []
     if report_path.exists():
@@ -146,12 +146,12 @@ def model_json(engine, proj, model, placed, *, files: dict, variants: list[tuple
     }
 
 
-def _bom_rows(engine, placed) -> list[dict]:
+def _bom_rows(engine, placed, extras=()) -> list[dict]:
     return [{"qty": l.qty, "part": l.ldraw_part, "name": l.name, "colour": l.color.name,
              "hex": engine.lib.colors[l.color.ldraw].rgb if l.color.ldraw in engine.lib.colors else "",
              "element_id": l.element_id, "bricklink_part": l.bl_part,
              "bricklink_colour": l.color.bl_id, "rare": l.rare}
-            for l in build_bom(placed, engine.catalog)]
+            for l in build_bom(placed, engine.catalog, extras)]
 
 
 def export_model(engine, proj, model, site_dir: Path | None = None) -> Path:

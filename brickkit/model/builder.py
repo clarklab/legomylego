@@ -56,6 +56,7 @@ class Submodel:
         self.title = title or name.replace("_", " ").capitalize()
         self.items: list[Placement | Use] = []
         self.captions: list[str] = [""]
+        self.views: dict[int, str] = {}     # step -> "above" | "below" (booklet camera)
 
     @property
     def current_step(self) -> int:
@@ -65,12 +66,15 @@ class Submodel:
     def n_steps(self) -> int:
         return len(self.captions)
 
-    def step(self, caption: str = "") -> int:
-        """Start a new step (reuses the current one if it is still empty)."""
+    def step(self, caption: str = "", view: str | None = None) -> int:
+        """Start a new step (reuses the current one if it is still empty). `view` tells the
+        booklet to look from "above" or "below" (default: decided automatically)."""
         if any(it.step == self.current_step for it in self.items):
             self.captions.append(caption)
         elif caption:
             self.captions[-1] = caption
+        if view:
+            self.views[self.current_step] = view
         return self.current_step
 
     def place(self, part: str, color, pos=(0, 0, 0), rot=None, *, tag: str = "",
@@ -109,6 +113,7 @@ class Model:
         self.gear_pairs: list[tuple[str, str, str]] = []  # (tag path a, tag path b, kind)
         self.lights: list[dict] = []
         self.cables: list[dict] = []
+        self.extras: list[tuple[str, Color, int, str]] = []   # bought, not placed in 3D
         self.extra_checks: list[Callable] = []           # fn(ctx) -> list of issue dicts
         self.glow_tags: dict[str, float] = {}
         self.variant: str | None = None
@@ -143,13 +148,29 @@ class Model:
     def gear_pair(self, a: str, b: str, kind: str = "spur") -> None:
         self.gear_pairs.append((a, b, kind))
 
-    def light(self, name: str, tag_path: str, color: str = "#FF3A1A", power: float = 1.5) -> None:
-        """A light source at a part (for the electrics check and lit renders)."""
-        self.lights.append({"name": name, "part": tag_path, "color": color, "power": power})
+    def light(self, name: str, tag_path: str, color: str = "#FF3A1A", power: float = 1.5,
+              offset=(0.0, 0.0, 0.0)) -> None:
+        """A light source at a part (for the electrics check and lit renders). `offset` (LDU, in
+        the part's own frame) moves the renders' point light, e.g. out of an LED's housing to
+        the middle of what it lights."""
+        self.lights.append({"name": name, "part": tag_path, "color": color, "power": power,
+                            "offset": tuple(map(float, offset))})
+
+    def light_position(self, light: dict, placed: list) -> np.ndarray | None:
+        """World position (LDU) of a light's point source, or None if its part is missing."""
+        found = self.find(light["part"], placed)
+        if not found:
+            return None
+        return (found[0].M @ np.append(np.asarray(light.get("offset", (0, 0, 0)), float), 1.0))[:3]
 
     def glow(self, tag: str, strength: float = 2.0) -> None:
         """Parts under this tag glow when the lights are on (renders only)."""
         self.glow_tags[tag] = strength
+
+    def extra(self, part: str, color, qty: int = 1, note: str = "") -> None:
+        """A part the builder needs that is not placed in 3D (it goes on the parts lists), e.g.
+        the lead and plug of a light unit whose lamp heads are placed."""
+        self.extras.append((self.canonical(part), self.resolve_color(color), int(qty), note))
 
     def cable(self, name: str, start: str, end: str, length: float, route=()) -> None:
         self.cables.append({"name": name, "from": start, "to": end, "length": float(length),

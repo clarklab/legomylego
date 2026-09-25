@@ -82,9 +82,9 @@ def model_scene(engine, model, *, pose_t: float | None = None, lights_on: bool =
     lights = []
     if lights_on:
         for light in model.lights:
-            found = model.find(light["part"], placed)
-            if found:
-                lights.append({"pos": found[0].M[:3, 3].tolist(), "color": light["color"],
+            pos = model.light_position(light, placed)
+            if pos is not None:
+                lights.append({"pos": pos.tolist(), "color": light["color"],
                                "power": light["power"]})
     return {"meshes": meshes, "instances": instances, "colors": _colors(engine, placed),
             "bounds": bounds(engine, placed), "lights": lights}
