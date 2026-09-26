@@ -26,10 +26,24 @@ BRICK = {(1, 1): "3005", (1, 2): "3004", (1, 3): "3622", (1, 4): "3010", (1, 6):
 BIG_PLATES = [(8, 16), (6, 16), (6, 14), (6, 12), (8, 8), (6, 10), (6, 8), (4, 12), (4, 10),
               (4, 8), (6, 6), (4, 6), (4, 4), (2, 16), (2, 14), (2, 12), (2, 10), (2, 8), (2, 6),
               (2, 4), (2, 3), (2, 2), (1, 8), (1, 6), (1, 4), (1, 3), (1, 2), (1, 1)]
+MID_PLATES = [(2, 12), (2, 10), (2, 8), (2, 6), (2, 4), (2, 3), (2, 2), (1, 8), (1, 6), (1, 4),
+              (1, 3), (1, 2), (1, 1)]
 TILES = [(2, 6), (2, 4), (2, 3), (2, 2), (1, 8), (1, 6), (1, 4), (1, 3), (1, 2), (1, 1)]
+# 1 x N runs (plates, tiles, bricks) by length
+PLATE1 = {n: PLATE[(1, n)] for n in (1, 2, 3, 4, 6, 8, 10, 12)}
+PLATE2 = {n: PLATE[(2, n)] for n in (2, 3, 4, 6, 8, 10, 12, 14, 16)}
+PLATE2[1] = "3023"            # a 1 x 2 plate turned across the run
+TILE1 = {n: TILE[(1, n)] for n in (1, 2, 3, 4, 6, 8)}
+TILE2 = {n: TILE[(2, n)] for n in (2, 3, 4, 6)}
 
-# quarter-circle parts: arc centre in the part's own frame; natural quadrant is (+x, -z)
-ARC = {"30565": (-40, 40), "79393": (0, 0), "27507": (0, 0), "27925": (-10, 10)}
+# quarter-circle parts: arc centre in the part's own frame (any quadrant; quarter_M turns them)
+ARC = {"30565": (-40, 40), "79393": (0, 0), "27507": (0, 0), "27925": (-10, 10),
+       "68568": (-10, -10)}
+
+
+def orient(ex, ey, ez) -> np.ndarray:
+    """3x3 rotation whose columns are where the part's local X, Y and Z axes point."""
+    return np.column_stack([np.asarray(v, float) for v in (ex, ey, ez)])
 
 
 def canon(part: str) -> str:
@@ -51,13 +65,14 @@ def rect_M(table: dict, rect: tuple, y: float):
     return part, transform((S * (i0 + i1) / 2, y, S * (k0 + k1) / 2), R)
 
 
-def pack(cells, sizes, order="row", prefer="x", below=None, shift=0) -> list[tuple]:
+def pack(cells, sizes, order="row", prefer="x", below=None, shift=0, uf=None) -> list[tuple]:
     """Greedy cover of stud cells by rectangles (both orientations). With `below`
     (cell -> id of the part underneath) each rectangle is chosen to join as many still
     separate groups of parts below as possible (union-find), then by area; otherwise by area.
-    `shift` rotates the scan start so alternative layouts can be tried.
+    `shift` rotates the scan start so alternative layouts can be tried; pass the same `uf`
+    dict to several calls that cover one layer so they share what is already joined.
     Returns (i0, i1, k0, k1) tuples."""
-    parent = {}
+    parent = {} if uf is None else uf
 
     def root(x):
         parent.setdefault(x, x)
@@ -81,14 +96,19 @@ def pack(cells, sizes, order="row", prefer="x", below=None, shift=0) -> list[tup
             continue
         best = None
         for w, d in cand:
-            box = {(i + a, k + b) for a in range(w) for b in range(d)}
-            if not box <= free:
-                continue
-            groups = {root(below[x]) for x in box if x in below} if below else set()
-            score = (len(groups), w * d)
-            if best is None or score > best[0]:
-                best = (score, box, (i, i + w - 1, k, k + d - 1))
-            if not below:
+            # every placement of a w x d rectangle that covers this cell (min corner first)
+            offs = [(0, 0)] + ([(oa, ob) for oa in range(w) for ob in range(d)
+                                if (oa, ob) != (0, 0)] if below else [])
+            for oa, ob in offs:
+                i0, k0 = i - oa, k - ob
+                box = {(i0 + a, k0 + b) for a in range(w) for b in range(d)}
+                if not box <= free:
+                    continue
+                groups = {root(below[x]) for x in box if x in below} if below else set()
+                score = (len(groups), w * d)
+                if best is None or score > best[0]:
+                    best = (score, box, (i0, i0 + w - 1, k0, k0 + d - 1))
+            if not below and best:
                 break
         if best:
             free -= best[1]
@@ -97,6 +117,52 @@ def pack(cells, sizes, order="row", prefer="x", below=None, shift=0) -> list[tup
                 ids = [root(below[x]) for x in best[1] if x in below]
                 for a in ids[1:]:
                     parent[root(a)] = root(ids[0])
+    return out
+
+
+def split_line(n: int, lengths, first=0) -> list[int]:
+    """n studs as runs of the given lengths: a first run of `first` when it fits, then as
+    few runs as possible with no 1-stud run (a 1 x 1 at the end of a line in one layer over
+    another 1 x 1 would be an island)."""
+    lengths = sorted(set(lengths), reverse=True)
+    best = {0: (0, 0, [])}
+    for m in range(1, n + 1):
+        cand = [(best[m - L][0] + (L == 1), best[m - L][1] + 1, best[m - L][2] + [L])
+                for L in lengths if L <= m and m - L in best]
+        if cand:
+            best[m] = min(cand, key=lambda c: (c[0], c[1]))
+    if first and first in lengths and n - first > 1 and n - first in best \
+            and best[n - first][0] == 0:
+        return [first] + sorted(best[n - first][2], reverse=True)
+    return sorted(best[n][2], reverse=True)
+
+
+def weave(cells, along: str, lengths=(12, 10, 8, 6, 4, 3, 2, 1), phase=0) -> list[tuple]:
+    """Cover stud cells with 1 x N runs along X (rows) or Z (columns): each line's
+    contiguous segments split into the given lengths. Successive lines start with a different
+    first run so the joints stagger. Two layers woven crosswise (rows over columns) join
+    every part to its neighbours, whatever the outline."""
+    lines = defaultdict(list)
+    for i, k in cells:
+        lines[k if along == "x" else i].append(i if along == "x" else k)
+    out = []
+    for n, key in enumerate(sorted(lines)):
+        vals = sorted(lines[key])
+        segs, cur = [], [vals[0]]
+        for v in vals[1:]:
+            if v == cur[-1] + 1:
+                cur.append(v)
+            else:
+                segs.append(cur)
+                cur = [v]
+        segs.append(cur)
+        for seg in segs:
+            first = (0, 4, 6, 3)[(n + phase) % 4]
+            pos = seg[0]
+            for L in split_line(len(seg), lengths, first):
+                a, b = pos, pos + L - 1
+                out.append((a, b, key, key) if along == "x" else (key, key, a, b))
+                pos += L
     return out
 
 
@@ -176,11 +242,11 @@ class Batch:
     def __init__(self):
         self.items = []
 
-    def add(self, part, color, M, cat, tag=""):
-        self.items.append((canon(part), color, np.asarray(M, float), cat, tag))
+    def add(self, part, color, M, cat, tag="", insert=None):
+        self.items.append((canon(part), color, np.asarray(M, float), cat, tag, insert))
 
     def parts(self, cats=None):
-        return [(p, M) for p, _, M, cat, _ in self.items if cats is None or cat in cats]
+        return [(p, M) for p, _, M, cat, *_ in self.items if cats is None or cat in cats]
 
     def phase_pieces(self, phases: list) -> int:
         """Worst piece count over the cumulative phases: 1 means every phase can be built
@@ -192,7 +258,12 @@ class Batch:
         return worst
 
     def emit(self, sub, phases: list, captions: dict, per_step: int = 6):
-        prior = [(it.part, it.M) for it in sub.items if hasattr(it, "part")]
+        prior = []
+        for it in sub.items:            # parts already in the submodel, sub-assemblies included
+            if hasattr(it, "part"):
+                prior.append((it.part, it.M))
+            else:
+                prior += [(p, it.M @ M) for p, _, M in it.sub.flatten_local()]
         adj = links(prior + self.parts())
         n0 = len(prior)
         built = set(range(n0))
@@ -227,6 +298,6 @@ class Batch:
                 told.update(self.items[j][3] for j in step)
                 sub.step(captions[new[0]] if new else "")
                 for j in step:
-                    part, color, M, cat, tag = self.items[j]
-                    sub.place(part, color, (0, 0, 0), tag=tag).M = M
+                    part, color, M, cat, tag, insert = self.items[j]
+                    sub.place(part, color, (0, 0, 0), tag=tag, insert=insert).M = M
         self.items = []

@@ -142,6 +142,12 @@ and `"bricklink_type": "S"` for items BrickLink sells as sets.
 | electrics | cable runs longer than the cable |
 | technique | warnings: clips on transparent parts, moving transparent parts, uncertified geometry |
 
+Connection points come from the LDCad shadow library. When a part has none there (for example
+74611 Plate Round 8 x 8 with hole, whose underside would otherwise connect to nothing), add a
+file with the same name under `brickkit/data/shadow/parts/` (or `parts/s/`) holding
+`0 !LDCAD SNAP_*` lines in the part's own frame. These overlay files are read after the
+library's file for that part, so they add to it; they never remove its snaps.
+
 ## Workflow loop
 1. `brickkit find` to pick parts that exist in your colours (prefer ≥3 sets since 2016).
 2. Write/extend a sub-assembly in `design.py`.

@@ -33,3 +33,21 @@ def test_technic_pin_has_two_pin_halves(engine):
     halves = [c for c in engine.shadow.connectors("2780.dat")
               if c.gender == "M" and c.secs and c.secs[0] == ("R", 8.0, 2.0)]
     assert len(halves) == 2
+
+
+def test_overlay_adds_snaps_the_shadow_library_lacks(engine):
+    """74611 (Plate Round 8 x 8 with hole) has no LDCad shadow file: the bundled overlay in
+    brickkit/data/shadow gives it anti-studs, and its studs still come from the LDraw part."""
+    cs = engine.shadow.connectors("74611.dat")
+    assert len(_studs(cs, "F")) == 44
+    assert len(_studs(cs, "M")) == 44
+
+
+def test_overlay_metas_merge_after_the_library(engine, tmp_path):
+    from brickkit.snaps.shadow import ShadowLibrary
+    (tmp_path / "parts").mkdir()
+    (tmp_path / "parts" / "3004.dat").write_text(
+        "0 !LDCAD SNAP_CYL [gender=F] [caps=one] [secs=R 6 4] [pos=0 0 0]\n")
+    base = engine.shadow
+    lib = ShadowLibrary(base.index.root, engine.lib, overlays=[tmp_path, tmp_path / "missing"])
+    assert len(lib.metas("3004.dat")) == len(base.metas("3004.dat")) + 1

@@ -4,6 +4,7 @@ from __future__ import annotations
 import itertools
 import re
 from dataclasses import replace
+from pathlib import Path
 
 import numpy as np
 
@@ -131,8 +132,13 @@ def _dedupe(conns: list[Connector]) -> list[Connector]:
 
 
 class ShadowLibrary:
-    def __init__(self, root, ldraw: LDrawLibrary):
+    """LDCad snap info. `overlays` are extra roots laid out like the shadow library (parts/,
+    parts/s/, p/) for parts it doesn't cover yet: their metas are read after the library's
+    own file for the same name (or instead of it, when the library has none)."""
+
+    def __init__(self, root, ldraw: LDrawLibrary, overlays=()):
         self.index = FileIndex(root)
+        self.overlays = [FileIndex(o) for o in overlays if Path(o).is_dir()]
         self.ldraw = ldraw
         self._metas: dict[str, list] = {}
         self._own: dict[str, list[Connector]] = {}
@@ -142,8 +148,8 @@ class ShadowLibrary:
         key = normalize(name)
         if key not in self._metas:
             out = []
-            p = self.index.resolve(key)
-            if p:
+            files = [ix.resolve(key) for ix in [self.index, *self.overlays]]
+            for p in (f for f in files if f):
                 for line in p.read_text(encoding="utf-8", errors="replace").splitlines():
                     m = META_RE.match(line.strip())
                     if m:

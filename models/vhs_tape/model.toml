@@ -1,45 +1,42 @@
 [model]
 name = "VHS Cassette"
 design = "design.py"
-description = "A 1:1 VHS video cassette in real LEGO, 184 x 104 x 26 mm: the dust door flips up on click hinges and both reels spin behind a smoked window."
+description = "A 1:1 VHS video cassette in real LEGO, 184 x 102 x 26 mm: an inner chassis with the tape run, lamp tube and reel spindles inside a shell with two big clear windows; the full-length dust flap swings up and both reels turn."
 notice = "VHS is a trademark of JVC KENWOOD Corporation."
 
 [palette]
-shell = "Black"              # top and bottom halves, dust door
-window = "Trans-Brown"       # smoked reel window (LEGO 'transparent brown')
+shell = "Black"              # the cassette: chassis, walls, top shell, dust flap
+glass = "Trans-Clear"        # window glass (Glass for Frame 1 x 6 x 6)
+label = "White"              # face label and spine label
+flange = "White"             # lower reel flanges (8 x 8 round plates)
 hub = "White"                # reel hubs
-flange = "White"             # lower reel flanges
-tape = "Reddish Brown"       # the tape: packs on the reels and the run across the mouth
-label = "White"              # face label recess and spine label
-detail = "Dark Bluish Gray"  # write-protect tab
-arrow = "Black"              # moulded insert arrows on the top
-metal = "Flat Silver"        # screws, metal tape guide pins
-bore = "Black"               # pin holders over the hubs (read as the hub bore)
-spring = "Light Bluish Gray" # reel pins
-roller = "White"             # tape guide rollers
-button = "Light Bluish Gray" # door release button
-
-[variants.clear_window]
-title = "Clear window"
-window = "Trans-Clear"
+tape = "Black"               # tape packs and the tape run across the mouth
+clear = "Trans-Clear"        # clear upper reel flanges
+spindle = "Red"              # red spindle axles: the red dot in each hub
+roller = "White"             # tape guide rollers and the guide post
+brake = "White"              # reel-lock release
+metal = "Flat Silver"        # screw heads
+tab = "Black"                # write-protect tab
+pin = "Black"                # the flap's two pivot pins (2780 was never made in White)
 
 [variants.white]
 title = "White shell (head cleaner style)"
 shell = "White"
-arrow = "White"
+tab = "White"
 label = "Light Bluish Gray"
-window = "Trans-Clear"
 
 [booklet]
-subtitle = "A 1:1 VHS tape, within a few millimetres of the real 187 x 103 x 25 mm cassette. Flip the dust door open; spin the reels through the window or from underneath."
-intro = "Two black halves close around two reels: a full supply reel and a nearly empty take-up reel, each spinning on its own pin behind a smoked window. The dust door clicks onto two hinges and swings up like the real flap. Look underneath for the drive holes, the screws, the write-protect tab and the open mouth where the head drum goes in."
+subtitle = "A 1:1 VHS tape, within a few millimetres of the real 187 x 103 x 25 mm cassette. Swing the dust flap up to see the tape; watch the reels turn through the windows."
+intro = "Built like a real cassette, from the inside out. First the chassis: the bottom with its drive holes and screw heads, the lamp tube, the reel-lock release, the guide rollers and the tape stretched across the mouth. Two reels drop onto their red spindles: a full supply reel and a nearly empty take-up reel. The end walls go on, then the top shell, built upside down with its grip bands, recessed label, spine label and two big windows, is lowered over everything. Last, the full-length dust flap hangs on two Technic pins."
 notes = [
-  "The dust door hangs on two click hinges: press it on firmly until both hinges click.",
-  "The reels sit loose on their pins until the top half closes over them. Keep the halves level while you lower the top.",
+  "Each reel turns on its red Technic axle in the chassis' round holes. The axle's end shows in the drive hole underneath: turn it with a fingertip to wind the tape.",
+  "Lower the top shell straight down so the window hangers find their ledges and the reel hubs slide under the windows.",
+  "The write-protect tab on the back is a single tile: pull it off to protect your recording.",
 ]
 works = [
-  { title = "Dust door", text = "The door swings up 90 degrees on two click hinges, over the tape run across the mouth.", image = "renders/open.png" },
-  { title = "Spinning reels", text = "Each reel turns on its own pin. Push the white flange through the round drive hole underneath and watch the tape pack turn in the window.", image = "renders/three_quarter.png" },
+  { title = "Dust flap", text = "The whole front edge is the flap. It swings up and out 90 degrees on two Technic pins through the end cheeks, uncovering the tape between two white guide rollers.", image = "renders/open.png" },
+  { title = "Turning reels", text = "Each reel turns on a red Technic axle in round holes in the chassis. Watch the supply and take-up packs through the clear windows, or turn a spindle from underneath like a VCR does.", image = "renders/three_quarter.png" },
+  { title = "Underneath", text = "Two drive holes with the red spindle ends, the lamp hole, the reel-lock release hole, five silver screw heads and the open mouth where the VCR's head drum goes in.", image = "renders/underside.png" },
 ]
 
 [checks]
@@ -57,8 +54,9 @@ label = "Dust door"
 tag = "flap"
 
 [[video.callouts]]
-label = "Click hinges"
-part = "3937"
+label = "Pivot pins"
+part = "2780"
+xray = true
 
 [[video.callouts]]
 label = "Supply reel"

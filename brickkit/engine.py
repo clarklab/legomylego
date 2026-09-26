@@ -24,7 +24,8 @@ class Engine:
     @cached_property
     def shadow(self):
         from .snaps.shadow import ShadowLibrary
-        return ShadowLibrary(self.cache / "ldcad_shadow" / "LDCadShadowLibrary-main", self.lib)
+        return ShadowLibrary(self.cache / "ldcad_shadow" / "LDCadShadowLibrary-main", self.lib,
+                             overlays=[paths.DATA_DIR / "shadow"])
 
     @cached_property
     def catalog(self):
