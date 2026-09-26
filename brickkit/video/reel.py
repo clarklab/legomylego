@@ -6,10 +6,9 @@ and its check report:
 
     model       name, slug, URL, pieces, steps, colours, part designs, sub-assemblies, size
     stats       the title's chips (size, steps, colours, sub-assemblies, plus [video] facts)
-    palette     pieces per colour (the parts list), for the swatches-to-bars chart
-    thumbs      part pictures from the booklet (out/booklet/part_*.png)
+    palette     pieces per colour (the parts list; colours for the themes' brick wipes)
     checks      the eight checks from out/report.json, each with its headline number
-    build       when each part lands (sorted), the booklet step, sections, the final piece
+    build       when each part lands (sorted), the height reached, sections, the final piece
     camera      the per-frame video camera, for 3D-tracked graphics (x-ray lines, callouts)
     scan        layout, silhouette box per frame, connection points (from the checks' matcher)
     mechanism   name, labels, pose parameter and angle per frame, tracked callouts
@@ -41,7 +40,7 @@ from . import timeline as T
 
 URL = "lego.superfun.games"
 DISCLAIMER = "Unofficial fan model · computer-checked, not yet built with real bricks"
-MOODS = {"open": "intro", "title": "rise", "palette": "groove_light", "build": "groove",
+MOODS = {"open": "intro", "title": "rise", "build": "groove",
          "scan": "breakdown", "mechanism": "halftime", "lights": "feature", "lift": "feature",
          "colourways": "groove", "booklet": "groove_light", "outro": "end"}
 CHECK_TITLES = {"real_elements": "Real parts", "connections": "Connections",
@@ -126,13 +125,11 @@ def model_stats(engine, proj, model, placed, tl, out_dir: Path, booklet_steps: i
 
 
 def title_chips(stats: dict) -> list[dict]:
+    """One compact row beside the piece counter: size, steps, colours, then any [video] facts
+    (the title keeps what fits in the row)."""
     chips = [{"value": stats["headline"][0], "label": stats["headline"][1]},
              {"value": f"{stats['steps']:,}", "label": "steps"},
              {"value": f"{stats['colours']}", "label": "colours"}]
-    if stats["subassemblies"]:
-        chips.append({"value": f"{stats['subassemblies']}", "label": "sub-assemblies"})
-    else:
-        chips.append({"value": f"{stats['designs']}", "label": "part designs"})
     for f in stats["facts"]:
         chips.append({"value": "", "label": f})
     return chips
@@ -153,15 +150,6 @@ def palette(engine, model, placed) -> list[dict]:
         out.append({"name": name, "rgb": c.rgb if c.rgb.startswith("#") else "#" + c.rgb,
                     "qty": int(n), "trans": bool(c.alpha < 255)})
     return out
-
-
-def thumbs(out_dir: Path, limit: int = 48) -> list[str]:
-    d = out_dir / "booklet"
-    files = sorted(d.glob("part_*.png")) if d.exists() else []
-    if len(files) > limit:
-        idx = np.linspace(0, len(files) - 1, limit).round().astype(int)
-        files = [files[i] for i in idx]
-    return [f"out/booklet/{f.name}" for f in files]
 
 
 def _report(out_dir: Path) -> dict:
@@ -477,7 +465,8 @@ def marks(tl, extras: dict) -> dict:
             out[name] = {"gauge": a + B // 2,
                          "callouts": [a + B + round(k * 0.75 * B) for k in range(n)]}
         elif name == "lights":
-            out[name] = {"power_on": tl["lights"]["power_on"], "label": a + B // 2}
+            out[name] = {"power_on": tl["lights"]["power_on"],
+                         "power_off": tl["lights"].get("power_off"), "label": a + B // 2}
         elif name == "lift":
             out[name] = {"label": a + B}
         elif name == "colourways":
@@ -531,7 +520,7 @@ def plan_reel(engine, proj, model, tl, theme, out_dir: Path, work: Path, *,
     reel = {
         "fps": tl["fps"], "frames": tl["frames"], "beat": B, "theme": theme,
         "segments": tl["segments"], "model": stats, "chips": title_chips(stats),
-        "palette": palette(engine, model, placed), "thumbs": thumbs(out_dir),
+        "palette": palette(engine, model, placed), "thumbs": [],
         "hero": hero(out_dir, hero_file), "logo": "logo.png", "checks": chk,
     }
     # build: landings in order, the step reached, the sections, landing rings
@@ -540,6 +529,7 @@ def plan_reel(engine, proj, model, tl, theme, out_dir: Path, work: Path, *,
     order = np.argsort(land, kind="stable")
     steps = np.asarray(tl["build"]["step"])
     run = np.maximum.accumulate(steps[order])
+    height = np.maximum.accumulate(np.asarray(tl["build"]["top_mm"])[order])
     pulses = []
     for i in [int(x) for x in order[:MAX_PULSES]]:
         f = int(round(land[i]))
@@ -553,6 +543,7 @@ def plan_reel(engine, proj, model, tl, theme, out_dir: Path, work: Path, *,
              for f in range(int(land[last]) - 2, b["end"])]
     reel["build"] = {
         "land": np.round(land[order], 2).tolist(), "step": run.tolist(),
+        "height": np.round(height, 1).tolist(), "ground_up": T.ground_up(cfg),
         "sections": tl["build"]["sections"], "land_last": tl["build"]["land_last"],
         "pulses": pulses, "final": {"start": int(land[last]) - 2, "track": final,
                                     "part": engine.catalog.part_name(placed[last].part)},
@@ -615,7 +606,9 @@ def plan_reel(engine, proj, model, tl, theme, out_dir: Path, work: Path, *,
             tr = [[round(float(v), 1) for v in screen(tl, f, led["pos"])[0][:2]]
                   for f in range(L["start"], L["end"])]
             leds.append({"name": led.get("name", ""), "color": led["color"], "track": tr})
-        reel["lights"] = {"power_on": tl["lights"]["power_on"], "leds": leds,
+        reel["lights"] = {"power_on": tl["lights"]["power_on"],
+                          "power_off": tl["lights"].get("power_off"),
+                          "off_label": str(cfg.get("lights_off_label") or "Lights off"), "leds": leds,
                           "label": str(cfg.get("lights_label") or "Lights on"),
                           "tap": bool(cfg.get("lights_tap"))}
     if "lift" in seg:
@@ -751,6 +744,10 @@ def cue_sheet(reel, tl, theme) -> dict:
         if reel.get("lights", {}).get("tap"):
             add(mk["lights"]["power_on"] - 1, "snap", gain=0.9)
         add(mk["lights"]["power_on"], "power", gain=1.0)
+        if mk["lights"].get("power_off") is not None:
+            if reel.get("lights", {}).get("tap"):
+                add(mk["lights"]["power_off"] - 1, "snap", gain=0.9)
+            add(mk["lights"]["power_off"], "power_off", gain=0.9)
     if "lift" in mk:
         s = next(x for x in tl["segments"] if x["name"] == "lift")
         add(s["start"], "riser", dur=(s["end"] - s["start"]) // 2, gain=0.6)

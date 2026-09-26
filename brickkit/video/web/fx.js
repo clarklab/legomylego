@@ -114,22 +114,26 @@ const WIPES = {
       snow(f, clamp((a - 0.72) / 0.28));
     }
   },
-  // playful: bubbles pop up over the frame, then pop away
-  bubbles(f, p, t) {
-    const cols = [TH.accent, TH.accent2, TH.bg2, '#2BB673', '#3D7DFF'];
-    const pts = [];
-    const R = rng(t.frame * 7 + 3);
-    for (let i = 0; i < 22; i++) pts.push([R() * L, R() * L, 170 + R() * 150, cols[i % cols.length], R() * 0.5]);
-    pts.forEach(([x, y, r, col, dl], i) => {
-      let q;
-      if (p < 0) q = clamp(((1 + p) - dl) / (1 - dl + 1e-6));
-      else q = 1 - clamp((p - dl * 0.8) / (1 - dl * 0.8 + 1e-6));
-      if (q <= 0) return;
-      const s = p < 0 ? E.spring(q, 1.4, 5) : E.outBack(q, 1.8);
-      CX.fillStyle = col; circle(x, y, r * s); CX.fill();
-      CX.fillStyle = rgba('#ffffff', 0.22); circle(x - r * s * 0.3, y - r * s * 0.32, r * s * 0.34); CX.fill();
-    });
-    if (Math.abs(p) < 0.1) { CX.fillStyle = TH.accent2; CX.fillRect(0, 0, L, L); }
+  // playful: a panel slides across on the beat, paw prints trotting along its edge
+  paws(f, p, t) {
+    const tilt = 0.14;
+    const e = p < 0 ? E.inOutCubic(clamp(1 + p)) : E.inOutCubic(clamp(p));
+    const x0 = p < 0 ? -80 : lerp(-80, L + 160, e);          // trailing edge
+    const x1 = p < 0 ? lerp(-80, L + 160, e) : L + 400;       // leading edge
+    CX.save();
+    CX.translate(L / 2, L / 2); CX.rotate(tilt); CX.translate(-L / 2, -L / 2);
+    CX.fillStyle = TH.accent2; CX.fillRect(x0 - 200, -300, Math.max(0, x1 - x0 + 200), L + 600);
+    CX.fillStyle = mix(TH.accent2, '#000000', 0.12);
+    CX.fillRect(x1 - 26, -300, 26, L + 600);
+    // prints along the moving edge, left and right paws in turn
+    const ex = p < 0 ? x1 : x0;
+    for (let k = 0; k < 7; k++) {
+      const y = -40 + k * 175;
+      const side = k % 2 ? 1 : -1;
+      const px = ex + (p < 0 ? -90 : 90) + side * 22;
+      pawPrint(px, y + side * 30, 52, '#FFFFFF', Math.PI / 2, CX, 0.9);
+    }
+    CX.restore();
   },
 };
 

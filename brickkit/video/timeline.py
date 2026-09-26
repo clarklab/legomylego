@@ -4,12 +4,16 @@ The video is an edit of beat-aligned segments (see `plan_segments`). Graphics-on
 (open, title, palette, outro) are drawn by the compositor; the booklet flip has its own Blender
 scene; the model-scene segments are planned here, frame by frame, for render/blender_animate.py:
 
-    build       parts drop in, in instruction order, section by section; each section is its
-                own orbiting shot (the cut between sections hides under a wipe), with speed
-                ramps: every section starts slow and speeds up, and the last pieces slow down
+    build       the model grows up from the table: parts by the height of their lowest point,
+                outward from the centre, each waiting for something to stand on or connect
+                to, dropping a short way into place (or, with build_order = "instructions",
+                in instruction order); sections (height bands) are orbiting shots of their own,
+                with speed ramps: each starts slow, speeds up, the last pieces slow down
     scan        slow orbit of the finished model, framed to one side for the checks panel
     mechanism   `model.pose`: build pose -> 0 -> 1 -> build pose, slow, close on the moving parts
-    lights      the studio goes dark, then the LEDs and glowing parts switch on   (lights/glow)
+    lights      the studio goes dark, then the LEDs and glowing parts switch on (lights/glow);
+                with lights_tap the mechanism presses as they do, with lights_off a second
+                tap switches them off again
     lift        everything but `exclude_tag` rises and hovers         (meta["video"]["lift"])
     colourways  slow push round the model; each colourway renders its own frames (variants)
 
@@ -32,7 +36,8 @@ absolute (frame 0 is the first frame of the video, at `fps`):
 
 Per-model tweaks go in `model.meta["video"]` or model.toml [video] (all optional), e.g.
     {"lift": {"exclude_tag": "stand", "height": 80}, "beats": {"build": 28}, "drop": 24,
-     "build_first": "tag", "sections": [[1, "Base"], [40, "Dome"]]}
+     "build_order": "ground_up" | "instructions", "sections": [[1, "Base"], ["Layer 1 (", "Dome"]],
+     "lights_tap": true, "lights_off": true}
 """
 from __future__ import annotations
 
@@ -53,11 +58,12 @@ LENS = 70.0
 MARGIN = 1.3              # frame = 1/MARGIN of the image is model (a little air round it)
 DROP = 24.0               # LDU a part travels as it drops in (about a stud)
 DROP_FRAMES = 8           # how long a drop takes
-ORDER = ("open", "title", "palette", "build", "scan", "mechanism", "lights", "lift",
-         "colourways", "booklet", "outro")
-KIND = {"open": "gfx", "title": "gfx", "palette": "gfx", "outro": "gfx", "booklet": "booklet"}
-BEATS = {"open": 6, "title": 8, "palette": 8, "build": 32, "scan": 12, "mechanism": 12,
-         "lights": 8, "lift": 6, "colourway": 4, "booklet": 12, "outro": 8}
+ORDER = ("open", "title", "build", "scan", "mechanism", "lights", "lift", "colourways",
+         "booklet", "outro")
+KIND = {"open": "gfx", "title": "gfx", "outro": "gfx", "booklet": "booklet"}
+BEATS = {"open": 6, "title": 8, "build": 36, "scan": 12, "mechanism": 12, "lights": 8,
+         "lift": 6, "colourway": 4, "booklet": 12, "outro": 8}
+LIGHTS_OFF_BEATS = 2      # extra lights beats when the lights also switch off again
 MAX_SECTIONS = 6
 LIGHTS_DIM = 0.16         # studio light level with the LEDs on
 DARK = 0.035              # the blackout before the LEDs switch on
@@ -245,8 +251,7 @@ def plan_segments(model, *, booklet: bool, beat: int = BEAT, variants=(), fps: i
         beats[k] = max(1, round(float(v) * fps / beat))
     beats.update({k: int(v) for k, v in (cfg.get("beats") or {}).items()})
     has = {
-        "open": True, "title": True, "palette": True, "build": True, "scan": True,
-        "outro": True,
+        "open": True, "title": True, "build": True, "scan": True, "outro": True,
         "mechanism": model.pose is not None and bool(model.groups),
         "lights": bool(model.lights) or bool(model.glow_tags),
         "lift": bool(cfg.get("lift")),
@@ -254,6 +259,8 @@ def plan_segments(model, *, booklet: bool, beat: int = BEAT, variants=(), fps: i
         "booklet": bool(booklet),
     }
     skip = set(cfg.get("skip", ()))
+    if cfg.get("lights_off") and "lights" not in (cfg.get("beats") or {}):
+        beats["lights"] += LIGHTS_OFF_BEATS
     beats["colourways"] = beats.get("colourways", beats["colourway"] * (1 + len(variants)))
     out, f = [], 0
     for n in ORDER:
@@ -299,6 +306,108 @@ def build_order(model, placed, cfg) -> tuple[list[int], np.ndarray]:
         run = max(run, order.get((p.owner, p.local_step), p.build_order) + 1)
         step[i] = run
     return seq, step
+
+
+LAYER = 8.0              # LDU: parts whose lowest points are within a plate share a layer
+
+
+def ground_up_order(engine, model, placed, C) -> list[int]:
+    """Parts in the order they'd go on growing the model up from the table: by the height of
+    their lowest point (a plate per layer), outward from the centre within a layer. Support
+    aware: a part waits until it stands on the ground or something it connects to is there
+    (so a hanging fang follows its bearing); anything left unsupported goes lowest first."""
+    import heapq
+    n = len(placed)
+    low = C[:, :, 1].max(1)                          # LDraw +Y is down: the lowest point
+    ground = float(low.max())
+    layer = np.round((ground - low) / LAYER)
+    ctr = C.reshape(-1, 3).mean(0)
+    mid = C.mean(1)
+    radial = np.hypot(mid[:, 0] - ctr[0], mid[:, 2] - ctr[2])
+    nbrs: list[set] = [set() for _ in range(n)]
+    try:
+        for c in engine.context(model).connections:
+            nbrs[c.a].add(c.b)
+            nbrs[c.b].add(c.a)
+    except Exception:          # noqa: BLE001 - no connection data: plain height order
+        pass
+    key = [(float(layer[i]), round(float(radial[i]), 1), i) for i in range(n)]
+    heap = [key[i] for i in range(n) if layer[i] <= 0.5]
+    heapq.heapify(heap)
+    queued = {k[2] for k in heap}
+    rest = sorted(key)
+    ri = 0
+    order, done = [], np.zeros(n, bool)
+    while len(order) < n:
+        if not heap:                                 # nothing supported: the lowest left
+            while done[rest[ri][2]]:
+                ri += 1
+            heapq.heappush(heap, rest[ri])
+            queued.add(rest[ri][2])
+        _, _, i = heapq.heappop(heap)
+        if done[i]:
+            continue
+        done[i] = True
+        order.append(i)
+        for j in nbrs[i]:
+            if not done[j] and j not in queued:
+                heapq.heappush(heap, key[j])
+                queued.add(j)
+    return order
+
+
+def height_bands(model, placed, seq, step, cfg, max_bands: int = 4) -> list[dict]:
+    """Sections for a ground-up build: runs of the video order named after the section most
+    of their parts belong to (sub-assemblies, captions or [video] sections), smoothed and
+    merged to at most `max_bands`; one untitled section when they wouldn't tell apart."""
+    inst_order, inst_step = build_order(model, placed, cfg)
+    label = {}
+    for sec in build_sections(model, placed, inst_order, inst_step, cfg):
+        for i in sec["parts"]:
+            label[i] = sec["title"]
+    names = sorted(set(label.values()))
+    n = len(seq)
+    if len(names) < 2 or n < 8:
+        runs = [{"title": "", "parts": list(seq)}]
+    else:
+        idx = {t: k for k, t in enumerate(names)}
+        onehot = np.zeros((n + 1, len(names)))
+        for k, i in enumerate(seq):
+            onehot[k + 1, idx[label[i]]] = 1
+        cum = onehot.cumsum(0)
+        w = max(4, n // 8)
+        maj = [names[int(np.argmax(cum[min(n, k + w)] - cum[max(0, k - w)]))] for k in range(n)]
+        runs = []
+        for k, i in enumerate(seq):
+            if runs and runs[-1]["title"] == maj[k]:
+                runs[-1]["parts"].append(i)
+            else:
+                runs.append({"title": maj[k], "parts": [i]})
+        while len(runs) > 1 and (len(runs) > max_bands or
+                                 min(len(r["parts"]) for r in runs) < n / 10):
+            j = min(range(len(runs)), key=lambda k: len(runs[k]["parts"]))
+            nb = 1 if j == 0 else j - 1 if j == len(runs) - 1 else (
+                j - 1 if len(runs[j - 1]["parts"]) <= len(runs[j + 1]["parts"]) else j + 1)
+            a, b = sorted((j, nb))
+            big = runs[a] if len(runs[a]["parts"]) >= len(runs[b]["parts"]) else runs[b]
+            runs[a:b + 1] = [{"title": big["title"], "parts": runs[a]["parts"] + runs[b]["parts"]}]
+            merged = []
+            for r in runs:
+                if merged and merged[-1]["title"] == r["title"]:
+                    merged[-1]["parts"] += r["parts"]
+                else:
+                    merged.append(r)
+            runs = merged
+        if len(runs) < 2:
+            runs = [{"title": "", "parts": list(seq)}]
+        for r in runs:                     # a name only where it's mostly true
+            share = sum(label[i] == r["title"] for i in r["parts"]) / len(r["parts"])
+            if share < 0.6:
+                r["title"] = ""
+    for r in runs:
+        r["first_step"] = int(min(step[i] for i in r["parts"]))
+        r["last_step"] = int(max(step[i] for i in r["parts"]))
+    return runs
 
 
 def build_sections(model, placed, seq, step, cfg, max_sections: int = MAX_SECTIONS) -> list[dict]:
@@ -386,12 +495,21 @@ def speed(tau: np.ndarray, first: bool, last: bool) -> np.ndarray:
     return v
 
 
-def build_schedule(model, placed, seg, cfg, beat: int = BEAT):
+def ground_up(cfg) -> bool:
+    """The build grows up from the table (default) or follows the instructions."""
+    return str(cfg.get("build_order", "ground_up")) != "instructions"
+
+
+def build_schedule(model, placed, seg, cfg, beat: int = BEAT, engine=None, C=None):
     """Appear frame (float) of each part, video order, booklet step, the sections with their
     frame ranges, and the frame the last part lands. Sections get time by parts ** 0.6 (small
     ones stay readable), at least two beats each, and start on a beat."""
     seq, step = build_order(model, placed, cfg)
-    secs = build_sections(model, placed, seq, step, cfg)
+    if ground_up(cfg) and engine is not None:
+        seq = ground_up_order(engine, model, placed, C)
+        secs = height_bands(model, placed, seq, step, cfg)
+    else:
+        secs = build_sections(model, placed, seq, step, cfg)
     a, b = seg["start"], seg["end"]
     lead = 4
     land_last = b - 2 * beat                      # the last piece lands on a beat...
@@ -527,6 +645,11 @@ def power_on_frame(seg: dict, beat: int) -> int:
     return seg["start"] + int(min(n - beat, 2 * beat))
 
 
+def power_off_frame(seg: dict, beat: int) -> int:
+    """With lights_off: on for about five beats, then a tap switches them off."""
+    return seg["end"] - int(3 * beat)
+
+
 def tap_curve(n: int, on: int) -> np.ndarray:
     """A quick press peaking as the lights switch on (frame `on` of n), then released."""
     k = np.arange(n, dtype=float)
@@ -598,11 +721,17 @@ def build_timeline(engine, model, segments: list[dict], *, fps: int = FPS, beat:
 
     # -- build -------------------------------------------------------------------------------
     b = seg["build"]
-    appear, seq, step, sections, land_last = build_schedule(model, placed, b, cfg, beat)
+    appear, seq, step, sections, land_last = build_schedule(model, placed, b, cfg, beat, engine, C)
     drop = float(cfg.get("drop", DROP))
-    dirs = insert_directions(model)
-    assert len(dirs) == len(placed)
-    offsets = [((d if d is not None else np.array([0.0, -1.0, 0.0])) * drop).tolist() for d in dirs]
+    if ground_up(cfg):                        # each part drops a short way into place
+        offsets = [[0.0, -drop, 0.0] for _ in placed]
+    else:                                     # along its insertion direction
+        dirs = insert_directions(model)
+        assert len(dirs) == len(placed)
+        offsets = [((d if d is not None else np.array([0.0, -1.0, 0.0])) * drop).tolist()
+                   for d in dirs]
+    top = C[:, :, 1].min(1)                   # each part's highest point (LDraw -Y up)
+    ground_y = float(C[:, :, 1].max())
     section_of = np.zeros(len(placed), int)
     for k, s in enumerate(sections):
         section_of[s["parts"]] = k
@@ -645,7 +774,11 @@ def build_timeline(engine, model, segments: list[dict], *, fps: int = FPS, beat:
             rest_row = pose_frames[-1]
             pose_frames += [rest_row] * (L["start"] - mech["end"])
             on = power_on_frame(L, beat) - L["start"]
-            for uu in tap_curve(L["end"] - L["start"], on):
+            taps = tap_curve(L["end"] - L["start"], on)
+            if cfg.get("lights_off"):             # and a second tap switches them off
+                taps = np.maximum(taps, tap_curve(L["end"] - L["start"],
+                                                  power_off_frame(L, beat) - L["start"]))
+            for uu in taps:
                 t = rest + (1.0 - rest) * float(uu)
                 P = model.pose(t)
                 pose_frames.append([np.asarray(P.get(g, ident), float).reshape(-1).tolist()
@@ -674,7 +807,7 @@ def build_timeline(engine, model, segments: list[dict], *, fps: int = FPS, beat:
 
     # -- lights ------------------------------------------------------------------------------
     dim, led = np.ones(nf), np.zeros(nf)
-    power_on = None
+    power_on = power_off = None
     L = seg.get("lights")
     if L:
         a, n = L["start"] - s0, L["end"] - L["start"]
@@ -686,9 +819,14 @@ def build_timeline(engine, model, segments: list[dict], *, fps: int = FPS, beat:
         flick = np.zeros(n)
         for s_, e_ in ((0, 2), (4, 5), (7, n)):    # tink, tink, on
             flick[(k >= on + s_) & (k < on + e_)] = 1.0
+        if cfg.get("lights_off"):
+            power_off = power_off_frame(L, beat)
+            off = power_off - L["start"]
+            flick[k >= off] = 0.0
+            d = np.where(k >= off, LIGHTS_DIM + (1 - LIGHTS_DIM) * smootherstep((k - off - 2) / (1.2 * beat)), d)
         dim[a:a + n] = d
         led[a:a + n] = flick
-        if lift_seg and lift_seg["start"] == L["end"]:
+        if lift_seg and lift_seg["start"] == L["end"] and not cfg.get("lights_off"):
             a2, n2 = lift_seg["start"] - s0, lift_seg["end"] - lift_seg["start"]
             k2 = np.arange(n2)
             dim[a2:a2 + n2] = LIGHTS_DIM + (LIFT_DIM - LIGHTS_DIM) * smootherstep(k2 / (0.5 * n2))
@@ -733,7 +871,7 @@ def build_timeline(engine, model, segments: list[dict], *, fps: int = FPS, beat:
                   "steps": len(model.instruction_order()), "shape": shape},
         "build": {"appear": appear.tolist(), "drop": DROP_FRAMES, "offset": offsets,
                   "order": seq, "step": step.tolist(), "section": section_of.tolist(),
-                  "land_last": land_last,
+                  "land_last": land_last, "top_mm": np.round((ground_y - top) * 0.4, 1).tolist(),
                   "sections": [{k: v for k, v in s.items() if k != "parts"} |
                                {"parts": len(s["parts"])} for s in sections]},
         "camera": cam, "shots": shots,
@@ -743,7 +881,7 @@ def build_timeline(engine, model, segments: list[dict], *, fps: int = FPS, beat:
         "lift": {"instance": lifted.tolist(), "start": lift_seg["start"] if lift_seg else 0,
                  "frames": lift_frames},
         "lights": {"leds": leds, "dim": dim.tolist(), "led": led.tolist(), "glow": led.tolist(),
-                   "start": s0, "power_on": power_on},
+                   "start": s0, "power_on": power_on, "power_off": power_off},
         "variants": var_out, "colourways": cw,
     }
 

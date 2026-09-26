@@ -54,7 +54,7 @@ THEMES: dict[str, dict] = {
         "grain": 0.07, "xray": "#29E3FF", "xray_bg": "#0E0620",
         "grade": {"tint": "#3A1650", "amount": 0.1, "contrast": 1.04, "saturate": 1.08},
     },
-    # playful: warm cream, bouncy squash-and-stretch type, bubble and paw-print wipes
+    # playful: warm cream, bouncy squash-and-stretch type, paw-print slides
     "playful": {
         "backdrop": "#BFDCEB",
         "beat": 14, "music": "playful",
@@ -63,7 +63,7 @@ THEMES: dict[str, dict] = {
         "hud": "#2A1A12", "hud_ink": "#FFF3DC", "panel": "rgba(255,249,236,0.95)",
         "panel_ink": "#2A1A12", "line": "#2A1A12",
         "display": "Fredoka", "mono": "Fredoka",
-        "transition": "bubbles", "title": "bounce", "callout": "pill", "overlay": "none",
+        "transition": "paws", "title": "bounce", "callout": "pill", "overlay": "none",
         "grain": 0.03, "xray": "#FF6B3D", "xray_bg": "#2A1A12",
         "grade": {"tint": "#FFE2B8", "amount": 0.05, "contrast": 1.03, "saturate": 1.06},
     },

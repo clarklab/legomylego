@@ -3,9 +3,8 @@
 A showreel of the model, cut to a beat and driven by the model's own data:
 
     open        a brick drops and snaps; stud wipe; REAL LEGO PIECES. / CHECKED BY COMPUTER.
-    title       the name in kinetic type over the hero still; piece counter; stat chips
-    palette     colour swatches turn into a bar chart of pieces per colour; parts rain
-    build       the time-lapse build (hero), section by section, with a HUD
+    title       the name in kinetic type over the hero still; piece counter; one stat row
+    build       the time-lapse build (hero), growing up from the table, with a HUD
     scan        the finished model under a scanner: x-ray lines, the eight checks tick in
     mechanism   the moving parts, slow, with callouts tracked on real parts     (model.pose)
     lights      the set goes dark, the lights switch on                        (lights/glow)
@@ -24,8 +23,9 @@ Pipeline:
      plates, type, HUD, data graphics, wipes, grading;
   4. audio.py synthesises the music and effects from the cue sheet; ffmpeg encodes.
 
-Plates are cached per segment in out/video_frames/<full|preview>/<segment>/ with a hash of
-everything they depend on, so a re-run only renders what changed. `--preview` is 540x540 at
+Plates are cached per segment in out/video_frames/<full|preview>/<segment>/, numbered from the
+segment's start, with a hash of everything they depend on, so a re-run only renders what
+changed (moving a segment in the edit keeps its plates). `--preview` is 540x540 at
 low samples and 15 fps (-> out/video_preview.mp4); `--segments build,scan` makes just those
 (-> out/video_build+scan.mp4); `--no-render` composes from whatever plates exist (grey where
 missing) to iterate on graphics; `--stills 120,480` writes single composed frames as PNGs."""
@@ -148,10 +148,16 @@ def _keyed(block, f):
     return frames[k]
 
 
-def segment_digest(tl: dict, seg: dict, q: dict, extra=None, variant: str | None = None) -> str:
-    """Hash of everything the plates of one segment depend on."""
-    base = {"seg": {k: seg[k] for k in ("name", "start", "end", "kind")}, "q": q,
-            "extra": extra}
+def segment_digest(tl: dict, seg: dict, q: dict, extra=None, variant: str | None = None,
+                   legacy: bool = False) -> str:
+    """Hash of everything the plates of one segment depend on - relative to the segment's
+    start, so moving a segment in the edit keeps its plates. (`legacy`: the old absolute
+    form, only to recognise plates rendered before; see migrate_plates.)"""
+    if legacy:
+        sg = {k: seg[k] for k in ("name", "start", "end", "kind")}
+    else:
+        sg = {"name": seg["name"], "length": seg["end"] - seg["start"], "kind": seg["kind"]}
+    base = {"seg": sg, "q": q, "extra": extra}
     if seg["kind"] == "booklet":
         base.update(code=_file_hash(FLIP, SCENE_SCRIPT))
         return _digest(base)
@@ -166,13 +172,53 @@ def segment_digest(tl: dict, seg: dict, q: dict, extra=None, variant: str | None
                           _keyed(tl["lift"], f)])
     appear = np.asarray(tl["build"]["appear"])
     building = bool(((appear + tl["build"]["drop"]) > a).any())
+    var = tl["variants"].get(variant) if variant else None
+    if var is not None and not legacy:
+        var = dict(var, frames=[x - a for x in var["frames"]])
+    if building:
+        built = [tl["build"]["appear"], tl["build"]["offset"]]
+        if not legacy:
+            built = [(np.asarray(built[0]) - a).round(4).tolist(), built[1]]
     base.update(frames=_digest(per_frame), scene=_digest(tl["scene"]),
-                build=_digest([tl["build"]["appear"], tl["build"]["offset"]]) if building else None,
+                build=_digest(built) if building else None,
                 groups=[tl["groups"]["names"], tl["groups"]["instance"]],
-                lift=tl["lift"]["instance"], leds=lt["leds"],
-                variant=tl["variants"].get(variant) if variant else None,
+                lift=tl["lift"]["instance"], leds=lt["leds"], variant=var,
                 code=_file_hash(ANIMATE, SCENE_SCRIPT))
     return _digest(base)
+
+
+def migrate_plates(work: Path, old_tl: dict, tl: dict, q: dict, plan, log) -> None:
+    """Plates rendered before plates were numbered per segment: where a segment's content is
+    unchanged (same relative digest) and the plates are what the old timeline made (their
+    stamp matches it), renumber them from the segment's start instead of re-rendering."""
+    new = {s["name"]: s for s in tl["segments"]}
+    for oseg in old_tl["segments"]:
+        nseg = new.get(oseg["name"])
+        if oseg["kind"] == "gfx" or nseg is None:
+            continue
+        keys = [None]
+        if oseg["name"] == "colourways" and old_tl.get("colourways"):
+            keys += old_tl["colourways"]["order"][1:]
+        extra = plan if oseg["kind"] == "booklet" else None
+        for v in keys:
+            d = work / (oseg["name"] + (f"@{v}" if v else ""))
+            stamp = d / ".hash"
+            if not stamp.exists() or (d / ".relative").exists():
+                continue
+            try:
+                ok = (stamp.read_text() == segment_digest(old_tl, oseg, q, extra, v, legacy=True)
+                      and segment_digest(old_tl, oseg, q, extra, v)
+                      == segment_digest(tl, nseg, q, extra, v))
+            except (KeyError, IndexError):
+                ok = False
+            if not ok:
+                continue
+            files = sorted((f for f in d.glob("*.png") if f.stem.isdigit()), key=lambda f: int(f.stem))
+            for f in files:                   # ascending: a target name is always free
+                f.rename(d / f"{int(f.stem) - oseg['start']:05d}.png")
+            stamp.write_text(segment_digest(tl, nseg, q, extra, v))
+            (d / ".relative").touch()
+            log(f"kept {len(files)} rendered frames of {d.name} (renumbered from its start)")
 
 
 def _prepare_dir(d: Path, digest: str, force: bool) -> None:
@@ -298,6 +344,12 @@ def make_video(engine, proj, model, out_dir: Path, *, preview: bool = False,
                                    cfg=cfg)
     tl = T.build_timeline(engine, model, segs, beat=beat, variants=variants,
                           backdrop=theme.get("backdrop"))
+    old_tl = None
+    if (work / "timeline.json").exists():
+        try:
+            old_tl = json.loads((work / "timeline.json").read_text())
+        except ValueError:
+            old_tl = None
     (work / "timeline.json").write_text(json.dumps(tl))
     bplan = out_dir / "booklet" / "plan.json"
     bsteps = len(json.loads(bplan.read_text())["steps"]) if bplan.exists() else None
@@ -324,10 +376,12 @@ def make_video(engine, proj, model, out_dir: Path, *, preview: bool = False,
     def frames_of(seg, a=None, b=None):
         a = seg["start"] if a is None else a
         b = seg["end"] if b is None else b
-        return [f for f in range(a, b) if f % step == 0]
+        return [f for f in range(a, b) if (f - seg["start"]) % step == 0]
 
     # -- 3D plates --------------------------------------------------------------------------
     render_q = {"size": size, "samples": samples, "engine": render_engine, "device": device}
+    if old_tl is not None and not force:
+        migrate_plates(work, old_tl, tl, render_q, plan, log)
     plates = {"step": step}
     jobs: dict[str | None, list] = collections.OrderedDict()
     book_job, book_merge = None, []
@@ -341,10 +395,11 @@ def make_video(engine, proj, model, out_dir: Path, *, preview: bool = False,
             # fast page turns are rendered as sub-frames and averaged (motion blur)
             book_job, book_merge = [], []
             for f in frames_of(seg):
-                k, out = f - seg["start"], d / f"{f:05d}.png"
+                k = f - seg["start"]
+                out = d / f"{k:05d}.png"
                 subs = plan["blur"].get(str(k)) if plan else None
                 if subs and not out.exists():
-                    parts = [str(d / f"{f:05d}.s{j}.png") for j in range(len(subs))]
+                    parts = [str(d / f"{k:05d}.s{j}.png") for j in range(len(subs))]
                     book_job += [[k + dt, pth] for dt, pth in zip(subs, parts)]
                     book_merge.append((out, parts))
                 else:
@@ -361,7 +416,8 @@ def make_video(engine, proj, model, out_dir: Path, *, preview: bool = False,
             a, b = seg["start"], seg["end"]
             if seg["name"] == "colourways" and tl.get("colourways"):
                 a, b = tl["colourways"]["frames"][v or tl["colourways"]["order"][0]]
-            jobs.setdefault(v, []).extend([f, str(d / f"{f:05d}.png")] for f in frames_of(seg, a, b))
+            jobs.setdefault(v, []).extend([f, str(d / f"{f - seg['start']:05d}.png")]
+                                          for f in frames_of(seg, a, b))
     reel["plates"] = plates
     timings = {}
     if render:

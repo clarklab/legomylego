@@ -50,7 +50,7 @@ def _contiguous(segs, total=None):
 # ---------------------------------------------------------------------------- segments
 def test_segments_follow_the_model(sample):
     segs = T.plan_segments(sample, booklet=False, beat=BEAT)
-    assert [s["name"] for s in segs] == ["open", "title", "palette", "build", "scan", "outro"]
+    assert [s["name"] for s in segs] == ["open", "title", "build", "scan", "outro"]
     _contiguous(segs)
     for s in segs:                                 # every cut on the beat
         assert s["start"] % BEAT == 0 and s["end"] % BEAT == 0
@@ -67,9 +67,9 @@ def test_segments_with_everything(engine):
     assert cw["beats"] == T.BEATS["colourway"] * 3
     # config: beats override, skipping a segment
     segs = T.plan_segments(model, booklet=True, beat=16, cfg={"beats": {"build": 20},
-                                                              "skip": ["palette"]})
+                                                              "skip": ["scan"]})
     names = [s["name"] for s in segs]
-    assert "palette" not in names and "lift" not in names      # cfg replaces meta here
+    assert "scan" not in names and "lift" not in names         # cfg replaces meta here
     assert next(s for s in segs if s["name"] == "build")["beats"] == 20
     seconds = sum(s["end"] - s["start"] for s in T.plan_segments(model, booklet=True, beat=BEAT,
                                                                 variants=["a"])) / T.FPS
@@ -91,21 +91,40 @@ def test_sample_timeline(engine, sample):
     # the last piece lands on a beat, two beats before the cut
     assert math.isclose(land.max(), tl["build"]["land_last"], abs_tol=1e-6)
     assert tl["build"]["land_last"] % BEAT == 0 and build["end"] - tl["build"]["land_last"] == 2 * BEAT
-    # instruction order: a part never appears before one from an earlier step
+    # ground up: the first part stands on the table; every later part has something it
+    # connects to already there, or nothing lower is left; each drops straight down
     placed = sample.flatten()
-    for i in range(n):
-        for j in range(n):
-            if placed[i].build_order < placed[j].build_order:
-                assert appear[i] < appear[j]
+    C = T.corners(engine, placed)
+    low = C[:, :, 1].max(1)
+    order = tl["build"]["order"]
+    assert low[order[0]] == low.max()
+    nbrs = {i: set() for i in range(n)}
+    for c in engine.context(sample).connections:
+        nbrs[c.a].add(c.b)
+        nbrs[c.b].add(c.a)
+    for k, i in enumerate(order[1:], 1):
+        before = set(order[:k])
+        on_table = abs(low[i] - low.max()) < T.LAYER / 2
+        assert on_table or nbrs[i] & before or all(low[j] <= low[i] + 1e-6 for j in order[k:])
+    for off in tl["build"]["offset"]:
+        assert off[0] == 0 and off[1] < -15 and off[2] == 0
+    assert np.allclose(sorted(tl["build"]["top_mm"])[-1],
+                       (C[:, :, 1].max() - C[:, :, 1].min()) * 0.4)
     # sections cover the build, start on beats and in order
     secs = tl["build"]["sections"]
     assert secs[0]["start"] == build["start"] and secs[-1]["end"] == build["end"]
     assert sum(s["parts"] for s in secs) == n
     for a, b in zip(secs, secs[1:]):
         assert a["end"] == b["start"] and (b["start"] - build["start"]) % BEAT == 0
-    # the steps shown never go backwards along the video order
-    steps = np.array(tl["build"]["step"])[tl["build"]["order"]]
-    assert (np.diff(steps) >= 0).all() and steps[-1] == len(sample.instruction_order())
+    # instruction order is still there on request
+    sample.meta["video"] = {"build_order": "instructions"}
+    tl2 = T.build_timeline(engine, sample, segs, beat=BEAT)
+    sample.meta.pop("video")
+    ap2 = np.array(tl2["build"]["appear"])
+    for i in range(n):
+        for j in range(n):
+            if placed[i].build_order < placed[j].build_order:
+                assert ap2[i] < ap2[j]
     # per-frame camera for every scene frame; nothing moves; lights never on
     s0, s1 = tl["scene_range"]
     assert len(tl["camera"]["pos"]) == s1 - s0 == len(tl["lights"]["dim"])
@@ -372,3 +391,55 @@ def test_callout_layout_stays_in_frame():
 def test_part_label():
     assert R.part_label("Dish 2 x 2 Inverted [Radar]") == "Dish 2×2 inverted"
     assert R.part_label("Technic Gear 24 Tooth [New Style with Single Axle Hole]") == "Technic gear 24 tooth"
+
+
+
+def test_lights_off_again(engine):
+    model = _rigged(engine)
+    model.meta["video"].update(lights_tap=True, lights_off=True)
+    segs = T.plan_segments(model, booklet=False, beat=BEAT)
+    L = next(s for s in segs if s["name"] == "lights")
+    assert L["beats"] == T.BEATS["lights"] + T.LIGHTS_OFF_BEATS
+    tl = T.build_timeline(engine, model, segs, beat=BEAT)
+    s0 = tl["scene_range"][0]
+    on, off = tl["lights"]["power_on"], tl["lights"]["power_off"]
+    assert L["start"] < on < off < L["end"]
+    led, dim = tl["lights"]["led"], tl["lights"]["dim"]
+    assert led[off - 1 - s0] == 1.0 and led[off + 1 - s0] == 0.0
+    assert dim[L["end"] - 1 - s0] > 0.9                      # the studio is back
+    lift = next(s for s in segs if s["name"] == "lift")
+    assert led[lift["start"] - s0] == 0.0                    # lifts off with the lights off
+    # the mechanism presses for both taps
+    g = tl["groups"]
+    rows = [np.array(r[0]).reshape(4, 4) for r in g["frames"]]
+    k_on, k_off = on - g["start"], off - g["start"]
+    assert not np.allclose(rows[k_on - 2], np.eye(4)) and not np.allclose(rows[k_off - 2], np.eye(4))
+
+
+def test_plates_survive_a_shifted_edit(engine, sample, tmp_path):
+    """Moving segments in the edit renumbers plates instead of re-rendering them."""
+    from brickkit.video import migrate_plates, segment_digest
+    q = {"size": 64, "samples": 1, "engine": "eevee", "device": "gpu"}
+    segs_old = T.plan_segments(sample, booklet=False, beat=BEAT, cfg={"beats": {"title": 8}})
+    segs_new = T.plan_segments(sample, booklet=False, beat=BEAT, cfg={"beats": {"title": 10}})
+    old = T.build_timeline(engine, sample, segs_old, beat=BEAT)
+    new = T.build_timeline(engine, sample, segs_new, beat=BEAT)
+    so = next(s for s in segs_old if s["name"] == "scan")
+    sn = next(s for s in segs_new if s["name"] == "scan")
+    assert so["start"] != sn["start"]
+    d = tmp_path / "scan"
+    d.mkdir()
+    (d / ".hash").write_text(segment_digest(old, so, q, legacy=True))
+    for f in range(so["start"], so["end"]):
+        (d / f"{f:05d}.png").write_text(str(f))
+    migrate_plates(tmp_path, old, new, q, None, lambda m: None)
+    assert (d / ".hash").read_text() == segment_digest(new, sn, q)
+    assert (d / "00000.png").read_text() == str(so["start"])
+    assert len(list(d.glob("*.png"))) == so["end"] - so["start"]
+    # a plate set whose stamp doesn't match is left alone (and re-rendered later)
+    e = tmp_path / "build"
+    e.mkdir()
+    (e / ".hash").write_text("something else")
+    (e / f"{segs_old[2]['start']:05d}.png").write_text("x")
+    migrate_plates(tmp_path, old, new, q, None, lambda m: None)
+    assert (e / ".hash").read_text() == "something else"

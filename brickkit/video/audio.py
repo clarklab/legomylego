@@ -778,7 +778,8 @@ class SFX:
     LEVEL = {"snap": -6.0, "click": -17.0, "whoosh": -14.0, "riser": -16.0, "hit": -6.0,
              "blip": -19.0, "tick": -21.0, "warn": -22.0, "pass": -16.0, "scan": -20.0,
              "power": -11.0, "motor": -19.0, "glitch": -17.0, "boing": -16.0, "page": -16.0,
-             "type": -21.0, "pop": -17.0, "riffle": -17.0, "flick": -19.0, "slap": -12.0}
+             "type": -21.0, "pop": -17.0, "riffle": -17.0, "flick": -19.0, "slap": -12.0,
+             "power_off": -13.0}
     DUR = {"whoosh": 8, "riser": 30, "scan": 30, "power": 36, "motor": 30, "glitch": 6,
            "riffle": 60}
     DUCK = {"hit": (7.0, 0.7), "power": (5.0, 0.9), "snap": (4.0, 0.35)}   # dB, release s
@@ -1032,6 +1033,16 @@ class SFX:
         y = _norm(_norm(rustle) + 0.5 * _norm(swish))
         th = (np.clip(0.5 - 1.0 * np.clip(t / 0.4, 0, 1), -1, 1) + 1) * np.pi / 4
         return _norm(_fade(np.stack([y * np.cos(th), y * np.sin(th)], axis=1), sr, 0.005, 0.05))
+
+    def fx_power_off(self, ev, rng):
+        """Lights switching off: a soft click and a falling electrical hum."""
+        sr = self.sr
+        n, t = self._t(0.7)
+        f = 110.0 * np.exp(-t / 0.25) + 40.0
+        hum = (np.sin(2 * np.pi * np.cumsum(f) / sr) + 0.35 * np.sin(4 * np.pi * np.cumsum(f) / sr))
+        hum *= np.exp(-t / 0.2) * np.clip(t / 0.01, 0, 1)
+        zap = bw(rng.standard_normal(n), "band", (2000.0, 7000.0), sr) * np.exp(-t / 0.01)
+        return _norm(_fade(_norm(hum) + 0.35 * _norm(zap), sr, 0.0005, 0.05))
 
     def fx_riffle(self, ev, rng):
         """A thumb-flip: paper flutter whose rate falls from fast to slow over `dur`, as the

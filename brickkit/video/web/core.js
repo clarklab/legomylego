@@ -392,14 +392,21 @@ function segAt(f) {
 }
 function seg(name) { return D.segments.find(s => s.name === name); }
 const pad = n => String(n).padStart(5, '0');
+// plates are numbered from their segment's start (a shifted edit keeps its renders)
 function plateUrl(name, f, variant = null) {
   const dir = D.plates && D.plates[variant ? `${name}@${variant}` : name];
-  if (!dir) return null;
+  const sg = seg(name);
+  if (!dir || !sg) return null;
   const st = D.plates.step || 1;
-  const g = f - (((f % st) + st) % st);
-  return `${dir}/${pad(g)}.png`;
+  const k = f - sg.start;
+  return `${dir}/${pad(k - (((k % st) + st) % st))}.png`;
 }
-async function plate(name, f, variant = null) { return img(plateUrl(name, f, variant)); }
+const USED = new Set();                   // plates asked for while drawing this frame
+async function plate(name, f, variant = null) {
+  const u = plateUrl(name, f, variant);
+  if (u) USED.add(u);
+  return img(u);
+}
 
 // draw a plate full frame (graded for the theme); placeholder when it isn't rendered
 function drawPlate(bm, o = {}) {
@@ -482,12 +489,12 @@ async function renderFrame(f) {
   drawTransitions(f, tpre);
   post(f, s);
   // keep the plate cache small: plates are used once or twice
-  if (f % 16 === 0) {
-    for (const k of Array.from(IMG.keys())) {
-      const m = /\/(\d{5})\.png$/.exec(k);
-      if (m && Math.abs(parseInt(m[1], 10) - f) > 48) { const v = IMG.get(k); if (v && v.close) v.close(); IMG.delete(k); }
+  for (const k of Array.from(IMG.keys())) {
+    if (k.startsWith('frames/') && !USED.has(k)) {
+      const v = IMG.get(k); if (v && v.close) v.close(); IMG.delete(k);
     }
   }
+  USED.clear();
   return true;
 }
 

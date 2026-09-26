@@ -47,12 +47,12 @@ function background(f) {
     CX.fillStyle = hg; CX.fillRect(0, hz - 60, L, 80);
   } else if (t === 'playful') {
     CX.fillStyle = TH.bg; CX.fillRect(0, 0, L, L);
-    const cols = [TH.bg2, TH.accent2, '#FFD9A0', '#FFC2B5'];
-    for (let i = 0; i < 26; i++) {
-      const r = 14 + hash(i, 3) * 34;
-      const x = hash(i, 1) * L;
-      const y = ((hash(i, 2) * (L + 200) - f * (0.4 + hash(i, 4) * 0.8)) % (L + 200) + L + 200) % (L + 200) - 100;
-      stud(x, y, r, cols[i % cols.length], CX, 0.42);
+    // a faint trail of paw prints walking diagonally across, drifting slowly
+    const drift = (f * 0.6) % 180;
+    for (let row = -2; row < 9; row++) for (let k = 0; k < 8; k++) {
+      const x = -120 + k * 180 + (row % 2) * 90 + drift;
+      const y = row * 150 + (k % 2) * 34 - drift * 0.55;
+      pawPrint(x, y, 34, TH.accent2, -0.5, CX, 0.1);
     }
   } else {
     CX.fillStyle = TH.bg; CX.fillRect(0, 0, L, L);
@@ -515,122 +515,26 @@ SEG.title = {
     // stat chips to the right of the counter, at most two rows (smaller chips if need be)
     const cw = measure(fmt(D.model.pieces), font(csize, 700)) + M + 40;
     const x0c = Math.max(cw, 360);
+    // one compact row: keep the chips that fit at a readable size
     const widths = D.chips.map((c, k) => chip(UP(c.value), c.label, 0, -999, 0, k));   // measure
-    let sc = 1, place = [];
-    for (sc of [1, 0.9, 0.8, 0.72, 0.64]) {
-      place = []; let x = x0c, row = 0;
-      widths.forEach((w0) => {
-        const w = w0 * sc;
-        if (x + w > L - M + 4 && x > x0c) { x = x0c; row++; }
-        place.push([x, row]); x += w + 14 * sc;
-      });
-      if (row <= 1) break;
+    let n = widths.length, sc = 1;
+    const rowW = (k, s_) => widths.slice(0, k).reduce((a, w) => a + w * s_ + 14 * s_, -14 * s_);
+    for (;;) {
+      sc = Math.min(1, (L - M - x0c) / rowW(n, 1));
+      if (sc >= 0.86 || n <= 3) break;
+      n--;
     }
-    D.chips.forEach((c, k) => {
+    const place = [];
+    let xx = x0c;
+    widths.slice(0, n).forEach(w => { place.push([xx, 0]); xx += (w + 14) * sc; });
+    D.chips.slice(0, n).forEach((c, k) => {
       const t0 = m.chips[k] !== undefined ? m.chips[k] : m.chips[m.chips.length - 1] + (k - m.chips.length + 1) * 4;
       const [x, row] = place[k];
-      const y = 872 + row * 74 * sc;
+      const y = 930 + row * 74 * sc;
       CX.save(); CX.translate(x, y); CX.scale(sc, sc);
       chip(UP(c.value), c.label, 0, 0, ramp(f, t0, t0 + 9), k);
       CX.restore();
     });
-  },
-};
-
-// ------------------------------------------------------------------------------ palette
-SEG.palette = {
-  draw(f, s) {
-    const m = D.marks.palette, b = B();
-    background(f);
-    const t = TH.name;
-    // part pictures drifting down behind, in three depths
-    const th = D.thumbs.map(u => IMG.get(u)).filter(Boolean);
-    const intro = tw(f, s.start, s.start + b);
-    th.forEach((bm, i) => {
-      const layer = i % 3;
-      const sc = [0.55, 0.8, 1.1][layer];
-      const sp = [0.9, 1.5, 2.4][layer];
-      const x = hash(i, 11) * (L + 100) - 50;
-      const span = L + 300;
-      const y = ((hash(i, 12) * span + (f - s.start) * sp) % span) - 150;
-      const a = [0.18, 0.26, 0.34][layer] * intro * (t === 'scan' || t === 'tape' ? 0.8 : 1);
-      CX.save(); CX.globalAlpha = a;
-      if (layer === 0) CX.filter = `blur(${2 * S}px)`;
-      CX.translate(x, y); CX.rotate((hash(i, 13) - 0.5) * 0.8 + (f - s.start) * 0.004 * (i % 2 ? 1 : -1));
-      CX.drawImage(bm, -bm.width * sc / 2, -bm.height * sc / 2, bm.width * sc, bm.height * sc);
-      CX.restore();
-    });
-    // headline
-    const P = D.palette;
-    const hp = tw(f, m.head, m.head + 10, E.outExpo);
-    CX.save(); CX.globalAlpha = hp; CX.translate(0, (1 - hp) * 30);
-    label('the parts palette', M, 112, { color: t === 'scan' ? TH.hud : t === 'tape' ? TH.accent2 : TH.accent });
-    const hs = 92;
-    text(`${D.model.colours} ${UP('colours')}`, M - 4, 200, { size: hs, color: TH.ink, spacing: -2 });
-    label(`${fmt(D.model.pieces)} pieces · ${D.model.designs} part designs · ${D.model.lines} part/colour pairs`, M, 246,
-      { color: TH.muted, size: TH.mono === 'VT323' ? 30 : 20 });
-    CX.restore();
-    // swatches -> bars
-    const N = Math.min(P.length, 40);
-    const TOP = Math.min(9, P.length);
-    const cols = Math.min(8, Math.ceil(Math.sqrt(N * 1.8)));
-    const rows = Math.ceil(N / cols);
-    const pitch = Math.min(190, (L - 2 * M) / cols, 560 / Math.max(1, rows));
-    const gx0 = L / 2 - (cols - 1) * pitch / 2, gy0 = 330 + (600 - (rows - 1) * pitch) / 2;
-    const mp = ramp(f, m.morph0, m.morph1);
-    const rowH = Math.min(96, 640 / Math.max(TOP + (P.length > TOP ? 1 : 0), 1));
-    const by0 = 330, barX = M + 88, barMax = L - M - barX - 120;
-    const bgL = luma(TH.name === 'tape' || TH.name === 'scan' ? TH.bg2 : TH.bg);
-    const maxQ = P[0] ? P[0].qty : 1;
-    const other = P.length - TOP;
-    for (let i = N - 1; i >= 0; i--) {
-      const c = P[i];
-      const t0 = m.swatch0 + (m.swatch1 - m.swatch0) * i / Math.max(1, N);
-      const ap = ramp(f, t0, t0 + 10);
-      if (ap <= 0) continue;
-      const gx = gx0 + (i % cols) * pitch, gy = gy0 + Math.floor(i / cols) * pitch;
-      let x, y, r;
-      const q = E.inOutCubic(clamp(mp * 1.25 - (i / N) * 0.25));
-      if (i < TOP) {
-        x = lerp(gx, M + 34, q); y = lerp(gy, by0 + i * rowH, q); r = lerp(pitch * 0.34, 22, q);
-      } else {
-        x = lerp(gx, M + 34, q); y = lerp(gy, by0 + TOP * rowH + 14, q); r = lerp(pitch * 0.34, 0, q);
-      }
-      const sc = E.spring(ap, 1.8, 6);
-      CX.save(); CX.globalAlpha = c.trans ? 0.72 : 1;
-      stud(x, y, r * sc, c.rgb);
-      CX.restore();
-      if (N <= 12 && q < 1) {                 // few colours: name them under their studs
-        const na = clamp(ap * 2) * (1 - clamp(q * 3));
-        if (na > 0.01) text(c.name, gx, gy + pitch * 0.34 + 34, { size: 19, weight: 600, color: TH.ink, align: 'center', alpha: na * 0.8 });
-      }
-      if (i < TOP && mp > 0) {
-        // the bar: a 1 x N plate, as long as its share
-        const bp = E.outCubic(ramp(f, m.morph0 + b * 0.5 + i * 2, m.morph1 + b + i * 2));
-        const len = Math.max(26, barMax * c.qty / maxQ) * bp;
-        const bh = Math.min(44, rowH * 0.46);
-        CX.save();
-        CX.globalAlpha = c.trans ? 0.7 : 1;
-        CX.fillStyle = mix(c.rgb, '#000000', 0.25); rrect(barX, y - bh / 2 + 4, len, bh, 7); CX.fill();
-        CX.fillStyle = c.rgb; rrect(barX, y - bh / 2, len, bh, 7); CX.fill();
-        for (let sx = barX + 15; sx < barX + len - 8; sx += 30) stud(sx, y - 1, 8.5, c.rgb);
-        CX.restore();
-        if (Math.abs(luma(c.rgb) - bgL) < 0.2) {                    // keep low-contrast bars visible
-          CX.save(); CX.strokeStyle = rgba(TH.ink, 0.55);
-          CX.lineWidth = 2; rrect(barX, y - bh / 2, len, bh, 7); CX.stroke(); CX.restore();
-        }
-        const la = clamp(bp * 3);
-        text(c.name, barX, y - bh / 2 - 8, { size: 23, weight: 600, color: TH.ink, alpha: la * 0.85 });
-        text(fmt(c.qty * clamp(bp * 1.2)), barX + len + 14, y + 12, { size: 34, color: TH.ink, alpha: la });
-      }
-    }
-    if (other > 0) {
-      const op = tw(f, m.morph1, m.morph1 + 8, E.outBack);
-      if (op > 0) {
-        const rest = P.slice(TOP).reduce((a, c) => a + c.qty, 0);
-        chip(`+${other}`, `more colours · ${fmt(rest)} pieces`, M + 8, by0 + TOP * rowH - 12, op, 1, { h: 50, vsize: 26, lsize: TH.mono === 'VT323' ? 26 : 17 });
-      }
-    }
   },
 };
 
@@ -691,11 +595,16 @@ SEG.build = {
     // HUD: section lower third
     const ls = sec.start + (k === 0 ? b : 3), le = Math.min(sec.start + b * 5, (D.build.sections[k + 1] || { start: s.end }).start - 4, done ? D.build.land_last : 1e9);
     const lp = tw(f, ls, ls + 10, E.outExpo) * (1 - tw(f, le - 8, le, E.inCubic));
-    if (lp > 0) lowerThird(k + 1, sec.title, lp, f - ls);
+    if (lp > 0 && sec.title) lowerThird(k + 1, sec.title, lp, f - ls);
     // HUD: step and pieces
     const st = UP(t === 'playful' ? 'step' : 'step');
     const nSteps = D.model.steps;
-    hudCounters(f, s, step, nSteps, pieces, done);
+    if (D.build.ground_up) {
+      const hgt = n ? D.build.height[n - 1] : 0;
+      heightCounter(f, s, hgt, D.build.height[D.build.height.length - 1]);
+    } else {
+      hudCounters(f, s, step, nSteps, pieces, done);
+    }
     // progress bar with section ticks
     progressBar(f, s, n / total, done);
     const fast = rateAt(f) > 4;
@@ -762,6 +671,27 @@ function hudCounters(f, s, step, nSteps, pieces, done) {
   text(str, x - w2, y + 60, { font: fnt, color: t === 'scan' ? TH.ink : TH.ink, align: 'right',
     shadow: t === 'scan' ? null : rgba('#ffffff', 0.6), blur: 12 });
   text(` / ${nSteps}`, x, y + 60, { font: font(34, 600), color: lc, align: 'right', alpha: 0.8 });
+}
+
+// how high the build has grown (mm above the table)
+function heightCounter(f, s, mm, total) {
+  const t = TH.name;
+  const x = L - M;
+  const unit = total >= 250 ? 'cm' : 'mm';
+  const v = unit === 'cm' ? (mm / 10).toFixed(1) : String(Math.round(mm));
+  const tot = unit === 'cm' ? (total / 10).toFixed(1) : String(Math.round(total));
+  if (t === 'tape') {
+    const o = { font: font(40, 400, 'VT323'), color: TH.ink, shadow: rgba('#000', 0.8), sx: 3, sy: 3, align: 'right', spacing: 2 };
+    text(`HEIGHT ${v}/${tot} ${UP(unit)}`, x, TOPY() - 24, o);
+    return;
+  }
+  const y = 118;
+  const lc = t === 'scan' ? TH.hud : TH.ink;
+  label('height', x, y - 2, { align: 'right', color: lc });
+  const w2 = measure(` / ${tot} ${unit}`, font(34, 600));
+  text(v, x - w2, y + 60, { font: font(64, 700), color: TH.ink, align: 'right',
+    shadow: t === 'scan' ? null : rgba('#ffffff', 0.6), blur: 12 });
+  text(` / ${tot} ${unit}`, x, y + 60, { font: font(34, 600), color: lc, align: 'right', alpha: 0.8 });
 }
 
 function progressBar(f, s, p, done) {
@@ -1094,7 +1024,8 @@ SEG.lights = {
     const Lt = D.lights, b = B();
     const on = Lt.power_on;
     // bloom: the bright parts of the plate, blurred and added
-    if (bm && f >= on) {
+    const lit = !(Lt.power_off !== null && Lt.power_off !== undefined && f >= Lt.power_off + 3);
+    if (bm && f >= on && lit) {
       const q = tw(f, on, on + b);
       const [c, x] = off('bloom');
       x.filter = `brightness(1.3) contrast(2.6) saturate(1.5) blur(${26 * S}px)`;
@@ -1114,10 +1045,11 @@ SEG.lights = {
       g.addColorStop(0, rgba(mix(col, '#ffffff', 0.6), 0.85 * q)); g.addColorStop(0.4, rgba(col, 0.35 * q)); g.addColorStop(1, rgba(col, 0));
       CX.save(); CX.globalCompositeOperation = 'screen'; CX.fillStyle = g; CX.fillRect(0, 0, L, L); CX.restore();
     }
-    // reticles lock on to each lamp
+    // reticles lock on to each lamp (and let go when they're switched off)
+    const offFade = (Lt.power_off !== null && Lt.power_off !== undefined) ? 1 - tw(f, Lt.power_off, Lt.power_off + 6) : 1;
     Lt.leds.forEach((led, i) => {
       const t0 = on + 6 + i * 4;
-      const p = ramp(f, t0, t0 + 12);
+      const p = ramp(f, t0, t0 + 12) * offFade;
       if (p <= 0) return;
       const [x, y] = led.track[Math.min(f - s.start, led.track.length - 1)];
       const r = lerp(90, 34, E.outExpo(p));
@@ -1127,10 +1059,15 @@ SEG.lights = {
       CX.restore();
       label(led.name || `lamp ${i + 1}`, x + r + 10, y + 5, { color: col, alpha: clamp(p * 2), size: TH.mono === 'VT323' ? 26 : 16 });
     });
+    const offf = Lt.power_off;
+    const isOff = offf !== null && offf !== undefined && f >= offf;
     const la = tw(f, D.marks.lights.label, D.marks.lights.label + 10, E.outExpo);
-    CX.save(); CX.globalAlpha = la;
-    label(f < on ? 'lights off' : 'power on', M, TOPY(), { color: TH.name === 'scan' ? TH.hud : TH.accent });
-    text(UP(Lt.label), M, TOPY() + 54, { size: 52, color: f < on ? rgba('#ffffff', 0.5) : '#FFFFFF' });
+    const swap = isOff ? tw(f, offf, offf + 8, E.outExpo) : 1;
+    CX.save(); CX.globalAlpha = la * swap; CX.translate(0, (1 - swap) * 24);
+    label(isOff ? 'power off' : f < on ? 'lights off' : 'power on', M, TOPY(), { color: TH.name === 'scan' ? TH.hud : TH.accent });
+    text(UP(isOff ? Lt.off_label : Lt.label), M, TOPY() + 54,
+      { size: 52, color: isOff ? TH.ink : f < on ? rgba('#ffffff', 0.5) : '#FFFFFF',
+        shadow: isOff ? rgba('#000', 0.35) : null, blur: 10 });
     CX.restore();
     osd(f, s, '▶ PLAY');
     visor(f, s, 'EMISSION');
@@ -1231,8 +1168,9 @@ function wipe(f, p, bm, i) {
   for (let k = 0; k < 7; k++) {
     const y = 90 + k * 150 + (k % 2) * 40;
     const px = edge(y) - 70 - (k % 2) * 60;
-    if (t === 'playful') pawPrint(px, y, 44, TH.ink, Math.PI / 2 + (k % 2 ? 0.25 : -0.25), CX, 0.8 * clamp(p * 6) * clamp((1 - p) * 6));
-    else stud(px, y, 20, TH.accent, CX, clamp(p * 6) * clamp((1 - p) * 6));
+    const a = clamp(p * 6) * clamp((1 - p) * 6);
+    if (t === 'playful') pawPrint(px, y, 44, TH.ink, Math.PI / 2 + (k % 2 ? 0.25 : -0.25), CX, 0.8 * a);
+    else { CX.save(); CX.globalAlpha *= a; brickTop(px, y, 2, 1, 26, TH.accent); CX.restore(); }
   }
 }
 
@@ -1261,10 +1199,11 @@ function colourwayLabel(it, idx, n, p, k) {
   it.swatches.forEach((sw, j) => {
     const q = ramp(k, 6 + j * 3, 18 + j * 3);
     if (q <= 0) return;
-    const r = 20;
+    const r = 20;                             // a flat 1 x 1 tile of the colour
     CX.save(); CX.translate(sx + r, y + 126); CX.scale(E.outBack(q), E.outBack(q));
-    stud(0, 0, r, sw.rgb);
-    CX.strokeStyle = rgba(t === 'brand' || t === 'playful' ? TH.ink : '#ffffff', 0.35); CX.lineWidth = 1.5; circle(0, 0, r); CX.stroke();
+    CX.fillStyle = sw.rgb; rrect(-r, -r, 2 * r, 2 * r, 6); CX.fill();
+    CX.strokeStyle = rgba(t === 'brand' || t === 'playful' ? TH.ink : '#ffffff', 0.4); CX.lineWidth = 1.5;
+    rrect(-r, -r, 2 * r, 2 * r, 6); CX.stroke();
     CX.restore();
     const nm = sw.name;
     const fnt = monoFont(TH.mono === 'VT323' ? 28 : 19);

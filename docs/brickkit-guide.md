@@ -169,12 +169,11 @@ chromium`). A full render takes roughly an hour of GPU time per model; iterate w
 | Segment | Beats | Shows | When |
 |---|---:|---|---|
 | open | 6 | a brick drops and snaps, stud wipe, REAL LEGO PIECES. / CHECKED BY COMPUTER. | always |
-| title | 8 | the name in kinetic type over a transparent Cycles hero, piece counter, stat chips | always |
-| palette | 8 | colour swatches turn into bars of pieces per colour; part pictures fall behind | always |
-| build | 32 | the time-lapse build, one orbiting shot per section, HUD, speed ramps | always |
+| title | 8 | the name in kinetic type over a transparent Cycles hero, piece counter, one row of stats | always |
+| build | 36 | the time-lapse build growing up from the table (parts by the height of their lowest point, outward from the centre, each waiting for something to stand on or connect to, dropping a short way into place); one orbiting shot per height band; HUD: pieces placed, height, progress | always |
 | scan | 12 | a scan line sweeps the model: x-ray of its LDraw edges and connection points; the eight checks tick in with their numbers | always |
 | mechanism | 12 | `model.pose`: build pose → 0 → 1 → back, with callouts tracked on real parts and a gauge | pose + groups |
-| lights | 8 | the set goes dark, the lights switch on with a bloom flash | lights / glow |
+| lights | 8 (+2) | the set goes dark, the lights switch on with a bloom flash; optionally a tap presses the mechanism as they do, and a second tap switches them off | lights / glow |
 | lift | 6 | everything but `exclude_tag` rises and hovers | `[video] lift` |
 | colourways | 4 per colourway | wipes between colourways that share the parts, with swatches | variants |
 | booklet | 12 | the printed booklet: its real cover opens, a thumb-flip through the step pages (motion-blurred) lands on a step spread, then loose step sheets are dealt into a fan (from every colourway's booklet if there are any) | `out/booklet.pdf` |
@@ -185,14 +184,18 @@ chromium`). A full render takes roughly an hour of GPU time per model; iterate w
 [video]
 theme = "tape"                  # brand (default) | scan | tape | playful
 beats = { build = 28 }          # segment lengths in beats
-skip = ["palette"]              # leave segments out
+skip = ["scan"]                 # leave segments out
 facts = ["1:1 scale"]           # extra title chips (words from the model's own docs)
 default_title = "Black"         # name of the default colourway (else [model] palette_title)
-sections = [[1, "Base"], ["Layer 1 (", "Dome"]]   # build sections: step number or caption start
+build_order = "ground_up"       # or "instructions": follow the booklet's order instead
+sections = [[1, "Base"], ["Layer 1 (", "Dome"]]   # named parts of the build (step or caption
+                                # start); ground-up bands are named after the one most of
+                                # their parts belong to, when it's at least 60% of them
 lift = { exclude_tag = "stand", height = 80 }
 lift_label = "Lifts off its stand"
 lights_label = "Nuclei light up"
 lights_tap = true               # the mechanism presses as the lights switch on (a tap lamp)
+lights_off = true               # a second tap switches them off again (lights_off_label)
 drop = 24                       # LDU a part falls as it lands
 [video.theme_overrides]         # any theme token, e.g. accent = "#FF3EA5"
 
@@ -210,14 +213,15 @@ that match nothing are left out (with a note in the log).
 **Themes** (`brickkit/video/themes.py`) set the tempo, colours, fonts, wipes and overlay:
 `brand` (cream and yellow, stud wipes), `scan` (teal HUD, scan lines, blast-door wipes),
 `tape` (VCR on-screen display, tracking glitches, chroma bleed), `playful` (bouncy type,
-bubble wipes, paw prints). Fonts are bundled OFL fonts in `brickkit/video/web/fonts/`.
+paw-print slides). Fonts are bundled OFL fonts in `brickkit/video/web/fonts/`.
 
 **How it's made:** `video/timeline.py` plans the 3D shots (no Blender), `video/reel.py` the
 graphics and the cue sheet from the model's data, `render/blender_animate.py` renders the
 plates (EEVEE, always under the machine-wide `blender_slot()` lock, 40 frames per process),
 `video/web/` is the compositor (a canvas `renderFrame(f)` run in headless Chromium by
 `video/compose.py`) and `video/audio.py` synthesises the music and effects (numpy, mastered to
--16 LUFS). Plates are cached per segment with a hash, so editing graphics never re-renders 3D.
+-16 LUFS). Plates are cached per segment, numbered from the segment's start, with a hash, so
+editing graphics never re-renders 3D and moving a segment in the edit keeps its renders.
 
 ## Shape helpers
 `brickkit.shapes.rings`: `ring_cells(r_out, r_in)`, `pack_cells(cells, lengths, offset, mode)`

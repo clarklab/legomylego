@@ -52,6 +52,8 @@ works = [
 theme = "scan"
 lights_label = "Tap: lights on"
 lights_tap = true                  # the lights toggle with a press: the video presses as they come on
+lights_off = true                  # ...and a second tap switches them off again before the lift
+lights_off_label = "Tap: lights off"
 lift_label = "Lifts off its stand"
 # sections start at the first step whose caption begins with the text
 sections = [["Base disc", "Base disc and fangs"], ["Skirt ring", "Skirt"],
