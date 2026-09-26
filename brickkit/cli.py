@@ -44,11 +44,21 @@ def _bom(engine, proj, model) -> None:
     write_parts_csv(lines, out / "parts.csv")
     write_bricklink_xml(lines, out / "bricklink_wanted.xml")
     write_pick_a_brick_csv(lines, out / "pick_a_brick.csv")
-    from .bom.price import estimate, write_estimate_md
-    low, high = write_estimate_md(model.name, estimate(lines, engine.catalog),
-                                  out / "price_estimate.md")
+    import json
+    from .bom.live_price import live_prices
+    from .bom.price import estimate, summary, write_estimate_md
+    live = None
+    try:
+        live = live_prices(lines)
+    except Exception as e:                        # no network, refused keys: say so, go on
+        print(f"live prices unavailable ({e}); using price bands")
+    day = live["day"] if live else None
+    priced = estimate(lines, engine.catalog, live)
+    low, high = write_estimate_md(model.name, priced, out / "price_estimate.md", day)
+    (out / "price.json").write_text(json.dumps(summary(priced, day), indent=1))
     print(f"parts list: {sum(l.qty for l in lines)} pieces in {len(lines)} lines "
-          f"-> {out / 'parts.csv'}; rough price ${low:,.0f}-${high:,.0f}")
+          f"-> {out / 'parts.csv'}; price ${low:,.0f}-${high:,.0f}"
+          f"{f' (BrickLink, {day})' if day else ' (rough estimate)'}")
 
 
 def _new(slug: str, name: str | None) -> int:
@@ -84,6 +94,15 @@ def main(argv=None) -> int:
     p.add_argument("--lights", action="store_true")
     p.add_argument("--out", default="renders")
     p.add_argument("--variant")
+    p = sub.add_parser("turntable", help="photoreal orbit loop (MP4) with the mechanism "
+                                          "and lights going, for the site's no-WebGL view")
+    p.add_argument("slug")
+    p.add_argument("--variant")
+    p.add_argument("--seconds", type=float, default=12.0)
+    p.add_argument("--fps", type=int, default=24)
+    p.add_argument("--size", type=int, default=720)
+    p.add_argument("--samples", type=int, default=48)
+    p.add_argument("--preview", action="store_true")
     p = sub.add_parser("booklet", help="instruction booklet PDF")
     p.add_argument("slug")
     p.add_argument("--variant")
@@ -140,6 +159,11 @@ def main(argv=None) -> int:
             print(f"{sets:5d}  {part:12s} {'ldraw' if has_ld else '     '}  {name}")
         return 0
     proj, model = _build(engine, args.slug, getattr(args, "variant", None))
+    if args.cmd == "turntable":
+        from .render.turntable import make_turntable
+        make_turntable(engine, model, _out(proj, model.variant), seconds=args.seconds,
+                       fps=args.fps, size=args.size, samples=args.samples, preview=args.preview)
+        return 0
     if args.cmd == "booklet":
         from .booklet.booklet import make_booklet
         pdf = make_booklet(engine, proj, model, rerender=not args.no_render,

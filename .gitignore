@@ -19,3 +19,5 @@ models/*/out/**/booklet/
 models/*/out/**/cover_render/
 .claude/
 models/*/out/*.tmp.mp4
+models/*/out/turntable_frames/
+models/*/out/turntable_preview.mp4

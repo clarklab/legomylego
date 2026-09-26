@@ -33,3 +33,30 @@ def test_price_estimate(engine, tmp_path):
     assert all(0 < p.low <= p.high for p in priced)
     low, high = write_estimate_md("Test", priced, tmp_path / "p.md")
     assert 0 < low < high and "price estimate" in (tmp_path / "p.md").read_text()
+
+
+def test_live_prices_used_and_dated(engine, tmp_path):
+    from brickkit.bom.price import estimate, summary, write_estimate_md
+    lines = build_bom(make(engine).flatten(), engine.catalog)
+    key = lambda l: (l.bl_type, l.bl_part, l.color.bl_id)
+    live = {"day": "2026-09-25", "prices": {
+        key(lines[0]): {"stock": {"ok": True, "avg": 0.12}, "sold": {"ok": True, "avg": 0.08}}}}
+    priced = estimate(lines, engine.catalog, live)
+    first = next(p for p in priced if p.line is lines[0])
+    assert first.live and (first.low, first.high) == (0.08, 0.12)
+    s = summary(priced, "2026-09-25")
+    assert s["source"] == "bricklink" and s["date"] == "2026-09-25" and s["live_lines"] == 1
+    write_estimate_md("Test", priced, tmp_path / "p.md", "2026-09-25")
+    assert "Priced 2026-09-25" in (tmp_path / "p.md").read_text()
+
+
+def test_bricklink_oauth_header(monkeypatch):
+    from brickkit.bom import live_price
+    monkeypatch.setattr(live_price.time, "time", lambda: 1700000000)
+    monkeypatch.setattr(live_price.secrets, "token_hex", lambda n: "abc")
+    cred = dict(zip(live_price.KEYS, ("ck", "cs", "tk", "ts")))
+    h = live_price._auth_header("GET", "https://api.bricklink.com/api/store/v1/items/PART/3001/price",
+                                {"color_id": "5", "guide_type": "stock"}, cred)
+    assert h.startswith("OAuth realm=") and 'oauth_consumer_key="ck"' in h and 'oauth_token="tk"' in h
+    assert h == live_price._auth_header("GET", "https://api.bricklink.com/api/store/v1/items/PART/3001/price",
+                                        {"color_id": "5", "guide_type": "stock"}, cred)

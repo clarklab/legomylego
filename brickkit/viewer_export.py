@@ -191,7 +191,7 @@ def model_json(engine, proj, model, placed, *, files: dict, variants: list[tuple
         "slug": proj.slug, "name": model.name,
         "description": cfg.get("description", ""), "notice": cfg.get("notice", ""),
         "parts": len(placed), "pieces": sum(r["qty"] for r in bom), "dims_mm": dims,
-        "price": _price(engine, placed, model.extras),
+        "price": _price(engine, placed, model.extras, proj.out / "price.json"),
         "features": {"mechanism": model.pose is not None, "lights": bool(model.lights)},
         "front_azimuth": float(model.meta.get("azimuth_offset", 0.0)),
         "colors": _colors(engine, codes), "variants": var_out,
@@ -212,13 +212,13 @@ def _item_text(item) -> str:
     return f"{head}: {tail}" if head else str(tail)
 
 
-def _price(engine, placed, extras) -> dict:
-    from .bom.price import estimate
-    priced = estimate(build_bom(placed, engine.catalog, extras), engine.catalog)
-    return {"low": round(sum(p.low * p.line.qty for p in priced), 2),
-            "high": round(sum(p.high * p.line.qty for p in priced), 2), "currency": "USD",
-            "note": "A rough range from typical BrickLink prices per part type, not live "
-                    "market data."}
+def _price(engine, placed, extras, saved: Path | None = None) -> dict:
+    """The price summary `brickkit bom` wrote (live BrickLink prices when set up), or the
+    rough estimate from price bands."""
+    if saved is not None and saved.exists():
+        return json.loads(saved.read_text())
+    from .bom.price import estimate, summary
+    return summary(estimate(build_bom(placed, engine.catalog, extras), engine.catalog))
 
 
 def _bom_rows(engine, placed, extras=()) -> list[dict]:
@@ -241,7 +241,8 @@ def export_model(engine, proj, model, site_dir: Path | None = None) -> Path:
                       ("bricklink_xml", proj.out / "bricklink_wanted.xml"),
                       ("pick_a_brick_csv", proj.out / "pick_a_brick.csv"),
                       ("price_estimate", proj.out / "price_estimate.md"),
-                      ("video_poster", proj.out / "video_poster.jpg")]:
+                      ("video_poster", proj.out / "video_poster.jpg"),
+                      ("turntable", proj.out / "turntable.mp4")]:
         if src.exists():
             shutil.copy2(src, dst / src.name)
             files[name] = src.name

@@ -570,9 +570,27 @@ async function initViewer(d) {
   const fail = (msg) => {
     host.classList.add('is-fallback');
     if (posterPath) poster.src = media.image(posterPath, 'lg');
-    $('#viewer-loading').innerHTML = `<div class="loading-card"><p class="viewer-error">${esc(msg)}</p></div>`;
     $('#dock').hidden = true;
     $('.viewer-top').hidden = true;
+    // No 3D here: play the photoreal turntable loop (the model turning, its mechanism and
+    // lights working) if there is one, else keep the still render with a note.
+    const tt = d.files?.turntable;
+    if (tt && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      const v = document.createElement('video');
+      for (const a of ['muted', 'loop', 'playsinline', 'autoplay']) v.setAttribute(a, '');
+      v.muted = true;
+      v.preload = 'auto';
+      v.className = 'viewer-turntable';
+      v.setAttribute('aria-label', `${d.name}, turning slowly with its moving parts working`);
+      if (poster.src) v.poster = poster.src;
+      v.src = media.url(tt);
+      v.addEventListener('playing', () => host.classList.add('is-turntable'), { once: true });
+      poster.after(v);
+      v.play?.().catch(() => {});
+      $('#viewer-loading').innerHTML = '';
+      return;
+    }
+    $('#viewer-loading').innerHTML = `<div class="loading-card"><p class="viewer-error">${esc(msg)}</p></div>`;
   };
   let mod;
   try {
