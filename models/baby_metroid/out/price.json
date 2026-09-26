@@ -1,0 +1,10 @@
+{
+ "low": 134.05,
+ "high": 428.1,
+ "currency": "USD",
+ "note": "A rough range from typical BrickLink prices per part type, not live market data.",
+ "source": "estimate",
+ "date": null,
+ "live_lines": 0,
+ "lines": 61
+}
