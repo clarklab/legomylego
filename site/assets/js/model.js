@@ -380,7 +380,11 @@ function renderGallery(d) {
   if (!renders.length) return;
   $('#gallery').hidden = false;
   const media = state.media;
-  const cap = (p) => humanize(p.split('/').pop().replace(/\.\w+$/, '').replace(/^renders?_/, '').replace(/^hero_/, 'hero '));
+  const cap = (p) => {
+    const name = p.split('/').pop().replace(/\.\w+$/, '').replace(/^renders?_/, '');
+    const labels = { hero_hero: 'Display view', hero_open_hero: 'Mechanism view', hero_lit_hero: 'Lights on', three_quarter: 'Three-quarter view' };
+    return labels[name] || humanize(name.replace(/^hero_/, '').replace(/_hero$/, ''));
+  };
   $('#gallery-grid').innerHTML = renders.map((p) => {
     const info = media.imageInfo(p);
     return `<button class="shot" type="button" data-src="${media.image(p, 'lg')}" data-cap="${esc(cap(p))}" aria-label="Open render: ${esc(cap(p))}">
@@ -710,6 +714,12 @@ async function main() {
   renderParts();
   renderGallery(d);
   renderPrice(d);
+  // Keep section shortcuts in sync with the resources this model actually provides.
+  const sectionNav = $('.model-nav');
+  if (sectionNav) {
+    for (const link of $$('a', sectionNav)) link.hidden = $(link.hash)?.hidden !== false;
+    sectionNav.hidden = !sectionNav.querySelector('a:not([hidden])');
+  }
   $('#parts-filter').addEventListener('input', renderParts);
   $('#parts-sort').addEventListener('change', renderParts);
   await initViewer(d);

@@ -21,17 +21,16 @@
 <meta name="twitter:description" content="Buildable models made from real LEGO parts. Every part, connection and step checked by computer.">
 <meta name="twitter:image" content="https://lego.superfun.games/assets/og/home.png?v=cee19de3bb">
 <!-- meta:end -->
-<meta name="theme-color" content="#fedb05" media="(prefers-color-scheme: light)">
-<meta name="theme-color" content="#13110e" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#f7f7f2" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#171a17" media="(prefers-color-scheme: dark)">
 <link rel="icon" href="/favicon.ico?v=eb084bacd7" sizes="48x48">
 <link rel="icon" href="/favicon.svg?v=c2f5a8448a" type="image/svg+xml">
 <link rel="icon" href="/favicon-32.png?v=00b4cb8f29" type="image/png" sizes="32x32">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png?v=f10572a144">
-<link rel="manifest" href="/site.webmanifest?v=9b64d34522">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&family=Fredoka:wght@500;600;700&display=swap">
+<link rel="manifest" href="/site.webmanifest?v=3b19dfe6f5">
+<link rel="preload" href="/assets/fonts/InterVariable.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="/assets/css/site.css">
+<link rel="stylesheet" href="/assets/css/model.css">
 <script>try{var t=localStorage.getItem('theme');if(t==='light'||t==='dark')document.documentElement.dataset.theme=t}catch(e){}</script>
 <script type="importmap">
 {
@@ -56,6 +55,7 @@
         <source srcset="/assets/brand/logo-header.webp?v=fe3fdd0e2a" type="image/webp">
         <img src="/assets/brand/logo-header.png?v=ebd2a13ef3" alt="L'Eggo my LEGO" width="64" height="48">
       </picture>
+      <span class="brand-name">L’Eggo <span>my LEGO</span></span>
     </a>
     <nav class="nav" aria-label="Main">
       <a href="/#models">Models</a>
@@ -140,6 +140,8 @@
       <div class="panel-cta span-2" id="panel-cta"></div>
     </aside>
   </section>
+
+  <nav class="model-nav wrap" aria-label="Model sections" hidden><a href="#checks">Design checks</a><a href="#downloads">Downloads</a><a href="#parts">Parts list</a><a href="#gallery">Gallery</a></nav>
 
   <div class="model-sections">
     <section class="section wrap" id="checks" aria-labelledby="checks-h" hidden>

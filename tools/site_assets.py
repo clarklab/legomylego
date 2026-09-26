@@ -44,8 +44,8 @@ YELLOW = (254, 219, 5)
 RED = (235, 21, 44)
 BLACK = (17, 16, 16)
 WHITE = (255, 255, 255)
-BG_LIGHT = "#fffcf3"
-THEME = "#fedb05"
+BG_LIGHT = "#f7f7f2"
+THEME = "#f7f7f2"
 
 LOGO_SRC = ROOT / "logo.png" if (ROOT / "logo.png").exists() else SITE / "assets" / "logo.png"
 FONT = SITE / "assets" / "fonts" / "Fredoka.ttf"

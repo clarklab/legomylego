@@ -64,3 +64,9 @@ JVC KENWOOD Corporation.
 ## Site
 
 `site/` is a static site deployed by Netlify (`netlify.toml`) at lego.superfun.games.
+
+Shared design tokens and page styles live in `site/assets/css/site.css`; the model viewer
+and detail sections use `site/assets/css/model.css`. Inter is served locally from
+`site/assets/fonts/` (license included). Edit `site/model.html` for model-page markup,
+then run `.venv/bin/python tools/site_assets.py` to refresh the generated `site/m/` pages.
+Preview locally with `.venv/bin/python -m http.server 4401 --directory site`.

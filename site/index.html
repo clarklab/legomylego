@@ -19,16 +19,14 @@
 <meta name="twitter:title" content="L'Eggo my LEGO: real LEGO models, checked by computer">
 <meta name="twitter:description" content="Buildable models made from real LEGO parts. Every part, connection and step checked by computer.">
 <meta name="twitter:image" content="https://lego.superfun.games/assets/og/home.png?v=cee19de3bb">
-<meta name="theme-color" content="#fedb05" media="(prefers-color-scheme: light)">
-<meta name="theme-color" content="#13110e" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#f7f7f2" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#171a17" media="(prefers-color-scheme: dark)">
 <link rel="icon" href="/favicon.ico?v=eb084bacd7" sizes="48x48">
 <link rel="icon" href="/favicon.svg?v=c2f5a8448a" type="image/svg+xml">
 <link rel="icon" href="/favicon-32.png?v=00b4cb8f29" type="image/png" sizes="32x32">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png?v=f10572a144">
-<link rel="manifest" href="/site.webmanifest?v=9b64d34522">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&family=Fredoka:wght@500;600;700&display=swap">
+<link rel="manifest" href="/site.webmanifest?v=3b19dfe6f5">
+<link rel="preload" href="/assets/fonts/InterVariable.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="/assets/css/site.css">
 <script>try{var t=localStorage.getItem('theme');if(t==='light'||t==='dark')document.documentElement.dataset.theme=t}catch(e){}</script>
 <script type="application/ld+json">
@@ -52,6 +50,7 @@
         <source srcset="/assets/brand/logo-header.webp?v=fe3fdd0e2a" type="image/webp">
         <img src="/assets/brand/logo-header.png?v=ebd2a13ef3" alt="L'Eggo my LEGO" width="64" height="48">
       </picture>
+      <span class="brand-name">L’Eggo <span>my LEGO</span></span>
     </a>
     <nav class="nav" aria-label="Main">
       <a href="#models">Models</a>
@@ -63,66 +62,70 @@
 </header>
 
 <main id="main">
-  <section class="hero studs" aria-labelledby="hero-h">
+  <section class="hero" aria-labelledby="hero-h">
     <div class="wrap">
-      <div>
-        <h1 id="hero-h">Real LEGO. <span class="hl">Checked by computer.</span></h1>
-        <p class="lede">Buildable models made only of real LEGO parts, and checked by computer before anyone builds them: every part is a real LEGO element, every connection is found, nothing collides, every step can be built, and the mechanisms really work.</p>
+      <div class="hero-copy">
+        <p class="eyebrow"><span class="status-dot" aria-hidden="true"></span>Independent LEGO® creations</p>
+        <h1 id="hero-h">For the love<br>of <span class="hl">the build.</span></h1>
+        <p class="lede">Original models. Real bricks. Every detail considered. Explore the designs in 3D, follow the build, and find every part you need.</p>
         <div class="cta">
-          <a class="btn btn-black" href="#models"><i data-icon="brick"></i>See the models</a>
-          <a class="btn btn-light" href="#how">How it works</a>
+          <a class="btn btn-black" href="#models">Explore the collection<i data-icon="arrowRight"></i></a>
+          <a class="text-link" href="/videos/"><i data-icon="play"></i>Watch the builds</a>
         </div>
-        <p class="note"><i data-icon="info"></i>Computer-checked. Not physically build-tested yet.</p>
+        <div class="hero-footnote"><i data-icon="shield"></i><p>Designed with care. Checked by computer.<span>Not physically build-tested yet.</span></p></div>
       </div>
       <div class="hero-art" id="hero-art">
-        <img class="hero-logo" src="/assets/brand/logo-square.png?v=53798897ca" alt="L'Eggo my LEGO" width="600" height="600">
+        <a class="hero-card" href="/m/baby_metroid/">
+          <div class="hero-image"><img src="/assets/img/baby_metroid/hero_lit_hero.webp?v=94e7b09d02" alt="Baby Metroid Lamp, rendered" width="1000" height="1000" fetchpriority="high"></div>
+          <div class="hero-card-label"><div><p class="featured-label">Featured model</p><h2>Baby Metroid Lamp</h2></div><span class="go"><i data-icon="arrowRight"></i></span></div>
+        </a>
       </div>
     </div>
   </section>
 
-  <section class="section wrap" aria-labelledby="checks-h">
-    <div class="section-head">
-      <div>
-        <span class="eyebrow">Checked by computer</span>
-        <h2 id="checks-h">Five things we check, every time</h2>
-        <p>Each model is tested part by part by <strong>brickkit</strong>, the engine that designs it. If a check fails, the model is not done.</p>
-      </div>
+  <div class="benefits" aria-label="Included with every model">
+    <div class="wrap">
+      <p><i data-icon="brick"></i>Real LEGO® elements</p>
+      <p><i data-icon="orbit"></i>Interactive 3D models</p>
+      <p><i data-icon="steps"></i>Step-by-step instructions</p>
+      <p><i data-icon="list"></i>Complete parts lists</p>
     </div>
-    <div class="checks-strip">
-      <article class="check-tile"><span class="tile-icon"><i data-icon="tag"></i></span><h3>Real elements</h3><p>Every part exists as a real LEGO element, in that colour.</p></article>
-      <article class="check-tile"><span class="tile-icon"><i data-icon="link"></i></span><h3>Every connection</h3><p>Studs, pins and axles are found joint by joint. No floating parts.</p></article>
-      <article class="check-tile"><span class="tile-icon"><i data-icon="collision"></i></span><h3>No collisions</h3><p>No two parts try to fill the same space.</p></article>
-      <article class="check-tile"><span class="tile-icon"><i data-icon="steps"></i></span><h3>Every step buildable</h3><p>Each part slides into place, in order, without hitting anything.</p></article>
-      <article class="check-tile"><span class="tile-icon"><i data-icon="gear"></i></span><h3>Working mechanisms</h3><p>Moving parts are swept through their full range. Gears mesh.</p></article>
-    </div>
-  </section>
+  </div>
 
-  <section class="section band" id="models" aria-labelledby="models-h">
+  <section class="section collection" id="models" aria-labelledby="models-h">
     <div class="wrap">
       <div class="section-head">
-        <div>
-          <span class="eyebrow">The models</span>
-          <h2 id="models-h">Pick one and build it</h2>
-          <p>Spin it in 3D, play the build step by step, then grab the parts list.</p>
-        </div>
+        <div><p class="eyebrow">The collection</p><h2 id="models-h">Find your next build.</h2><p>A little nostalgia. A little imagination. A lot of bricks.</p></div>
+        <p class="collection-count" id="collection-count">Original designs</p>
       </div>
-      <div class="model-grid" id="model-grid" aria-live="polite">
-        <div class="skeleton" aria-hidden="true"></div>
+      <div class="model-grid" id="model-grid" aria-live="polite"><div class="skeleton" aria-hidden="true"></div></div>
+      <div class="collection-note"><i data-icon="brick"></i><p>More ideas on the workbench. New models join the collection as they’re ready.</p></div>
+    </div>
+  </section>
+
+  <section class="section engineering" aria-labelledby="checks-h">
+    <div class="wrap">
+      <div class="section-head">
+        <div><p class="eyebrow">Imagination, engineered</p><h2 id="checks-h">Every detail.<br>Every brick. Checked.</h2></div>
+        <p>Good design goes deeper than the surface. Our brickkit engine checks each model, part by part, before it reaches the collection.</p>
       </div>
+      <div class="checks-strip">
+        <article class="check-tile"><span class="tile-icon"><i data-icon="tag"></i></span><h3>Real elements</h3><p>Real LEGO parts, available in the colours used.</p></article>
+        <article class="check-tile"><span class="tile-icon"><i data-icon="link"></i></span><h3>Connected parts</h3><p>Studs, pins and axles checked, joint by joint.</p></article>
+        <article class="check-tile"><span class="tile-icon"><i data-icon="collision"></i></span><h3>Clear geometry</h3><p>No two parts should occupy the same space.</p></article>
+        <article class="check-tile"><span class="tile-icon"><i data-icon="steps"></i></span><h3>Buildable steps</h3><p>Every part’s path into place is simulated.</p></article>
+        <article class="check-tile"><span class="tile-icon"><i data-icon="gear"></i></span><h3>Moving mechanisms</h3><p>Moving parts tested through their full range.</p></article>
+      </div>
+      <p class="engineering-note"><i data-icon="info"></i>Computer checks are a starting point. Models have not yet been physically build-tested; see each model’s results and notes.</p>
     </div>
   </section>
 
   <section class="section wrap" id="how" aria-labelledby="how-h">
-    <div class="section-head">
-      <div>
-        <span class="eyebrow">How it works</span>
-        <h2 id="how-h">From code to bricks</h2>
-      </div>
-    </div>
+    <div class="section-head"><div><p class="eyebrow">From screen to your shelf</p><h2 id="how-h">Make something worth keeping.</h2></div><a class="text-link" href="#models">Choose your model<i data-icon="arrowRight"></i></a></div>
     <div class="how">
-      <article class="how-step"><span class="num">1</span><h3>Designed brick by brick</h3><p>Each model is placed part by part in brickkit, using real LEGO part geometry and colours.</p></article>
-      <article class="how-step"><span class="num">2</span><h3>Checked by computer</h3><p>Connections, collisions, build order, balance and moving parts are all simulated before release.</p></article>
-      <article class="how-step"><span class="num">3</span><h3>Built by you</h3><p>Follow the steps, then order the exact parts with a BrickLink wanted list or LEGO Pick a Brick.</p></article>
+      <article class="how-step"><p class="num">01 / EXPLORE</p><h3>Get to know the design.</h3><p>Turn it around in 3D. Try the mechanisms, explore the colourways, and inspect every detail.</p></article>
+      <article class="how-step"><p class="num">02 / PREPARE</p><h3>Gather your bricks.</h3><p>Download the exact parts list. Use a BrickLink wanted list or LEGO Pick a Brick to complete your collection.</p></article>
+      <article class="how-step"><p class="num">03 / BUILD</p><h3>Enjoy every step.</h3><p>Follow the interactive build, watch the video, or settle in with the instruction booklet. Build at your own pace.</p></article>
     </div>
   </section>
 </main>
