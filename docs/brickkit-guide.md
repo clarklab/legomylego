@@ -134,7 +134,7 @@ and `"bricklink_type": "S"` for items BrickLink sells as sets.
 | Check | Fails when |
 |---|---|
 | real_elements | a part/colour pair LEGO never made (suggests substitutes); warns when rare (<3 sets or none since 2016) |
-| connections | any part/sub-assembly not attached (studs, pins, axles, clips, hinges via LDCad snap data) |
+| connections | any part/sub-assembly not attached (studs, pins, axles, clips, hinges, balls via LDCad snap data) |
 | collisions | two parts overlap by more than ~0.5 LDU |
 | buildability | a part can't slide into place in its step, or a step leaves loose pieces |
 | stability | centre of mass outside the footprint of the lowest parts, or tips over under 10° |
@@ -147,6 +147,17 @@ Connection points come from the LDCad shadow library. When a part has none there
 file with the same name under `brickkit/data/shadow/parts/` (or `parts/s/`) holding
 `0 !LDCAD SNAP_*` lines in the part's own frame. These overlay files are read after the
 library's file for that part, so they add to it; they never remove its snaps.
+
+**Ball joints.** LDCad describes balls and their sockets as `SNAP_GEN [bounding=sph R]`
+(towballs, Technic balls). A ball turns in its socket, so these connect at any orientation:
+same centre (within 1 LDU), same radius (within 0.6), same group, opposite genders. They are
+reported as `ball` connections, and the buildability check treats them like clips and hinges
+(the socket's jaws flex as the ball pops in, so the socket never blocks the part carrying the
+ball). Overlays add the Technic ball snaps LDCad lacks: 53585 (Technic Ball Joint with through
+axle hole) gets the `techBallJnt` group its twin 32474 has, and 67696 (Brick 2 x 2 with wide
+ball socket, the football figures' shoulder joint) gets its socket, where 92013's is. The
+67696 socket's jaws leave a slot in the brick's own x-y plane: the ball's axle can swing
+freely in that plane, only about 25 degrees across it.
 
 ## Workflow loop
 1. `brickkit find` to pick parts that exist in your colours (prefer ≥3 sets since 2016).
@@ -168,6 +179,9 @@ chromium`). A full render takes roughly an hour of GPU time per model; iterate w
 | `--segments build,scan` | only those segments → `out/video_build+scan.mp4` |
 | `--no-render` | no Blender: compose from the plates already rendered (grey where missing) |
 | `--stills 120,480` | write single composed frames to `out/video_frames/<q>/stills/`, no video |
+| `--cold-open SCENE` | try a cold open (`sunset_road`) for this run, tagged like `--theme` (`out/video_cold_open...`); `--segments cold_open,open` renders just it and the cut into the reel |
+| `--scratch DIR` | write the run's work and outputs under `DIR` (the model's `out/` is only read): previews of a model someone else is working on |
+| `--theme NAME` | try another theme for this run (model.toml's theme and its overrides left out): writes `out/video_NAME[...].mp4` and `out/video_frames/<q>@NAME/` (stills there too), never the model's own video, poster or plates; with `--no-render` it composes over the model's rendered plates read-only, keeping their tempo and backdrop so they line up |
 | `--no-audio` | no music or sound effects |
 | `--force` | re-render cached plates; `--engine cycles` / `--device cpu` as for stills |
 
@@ -175,6 +189,7 @@ chromium`). A full render takes roughly an hour of GPU time per model; iterate w
 
 | Segment | Beats | Shows | When |
 |---|---:|---|---|
+| cold_open | seconds + 1 | the model performs in a set of its own before anything else, in three shots, then a hard cut to black for a beat and straight into the open (below) | `[video.cold_open]` |
 | open | 6 | a brick drops and snaps, stud wipe, REAL LEGO PIECES. / CHECKED BY COMPUTER. | always |
 | title | 8 | the name in kinetic type over a transparent Cycles hero, piece counter, one row of stats | always |
 | build | 36 | the time-lapse build growing up from the table (parts by the height of their lowest point, outward from the centre, each waiting for something to stand on or connect to, dropping a short way into place); one orbiting shot per height band; HUD: pieces placed, height, progress | always |
@@ -189,7 +204,7 @@ chromium`). A full render takes roughly an hour of GPU time per model; iterate w
 **Config** in model.toml (all optional; `model.meta["video"]` from design.py wins key by key):
 ```toml
 [video]
-theme = "tape"                  # brand (default) | scan | tape | playful
+theme = "tape"                  # brand (default) | scan | tape | playful | grindhouse
 beats = { build = 28 }          # segment lengths in beats
 skip = ["scan"]                 # leave segments out
 facts = ["1:1 scale"]           # extra title chips (words from the model's own docs)
@@ -206,6 +221,15 @@ lights_off = true               # a second tap switches them off again (lights_o
 drop = 24                       # LDU a part falls as it lands
 [video.theme_overrides]         # any theme token, e.g. accent = "#FF3EA5"
 
+[video.cold_open]               # opt-in: the reel opens on the model performing
+scene = "sunset_road"           # a two-lane road running into a low sun
+seconds = 7                     # the performance (rounded to beats; then a beat of black)
+motion = "performance"          # meta["performance"] (else, or "pose": model.pose swinging 0..1)
+spin_turns = 1.5                # the whole figure turns about its pivot, in three lurches
+hide_tags = ["stand"]           # parts left out (added to performance_info's)
+# optional: sun_elevation = 2.4, sun_size = 1.4 (deg), cycle = 2.5 (s), rev_tag = "saw",
+# letterbox = 0.09, exposure, sky_strength, sun_strength, sky_tint, haze
+
 [[video.callouts]]              # mechanism callouts; without any, one per moving group
 label = "Dust door"
 tag = "flap"                    # parts under a tag; globs make one anchor each: "fang_*"
@@ -213,6 +237,21 @@ part = "3937"                   # or a part number (one anchor per part), or col
 sub = "Swings 90°"              # second line; default: how far its group turns, or its name
 xray = true                     # also draw the parts' outlines (for parts hidden inside)
 ```
+**Cold open.** `design.py` gives the motion: `model.meta["performance"] = f` with `f(u)` for u
+in [0, 1) returning `{group: 4x4 world matrix}` like `model.pose` (one loop of the dance), and
+`model.meta["performance_info"] = {"hide_tags": [...], "ground_y": y, "pivot": [x, z],
+"cycle_s": 2.5}` (where it stands, what to hide, how long a loop takes). The loop plays at
+that speed once the engine catches (after about half a second), the figure spins about the
+pivot, and three shots cut hard: a 300 mm wide shot straight into the sun with the figure's
+head just under it, a low 70 mm and an ankle-height 38 mm shot. `sunset_road`
+(`render/blender_cold_open.py`, EEVEE): a physical sky with a warm sun lamp along the sun's line
+and a camera-only sun disc, a faded dashed centre line, gravel shoulders, dry grass fields and
+haze with distance, all scaled to the figure (a lane is two of its heights). The compositor
+adds letterbox bars, bloom, a flare that dies when something crosses the sun, and dust in the
+light; the sound is a chainsaw that is pulled, catches, idles and roars with the saw's speed
+(the `rev_tag` parts'), over wind, cut dead at the black. No music plays under it. Its plates
+render in about 0.5 s a frame at preview size. A model without one is unchanged.
+
 Callout anchors are the centres of the matched parts, moved by their group's pose every
 frame and projected through the video camera, so the lines follow the real parts. Callouts
 that match nothing are left out (with a note in the log).
@@ -220,7 +259,13 @@ that match nothing are left out (with a note in the log).
 **Themes** (`brickkit/video/themes.py`) set the tempo, colours, fonts, wipes and overlay:
 `brand` (cream and yellow, stud wipes), `scan` (teal HUD, scan lines, blast-door wipes),
 `tape` (VCR on-screen display, tracking glitches, chroma bleed), `playful` (bouncy type,
-paw-print slides). Fonts are bundled OFL fonts in `brickkit/video/web/fonts/`.
+paw-print slides), `grindhouse` (a 70s drive-in horror print at 100 BPM: warm near-black,
+bone type, blood red and apron yellow; gate weave, flicker, dust, hairs, scratches and light
+leaks; film-burn cuts spliced in with a frame slip, frame slips between build sections, a
+projector roll between colourways; the name rubber-stamped, typewritten labels, evidence-tag
+callouts; a heartbeat, drone, string swells and scraped metal, with a two-stroke chainsaw on
+the title). Fonts are bundled OFL fonts in `brickkit/video/web/fonts/`. Try one without
+touching the model: `brickkit video SLUG --theme grindhouse --no-render --stills 90,150,600`.
 
 **How it's made:** `video/timeline.py` plans the 3D shots (no Blender), `video/reel.py` the
 graphics and the cue sheet from the model's data, `render/blender_animate.py` renders the

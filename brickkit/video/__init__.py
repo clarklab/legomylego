@@ -2,6 +2,7 @@
 
 A showreel of the model, cut to a beat and driven by the model's own data:
 
+    cold_open   (opt-in) the model performs in a set of its own, a hard cut to black ([video.cold_open])
     open        a brick drops and snaps; stud wipe; REAL LEGO PIECES. / CHECKED BY COMPUTER.
     title       the name in kinetic type over the hero still; piece counter; one stat row
     build       the time-lapse build (hero), growing up from the table, with a HUD
@@ -18,7 +19,8 @@ Pipeline:
      from the model's data (themes.py skins it: model.toml [video] theme = ...);
   2. the model-scene plates render in Blender EEVEE (render/blender_animate.py), colourways
      once per colour scheme, the booklet flip in its own scene (booklet_flip.py) - always under
-     render/scene.py's blender_slot, one chunk of frames per Blender process;
+     render/scene.py's blender_slot, one chunk of frames per Blender process; a cold open in
+     its own set (render/blender_cold_open.py);
   3. the compositor (web/, driven by compose.py in headless Chromium) draws every frame:
      plates, type, HUD, data graphics, wipes, grading;
   4. audio.py synthesises the music and effects from the cue sheet; ffmpeg encodes.
@@ -28,7 +30,15 @@ segment's start, with a hash of everything they depend on, so a re-run only rend
 changed (moving a segment in the edit keeps its plates). `--preview` is 540x540 at
 low samples and 15 fps (-> out/video_preview.mp4); `--segments build,scan` makes just those
 (-> out/video_build+scan.mp4); `--no-render` composes from whatever plates exist (grey where
-missing) to iterate on graphics; `--stills 120,480` writes single composed frames as PNGs."""
+missing) to iterate on graphics; `--stills 120,480` writes single composed frames as PNGs.
+
+`--theme NAME` tries another theme for one run (model.toml's [video] theme and its overrides
+are left out): its outputs are out/video_NAME[...].mp4 and out/video_frames/<q>@NAME/, so the
+model's own video, poster and plates are left alone. With `--no-render` it composes over the
+model's rendered plates, read-only, keeping their tempo and backdrop so the graphics line up.
+`--cold-open SCENE` tries a cold open the same way (tagged `cold_open`; its plates render into
+the tagged work directory, `--segments cold_open` for just those). `--scratch DIR` writes the
+run's work and outputs under DIR instead (the model's out/ is only read)."""
 from __future__ import annotations
 
 import collections
@@ -47,6 +57,7 @@ from . import themes
 from . import timeline as T
 
 ANIMATE = Path(__file__).resolve().parent.parent / "render" / "blender_animate.py"
+COLD = ANIMATE.with_name("blender_cold_open.py")
 SCENE_SCRIPT = ANIMATE.with_name("blender_scene.py")
 FLIP = Path(__file__).resolve().with_name("booklet_flip.py")
 LOGO = paths.ROOT / "logo.png"
@@ -160,6 +171,12 @@ def segment_digest(tl: dict, seg: dict, q: dict, extra=None, variant: str | None
     base = {"seg": sg, "q": q, "extra": extra}
     if seg["kind"] == "booklet":
         base.update(code=_file_hash(FLIP, SCENE_SCRIPT))
+        return _digest(base)
+    if seg["kind"] == "cold":                 # its own set: the plan, the parts, the scripts
+        co = {k: v for k, v in tl["cold_open"].items() if k not in ("start", "end", "cut", "catch", "rev")}
+        base.update(cold=_digest(co), code=_file_hash(COLD, ANIMATE, SCENE_SCRIPT),
+                    scene=_digest({k: v for k, v in tl["scene"].items()
+                                   if k not in ("backdrop", "ground_color")}))
         return _digest(base)
     a, b = seg["start"], seg["end"]
     s0 = tl["scene_range"][0]
@@ -285,18 +302,21 @@ def contact_sheet(thumbs: list[tuple[int, np.ndarray]], path: Path, fps: int, co
 
 
 # ---------------------------------------------------------------------------- hero cutout
-def hero_cutout(engine, model, out_dir: Path, shape: dict, render: bool, log) -> Path | None:
+def hero_cutout(engine, model, out_dir: Path, shape: dict, render: bool, log,
+                dest: Path | None = None) -> Path | None:
     """A transparent Cycles still of the finished model (shadow kept) for the title: the site
-    hero's angle, turned towards broadside for long models. Cached by the model's MPD."""
+    hero's angle, turned towards broadside for long models. Cached by the model's MPD; a new
+    one is rendered under `dest` (default out_dir)."""
     from ..render.scene import render_model
-    d = out_dir / "video_frames" / "hero_cut"
     az = T.avoid_end_on(-35.0, shape, 58.0)
     view = {"name": "hero", "azimuth": az, "elevation": 20, "lens": 60}
     mpd = next(iter(sorted(out_dir.glob("*.mpd"))), None)
     stamp = _digest([view, _file_hash(mpd) if mpd else model.slug, 2])
-    f = d / "hero.png"
-    if f.exists() and (d / ".hash").exists() and (d / ".hash").read_text() == stamp:
-        return f
+    for d in dict.fromkeys([out_dir / "video_frames" / "hero_cut",
+                            (dest or out_dir) / "video_frames" / "hero_cut"]):
+        f = d / "hero.png"
+        if f.exists() and (d / ".hash").exists() and (d / ".hash").read_text() == stamp:
+            return f
     if not render:
         return f if f.exists() else None
     log("title still: rendering a transparent hero in Cycles")
@@ -311,19 +331,36 @@ def make_video(engine, proj, model, out_dir: Path, *, preview: bool = False,
                segments: list[str] | None = None, force: bool = False,
                render_engine: str = "eevee", device: str = "gpu", audio: bool = True,
                render: bool = True, stills: list[int] | None = None, workers: int = 4,
-               log=None) -> Path:
-    """Render and encode the showreel; returns the .mp4 path (or the stills' directory)."""
+               theme_name: str | None = None, cold_open: str | None = None,
+               scratch: Path | None = None, log=None) -> Path:
+    """Render and encode the showreel; returns the .mp4 path (or the stills' directory).
+    `theme_name` and `cold_open` (a scene) try them for this run; `scratch` takes this run's
+    writes (see the module docstring)."""
     log = log or (lambda msg: print(msg, flush=True))
     t_start = time.time()
     qname = "preview" if preview else "full"
     q = QUALITY[qname]
     step, size = q["step"], q["size"]
     samples = q["samples"][render_engine]
-    work = out_dir / "video_frames" / qname
-    work.mkdir(parents=True, exist_ok=True)
+    own = out_dir / "video_frames" / qname        # the model's own work: plates, plan, sound
+    base = Path(scratch) if scratch else out_dir  # where this run writes
 
-    cfg = R.configure(proj, model)
-    theme = themes.theme_for(cfg)
+    cfg, theme, trial = themes.trial_theme(R.configure(proj, model), theme_name,
+                                           keep_plates=not render)
+    tags = [theme_name] if trial else []
+    if cold_open and (cfg.get("cold_open") or {}).get("scene") != cold_open:
+        old = cfg.get("cold_open")
+        cfg = dict(cfg, cold_open=dict(old if isinstance(old, dict) else {}, scene=cold_open))
+        tags.append("cold_open")
+    tag = "+".join(tags)
+    work = base / "video_frames" / (f"{qname}@{tag}" if tag else qname)
+    borrow = (bool(tags) or base != out_dir) and not render   # the model's plates, read-only
+    if tags:
+        log(f"trying {' and '.join(tags)}: outputs tagged _{tag}, the model's own left alone"
+            + ("; over its rendered plates" + (" (their tempo and backdrop kept)" if trial else "")
+               if borrow else ""))
+    plates_at = own if borrow else work
+    work.mkdir(parents=True, exist_ok=True)
     beat = int(theme["beat"])
     variants = R.colourway_variants(engine, proj, model, log)
 
@@ -336,14 +373,14 @@ def make_video(engine, proj, model, out_dir: Path, *, preview: bool = False,
         from .booklet_flip import prepare
         bseg = next(s for s in segs if s["name"] == "booklet")
         vpdfs = {v: out_dir / "variants" / v / "booklet.pdf" for v in variants}
-        plan = prepare(pdf, out_dir / "video_frames" / "pages", bseg["end"] - bseg["start"],
+        plan = prepare(pdf, base / "video_frames" / "pages", bseg["end"] - bseg["start"],
                        T.FPS, q["page_px"], beat,
                        {k: f for k, f in vpdfs.items() if f.exists()})
         if plan is None:
             segs = T.plan_segments(model, booklet=False, beat=beat, variants=list(variants),
                                    cfg=cfg)
     tl = T.build_timeline(engine, model, segs, beat=beat, variants=variants,
-                          backdrop=theme.get("backdrop"))
+                          backdrop=theme.get("backdrop"), cfg=cfg)
     old_tl = None
     if (work / "timeline.json").exists():
         try:
@@ -353,7 +390,8 @@ def make_video(engine, proj, model, out_dir: Path, *, preview: bool = False,
     (work / "timeline.json").write_text(json.dumps(tl))
     bplan = out_dir / "booklet" / "plan.json"
     bsteps = len(json.loads(bplan.read_text())["steps"]) if bplan.exists() else None
-    cut = hero_cutout(engine, model, out_dir, tl["model"]["shape"], render, log)
+    cut = hero_cutout(engine, model, out_dir, tl["model"]["shape"],       # the title's still
+                      render and (not segments or "title" in segments), log, dest=base)
     reel = R.plan_reel(engine, proj, model, tl, theme, out_dir, work, booklet_plan=plan,
                        booklet_steps=bsteps, hero_file=cut, log=log)
 
@@ -380,17 +418,27 @@ def make_video(engine, proj, model, out_dir: Path, *, preview: bool = False,
 
     # -- 3D plates --------------------------------------------------------------------------
     render_q = {"size": size, "samples": samples, "engine": render_engine, "device": device}
-    if old_tl is not None and not force:
+    if old_tl is not None and not force and not borrow:
         migrate_plates(work, old_tl, tl, render_q, plan, log)
     plates = {"step": step}
     jobs: dict[str | None, list] = collections.OrderedDict()
     book_job, book_merge = None, []
+    cold_job = []
     for seg in chosen:
         if seg["kind"] == "gfx":
             continue
+        if seg["kind"] == "cold":                 # its own set; black after the cut
+            d = work / "cold_open"
+            if not borrow:
+                _prepare_dir(d, segment_digest(tl, seg, render_q), force)
+            plates["cold_open"] = ("work" if plates_at != work else "frames") + "/cold_open"
+            cold_job = [[f, str(d / f"{f - seg['start']:05d}.png")]
+                        for f in frames_of(seg, seg["start"], tl["cold_open"]["cut"])]
+            continue
         if seg["kind"] == "booklet":
-            d = work / "booklet"
-            _prepare_dir(d, segment_digest(tl, seg, render_q, plan), force)
+            d = plates_at / "booklet"
+            if not borrow:
+                _prepare_dir(d, segment_digest(tl, seg, render_q, plan), force)
             plates["booklet"] = "frames/booklet"
             # fast page turns are rendered as sub-frames and averaged (motion blur)
             book_job, book_merge = [], []
@@ -410,8 +458,9 @@ def make_video(engine, proj, model, out_dir: Path, *, preview: bool = False,
             vlist = [None] + tl["colourways"]["order"][1:]
         for v in vlist:
             key = seg["name"] + (f"@{v}" if v else "")
-            d = work / key
-            _prepare_dir(d, segment_digest(tl, seg, render_q, variant=v), force)
+            d = plates_at / key
+            if not borrow:
+                _prepare_dir(d, segment_digest(tl, seg, render_q, variant=v), force)
             plates[key] = f"frames/{key}"
             a, b = seg["start"], seg["end"]
             if seg["name"] == "colourways" and tl.get("colourways"):
@@ -419,6 +468,8 @@ def make_video(engine, proj, model, out_dir: Path, *, preview: bool = False,
             jobs.setdefault(v, []).extend([f, str(d / f"{f - seg['start']:05d}.png")]
                                           for f in frames_of(seg, a, b))
     reel["plates"] = plates
+    if borrow:                                    # plates from the model's run, the rest ours
+        reel["wire"]["url"] = f"work/{Path(reel['wire']['url']).name}"
     timings = {}
     if render:
         for v, fr in jobs.items():
@@ -427,6 +478,12 @@ def make_video(engine, proj, model, out_dir: Path, *, preview: bool = False,
             timings[f"scene{'@' + v if v else ''}"] = _run_blender(
                 ANIMATE, job, work / "scene_job.json", f"model scene{' (' + v + ')' if v else ''}",
                 log)
+        if cold_job:
+            job = {"timeline": str(work / "timeline.json"), "frames": cold_job,
+                   "size": [size, size], "samples": samples, "engine": render_engine,
+                   "device": device}
+            timings["cold_open"] = _run_blender(COLD, job, work / "cold_job.json", "cold open",
+                                                log)
         if book_job:
             job = {"plan": plan, "frames": book_job, "size": [size, size], "samples": samples,
                    "engine": render_engine, "device": device}
@@ -434,8 +491,8 @@ def make_video(engine, proj, model, out_dir: Path, *, preview: bool = False,
             merge_subframes(book_merge)
     (work / "reel.json").write_text(json.dumps(reel))
 
-    roots = {"out": out_dir, "frames": work, "cut": out_dir / "video_frames" / "hero_cut",
-             "logo.png": LOGO}
+    roots = {"out": out_dir, "frames": plates_at, "work": work,
+             "cut": cut.parent if cut else out_dir / "video_frames" / "hero_cut", "logo.png": LOGO}
 
     # -- stills -------------------------------------------------------------------------------
     from PIL import Image
@@ -470,8 +527,10 @@ def make_video(engine, proj, model, out_dir: Path, *, preview: bool = False,
 
     # -- compose + encode ---------------------------------------------------------------------
     from .compose import compose
-    tag = "" if not segments else "_" + "+".join(s["name"] for s in chosen)
-    out = out_dir / f"video{tag}{'_preview' if preview else ''}.mp4"
+    name = "" if not segments else "_" + "+".join(s["name"] for s in chosen)
+    if tag:
+        name = f"_{tag}{name}"
+    out = base / f"video{name}{'_preview' if preview else ''}.mp4"
     enc = Encoder(out, T.FPS / step, size, q, wav, offset)
     thumbs = []
     every = int(T.FPS)
@@ -489,9 +548,9 @@ def make_video(engine, proj, model, out_dir: Path, *, preview: bool = False,
     compose(frames, size, reel, roots, sink, workers=workers, log=log)
     enc.close()
     timings["compose"] = time.time() - t0
-    contact_sheet(thumbs, out_dir / "video_frames" / f"contact_sheet{tag}{'_preview' if preview else ''}.jpg",
+    contact_sheet(thumbs, base / "video_frames" / f"contact_sheet{name}{'_preview' if preview else ''}.jpg",
                   T.FPS)
-    if not segments and not preview and "a" in poster:
+    if not segments and not preview and not tags and base == out_dir and "a" in poster:
         Image.fromarray(poster["a"]).save(out_dir / "video_poster.jpg", quality=90)
     mb = out.stat().st_size / 1e6
     log(f"encoded {len(frames)} frames at {T.FPS / step:g} fps -> {out} ({mb:.1f} MB)")

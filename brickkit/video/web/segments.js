@@ -54,11 +54,153 @@ function background(f) {
       const y = row * 150 + (k % 2) * 34 - drift * 0.55;
       pawPrint(x, y, 34, TH.accent2, -0.5, CX, 0.1);
     }
+  } else if (t === 'grindhouse') {
+    // a dark, warm, stained wall under one bulb
+    const g = CX.createRadialGradient(L / 2, L * 0.4, 40, L / 2, L / 2, L * 0.82);
+    g.addColorStop(0, TH.bg2); g.addColorStop(1, TH.bg);
+    CX.fillStyle = g; CX.fillRect(0, 0, L, L);
+    const mt = mottle();
+    if (mt) {
+      CX.globalCompositeOperation = 'soft-light'; CX.globalAlpha = 0.3;
+      CX.fillStyle = CX.createPattern(mt, 'repeat'); CX.fillRect(0, 0, L, L);
+    }
   } else {
     CX.fillStyle = TH.bg; CX.fillRect(0, 0, L, L);
     CX.fillStyle = rgba(TH.ink, 0.045);
     for (let x = 30; x < L; x += 60) for (let y = 30; y < L; y += 60) { circle(x, y, 11); CX.fill(); }
   }
+  CX.restore();
+}
+
+// ------------------------------------------------------------------------------ grindhouse
+// soft blotches (the noise blown up 8x, smoothly) for a stained backdrop (made once)
+let MOTTLE = null;
+function mottle() {
+  if (MOTTLE || !NOISE) return MOTTLE;
+  MOTTLE = document.createElement('canvas');
+  MOTTLE.width = MOTTLE.height = 512;
+  const x = MOTTLE.getContext('2d');
+  x.imageSmoothingEnabled = true;
+  x.drawImage(NOISE, 0, 0, 64, 64, 0, 0, 512, 512);
+  return MOTTLE;
+}
+
+// worn rubber-stamp ink: an alpha mask of blotches and specks grown from the noise (made once)
+let INK = null;
+function inkMask() {
+  if (INK || !NOISE) return INK;
+  const n = 512;
+  const c = document.createElement('canvas');
+  c.width = c.height = n;
+  const x = c.getContext('2d', { willReadFrequently: true });
+  x.imageSmoothingEnabled = true;
+  x.drawImage(NOISE, 0, 0, 64, 64, 0, 0, n, n);              // blown up 8x: soft blotches
+  const blot = x.getImageData(0, 0, n, n).data;
+  x.drawImage(NOISE, 0, 0, 256, 256, 0, 0, n, n);            // 2x: fine specks
+  const speck = x.getImageData(0, 0, n, n).data;
+  const im = x.createImageData(n, n);
+  for (let i = 0; i < n * n; i++) {
+    const a = Math.max(clamp((blot[4 * i] / 255 - 0.64) * 6), speck[4 * i] > 240 ? 1 : 0);
+    im.data[4 * i + 3] = Math.round(255 * a);
+  }
+  x.putImageData(im, 0, 0);
+  INK = c;
+  return INK;
+}
+
+// lines of type stamped in `col` ink, centred on (cx, cy), in a double-ruled box, worn by the
+// ink mask (fixed per `seed`); o: rot, sc, alpha, box, pad, lh, spacing, wear, seed. Returns
+// the box's size.
+function rubberStamp(lines, cx, cy, size, col, o = {}) {
+  const [c, x] = off('stamp');
+  const fnt = font(size, 700);
+  const sp = o.spacing || 0;
+  const lh = size * (o.lh || 1.0), capH = size * 0.72;
+  const w = Math.max(...lines.map(l => measure(l, fnt, sp)));
+  const h = capH + lh * (lines.length - 1);
+  const pad = o.pad === undefined ? size * 0.3 : o.pad;
+  const bw = w + 2 * pad, bh = h + 2 * pad;
+  x.save();
+  x.fillStyle = col; x.strokeStyle = col;
+  x.font = fnt; x.letterSpacing = `${sp}px`; x.textAlign = 'center'; x.textBaseline = 'alphabetic';
+  lines.forEach((l, i) => x.fillText(l, cx, cy - h / 2 + capH + i * lh));
+  if (o.box !== false) {
+    const i2 = pad * 0.36;
+    x.lineWidth = Math.max(3, size * 0.075); x.strokeRect(cx - bw / 2, cy - bh / 2, bw, bh);
+    x.lineWidth = Math.max(1.5, size * 0.025);
+    x.strokeRect(cx - bw / 2 + i2, cy - bh / 2 + i2, bw - 2 * i2, bh - 2 * i2);
+  }
+  const M = inkMask();
+  if (M) {
+    const sd = o.seed || 0;
+    const pat = x.createPattern(M, 'repeat');
+    pat.setTransform(new DOMMatrix().translate(-((sd * 137) % 512), -((sd * 71) % 512)));
+    x.globalCompositeOperation = 'destination-out';
+    x.globalAlpha = o.wear === undefined ? 0.8 : o.wear;
+    x.fillStyle = pat; x.fillRect(0, 0, L, L);
+  }
+  x.restore();
+  CX.save();
+  CX.globalAlpha *= o.alpha === undefined ? 1 : o.alpha;
+  const sc = o.sc || 1;
+  CX.translate(cx, cy); CX.rotate(o.rot || 0); CX.scale(sc, sc); CX.translate(-cx, -cy);
+  CX.drawImage(c, 0, 0, L, L);
+  CX.restore();
+  return { w: bw, h: bh };
+}
+
+// typewritten: each glyph a little off its line and uneven in ink; only the first `n` shown
+function typed(str, x, y, o = {}) {
+  const n = o.n === undefined ? str.length : o.n;
+  const sd = o.seed || 3;
+  return kinetic(str, x, y, o.font || monoFont(o.size || 22), (i) => (i >= n ? { alpha: 0 } : {
+    dy: (hash(i, sd) - 0.5) * (o.jit === undefined ? 2.4 : o.jit),
+    rot: (hash(i, sd + 1) - 0.5) * 0.05,
+    alpha: 0.8 + 0.2 * hash(i, sd + 2),
+  }), { align: o.align, color: o.color, spacing: o.spacing });
+}
+
+// an evidence tag on a string: a paper card with a punched hole on the string's side, the
+// label typed on; it swings as it's hung and settles askew (the grindhouse callout)
+function evidenceTag(title, sub, x, y, side, p, k) {
+  const T = UP(title), U = sub ? UP(sub) : '';
+  const tf = font(28, 700), sf = monoFont(18);
+  const hole = 30;
+  const w = Math.max(measure(T, tf), measure(U, sf, 1)) + 40 + hole, h = U ? 84 : 58;
+  const bx = side === 'left' ? x : side === 'center' ? x - w / 2 : x - w;
+  const holeRight = side === 'left';                 // the string comes in from the model
+  const hx = holeRight ? bx + w - 20 : bx + 20, hy = y + h / 2;
+  const q = clamp(p * 1.3);
+  const rest = (hash(k, 29) - 0.5) * 0.07;
+  const swing = (1 - E.outCubic(q)) * (holeRight ? -0.6 : 0.6) + Math.exp(-q * 4) * Math.sin(q * 16) * 0.06;
+  const cut = 16;
+  const card = (ox, oy) => {
+    const X0 = bx + ox, X1 = bx + w + ox, Y0 = y + oy, Y1 = y + h + oy;
+    CX.beginPath();
+    if (holeRight) {
+      CX.moveTo(X0, Y0); CX.lineTo(X1 - cut, Y0); CX.lineTo(X1, Y0 + cut);
+      CX.lineTo(X1, Y1 - cut); CX.lineTo(X1 - cut, Y1); CX.lineTo(X0, Y1);
+    } else {
+      CX.moveTo(X0 + cut, Y0); CX.lineTo(X1, Y0); CX.lineTo(X1, Y1);
+      CX.lineTo(X0 + cut, Y1); CX.lineTo(X0, Y1 - cut); CX.lineTo(X0, Y0 + cut);
+    }
+    CX.closePath();
+  };
+  const paper = TH.paper || TH.ink;
+  CX.save();
+  CX.globalAlpha *= clamp(p * 4);
+  CX.translate(hx, hy); CX.rotate(rest + swing); CX.translate(-hx, -hy);
+  CX.fillStyle = rgba('#000000', 0.45); card(5, 8); CX.fill();
+  CX.fillStyle = paper; card(0, 0); CX.fill();
+  CX.strokeStyle = rgba(TH.bg, 0.18); CX.lineWidth = 1.2;       // a ruled line to type on
+  CX.beginPath(); CX.moveTo(bx + (holeRight ? 14 : hole + 12), y + 47); CX.lineTo(bx + w - (holeRight ? hole + 12 : 14), y + 47); CX.stroke();
+  CX.fillStyle = mix(paper, '#7A5A30', 0.35); circle(hx, hy, 11); CX.fill();
+  CX.fillStyle = TH.bg; circle(hx, hy, 5.5); CX.fill();
+  const tx = holeRight ? bx + 18 : bx + hole + 16;
+  const n1 = Math.floor(clamp((p - 0.1) / 0.45) * T.length + 1e-6);
+  const n2 = Math.floor(clamp((p - 0.45) / 0.45) * U.length + 1e-6);
+  typed(T, tx, y + 38, { font: tf, color: TH.bg, n: n1, seed: k * 7 + 1 });
+  if (U) typed(U, tx, y + 70, { font: sf, color: TH.accent, n: n2, seed: k * 7 + 4, spacing: 1 });
   CX.restore();
 }
 
@@ -89,6 +231,11 @@ function panel(x, y, w, h, o = {}) {
     CX.fillStyle = rgba('#000000', 0.12); rrect(x + 6, y + 8, w, h, 26); CX.fill();
     CX.fillStyle = TH.panel; rrect(x, y, w, h, 26); CX.fill();
     CX.strokeStyle = TH.ink; CX.lineWidth = 3.5; rrect(x, y, w, h, 26); CX.stroke();
+  } else if (t === 'grindhouse') {             // an old title card: double rules, a red tab
+    CX.fillStyle = TH.panel; CX.fillRect(x, y, w, h);
+    CX.strokeStyle = rgba(TH.ink, 0.55); CX.lineWidth = 2; CX.strokeRect(x + 1, y + 1, w - 2, h - 2);
+    CX.strokeStyle = rgba(TH.ink, 0.22); CX.lineWidth = 1; CX.strokeRect(x + 8.5, y + 8.5, w - 17, h - 17);
+    CX.fillStyle = TH.accent; CX.fillRect(x + 26, y - 5, 64, 10);
   } else {
     CX.fillStyle = TH.panel; rrect(x, y, w, h, 18); CX.fill();
     CX.strokeStyle = TH.ink; CX.lineWidth = 3; rrect(x, y, w, h, 18); CX.stroke();
@@ -105,10 +252,14 @@ function statusIcon(x, y, r, st, p, na = false) {
   if (TH.name === 'scan' || TH.name === 'tape') {
     CX.strokeStyle = col; CX.lineWidth = 2.5; circle(0, 0, r); CX.stroke();
     CX.fillStyle = rgba(col, 0.16); circle(0, 0, r); CX.fill();
+  } else if (TH.name === 'grindhouse') {        // a box on a form, ticked in ink
+    const b = r * 0.82;
+    CX.fillStyle = rgba(col, 0.14); CX.fillRect(-b, -b, 2 * b, 2 * b);
+    CX.strokeStyle = col; CX.lineWidth = 2.5; CX.strokeRect(-b, -b, 2 * b, 2 * b);
   } else {
     CX.fillStyle = col; circle(0, 0, r); CX.fill();
   }
-  const ink = (TH.name === 'scan' || TH.name === 'tape') ? col : '#FFFFFF';
+  const ink = (TH.name === 'scan' || TH.name === 'tape' || TH.name === 'grindhouse') ? col : '#FFFFFF';
   if (na) {
     CX.strokeStyle = ink; CX.lineWidth = r * 0.22; CX.lineCap = 'round';
     CX.beginPath(); CX.moveTo(-r * 0.4, 0); CX.lineTo(r * 0.4, 0); CX.stroke();
@@ -138,12 +289,18 @@ function chip(value, lab, x, y, p, k = 0, o = {}) {
   const gap = value ? 12 : 0;
   const w = vw + gap + lw + 44;
   if (p <= 0) return w;
-  const sc = t === 'playful' ? E.spring(p, 1.8, 6) : E.outBack(clamp(p), 2.2);
+  const sc = t === 'playful' ? E.spring(p, 1.8, 6) : t === 'grindhouse' ? 1 + 0.45 * (1 - E.outCubic(clamp(p * 1.5)))
+    : E.outBack(clamp(p), 2.2);
   CX.save();
   CX.translate(x + w / 2, y + h / 2); CX.scale(sc, sc); CX.translate(-w / 2, -h / 2);
   CX.globalAlpha = clamp(p * 3);
   let fg = TH.hud_ink, lc = TH.hud_ink;
-  if (t === 'scan') {
+  if (t === 'grindhouse') {                    // a typed paper label, slapped on askew
+    CX.translate(w / 2, h / 2); CX.rotate((hash(k, 17) - 0.5) * 0.05); CX.translate(-w / 2, -h / 2);
+    CX.fillStyle = rgba('#000000', 0.4); CX.fillRect(4, 6, w, h);
+    CX.fillStyle = TH.paper; CX.fillRect(0, 0, w, h);
+    fg = TH.accent; lc = TH.bg;
+  } else if (t === 'scan') {
     CX.fillStyle = rgba(TH.bg, 0.72); CX.fillRect(0, 0, w, h);
     CX.strokeStyle = rgba(TH.hud, 0.55); CX.lineWidth = 1.5; CX.strokeRect(0.75, 0.75, w - 1.5, h - 1.5);
     brackets(-3, -3, w + 3, h + 3, 10, TH.hud, 2);
@@ -226,6 +383,99 @@ function visor(f, s, title) {
   label(`AZ ${az.toFixed(1).padStart(5, '0')}°  EL ${el.toFixed(1)}°`, L - 52, L - 50,
     { align: 'right', color: rgba(TH.hud, 0.75), size: 18 });
   label(title || '', 52, L - 50, { color: rgba(TH.hud, 0.75), size: 18 });
+}
+
+// ------------------------------------------------------------------------------ cold open
+// the model performing in a set of its own (render/blender_cold_open.py), before the reel: the
+// plates full frame under the theme's look, the low sun blooming and flaring (the flare dies
+// when something crosses the sun), dust hanging in the light, letterbox bars; black from the cut
+SEG.cold_open = {
+  async prepare(f) { return f < D.cold_open.cut ? plate('cold_open', f) : null; },
+  draw(f, s, bm) {
+    const C = D.cold_open;
+    if (f >= C.cut) { CX.fillStyle = '#000000'; CX.fillRect(0, 0, L, L); return; }
+    drawPlate(bm);
+    const k = Math.min(f - C.start, C.sun.length - 1);
+    const sun = C.sun[k];
+    const lit = sunLight(bm, sun, C, k);
+    if (bm) sunBloom(bm, sun, lit);
+    motes(f, sun, lit);
+    if (sun) flare(sun, lit);
+    const bar = C.letterbox * L;
+    CX.fillStyle = '#000000'; CX.fillRect(0, 0, L, bar); CX.fillRect(0, L - bar, L, bar);
+    osd(f, s, '\u25B6 PLAY');
+    visor(f, s, 'COLD OPEN');
+  },
+};
+// how much of the sun gets through: the plate's brightness over the disc (0 when the figure or
+// the saw is in front of it), less as it goes off the frame
+function sunLight(bm, sun, C, k) {
+  if (!bm || !sun) return 0;
+  const [x, y] = sun;
+  const out = Math.max(0, -x, x - L, -y, y - L);
+  if (out > 0) return 0.5 * clamp(1 - out / 400);
+  const r = Math.max(6, 0.5 * C.size / (2 * Math.atan(18 / C.lens[k]) * 180 / Math.PI) * L);
+  const c = off('sunprobe', 8, 8)[0];
+  const x2 = c.getContext('2d', { willReadFrequently: true });
+  x2.setTransform(1, 0, 0, 1, 0, 0);
+  const sx = bm.width / L;
+  x2.drawImage(bm, (x - r) * sx, (y - r) * sx, 2 * r * sx, 2 * r * sx, 0, 0, c.width, c.height);
+  const d = x2.getImageData(0, 0, c.width, c.height).data;
+  let hot = 0;
+  for (let i = 0; i < d.length; i += 4) if (d[i] > 235 && d[i + 1] > 150) hot++;
+  return hot / (d.length / 4);
+}
+function sunBloom(bm, sun, lit) {
+  const [c, x] = off('coldbloom');
+  x.filter = `brightness(0.8) contrast(6) saturate(1.4) blur(${24 * S}px)`;   // highlights only
+  x.drawImage(bm, 0, 0, L, L);
+  x.filter = 'none';
+  CX.save();
+  CX.globalCompositeOperation = 'screen'; CX.globalAlpha = 0.4;
+  CX.setTransform(1, 0, 0, 1, 0, 0); CX.drawImage(c, 0, 0);
+  CX.restore();
+  CX.setTransform(S, 0, 0, S, 0, 0);
+  if (!sun || lit <= 0) return;
+  const g = CX.createRadialGradient(sun[0], sun[1], 0, sun[0], sun[1], 360);
+  g.addColorStop(0, rgba('#FFD49A', 0.35 * lit)); g.addColorStop(0.3, rgba('#FF8A30', 0.14 * lit));
+  g.addColorStop(1, rgba('#FF6A1A', 0));
+  CX.save(); CX.globalCompositeOperation = 'screen'; CX.fillStyle = g; CX.fillRect(0, 0, L, L); CX.restore();
+}
+// a lens flare: a streak through the sun and ghosts along the line through the middle
+function flare(sun, lit) {
+  if (lit <= 0.01) return;
+  const [x, y] = sun;
+  CX.save();
+  CX.globalCompositeOperation = 'screen';
+  const st = CX.createLinearGradient(x - L * 0.7, 0, x + L * 0.7, 0);
+  st.addColorStop(0, rgba('#FF8A3C', 0)); st.addColorStop(0.5, rgba('#FFD9A0', 0.4 * lit));
+  st.addColorStop(1, rgba('#FF8A3C', 0));
+  CX.fillStyle = st; CX.fillRect(x - L * 0.7, y - 2, L * 1.4, 4);
+  const cx = L / 2 - x, cy = L / 2 - y;
+  for (const [t, r, col, a] of [[0.55, 38, '#FFB347', 0.1], [0.9, 16, '#9FD3FF', 0.14],
+    [1.25, 70, '#FF7A30', 0.06], [1.55, 24, '#C8FF9A', 0.1], [1.9, 120, '#FF9A3C', 0.045]]) {
+    const gx = x + cx * t * 2, gy = y + cy * t * 2;
+    const g = CX.createRadialGradient(gx, gy, 0, gx, gy, r);
+    g.addColorStop(0, rgba(col, a * lit)); g.addColorStop(0.7, rgba(col, a * lit * 0.8)); g.addColorStop(1, rgba(col, 0));
+    CX.fillStyle = g; circle(gx, gy, r); CX.fill();
+  }
+  CX.restore();
+}
+// dust in the air: specks drifting across, lit up by the sun behind them
+function motes(f, sun, lit) {
+  CX.save();
+  CX.globalCompositeOperation = 'screen';
+  for (let i = 0; i < 80; i++) {
+    const R = rng(i * 7919 + 17);
+    const vx = (R() - 0.35) * 1.1, vy = (R() - 0.6) * 0.5, sz = 0.7 + R() * R() * 2.6;
+    const x = (((R() * L + vx * f + 14 * Math.sin(f * 0.03 + i)) % L) + L) % L;
+    const y = (((R() * L + vy * f + 9 * Math.sin(f * 0.041 + i * 1.7)) % L) + L) % L;
+    const near = sun ? Math.exp(-Math.hypot(x - sun[0], y - sun[1]) / 380) : 0;
+    const a = (0.12 + 0.75 * near * (0.3 + 0.7 * lit)) * (0.6 + 0.4 * Math.sin(f * 0.2 + i * 3));
+    if (a <= 0.02) continue;
+    CX.fillStyle = rgba('#FFD9A8', a); circle(x, y, sz); CX.fill();
+  }
+  CX.restore();
 }
 
 // ------------------------------------------------------------------------------ open
@@ -362,7 +612,41 @@ function nameLines(name, maxW, size) {
   return best[1];
 }
 
+// the stamp style: the name comes down like a rubber stamp and lands on the hero beat, when the
+// cut into the title has cleared (the music's stamp thud and chainsaw are cued there too)
+const STAMP_FALL = 4;
+function stampLayout(lines, size) {
+  const sz = Math.min(size, 124, ...lines.map(l => fitSize(l, size, L - 2 * M - size * 0.8, 700)));
+  const h = sz * 0.72 + sz * (lines.length - 1) + 2 * sz * 0.3;
+  return { sz, h, cy: (lines.length > 1 ? 70 : 76) + h / 2 };
+}
+function titleStamp(f, m, lines, size) {
+  const k = f - (m.hero - STAMP_FALL);
+  if (k < 0) return;
+  const { sz, cy } = stampLayout(lines, size);
+  const lh = sz;
+  const q = clamp(k / STAMP_FALL);
+  let sc, rot = -0.035, alpha = 1;
+  if (q < 1) {                                  // coming down onto the page
+    sc = lerp(1.7, 1, E.inQuad(q));
+    rot = lerp(-0.14, -0.035, q);
+    alpha = clamp(q * 2.5);
+  } else {                                      // the thump: squash, recover
+    const j = k - STAMP_FALL;
+    sc = 1 - 0.05 * Math.exp(-j / 2) * Math.cos(j * 1.3);
+  }
+  const col = mix(TH.accent, '#FF5A40', 0.18);
+  if (q >= 1 && k - STAMP_FALL < 5) {            // a ghost of the first strike, slipping off
+    const j = k - STAMP_FALL;
+    rubberStamp(lines, L / 2 + 5 + j, cy + 3, sz, col, { rot: rot + 0.006, sc, alpha: 0.35 * (1 - j / 5), lh: lh / sz, seed: 3, wear: 0.9 });
+  }
+  rubberStamp(lines, L / 2, cy, sz, col, { rot, sc, alpha, lh: lh / sz, seed: 1 });
+}
+
 SEG.title = {
+  shake(f) {
+    if (TH.title === 'stamp') shakeAt(f, [D.marks.title.hero], 9, 8);
+  },
   draw(f, s) {
     const m = D.marks.title, b = B();
     background(f);
@@ -373,7 +657,8 @@ SEG.title = {
     let size = Math.min(150, ...lines.map(l => fitSize(l, 150, L - 2 * M, 700, null, -0.02)));
     if (lines.length > 1) size = Math.min(size, 112);
     const y0 = lines.length > 1 ? 146 : 184;
-    const nameBottom = y0 + (lines.length - 1) * size * 0.98 + size * 0.2;
+    let nameBottom = y0 + (lines.length - 1) * size * 0.98 + size * 0.2;
+    if (TH.title === 'stamp') { const st = stampLayout(lines, size); nameBottom = st.cy + st.h / 2 - 12; }
     if (bm) {
       const r = heroRect(nameBottom + 26);
       const hp = ramp(f, m.hero, m.hero + b * 1.5);
@@ -389,6 +674,14 @@ SEG.title = {
         const g = CX.createRadialGradient(cx, gy, 10, cx, gy, gw * 1.3);
         g.addColorStop(0, rgba(TH.accent, 0.45 * hp)); g.addColorStop(1, rgba(TH.accent, 0));
         CX.fillStyle = g; CX.beginPath(); CX.ellipse(cx, gy, gw * 1.3, 60, 0, 0, Math.PI * 2); CX.fill();
+      } else if (t === 'grindhouse') {           // a pool of bulb light on the floor
+        CX.save(); CX.translate(cx, gy); CX.scale(1, 0.16);
+        const g = CX.createRadialGradient(0, 0, 10, 0, 0, gw * 1.6);
+        g.addColorStop(0, rgba('#E8B377', 0.3 * hp)); g.addColorStop(1, rgba('#E8B377', 0));
+        CX.fillStyle = g; circle(0, 0, gw * 1.6); CX.fill();
+        CX.restore();
+        CX.fillStyle = rgba('#000000', 0.5 * hp); CX.filter = `blur(${14 * S}px)`;
+        CX.beginPath(); CX.ellipse(cx, gy, gw * 0.8, 20, 0, 0, Math.PI * 2); CX.fill(); CX.filter = 'none';
       } else {
         CX.fillStyle = rgba('#000000', 0.16 * hp); CX.filter = `blur(${16 * S}px)`;
         CX.beginPath(); CX.ellipse(cx, gy, gw, 26, 0, 0, Math.PI * 2); CX.fill(); CX.filter = 'none';
@@ -421,6 +714,12 @@ SEG.title = {
         const sy = 0.6 + 0.4 * q, sx = 1.25 - 0.25 * q;
         CX.translate(cx, r.box[3]); CX.scale(sx * q, sy * q); CX.translate(-cx, -r.box[3]);
         CX.drawImage(bm, r.x, r.y, r.w, r.h);
+      } else if (t === 'grindhouse') {            // it flickers up out of the dark, like a bad bulb
+        const on = hp >= 1 ? 1 : clamp(hp * 1.3) * (hash(f, 41) < 0.3 + 0.7 * hp ? 1 : 0.25);
+        CX.globalAlpha = on;
+        CX.filter = `sepia(0.3) saturate(0.8) contrast(1.1) brightness(${lerp(1.8, 1, E.outCubic(hp))})`;
+        CX.drawImage(bm, r.x, r.y, r.w, r.h);
+        CX.filter = 'none';
       } else {                                    // an iris opens
         CX.beginPath(); CX.arc(cx, cy, 760 * E.outCubic(hp), 0, Math.PI * 2); CX.clip();
         const sc = 1.1 - 0.1 * E.outCubic(hp);
@@ -438,7 +737,9 @@ SEG.title = {
       const col = t === 'playful' ? TH.ink : TH.ink;
       if (t === 'decode') { /* unreachable: styles keyed by theme.title below */ }
       const style = TH.title;
-      if (style === 'decode') {
+      if (style === 'stamp') {                  // one stamp for all the lines
+        if (li === 0) titleStamp(f, m, lines, size);
+      } else if (style === 'decode') {
         const glyph = '#%&@0123456789<>/\\{}[]=+*ABCDEFGHKMNRSTXZ';
         kinetic(ln, L / 2, y, fnt, (i, n, gl) => {
           const t0 = m.name + (base + i) * 1.6;
@@ -632,6 +933,14 @@ function lowerThird(num, title, p, k) {
   } else if (t === 'tape') {
     text(`CHAPTER ${String(num).padStart(2, '0')}`, x, y + 6, { font: font(40, 400, 'VT323'), color: TH.accent2, shadow: rgba('#000', 0.8), sx: 3, sy: 3, spacing: 2 });
     text(UP(title), x, y + 12 + tsize * 0.95, { size: tsize, color: TH.ink, shadow: rgba(TH.accent, 0.8), sx: 4, sy: 0, spacing: -1 });
+  } else if (t === 'grindhouse') {            // a reel label, the title typed on, a red rule
+    CX.translate(-slide, 0);
+    label(`reel ${String(num).padStart(2, '0')}`, x, y + 4, { color: TH.accent2, shadow: rgba('#000', 0.9), blur: 6 });
+    const T = UP(title);
+    CX.save(); CX.shadowColor = rgba('#000', 0.85); CX.shadowBlur = 12;
+    typed(T, x, y + 14 + tsize * 0.95, { font: font(tsize, 700), color: TH.ink, n: Math.floor(clamp(k / 12) * T.length + 1e-6), seed: num * 5, jit: 3 });
+    CX.restore();
+    CX.fillStyle = TH.accent; CX.fillRect(x, y + 30 + tsize, tw_ * E.outExpo(clamp((k - 4) / 14)), 5);
   } else if (t === 'playful') {
     const bw = tw_ + 130, bh = tsize + 34;
     const sq = E.spring(clamp(k / 16), 1.6, 5);
@@ -669,7 +978,7 @@ function hudCounters(f, s, step, nSteps, pieces, done) {
   const fnt = font(64, 700);
   const w2 = measure(` / ${nSteps}`, font(34, 600));
   text(str, x - w2, y + 60, { font: fnt, color: t === 'scan' ? TH.ink : TH.ink, align: 'right',
-    shadow: t === 'scan' ? null : rgba('#ffffff', 0.6), blur: 12 });
+    shadow: t === 'scan' ? null : t === 'grindhouse' ? rgba('#000000', 0.85) : rgba('#ffffff', 0.6), blur: 12 });
   text(` / ${nSteps}`, x, y + 60, { font: font(34, 600), color: lc, align: 'right', alpha: 0.8 });
 }
 
@@ -690,7 +999,7 @@ function heightCounter(f, s, mm, total) {
   label('height', x, y - 2, { align: 'right', color: lc });
   const w2 = measure(` / ${tot} ${unit}`, font(34, 600));
   text(v, x - w2, y + 60, { font: font(64, 700), color: TH.ink, align: 'right',
-    shadow: t === 'scan' ? null : rgba('#ffffff', 0.6), blur: 12 });
+    shadow: t === 'scan' ? null : t === 'grindhouse' ? rgba('#000000', 0.85) : rgba('#ffffff', 0.6), blur: 12 });
   text(` / ${tot} ${unit}`, x, y + 60, { font: font(34, 600), color: lc, align: 'right', alpha: 0.8 });
 }
 
@@ -713,8 +1022,11 @@ function progressBar(f, s, p, done) {
   }
   const trackCol = t === 'scan' ? rgba(TH.hud, 0.25) : rgba(TH.ink, 0.16);
   const fillCol = t === 'scan' ? TH.hud : TH.accent;
-  const h = t === 'scan' ? 4 : 14;
-  if (t !== 'scan') { CX.fillStyle = rgba('#ffffff', 0.7); rrect(x0 - 4, y - h / 2 - 4, x1 - x0 + 8, h + 8, (h + 8) / 2); CX.fill(); }
+  const h = t === 'scan' ? 4 : t === 'grindhouse' ? 8 : 14;
+  if (t !== 'scan') {
+    CX.fillStyle = t === 'grindhouse' ? rgba('#000000', 0.45) : rgba('#ffffff', 0.7);
+    rrect(x0 - 4, y - h / 2 - 4, x1 - x0 + 8, h + 8, (h + 8) / 2); CX.fill();
+  }
   CX.fillStyle = trackCol; rrect(x0, y - h / 2, x1 - x0, h, h / 2); CX.fill();
   CX.fillStyle = flash > 0.02 ? mix(fillCol, '#ffffff', flash) : fillCol;
   rrect(x0, y - h / 2, Math.max(h, (x1 - x0) * p), h, h / 2); CX.fill();
@@ -733,7 +1045,7 @@ function progressBar(f, s, p, done) {
   const lc = t === 'scan' ? TH.hud : TH.ink;
   const txt = `${fmt(pieces)} / ${fmt(D.model.pieces)}`;
   text(txt, x1, y - 24, { size: 34, color: t === 'scan' ? TH.ink : TH.ink, align: 'right',
-    shadow: t === 'scan' ? null : rgba('#ffffff', 0.7), blur: 10 });
+    shadow: t === 'scan' ? null : t === 'grindhouse' ? rgba('#000000', 0.85) : rgba('#ffffff', 0.7), blur: 10 });
   label('pieces', x1 - measure(txt, font(34, 700)) - 14, y - 26, { align: 'right', color: lc });
   if (done) {
     const q = tw(f, D.build.land_last, D.build.land_last + 10);
@@ -816,7 +1128,7 @@ function checksPanel(f, s, lay) {
   CX.translate((1 - pa) * 40, 0);
   panel(px, py, pw, ph, { alpha: pa });
   CX.globalAlpha = pa;
-  label('checked by computer', px + 26, py + 42, { color: t === 'scan' ? TH.hud : t === 'tape' ? TH.accent2 : TH.accent, size: TH.mono === 'VT323' ? 32 : 20 });
+  label('checked by computer', px + 26, py + 42, { color: t === 'scan' ? TH.hud : t === 'tape' || t === 'grindhouse' ? TH.accent2 : TH.accent, size: TH.mono === 'VT323' ? 32 : 20 });
   text(UP(D.model.name), px + 26, py + 76, { size: 26, color: TH.panel_ink, alpha: 0.75 });
   CX.restore();
   const colW = (pw - 32) / cols;
@@ -855,7 +1167,8 @@ function checksPanel(f, s, lay) {
     CX.restore();
   });
   // summary stamp
-  const sq = ramp(f, m.summary, m.summary + 12);
+  const pre = t === 'grindhouse' ? STAMP_FALL : 0;         // a stamp comes down onto the beat
+  const sq = ramp(f, m.summary - pre, m.summary + 12);
   if (sq > 0) {
     const allPass = D.checks.rows.every(r => r.status === 'pass');
     const str = UP(D.checks.summary);
@@ -866,6 +1179,13 @@ function checksPanel(f, s, lay) {
     const head = Math.max(measure(UP(D.model.name), font(26, 700)), 260) + 40;
     const below = pw - head < w + 20;
     const sx = below ? px + (pw - w) / 2 : px + pw - w - 20, sy = below ? py + ph + 18 : py + 22;
+    if (t === 'grindhouse') {
+      const j = f - m.summary + STAMP_FALL, k2 = clamp(j / STAMP_FALL), j2 = j - STAMP_FALL;
+      rubberStamp([str], sx + w / 2, sy + 30, 30, col, { rot: lerp(-0.2, -0.06, k2),
+        sc: k2 < 1 ? lerp(1.8, 1, E.inQuad(k2)) : 1 - 0.05 * Math.exp(-j2 / 2) * Math.cos(j2 * 1.3),
+        alpha: clamp(k2 * 2.5), pad: 12, seed: 5 });
+      return;
+    }
     CX.save();
     const sc = t === 'playful' ? E.spring(sq, 1.8, 6) : 1 + 0.6 * (1 - E.outBack(sq, 2));
     CX.translate(sx + w / 2, sy + 30); CX.scale(sc, sc); CX.rotate(t === 'brand' || t === 'playful' ? -0.05 : 0);
@@ -885,6 +1205,7 @@ function checksPanel(f, s, lay) {
 function calloutLabel(title, sub, x, y, side, p, k) {
   if (p <= 0) return;
   const t = TH.name;
+  if (t === 'grindhouse') { evidenceTag(title, sub, x, y, side, p, k); return; }
   const al = side === 'left' ? 'left' : 'right';
   const ts = 34, ss = TH.mono === 'VT323' ? 30 : 20;
   const tw_ = measure(UP(title), font(ts, 700), -0.5);
@@ -942,7 +1263,8 @@ SEG.mechanism = {
       const [tx, ty] = c.attach;
       CX.save();
       CX.strokeStyle = lineCol; CX.lineWidth = 2.2;
-      CX.shadowColor = TH.name === 'brand' || TH.name === 'playful' ? 'rgba(255,255,255,0.8)' : rgba(TH.hud, 0.6);
+      CX.shadowColor = TH.name === 'brand' || TH.name === 'playful' ? 'rgba(255,255,255,0.8)'
+        : TH.name === 'grindhouse' ? rgba('#000000', 0.8) : rgba(TH.hud, 0.6);
       CX.shadowBlur = 6;
       c.anchors.forEach(a => {
         const [ax, ay] = a.track[Math.min(k, a.track.length - 1)];
@@ -959,10 +1281,10 @@ SEG.mechanism = {
         }
         CX.stroke();
         // anchor dot and ring
-        CX.fillStyle = TH.name === 'brand' ? TH.accent : TH.name === 'playful' ? TH.accent : TH.hud;
+        CX.fillStyle = TH.name === 'brand' ? TH.accent : TH.name === 'playful' || TH.name === 'grindhouse' ? TH.accent : TH.hud;
         circle(ax, ay, 6.5 * E.outBack(clamp(p * 2))); CX.fill();
         const rp = ((f - t0) % 24) / 24;
-        CX.strokeStyle = rgba(TH.name === 'brand' || TH.name === 'playful' ? TH.accent : TH.hud, 1 - rp);
+        CX.strokeStyle = rgba(TH.name === 'brand' || TH.name === 'playful' || TH.name === 'grindhouse' ? TH.accent : TH.hud, 1 - rp);
         CX.lineWidth = 2; circle(ax, ay, 8 + 18 * rp); CX.stroke();
         CX.strokeStyle = lineCol; CX.lineWidth = 2.2;
       });
@@ -974,7 +1296,7 @@ SEG.mechanism = {
     const c0 = m.callouts.length ? m.callouts[0] : s.end;
     const ha = tw(f, s.start + 2, s.start + 12, E.outExpo) * (1 - tw(f, c0 - 6, c0 + 2, E.inCubic));
     CX.save(); CX.globalAlpha = ha;
-    label('mechanism', M, TOPY(), { color: TH.name === 'scan' ? TH.hud : TH.name === 'tape' ? TH.accent2 : TH.accent });
+    label('mechanism', M, TOPY(), { color: TH.name === 'scan' ? TH.hud : TH.name === 'tape' || TH.name === 'grindhouse' ? TH.accent2 : TH.accent });
     text(UP(MM.name), M, TOPY() + 52, { size: fitSize(UP(MM.name), 52, 620, 700), color: TH.name === 'brand' || TH.name === 'playful' ? TH.ink : TH.ink,
       shadow: TH.name === 'brand' || TH.name === 'playful' ? rgba('#ffffff', 0.7) : rgba('#000', 0.5), blur: 12 });
     CX.restore();
@@ -998,10 +1320,11 @@ function gauge(f, s) {
   else { CX.fillStyle = rgba('#000', 0.45); CX.fillRect(x0 - 150, y - 66, w + 300, 118); }
   const lab = MM.labels;
   const ink = t === 'brand' || t === 'playful' ? TH.ink : TH.ink;
-  label(MM.name, x0 - 122, y - 34, { color: t === 'scan' ? TH.hud : t === 'tape' ? TH.accent2 : TH.accent,
+  label(MM.name, x0 - 122, y - 34, { color: t === 'scan' ? TH.hud : t === 'tape' || t === 'grindhouse' ? TH.accent2 : TH.accent,
     size: TH.mono === 'VT323' ? 26 : 16 });
-  text(UP(lab[0] || ''), x0 - 22, y + 8, { size: 24, color: ink, align: 'right', alpha: lerp(1, 0.45, u) });
-  text(UP(lab[1] || ''), x0 + w + 22, y + 8, { size: 24, color: ink, align: 'left', alpha: lerp(0.45, 1, u) });
+  const ls = s_ => (t === 'grindhouse' ? Math.min(24, fitSize(s_, 24, 124, 700)) : 24);   // mono runs wide
+  text(UP(lab[0] || ''), x0 - 22, y + 8, { size: ls(UP(lab[0] || '')), color: ink, align: 'right', alpha: lerp(1, 0.45, u) });
+  text(UP(lab[1] || ''), x0 + w + 22, y + 8, { size: ls(UP(lab[1] || '')), color: ink, align: 'left', alpha: lerp(0.45, 1, u) });
   CX.fillStyle = rgba(ink, 0.22); rrect(x0, y - 4, w, 8, 4); CX.fill();
   CX.fillStyle = col; rrect(x0, y - 4, Math.max(8, w * u), 8, 4); CX.fill();
   CX.fillStyle = col; circle(x0 + w * u, y, 14); CX.fill();
@@ -1064,7 +1387,7 @@ SEG.lights = {
     const la = tw(f, D.marks.lights.label, D.marks.lights.label + 10, E.outExpo);
     const swap = isOff ? tw(f, offf, offf + 8, E.outExpo) : 1;
     CX.save(); CX.globalAlpha = la * swap; CX.translate(0, (1 - swap) * 24);
-    label(isOff ? 'power off' : f < on ? 'lights off' : 'power on', M, TOPY(), { color: TH.name === 'scan' ? TH.hud : TH.accent });
+    label(isOff ? 'power off' : f < on ? 'lights off' : 'power on', M, TOPY(), { color: TH.name === 'scan' ? TH.hud : TH.name === 'grindhouse' ? TH.accent2 : TH.accent });
     text(UP(isOff ? Lt.off_label : Lt.label), M, TOPY() + 54,
       { size: 52, color: isOff ? TH.ink : f < on ? rgba('#ffffff', 0.5) : '#FFFFFF',
         shadow: isOff ? rgba('#000', 0.35) : null, blur: 10 });
@@ -1087,7 +1410,7 @@ SEG.lift = {
     const m = D.marks.lift;
     const p = tw(f, m.label, m.label + 12, E.outExpo);
     CX.save(); CX.globalAlpha = p; CX.translate(0, (1 - p) * 30);
-    label('lift', M, TOPY(), { color: TH.name === 'scan' ? TH.hud : TH.accent });
+    label('lift', M, TOPY(), { color: TH.name === 'scan' ? TH.hud : TH.name === 'grindhouse' ? TH.accent2 : TH.accent });
     text(UP(D.lift.label), M, TOPY() + 54, { size: 52, color: '#FFFFFF' });
     CX.restore();
     osd(f, s, '▶ PLAY');
@@ -1133,6 +1456,25 @@ SEG.colourways = {
 
 function wipe(f, p, bm, i) {
   const t = TH.name;
+  if (t === 'grindhouse') {                 // the loop is lost: the next colourway rolls down into the gate
+    const q = E.inOutCubic(clamp((p - 0.25) / 0.5));
+    if (q <= 0) return;
+    const gap = 26, y = q * (L + gap);
+    const [c, x] = off('roll');
+    x.setTransform(1, 0, 0, 1, 0, 0);
+    x.drawImage(CV, 0, 0);
+    CX.save();
+    CX.drawImage(c, 0, y, L, L);
+    CX.save(); CX.translate(0, y - L - gap); drawPlate(bm); CX.restore();
+    CX.fillStyle = '#050302'; CX.fillRect(0, y - gap, L, gap);
+    if (q < 1) {                            // the lamp flares while it rolls
+      CX.globalCompositeOperation = 'screen';
+      CX.fillStyle = rgba('#FFE9C8', 0.25 * Math.sin(Math.PI * q) * (0.6 + 0.4 * hash(f, 43)));
+      CX.fillRect(0, 0, L, L);
+    }
+    CX.restore();
+    return;
+  }
   if (t === 'tape') {                       // a tracking band rolls down the new tape
     const y = lerp(-80, L + 80, p);
     CX.save(); CX.beginPath(); CX.rect(0, 0, L, y); CX.clip(); drawPlate(bm); CX.restore();
@@ -1180,7 +1522,8 @@ function colourwayLabel(it, idx, n, p, k) {
   const x = M, y = L - M - 150;
   CX.save();
   CX.globalAlpha = clamp(p * 2);
-  label(`colourway ${idx + 1} / ${n}`, x, y, { color: t === 'scan' ? TH.hud : t === 'tape' ? TH.accent2 : TH.accent, size: TH.mono === 'VT323' ? 32 : 20 });
+  label(`colourway ${idx + 1} / ${n}`, x, y, { color: t === 'scan' ? TH.hud : t === 'tape' || t === 'grindhouse' ? TH.accent2 : TH.accent, size: TH.mono === 'VT323' ? 32 : 20,
+    shadow: t === 'grindhouse' ? rgba('#000', 0.9) : undefined, blur: 8 });
   const size = fitSize(UP(it.title), 84, L - 2 * M, 700);
   if (t === 'playful') {
     kinetic(UP(it.title), x, y + 84, font(size, 700), (i) => {
@@ -1188,9 +1531,14 @@ function colourwayLabel(it, idx, n, p, k) {
       const w = Math.exp(-q * 5) * Math.cos(q * 12);
       return { alpha: q > 0 ? 1 : 0, sx: 1 + 0.25 * w, sy: 1 - 0.25 * w, dy: -w * 20 };
     }, { spacing: -1 });
+  } else if (t === 'grindhouse') {
+    const T = UP(it.title);
+    CX.save(); CX.shadowColor = rgba('#000', 0.8); CX.shadowBlur = 14;
+    typed(T, x, y + 84, { font: font(size, 700), color: TH.ink, n: Math.floor(clamp(k / 14) * T.length + 1e-6), seed: idx * 3 + 1, jit: 3 });
+    CX.restore();
   } else {
     CX.save(); CX.beginPath(); CX.rect(0, y + 4, L, 100); CX.clip();
-    text(UP(it.title), x, y + 84 + (1 - E.outExpo(p)) * 90, { size, color: t === 'brand' ? TH.ink : '#FFFFFF', spacing: -1,
+    text(UP(it.title), x, y + 84 + (1 - E.outExpo(p)) * 90, { size, color: t === 'brand' || t === 'grindhouse' ? TH.ink : '#FFFFFF', spacing: -1,
       shadow: t === 'brand' ? rgba('#ffffff', 0.8) : rgba('#000', 0.6), blur: 14 });
     CX.restore();
   }
@@ -1207,7 +1555,7 @@ function colourwayLabel(it, idx, n, p, k) {
     CX.restore();
     const nm = sw.name;
     const fnt = monoFont(TH.mono === 'VT323' ? 28 : 19);
-    text(TH.mono === 'Fredoka' ? nm : UP(nm), sx + 2 * r + 10, y + 132, { font: fnt, color: t === 'brand' || t === 'playful' ? TH.ink : '#FFFFFF', alpha: clamp(q * 2),
+    text(TH.mono === 'Fredoka' ? nm : UP(nm), sx + 2 * r + 10, y + 132, { font: fnt, color: t === 'brand' || t === 'playful' || t === 'grindhouse' ? TH.ink : '#FFFFFF', alpha: clamp(q * 2),
       shadow: t === 'brand' || t === 'playful' ? rgba('#fff', 0.8) : rgba('#000', 0.7), blur: 8, spacing: 1 });
     sx += 2 * r + 24 + measure(TH.mono === 'Fredoka' ? nm : UP(nm), fnt, 1);
   });
@@ -1274,8 +1622,9 @@ SEG.outro = {
       CX.restore();
     }
     const fp = tw(f, m.fine, m.fine + 12);
-    text(D.model.disclaimer, L / 2, 930, { font: font(24, 500), color: K, align: 'center', alpha: fp * 0.85 });
-    if (D.model.notice) text(D.model.notice, L / 2, 966, { font: font(19, 400), color: K, align: 'center', alpha: fp * 0.6 });
+    const fine = (str, sz, wt) => font(Math.min(sz, fitSize(str, sz, L - 2 * M, wt)), wt);   // a wide face shrinks
+    text(D.model.disclaimer, L / 2, 930, { font: fine(D.model.disclaimer, 24, 500), color: K, align: 'center', alpha: fp * 0.85 });
+    if (D.model.notice) text(D.model.notice, L / 2, 966, { font: fine(D.model.notice, 19, 400), color: K, align: 'center', alpha: fp * 0.6 });
   },
 };
 

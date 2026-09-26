@@ -184,6 +184,93 @@ def test_events_land_on_their_frames(rendered):
     assert A.amp2db(after) > A.amp2db(before) + 6.0
 
 
+def test_grindhouse_sound(tmp_path):
+    """The grindhouse style: a heartbeat on the kick bus (lub-dubs on the grid, none in the
+    breakdown), the moods still build, its effects land on their frames, the chainsaw revs, and
+    the render is deterministic at the loudness target."""
+    cues = _cues("grindhouse")
+    st = A.render_stems(cues, SR)
+    level = {m: _section_lufs(st["music"], cues, m) for m in MOODS}
+    assert level["groove"] > level["intro"] + 3.0
+    assert level["groove"] > level["breakdown"] + 2.0
+    assert level["groove"] > level["groove_light"]
+    kicks = np.array(st["arranger"].kicks) / SR / 0.5
+    assert len(kicks) and np.allclose(kicks * 4, np.round(kicks * 4), atol=1e-3)
+    s = cues["sections"][MOODS.index("breakdown")]
+    assert not ((kicks >= s["start"] / 15) & (kicks < s["end"] / 15)).any()
+    assert "metal" in st["arranger"].levels                 # the scrapes
+    sfx = A.SFX(SR, FPS, seed=1)
+    for ev in ({"frame": 12.5, "type": "chainsaw"}, {"frame": 20.0, "type": "typewriter"}):
+        y, duck = sfx.render([ev], 4 * SR)
+        at = round(ev["frame"] / FPS * SR)
+        first = int(np.argmax(np.abs(y).max(axis=1) > 1e-6))
+        assert 0 <= first - at <= 2, ev
+    assert sfx.render([{"frame": 3, "type": "chainsaw"}], 4 * SR)[1].max() > 3.0     # music ducks
+    assert sfx.render([{"frame": 3, "type": "typewriter"}], 4 * SR)[1].max() == 0.0
+    # a burn swells into its cut (frame + dur) and is gone soon after
+    y, _ = sfx.render([{"frame": 30, "type": "burn", "dur": 9}], 4 * SR)
+    env = np.convolve(np.abs(y).max(axis=1), np.ones(480) / 480, "same")
+    peak = np.argmax(env) / SR * FPS
+    assert 34 <= peak <= 41 and env[round(42 / FPS * SR):].max() < 0.5 * env.max()
+    # the chainsaw revs: its firing rate climbs from idle to several times faster
+    saw = sfx.fx_chainsaw({"frame": 0, "type": "chainsaw"}, np.random.default_rng(1)).mean(axis=1)
+    envl = A.bw(np.abs(A.bw(saw, "band", (200.0, 3000.0), SR)), "low", 400.0, SR)
+
+    def rate(t):
+        e = envl[int(t * SR):int((t + 0.08) * SR)]
+        e = e - e.mean()
+        ac = np.correlate(e, e, "full")[len(e) - 1:]
+        lo, hi = SR // 250, SR // 12
+        return SR / (lo + np.argmax(ac[lo:hi]))
+    assert rate(1.1) > 2.5 * rate(0.4)
+    cues["events"] += [{"frame": 36, "type": "chainsaw", "gain": 0.9},
+                       {"frame": 200, "type": "burn", "dur": 9}, {"frame": 250, "type": "typewriter"}]
+    a = A.render_audio(cues, tmp_path / "a.wav")
+    b = A.render_audio(cues, tmp_path / "b.wav")
+    assert (tmp_path / "a.wav").read_bytes() == (tmp_path / "b.wav").read_bytes() and a == b
+    assert a["lufs"] == pytest.approx(-16.0, abs=0.5) and a["true_peak_db"] <= -1.0
+
+
+def test_cold_open_sound(tmp_path):
+    """A cold open: no music under it, the chainsaw bed (pull, catch, idle, revving with its
+    curve) and wind, cut dead at the cut, silence for the black, then the reel as before; the
+    mix still masters to the loudness target."""
+    cut, end = 180, 195                                  # 6 s of performance, half a second black
+    frames = 12 * 30
+    t = np.arange(cut) / FPS
+    curve = np.where(t < 0.8, 0.0, np.clip(np.sin(2 * np.pi * (t - 0.8) / 2.5) ** 2, 0, 1))
+    reel = _cues("grindhouse")
+    sections = [{"name": "cold_open", "start": 0, "end": end, "mood": "cold"}]
+    for sec in reel["sections"]:
+        sections.append(dict(sec, start=end + round(sec["start"] * (frames - end) / reel["frames"]),
+                             end=end + round(sec["end"] * (frames - end) / reel["frames"])))
+    events = [{"frame": 0, "type": "chainsaw_bed", "dur": cut, "curve": curve.tolist(), "catch": 14},
+              {"frame": 0, "type": "wind", "dur": cut, "gain": 0.8},
+              {"frame": end + 3, "type": "snap"}]
+    cues = {"fps": FPS, "frames": frames, "beat_frames": 15, "style": "grindhouse", "seed": 3,
+            "sections": sections, "events": events}
+    st = A.render_stems(cues, SR)
+    assert not st["music"][:round(end / FPS * SR)].any()             # no music under it
+    info = A.render_audio(cues, tmp_path / "cold.wav")
+    x, _ = A.read_wav(tmp_path / "cold.wav")
+    assert info["lufs"] == pytest.approx(-16.0, abs=0.5) and info["true_peak_db"] <= -1.0
+    c, e = round(cut / FPS * SR), round(end / FPS * SR)
+    assert not x[c + int(0.005 * SR):e].any()                        # dead at the cut, then silence
+    groove = next(s_ for s_ in sections if s_["mood"] == "groove")
+    level = A.measure_lufs(x[round(groove["start"] / FPS * SR):round(groove["end"] / FPS * SR)], SR)
+    assert abs(A.measure_lufs(x[:c], SR) - level) < 3.0              # about as loud as the groove
+    # it follows the swing: loud where the curve peaks, quieter at idle
+    env = np.array([np.sqrt((x[round(f / FPS * SR):round((f + 1) / FPS * SR)] ** 2).mean())
+                    for f in range(cut)])
+    after = slice(40, cut)
+    assert np.corrcoef(curve[after], A.amp2db(env[after]))[0, 1] > 0.6
+    # the pull-start: something before the catch, quieter than the roar
+    assert 0 < env[:14].max() < env[after].max()
+    again = A.render_audio(cues, tmp_path / "again.wav")
+    assert (tmp_path / "again.wav").read_bytes() == (tmp_path / "cold.wav").read_bytes()
+    assert again == info
+
+
 def test_minimal_cues_and_unknown_things(tmp_path):
     cues = {"fps": 25, "frames": 60, "beat_frames": 12, "style": "no-such-style",
             "events": [{"frame": 5, "type": "mystery"}, {"frame": 500, "type": "snap"}]}

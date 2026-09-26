@@ -1,0 +1,5 @@
+0 brickkit overlay for "Technic Ball Joint with Axlehole Open" (53585)
+0 // The LDCad shadow file gives this ball [bounding=sph 13] without a group, so it never
+0 // meets the Technic ball sockets (92013, 62712, 67696: group techBallJnt). It is the same
+0 // ball as 32474's: add the grouped snap (overlays add to the library's snaps).
+0 !LDCAD SNAP_GEN [group=techBallJnt] [gender=M] [bounding=sph 12.7] [match=size] [placement=free]

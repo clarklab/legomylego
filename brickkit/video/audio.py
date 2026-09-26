@@ -6,21 +6,24 @@
 
 Everything is made here with numpy/scipy: band-limited oscillators, biquads, a noise-based
 convolution reverb, a small drum machine and a handful of melodic voices (plucks, FM bells,
-marimba, Karplus-Strong, pads, whistle), arranged section by section in one of four styles, plus
-the SFX events, then mastered to `lufs` with a lookahead true-peak limiter (<= -1 dBTP).
+marimba, Karplus-Strong, pads, whistle, string swells, drones, struck and scraped metal, a
+heartbeat), arranged section by section in one of five styles, plus the SFX events, then
+mastered to `lufs` with a lookahead true-peak limiter (<= -1 dBTP).
 No samples, no external audio, no licensed music.
 
 Cue sheet (the video's edit plan produces it):
     fps, frames     frame rate and video length; the WAV is exactly round(frames / fps * sr) samples
     beat_frames     frames per beat (bpm = 60 * fps / beat_frames); beat 0 is at frame 0
-    style           "brand" | "scan" | "tape" | "playful"
+    style           "brand" | "scan" | "tape" | "playful" | "grindhouse"
     seed            every random choice derives from it: the same cue sheet gives identical samples
     key             optional {"root": MIDI note, "mode": "major" | "minor"} (else a style default)
     sections        [{name, start, end, mood}] contiguous frames covering [0, frames); moods:
-                    intro, rise, groove_light, groove, breakdown, halftime, feature, end
+                    intro, rise, groove_light, groove, breakdown, halftime, feature, end,
+                    cold (a cold open: no music)
                     (every section start is a cut: it gets a crash/impact and a fresh phrase)
     events          [{frame, type, gain?, pitch?, dur?, pan?}] SFX placed sample-accurately at
-                    frame / fps; types in SFX.LEVEL, unknown types are ignored
+                    frame / fps; types in SFX.LEVEL, unknown types are ignored (chainsaw_bed
+                    also takes `curve`, 0..1 per frame, and `catch`, a frame)
 
 Layout: utilities - loudness and mastering - instruments (Voices) - SFX - arrangement (STYLES,
 Arranger) - render_audio - demo:  python -m brickkit.video.audio playful out.wav [seconds]
@@ -617,6 +620,84 @@ class Voices:
         nz = bw(rng.standard_normal(n), "low", 260.0, sr) * env_perc(n, sr, 0.3, 0.003)
         return _norm(_fade(np.tanh(1.4 * (sub + 0.6 * _norm(nz))), sr, 0.0, 0.2))
 
+    def heart(self, midi, dur, rng, gap=0.22, f_hi=130.0, f_lo=46.0, decay=0.2, dub=0.7):
+        """Heartbeat for the kick bus: a muffled low thump and, `gap` s later, a softer and
+        slightly higher second one (lub-dub), each with a dull knock so small speakers hear it."""
+        sr = self.sr
+        n, t = self._t(0.95)
+
+        def thump(t0, fh, fl, dec, amp):
+            tt = np.maximum(t - t0, 0.0)
+            on = t >= t0
+            f = np.where(on, fl + (fh - fl) * np.exp(-tt / 0.03), 0.0)
+            e = np.where(on, (1.0 - np.exp(-tt / 0.004)) * np.exp(-tt / dec), 0.0)
+            return amp * np.sin(2 * np.pi * np.cumsum(f) / sr) * e
+
+        y = thump(0.0, f_hi, f_lo, decay, 1.0) + thump(gap, f_hi * 1.15, f_lo * 1.1, decay * 0.8, dub)
+        y = np.tanh(2.2 * y) / np.tanh(2.2)
+        knock = bw(rng.standard_normal(n), "band", (150.0, 700.0), sr)
+        y += 0.35 * _norm(knock) * (env_perc(n, sr, 0.018, 0.001)
+                                    + dub * np.where(t >= gap, env_perc(n, sr, 0.015, 0.001)[
+                                        np.maximum(np.arange(n) - int(gap * sr), 0)], 0.0))
+        return _norm(_fade(bw(y, "low", 1500.0, sr), sr, 0.0, 0.05))
+
+    def clank(self, midi, dur, rng, f0=196.0, decay=0.5):
+        """Struck steel (a hook, a pipe): a free bar's inharmonic modes, the low ones ringing
+        longest, over a bright strike."""
+        sr = self.sr
+        n, t = self._t(decay * 4 + 0.1)
+        y = np.zeros(n)
+        for k, (ratio, a) in enumerate(((1.0, 1.0), (2.756, 0.7), (5.404, 0.5), (8.933, 0.32),
+                                        (13.34, 0.2))):
+            f = min(f0 * ratio * rng.uniform(0.985, 1.015), 0.45 * sr)
+            y += a * np.sin(2 * np.pi * f * t + rng.uniform(0, 6.3)) * np.exp(-t / (decay / (1 + 0.8 * k)))
+        y *= 1.0 - np.exp(-t / 0.0008)
+        y += 0.6 * bw(rng.standard_normal(n), "band", (2000.0, 9000.0), sr) * np.exp(-t / 0.006)
+        return _norm(_fade(np.tanh(1.4 * _norm(y)), sr, 0.0, 0.1))
+
+    def scrape(self, midi, dur, rng):
+        """Metal dragged on metal: stick-slip clicks at a wandering rate and friction noise ringing
+        a few steel resonances, the pitch sliding a little as it goes."""
+        sr = self.sr
+        n, t = self._t(max(dur, 0.3) + 0.3)
+        rate = 55.0 * 2.0 ** (0.8 * np.sin(2 * np.pi * rng.uniform(0.3, 0.9) * t + rng.uniform(0, 6.3)))
+        ph = np.cumsum(rate) / sr
+        idx = np.nonzero(np.diff(np.floor(ph)) > 0)[0]
+        exc = 0.25 * rng.standard_normal(n)
+        exc[idx] += rng.uniform(0.3, 1.0, len(idx))
+        glide = 2.0 ** (rng.uniform(-0.25, 0.25) * t / t[-1])
+        y = np.zeros(n)
+        for fr, q, a in ((1150.0, 30.0, 1.0), (1930.0, 40.0, 0.8), (2870.0, 50.0, 0.6),
+                         (4310.0, 60.0, 0.45), (6230.0, 70.0, 0.3)):
+            y += a * _norm(tv_filter(exc, "bp", fr * rng.uniform(0.9, 1.1) * glide, sr, q=q, block=512))
+        env = np.clip(t / 0.15, 0.0, 1.0) * np.clip((t[-1] - t) / 0.3, 0.0, 1.0)
+        return _norm(y * env)
+
+    def swell(self, midi, dur, rng, detune=18.0, voices=5, bright=1900.0, attack=None,
+              release=1.2):
+        """String-like swell: detuned saws with slow, uneven vibrato through a band-pass, rising
+        over `attack` s (default most of the note) and letting go."""
+        sr, f = self.sr, float(mtof(midi))
+        n, t = self._t(dur + release)
+        y = np.zeros(n)
+        for c in np.linspace(-detune, detune, voices):
+            vib = 1.0 + 0.0035 * np.sin(2 * np.pi * rng.uniform(4.5, 6.0) * t + rng.uniform(0, 6.3))
+            y += osc_saw(f * 2 ** (c / 1200) * vib, n, sr, rng.random())
+        y = bw(bw(y / voices, "low", bright, sr), "high", 160.0, sr)
+        a = 0.6 * dur if attack is None else attack
+        return y * env_adsr(n, sr, max(a, 0.05), 0.5, 0.9, release, dur)
+
+    def drone(self, midi, dur, rng, attack=1.5, release=1.0, bright=450.0):
+        """Low drone: two saws a few cents apart (a slow beating) and a sine, darkly filtered, the
+        filter breathing slowly."""
+        sr, f = self.sr, float(mtof(midi))
+        n, t = self._t(dur + release)
+        y = 0.5 * (osc_saw(f * 2 ** (3 / 1200), n, sr, rng.random())
+                   + osc_saw(f * 2 ** (-3 / 1200), n, sr, rng.random()))
+        fc = bright * 2.0 ** (0.6 * np.sin(2 * np.pi * 0.09 * t + rng.uniform(0, 6.3)))
+        y = tv_filter(y, "lp", fc, sr, q=1.2, block=512) + 0.6 * osc_sine(f, n, sr)
+        return y * env_adsr(n, sr, attack, 1.0, 1.0, release, dur)
+
     def uplift(self, midi, dur, rng):
         """Noise riser (stereo) with a rising band-pass, peaking at its end."""
         sr = self.sr
@@ -779,12 +860,15 @@ class SFX:
              "blip": -19.0, "tick": -21.0, "warn": -22.0, "pass": -16.0, "scan": -20.0,
              "power": -11.0, "motor": -19.0, "glitch": -17.0, "boing": -16.0, "page": -16.0,
              "type": -21.0, "pop": -17.0, "riffle": -17.0, "flick": -19.0, "slap": -12.0,
-             "power_off": -13.0}
+             "power_off": -13.0, "chainsaw": -6.0, "burn": -14.0, "typewriter": -18.0,
+             "chainsaw_bed": -5.5, "wind": -30.0}
     DUR = {"whoosh": 8, "riser": 30, "scan": 30, "power": 36, "motor": 30, "glitch": 6,
-           "riffle": 60}
-    DUCK = {"hit": (7.0, 0.7), "power": (5.0, 0.9), "snap": (4.0, 0.35)}   # dB, release s
+           "riffle": 60, "chainsaw": 54, "burn": 10}
+    DUCK = {"hit": (7.0, 0.7), "power": (5.0, 0.9), "snap": (4.0, 0.35),     # dB, release s
+            "chainsaw": (5.0, 0.8)}
     ROOM = {"snap": 0.12, "blip": 0.25, "pass": 0.35, "type": 0.15, "pop": 0.2, "warn": 0.2,
-            "boing": 0.2, "tick": 0.1, "click": 0.08, "slap": 0.18, "flick": 0.08}
+            "boing": 0.2, "tick": 0.1, "click": 0.08, "slap": 0.18, "flick": 0.08,
+            "typewriter": 0.12}
 
     def __init__(self, sr: int, fps: float, seed: int):
         self.sr, self.fps, self.seed = sr, float(fps), int(seed) % (2 ** 63)
@@ -1099,16 +1183,149 @@ class SFX:
         y += 0.2 * bw(rng.standard_normal(n), "high", 3000.0, sr) * np.exp(-t / 0.002)
         return _norm(_fade(y, sr, 0.0, 0.01))
 
+    # engine speed (firings a second) through a chainsaw's start and revs, at times in s of 1.8
+    SAW_RPM = ((0.0, 16.0), (0.1, 26.0), (0.17, 14.0), (0.26, 40.0), (0.36, 52.0), (0.5, 48.0),
+               (0.66, 150.0), (0.8, 105.0), (0.95, 165.0), (1.3, 170.0), (1.5, 72.0), (1.8, 50.0))
+
+    def _engine(self, rpm, rng):
+        """A two-stroke engine at `rpm` (firings a second, per sample): a buzzy exhaust pulse
+        train (one uneven firing per turn, misfiring when slow) through the muffler's
+        resonances, raspy, the chain whining under load as it revs. Mono, normalised."""
+        sr, n = self.sr, len(rpm)
+        wob = bw(rng.standard_normal(n), "low", 9.0, sr, 1)
+        rpm = rpm * (1.0 + 0.04 * wob / (np.abs(wob).max() + _TINY))
+        ph = np.cumsum(rpm) / sr
+        cyc = np.floor(ph).astype(int)
+        frac = ph - cyc
+        amp = rng.uniform(0.55, 1.0, cyc[-1] + 2)
+        amp[rng.random(len(amp)) < 0.2] *= 0.15               # misfires...
+        a = np.where(rpm < 70.0, amp[cyc], np.maximum(amp[cyc], 0.7))   # ...only when slow
+        x = np.exp(-frac * 9.0) * a
+        x = x - uniform_filter1d(x, int(0.02 * sr) | 1)
+        x += 0.5 * rng.standard_normal(n) * np.exp(-frac * 5.0) * a       # exhaust breath
+        y = (0.8 * filt(x, "bp", 420.0, sr, 2.5) + 0.7 * filt(x, "bp", 1150.0, sr, 3.0)
+             + 0.45 * filt(x, "bp", 2600.0, sr, 4.0) + 0.3 * x)
+        y = np.tanh(2.4 * _norm(y))
+        load = np.clip((rpm - 60.0) / 100.0, 0.0, 1.0)
+        chain = bw(rng.standard_normal(n), "band", (2500.0, 7500.0), sr) * load ** 2
+        whine = bw(osc_saw(rpm * 7.0, n, sr), "band", (1200.0, 6000.0), sr) * load
+        return _norm(y) + 0.3 * _norm(chain) + 0.12 * _norm(whine)
+
+    def _cord(self, t, rng, length=0.12):
+        """The pull-cord: a ratcheting zip."""
+        cord = (t < length) * (0.5 + 0.5 * np.sign(np.sin(2 * np.pi * 70.0 * t)))
+        return _norm(bw(rng.standard_normal(len(t)), "band", (800.0, 5000.0), self.sr)) * cord
+
+    def fx_chainsaw(self, ev, rng):
+        """Two-stroke chainsaw: the pull-cord, a sputter, the engine catches, two revs and it drops
+        back to idle."""
+        sr, T = self.sr, self._dur(ev)
+        n, t = self._t(T)
+        k = np.array(self.SAW_RPM)
+        rpm = np.interp(t, k[:, 0] * T / 1.8, k[:, 1])
+        rpm = uniform_filter1d(rpm, int(0.04 * sr) | 1, mode="nearest")
+        y = self._engine(rpm, rng)
+        y += 0.5 * self._cord(t, rng)
+        y = _fade(y, sr, 0.004, 0.25)
+        pan = 0.25 * np.sin(2 * np.pi * 0.4 * t)
+        th = (pan + 1) * np.pi / 4
+        return _norm(np.stack([y * np.cos(th), y * np.sin(th)], axis=1))
+
+    def fx_chainsaw_bed(self, ev, rng):
+        """The cold open's chainsaw, running for `dur` frames and stopping dead there: pulled
+        (the cord, a few sputters), it catches at frame `catch`, idles, then roars with `curve`
+        (0..1 per frame: how fast the saw is swinging), revving up quickly and falling back
+        more slowly, as an engine does."""
+        sr, fps = self.sr, self.fps
+        n, t = self._t(self._dur(ev))
+        curve = np.asarray(ev.get("curve") or [0.0], float)
+        catch = float(ev.get("catch", 0.45 * fps)) / fps
+        want = np.clip(np.interp(t * fps, np.arange(len(curve)), curve), 0.0, 1.0)
+        # the engine lags the throttle: up in ~50 ms, down in ~180 ms (1 ms steps)
+        step = sr // 1000
+        w = want[::step]
+        got = np.empty_like(w)
+        v = 0.0
+        for i, x in enumerate(w):
+            v += (x - v) * (0.02 if x > v else 0.0055)
+            got[i] = v
+        rev = np.interp(np.arange(n), np.arange(len(got)) * step, got)
+        rpm = 50.0 + 125.0 * rev ** 1.1
+        before = t < catch                                 # pulled: it coughs, then catches
+        cough = 18.0 + 10.0 * np.clip((t - 0.1) / max(catch - 0.1, 1e-3), 0.0, 1.0)
+        rpm = np.where(before, cough, rpm)
+        y = self._engine(rpm, rng)
+        spit = np.clip(np.sin(2 * np.pi * 5.0 * t + rng.uniform(0, 6.3)) * 3.0, 0.0, 1.0)
+        y *= np.where(before, 0.35 * np.clip((t - 0.1) / 0.1, 0.0, 1.0) * (0.3 + 0.7 * spit),
+                      0.55 + 0.45 * rev)
+        y += 0.6 * self._cord(t, rng)
+        pan = 0.2 * np.sin(2 * np.pi * 0.23 * t)
+        th = (pan + 1) * np.pi / 4
+        return _norm(np.stack([y * np.cos(th), y * np.sin(th)], axis=1))
+
+    def fx_wind(self, ev, rng):
+        """Wind over open ground for `dur` frames: breathy noise in gusts, a low rumble, wide."""
+        sr = self.sr
+        n, t = self._t(self._dur(ev))
+        gust = bw(rng.standard_normal(n), "low", 0.35, sr, 1)
+        gust = 0.55 + 0.45 * gust / (np.abs(gust).max() + _TINY)
+        fc = 500.0 * 2.0 ** (1.2 * (gust - 0.55))
+        air = tv_filter(pink(rng, (n, 2)), "bp", fc, sr, q=0.7, block=512)
+        rumble = bw(pink(rng, (n, 2)), "low", 120.0, sr)
+        y = (_norm(air) * gust[:, None] + 0.5 * _norm(rumble))
+        return _norm(_fade(y, sr, 0.25, 0.0))
+
+    def fx_burn(self, ev, rng):
+        """Film burning in the gate: crackle thickening into a flaring rush that peaks at
+        frame + dur, the projector's sprocket chatter under it, a low pop as the splice passes."""
+        sr, T = self.sr, self._dur(ev)
+        n, t = self._t(T + 0.35)
+        u = np.clip(t / T, 0.0, 1.0)
+        hits = rng.random(n) < (20.0 + 140.0 * u ** 2) / sr * (t < T + 0.08)
+        imp = np.zeros(n)
+        imp[hits] = rng.uniform(0.2, 1.0, hits.sum()) ** 2 * np.sign(rng.standard_normal(hits.sum()))
+        crackle = bw(imp, "band", (900.0, 7000.0), sr)
+        fc = np.where(t < T, 300.0 * (6000.0 / 300.0) ** u, 6000.0 * np.exp(-(t - T) / 0.1))
+        flare = tv_filter(rng.standard_normal(n), "lp", np.maximum(fc, 200.0), sr, q=0.9, block=128)
+        flare *= np.where(t < T, u ** 2, np.exp(-(t - T) / 0.06))
+        chatter = filt(rng.standard_normal(n), "bp", 1400.0, sr, 1.5) * (np.sin(2 * np.pi * 24.0 * t) > 0) * u
+        tp = np.maximum(t - T, 0.0)
+        pop = (t >= T) * np.sin(2 * np.pi * np.cumsum((t >= T) * (55.0 + 50.0 * np.exp(-tp / 0.02))) / sr)
+        pop *= np.exp(-tp / 0.06)
+        y = 0.7 * _norm(crackle) + 0.8 * _norm(flare) + 0.25 * _norm(chatter) + 0.6 * pop
+        p0 = float(ev.get("pan", 0.4))
+        pos = p0 - 2 * p0 * np.clip(t / (T + 0.05), 0.0, 1.0)
+        th = (np.clip(pos, -1, 1) + 1) * np.pi / 4
+        return _norm(_fade(np.stack([y * np.cos(th), y * np.sin(th)], axis=1), sr, 0.005, 0.05))
+
+    def fx_typewriter(self, ev, rng):
+        """A typewriter key: the type bar's clack on the platen, a woody thud, the bar's return
+        click and a faint ring; `pitch` varies it."""
+        sr = self.sr
+        n, t = self._t(0.12)
+        p = float(ev.get("pitch", 0))
+        clack = filt(rng.standard_normal(n), "bp", 3200.0 * 2 ** rng.normal(0, 0.12), sr, 1.2)
+        clack *= np.exp(-t / 0.0025)
+        thud = np.sin(2 * np.pi * rng.uniform(170.0, 230.0) * t) * env_perc(n, sr, 0.012, 0.0005)
+        body = filt(rng.standard_normal(n), "bp", 900.0, sr, 2.0) * np.exp(-t / 0.01)
+        ring = np.sin(2 * np.pi * (2400.0 + 90.0 * (p % 5)) * t) * np.exp(-t / 0.03)
+        t2 = np.maximum(t - rng.uniform(0.018, 0.03), 0.0)
+        back = filt(rng.standard_normal(n), "bp", 2200.0, sr, 2.0) * np.exp(-t2 / 0.002) * (t2 > 0)
+        y = _norm(clack) + 0.55 * thud + 0.35 * _norm(body) + 0.06 * ring + 0.3 * _norm(back)
+        return _norm(_fade(y, sr, 0.0, 0.01))
+
 
 # ================================================================================ arrangement
-MOODS = ("intro", "rise", "groove_light", "groove", "breakdown", "halftime", "feature", "end")
+MOODS = ("intro", "rise", "groove_light", "groove", "breakdown", "halftime", "feature", "end",
+         "cold")                                  # cold: a cold open, no music (its SFX only)
 DRIVE = ("groove", "feature")
 SLOW = ("intro", "breakdown", "halftime", "end")          # chords change every 2 bars
-BUSES = ("kick", "back", "hats", "perc", "bass", "pad", "keys", "arp", "lead", "lead2", "fx", "tex")
+BUSES = ("kick", "back", "hats", "perc", "bass", "pad", "keys", "arp", "lead", "lead2", "fx", "tex",
+         "metal")
 SENDS = {"kick": (0.04, 0.0, 0.0), "back": (0.3, 0.12, 0.0), "hats": (0.08, 0.0, 0.0),   # room, hall, delay
          "perc": (0.15, 0.05, 0.0), "pad": (0.0, 0.35, 0.0), "keys": (0.15, 0.2, 0.18),
          "arp": (0.1, 0.3, 0.3), "lead": (0.1, 0.22, 0.22), "lead2": (0.1, 0.3, 0.25),
-         "fx": (0.0, 0.3, 0.0), "tex": (0.0, 0.3, 0.0)}
+         "fx": (0.0, 0.3, 0.0), "tex": (0.0, 0.3, 0.0), "metal": (0.1, 0.4, 0.12)}
 HALL = {"intro": 1.3, "rise": 1.0, "groove_light": 0.9, "groove": 0.8, "breakdown": 1.6,
         "halftime": 2.0, "feature": 0.85, "end": 2.4}                   # hall send per mood
 BRIGHT = {"intro": (550.0, 1900.0), "rise": (900.0, 8000.0), "groove_light": (3500.0, 3500.0),
@@ -1134,6 +1351,9 @@ PROG = {
              "major": [(0, (0, 4, 7)), (9, (0, 3, 7)), (5, (0, 4, 7)), (7, (0, 4, 7))]},
     "playful": {"major": [(0, (0, 4, 7)), (9, (0, 3, 7)), (2, (0, 3, 7)), (7, (0, 4, 7, 10))],
                 "minor": [(0, (0, 3, 7)), (5, (0, 3, 7)), (10, (0, 4, 7)), (3, (0, 4, 7))]},
+    # i(b9) bVImaj7 bII vii-dim7: close clusters, a Phrygian lean
+    "grindhouse": {"minor": [(0, (0, 3, 7, 13)), (8, (0, 4, 7, 11)), (1, (0, 4, 7)), (11, (0, 3, 6, 9))],
+                   "major": [(0, (0, 4, 7, 11)), (1, (0, 4, 7)), (8, (0, 4, 7)), (6, (0, 3, 6))]},
 }
 
 
@@ -1145,7 +1365,11 @@ def _eighths(fn):
 # bass_pat: {kind: ((step, len16, interval, vel), ...)}; keys: (inst, low note, {mood: steps}, kw);
 # arp: (inst, centre note, chord-tone pattern, {mood: (every n 16ths, vel)}, kw);
 # lead/lead2: (inst, centre note, {mood: vel}, kw); hooks: 2-bar rhythms ((pos16, len16), ...);
-# mix: bus loudness in LU relative to the music bed.
+# mix: bus loudness in LU relative to the music bed. Optional: kick_inst, kicks {mood: steps},
+# kick_vel {step: vel}, backs {mood: steps} (else four-on-the-floor, backbeat on 2 and 4);
+# drone (inst, kw, moods, ((interval, vel), ...)) (else the pad's root and fifth in intro and
+# breakdown); scrapes {mood: (every n beats, vel)} on the metal bus; rev_cuts (reversed cymbal
+# into every cut, at vel); film (an old optical track: band-limited, crackle and hiss).
 STYLES = {
     "brand": dict(
         key=(53, "major"), swing=0.0, pump=4.0, rt=(0.8, 2.2), delay=0.75, bright=1.0, booms=False,
@@ -1256,6 +1480,42 @@ STYLES = {
         tex=0.5, tape=False,
         mix=dict(kick=-7, back=-8, hats=-15, perc=-12, bass=-6, pad=-14, keys=-9, arp=-8, lead=-5,
                  lead2=-9, fx=-11, tex=-24)),
+    "grindhouse": dict(
+        key=(50, "minor"), swing=0.0, pump=2.5, rt=(1.1, 3.4), delay=0.75, bright=0.6, booms=True,
+        kick_inst="heart", kick=dict(gap=0.22, f_hi=130.0, f_lo=46.0, decay=0.2),
+        kicks={"rise": (0, 8), "groove_light": (0, 8), "groove": (0, 4, 8, 12),
+               "feature": (0, 4, 8, 12), "halftime": (0, 8)},
+        kick_vel={4: 0.85, 12: 0.85},
+        backs={"groove": (8,), "feature": (8,), "halftime": (8,)},
+        back=(("clank", 1.0, {}), ("snare", 0.25, dict(tone=150.0, decay=0.25, bright=4000.0, body=0.4))),
+        light_back=(("clank", 0.45, dict(f0=233.0)),), fill=("tom", (45, 43, 41, 38)),
+        hats={"groove": (("tick", "16", (0.6, 0.22, 0.4, 0.22)),),
+              "groove_light": (("tick", "8", (0.5, 0.3)),),
+              "rise": (("tick", "8", (0.45, 0.25)),),
+              "breakdown": (("tick", (2, 6, 10, 14), (0.25,)),),
+              "halftime": (("tick", "16", (0.35, 0.12, 0.22, 0.12)),)},
+        bass="bass_sub", break_bass=False,
+        bass_pat={"drive": ((0, 2, 0, 1.0), (2, 2, 0, 0.6), (4, 2, 12, 0.8), (6, 2, 0, 0.6),
+                            (8, 2, 0, 0.95), (10, 2, 0, 0.6), (12, 2, 12, 0.8), (14, 2, 1, 0.75)),
+                  "light": ((0, 2, 0, 1.0), (4, 2, 0, 0.75), (8, 2, 0, 0.95), (12, 2, 0, 0.75)),
+                  "half": ((0, 8, 0, 1.0), (8, 6, 0, 0.9), (14, 2, 1, 0.7))},
+        pad=("swell", dict(detune=20.0, voices=5, bright=1900.0, release=1.4)), pad_lo=50,
+        drone=("drone", {}, ("intro", "rise", "groove_light", "groove", "breakdown", "halftime",
+                             "feature"), ((0, 0.6), (12, 0.3))),
+        keys=("swell", 69, {"halftime": (0,)}, dict(detune=26.0, voices=4, bright=3500.0, release=1.8)),
+        strum=False,
+        arp=("bell", 79, (0, 2, 1, 3, 1, 2, 0, 4),
+             {"intro": (4, 0.35), "breakdown": (2, 0.5), "rise": (4, 0.35)},
+             dict(decay=0.45, ratio=3.01, index=1.2)),
+        lead=("saw_lead", 62, {"groove": 0.8, "feature": 1.0}, {}),
+        lead2=None,
+        hooks=(((0, 6), (6, 2), (8, 8), (16, 6), (22, 2), (24, 8)),
+               ((0, 4), (4, 4), (8, 8), (16, 3), (19, 3), (22, 10))),
+        scrapes={"intro": (8.0, 0.6), "rise": (8.0, 0.5), "groove": (8.0, 0.5),
+                 "breakdown": (4.0, 0.8), "halftime": (6.0, 0.7)},
+        rev_cuts=0.55, tex=0.8, tape=False, film=True,
+        mix=dict(kick=-4, back=-9, hats=-17, perc=-16, bass=-6, pad=-7, keys=-11, arp=-12, lead=-9,
+                 fx=-8, tex=-16, metal=-13)),
 }
 
 
@@ -1371,7 +1631,7 @@ class Arranger:
         buf = self.V.get(inst, midi, dur_beats * self.spb, var, **kw)
         at = self.b2s(beat) + int(round(shift * self.sr)) - (len(buf) if end else 0)
         add(self.bus[bus], buf, at, vel if buf.ndim == 2 else vel * pan_gains(pan))
-        if inst == "kick":
+        if bus == "kick":
             self.kicks.append(at)
 
     def _chord(self, bus, inst, chord, beat, dur, vel, lo, kw, strum=False):
@@ -1385,7 +1645,9 @@ class Arranger:
     def arrange(self):
         for i, sec in enumerate(self.secs):
             nxt = self.secs[i + 1]["mood"] if i + 1 < len(self.secs) else None
-            if i > 0:
+            if sec["mood"] == "cold":                        # silence under the cold open
+                continue
+            if i > 0 and self.secs[i - 1]["mood"] != "cold":
                 self._cut(sec)
             self._drums(sec, nxt)
             self._bass(sec)
@@ -1402,16 +1664,19 @@ class Arranger:
         if mood in ("breakdown", "halftime", "end", "feature") or (P["booms"] and mood != "rise"):
             self.play("fx", "boom", b, vel=0.6 if mood == "breakdown" else 0.85)
         if mood == "end":
-            self.play("kick", "kick", b, vel=1.0, **P["kick"])
+            self.play("kick", P.get("kick_inst", "kick"), b, vel=1.0, **P["kick"])
 
     def _approach(self, sec, nxt):
         """The last beats before a cut: a riser into bigger sections, else a reversed cymbal."""
         mood, b0, b1 = sec["mood"], sec["b0"], sec["b1"]
+        rev = self.P.get("rev_cuts")
         if (nxt in DRIVE and mood not in DRIVE) or (nxt == "groove_light" and mood in ("intro", "rise")):
             L = min(8.0 if mood == "rise" else 4.0, b1 - b0)
             self.play("fx", "uplift", b1, L, vel=0.8, end=True)
-        elif nxt != mood:
+        elif nxt != mood and not rev:
             self.play("fx", "rev_crash", b1, min(1.5, b1 - b0), vel=0.45, end=True)
+        if rev:                                  # a reversed cymbal into every cut
+            self.play("fx", "rev_crash", b1, min(2.0, b1 - b0), vel=rev, end=True)
 
     def _drums(self, sec, nxt):
         mood, P = sec["mood"], self.P
@@ -1422,9 +1687,10 @@ class Arranger:
         fill = nxt is not None and mood in ("groove", "feature", "groove_light", "halftime", "rise")
         fill_from = b1 - 1.0 if fill and b1 - b0 >= 2 else b1 + 1
         four = (0, 4, 8, 12)
-        kicks = {"rise": four, "groove_light": four, "groove": four, "feature": four,
-                 "halftime": (0, 11)}.get(mood, ())
-        backs = {"groove": (4, 12), "feature": (4, 12), "halftime": (8,)}.get(mood, ())
+        kicks = P.get("kicks", {"rise": four, "groove_light": four, "groove": four, "feature": four,
+                                "halftime": (0, 11)}).get(mood, ())
+        backs = P.get("backs", {"groove": (4, 12), "feature": (4, 12), "halftime": (8,)}).get(mood, ())
+        kick_inst, kick_vel = P.get("kick_inst", "kick"), P.get("kick_vel", {})
         lights = (4, 12) if mood == "groove_light" else ()
         hats = P["hats"].get("groove" if mood == "feature" else mood, ())
         nbars = int(np.ceil((b1 - b0) / 4 - 1e-9))
@@ -1433,7 +1699,8 @@ class Arranger:
             in_fill = beat >= fill_from - 1e-9
             if step in kicks and not (drop and beat >= b1 - 1 - 1e-9):
                 v = 0.7 + 0.3 * (beat - b0) / max(1.0, b1 - b0) if mood == "rise" else 1.0
-                self.play("kick", "kick", t, vel=0.6 if step == 11 else v, **P["kick"])
+                self.play("kick", kick_inst, t, vel=(0.6 if step == 11 else v) * kick_vel.get(step, 1.0),
+                          **P["kick"])
             if step in backs and not in_fill:
                 for inst, v, kw in P["back"]:
                     self.play("back", inst, t, vel=v, **kw)
@@ -1507,11 +1774,17 @@ class Arranger:
             self._chord("pad", inst, self.chord(sec, bar), c, min(span, b1 - c), vel, P["pad_lo"], kw2)
             c += span
             bar += int(span // 4)
-        if mood in ("intro", "breakdown"):                   # drone: root and fifth
+        drone = P.get("drone")
+        if drone is None and mood in ("intro", "breakdown"):  # drone: root and fifth
             for iv, v in ((12, 0.5), (19, 0.3)):
                 self.play("pad", inst, b0, b1 - b0, midi=self.bass_note(self.prog[0], iv),
                           vel=v * vel, **dict(kw, attack=float(min(2.0, 0.4 * (b1 - b0) * self.spb)),
                                               release=0.5))
+        elif drone is not None and mood in drone[2]:         # the style's own drone
+            dinst, dkw, _, notes = drone
+            for iv, v in notes:
+                self.play("pad", dinst, b0, b1 - b0, midi=self.bass_note(self.prog[0], iv), vel=v,
+                          **dict(dkw, attack=float(min(2.0, 0.4 * (b1 - b0) * self.spb)), release=0.5))
         if keys and mood in keys[2]:
             kinst, lo, moods, kkw = keys
             for bar, step, beat in self.steps(sec):
@@ -1564,6 +1837,14 @@ class Arranger:
 
     def _texture(self, sec):
         mood, P, sr = sec["mood"], self.P, self.sr
+        sc = P.get("scrapes", {}).get(mood)
+        if sc:                                               # metal dragged on metal, off the grid
+            every, vel = sc
+            rng = self.V.rng("scrape", sec["f0"])
+            for b in np.arange(sec["b0"] + every / 2, sec["b1"] - 1.0, every):
+                self.play("metal", "scrape", float(b) + int(rng.integers(0, 4)) / 4 + 0.13,
+                          float(rng.choice([1.0, 1.5, 2.0])), vel=vel * rng.uniform(0.6, 1.0),
+                          pan=rng.uniform(-0.7, 0.7), var=int(rng.integers(3)))
         if P["booms"] and mood in ("intro", "breakdown"):
             for b in np.arange(sec["b0"], sec["b1"] - 1e-9, 8.0):
                 if b > sec["b0"] or sec["f0"] == 0:
@@ -1666,7 +1947,22 @@ class Arranger:
             music = bw(wow_flutter(music, sr, rng), "low", 11000.0, sr)
             hiss = bw(bw(pink(rng, (self.n, 2)), "high", 1500.0, sr), "low", 12000.0, sr)
             music += hiss * db2amp(MUSIC_REF - 50.0)
+        if P.get("film"):                                    # an old optical track
+            rng = self.V.rng("film")
+            music = bw(bw(music, "low", 9500.0, sr, 2), "high", 45.0, sr)
+            hits = rng.random(self.n) < 9.0 / sr
+            imp = np.zeros(self.n)
+            imp[hits] = rng.pareto(2.5, hits.sum()) * np.sign(rng.standard_normal(hits.sum()))
+            crackle = bw(np.clip(imp, -6, 6), "band", (700.0, 6000.0), sr)
+            hiss = bw(bw(pink(rng, self.n), "high", 1200.0, sr), "low", 7000.0, sr)
+            lv = measure_lufs(music, sr)
+            ref = lv if np.isfinite(lv) else MUSIC_REF
+            music += ((crackle / (np.abs(crackle).max() + _TINY)) * db2amp(ref - 8.0)
+                      + hiss * db2amp(ref - 46.0))[:, None]
         music = bw(bw(music, "high", 30.0, sr, 4), "low", 18000.0, sr) * self.end_fade()[:, None]
+        for sec in self.secs:                                # a cold open: silence, hiss and all
+            if sec["mood"] == "cold":
+                music[self.f2s(sec["f0"]):self.f2s(sec["f1"])] = 0.0
         lv = measure_lufs(music, sr)
         return music * db2amp(MUSIC_REF - lv) if np.isfinite(lv) else music
 
@@ -1747,6 +2043,12 @@ def example_cues(style: str = "playful", seconds: float | None = None, seed: int
     ev += [{"frame": S["booklet"]["start"] + 8 + 20 * j, "type": "page"} for j in range(5)]
     o0 = S["outro"]["start"]
     ev += [{"frame": o0, "type": "hit", "gain": 0.8}, {"frame": o0 + 20, "type": "boing", "pitch": 3}]
+    if style == "grindhouse":               # its flavour, as the edit plan gives it
+        ev += [{"frame": S["title"]["start"] + 10, "type": "chainsaw", "gain": 0.9},
+               {"frame": S["title"]["start"] + 7, "type": "slap"}]
+        swap = {"whoosh": "burn", "blip": "typewriter", "pop": "typewriter", "type": "typewriter",
+                "pass": "slap"}
+        ev = [dict(e, type=swap.get(e["type"], e["type"])) for e in ev]
     ev = [e for e in ev if 0 <= e["frame"] < frames]
     return {"fps": fps, "frames": frames, "beat_frames": bf, "style": style, "seed": seed,
             "sections": sections, "events": ev}

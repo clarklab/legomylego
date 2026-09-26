@@ -19,7 +19,7 @@ class Connection:
     b: int
     ca: Connector
     cb: Connector
-    kind: str       # stud | pin | axle | bar | clip | hinge | gen
+    kind: str       # stud | pin | axle | bar | clip | hinge | ball | gen
     overlap: float  # engaged length in LDU
 
 
@@ -137,7 +137,24 @@ def find_connections(conns_by_part: list[list[Connector]], min_overlap: float = 
                 j, cj = items[y]
                 if i == j or ci.gender == cj.gender:
                     continue
-                if (np.linalg.norm(ci.origin - cj.origin) <= 1.0
-                        and abs(np.dot(ci.M[:3, 1], cj.M[:3, 1])) > 0.999):
+                if np.linalg.norm(ci.origin - cj.origin) > 1.0:
+                    continue
+                ra, rb = sphere_radius(ci), sphere_radius(cj)
+                if ra is not None or rb is not None:
+                    # a ball turns freely in its socket: any orientation, same size
+                    if ra is not None and rb is not None and abs(ra - rb) <= RADIUS_TOL:
+                        out.append(Connection(i, j, ci, cj, "ball", 0.0))
+                elif abs(np.dot(ci.M[:3, 1], cj.M[:3, 1])) > 0.999:
                     out.append(Connection(i, j, ci, cj, "gen", 0.0))
     return out
+
+
+def sphere_radius(c: Connector) -> float | None:
+    """Radius of a ball-joint snap (LDCad SNAP_GEN [bounding=sph R]), else None."""
+    b = c.bounding
+    if len(b) >= 2 and b[0].lower() == "sph":
+        try:
+            return float(b[1])
+        except ValueError:
+            return None
+    return None

@@ -117,3 +117,17 @@ def test_floating_loose_part_fails(engine):
     s.place("3001", "White", (0, -24, 0))
     r = check(engine, m)
     assert r.status == "fail" and "loose" in r.items[0]["problem"]
+
+
+def test_ball_snaps_into_socket(engine):
+    """A ball joint pops into its socket (the socket's jaws flex), so the socket never blocks
+    the part carrying the ball."""
+    m = Model("J", "j", {}, engine.catalog)
+    s = m.main
+    s.place("3020", "White")
+    s.step()
+    s.place("67696", "Black", (-20, -24, 0))
+    s.step()
+    s.place("53585", "Black", (20, -14, 0), rot(z=30))
+    r = check(engine, m)
+    assert r.status == "pass", r.items

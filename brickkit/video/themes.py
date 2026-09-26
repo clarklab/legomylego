@@ -2,13 +2,15 @@
 
 A theme is a flat dict of tokens the compositor (web/reel.js) and the sound (audio.py) read:
 tempo (`beat` frames per beat at 30 fps), colours (`backdrop` is the 3D studio's), fonts, the
-transition and title styles, the overlay and the music style. Pick one in model.toml and
-override any token:
+transition and title styles, the overlay and the music style. Pick one in model.toml
+(brand | scan | tape | playful | grindhouse) and override any token:
 
     [video]
     theme = "tape"
     [video.theme_overrides]
     accent = "#FF3EA5"
+
+`brickkit video SLUG --theme NAME` tries another theme for one run.
 """
 from __future__ import annotations
 
@@ -67,6 +69,20 @@ THEMES: dict[str, dict] = {
         "grain": 0.03, "xray": "#FF6B3D", "xray_bg": "#2A1A12",
         "grade": {"tint": "#FFE2B8", "amount": 0.05, "contrast": 1.03, "saturate": 1.06},
     },
+    # 70s drive-in horror print: warm near-black, bone type, blood red and apron yellow; gate
+    # weave, dust and scratches, film-burn cuts, rubber-stamped case-file titles, evidence tags
+    "grindhouse": {
+        "backdrop": "#3A302A",
+        "beat": 18, "music": "grindhouse",
+        "bg": "#120D0A", "bg2": "#2B2019", "ink": "#EBE0CA", "muted": "#9C8C75",
+        "accent": "#C0181F", "accent2": "#E3B42C", "ok": "#A3B46A", "warn": "#E3862C",
+        "hud": "#EBE0CA", "hud_ink": "#120D0A", "panel": "rgba(18,13,10,0.84)",
+        "panel_ink": "#EBE0CA", "line": "#EBE0CA", "paper": "#E4D5B5",
+        "display": "Space Mono", "mono": "Space Mono",
+        "transition": "burn", "title": "stamp", "callout": "tag", "overlay": "film",
+        "grain": 0.09, "xray": "#E3B42C", "xray_bg": "#0E0906",
+        "grade": {"tint": "#8C5A2A", "amount": 0.2, "contrast": 1.12, "saturate": 0.7},
+    },
 }
 
 
@@ -78,3 +94,18 @@ def theme_for(cfg: dict) -> dict:
     th = dict(THEMES[name], name=name, brand=dict(BRAND))
     th.update(cfg.get("theme_overrides") or {})
     return th
+
+
+def trial_theme(cfg: dict, name: str | None, keep_plates: bool = False) -> tuple[dict, dict, bool]:
+    """The theme for one run: the model's (theme_for(cfg)), or theme `name` tried in its place
+    (`brickkit video --theme`), the model's overrides left out. `keep_plates` (composing over the
+    model's rendered plates) keeps the model's tempo and backdrop so the plates line up.
+    Returns (cfg, theme, trial)."""
+    theme = theme_for(cfg)
+    if name is None or name == theme["name"]:
+        return cfg, theme, False
+    cfg = dict(cfg, theme=name, theme_overrides={})
+    tried = theme_for(cfg)
+    if keep_plates:
+        tried.update(beat=theme["beat"], backdrop=theme["backdrop"])
+    return cfg, tried, True

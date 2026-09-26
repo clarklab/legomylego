@@ -490,7 +490,7 @@ async function renderFrame(f) {
   post(f, s);
   // keep the plate cache small: plates are used once or twice
   for (const k of Array.from(IMG.keys())) {
-    if (k.startsWith('frames/') && !USED.has(k)) {
+    if ((k.startsWith('frames/') || k.startsWith('work/')) && !USED.has(k)) {
       const v = IMG.get(k); if (v && v.close) v.close(); IMG.delete(k);
     }
   }

@@ -14,6 +14,7 @@ and its check report:
     mechanism   name, labels, pose parameter and angle per frame, tracked callouts
     lights      power-on frame and tracked lamp positions
     colourways  wipes and each colourway's swatches
+    cold_open   (with one) its shots, the cut to black, the sun's place on screen per frame
     marks       beat-aligned key frames of every segment (the graphics and the music share them)
     transitions every cut and its wipe style
 
@@ -40,7 +41,7 @@ from . import timeline as T
 
 URL = "lego.superfun.games"
 DISCLAIMER = "Unofficial fan model · computer-checked, not yet built with real bricks"
-MOODS = {"open": "intro", "title": "rise", "build": "groove",
+MOODS = {"cold_open": "cold", "open": "intro", "title": "rise", "build": "groove",
          "scan": "breakdown", "mechanism": "halftime", "lights": "feature", "lift": "feature",
          "colourways": "groove", "booklet": "groove_light", "outro": "end"}
 CHECK_TITLES = {"real_elements": "Real parts", "connections": "Connections",
@@ -439,7 +440,11 @@ def marks(tl, extras: dict) -> dict:
     out = {}
     for s in tl["segments"]:
         a, name = s["start"], s["name"]
-        if name == "open":
+        if name == "cold_open":
+            co = tl["cold_open"]
+            out[name] = {"shots": [a + f for f, _ in co["shots"]], "catch": co["catch"],
+                         "cut": co["cut"]}
+        elif name == "open":
             out[name] = {"drop": a + B // 4, "land": a + B, "wipe": a + B, "wipe_end": a + 2 * B,
                          "words": [a + 2 * B, a + 2 * B + B // 2, a + 3 * B],
                          "band": a + 4 * B, "out": s["end"] - B // 2}
@@ -486,11 +491,14 @@ def marks(tl, extras: dict) -> dict:
 
 def transitions(tl, theme) -> list[dict]:
     """Every cut, with its wipe: the theme's between segments, bricks into the build, a quick
-    band between build sections, the house stud wipe into the outro."""
+    band between build sections, the house stud wipe into the outro. (Out of a cold open's
+    black it's a straight cut.)"""
     B = _B(tl)
     segs = tl["segments"]
     out = []
     for a, b in zip(segs, segs[1:]):
+        if a["name"] == "cold_open":
+            continue
         kind = theme["transition"]
         if b["name"] == "build":
             kind = "bricks"
@@ -626,6 +634,8 @@ def plan_reel(engine, proj, model, tl, theme, out_dir: Path, work: Path, *,
                                                     ("Parts list", "parts.csv"),
                                                     ("BrickLink list", "bricklink_wanted.xml"))
                                      if (out_dir / f).exists()]}
+    if tl.get("cold_open"):
+        reel["cold_open"] = cold_open_graphics(tl)
     extras = {"chips": len(reel["chips"]), "checks": len(chk["rows"]),
               "callouts": len(reel.get("mechanism", {}).get("callouts", [])),
               "booklet": reel.get("booklet")}
@@ -633,6 +643,22 @@ def plan_reel(engine, proj, model, tl, theme, out_dir: Path, work: Path, *,
     reel["transitions"] = transitions(tl, theme)
     reel["cues"] = cue_sheet(reel, tl, theme)
     return reel
+
+
+def cold_open_graphics(tl) -> dict:
+    """What the compositor needs for the cold open: its frames, shots, letterbox, and where the
+    sun is on screen each frame ([x, y] px of 1080, or None behind the camera) for the flare."""
+    co = tl["cold_open"]
+    e, a = np.radians(co["sun"]["elevation"]), np.radians(co["sun"]["azimuth"])
+    d = np.array([np.sin(a) * np.cos(e), -np.sin(e), np.cos(a) * np.cos(e)])
+    cam = co["camera"]
+    sun = []
+    for pos, tgt, lens in zip(cam["pos"], cam["target"], cam["lens"]):
+        x, y, z = T.project((np.asarray(pos) + d * 1e7)[None], pos, tgt, lens, 1080.0)[0]
+        sun.append([round(float(x), 1), round(float(y), 1)] if z > 0 else None)
+    return {"start": co["start"], "end": co["end"], "cut": co["cut"],
+            "shots": [co["start"] + f for f, _ in co["shots"]], "letterbox": co["letterbox"],
+            "sun": sun, "size": co["sun"]["size"], "lens": cam["lens"]}
 
 
 def colourway_items(engine, proj, model, placed, tl, cfg) -> dict:
@@ -674,12 +700,22 @@ def cue_sheet(reel, tl, theme) -> dict:
         ev.append({"frame": float(frame), "type": kind, **kw})
 
     tape = theme.get("transition") == "glitch"
+    film = theme.get("transition") == "burn"
+    grind = theme.get("music") == "grindhouse"
+    if "cold_open" in mk:                         # the engine and the wind, cut dead at the cut
+        m, co = mk["cold_open"], tl["cold_open"]
+        n = m["cut"] - co["start"]
+        add(co["start"], "chainsaw_bed", dur=n, curve=co["rev"][:n],
+            catch=m["catch"] - co["start"], gain=1.0)
+        add(co["start"], "wind", dur=n, gain=0.8)
     for t in reel["transitions"]:
         if t["type"] == "band":
-            add(t["frame"] - 6, "whoosh", dur=6, gain=0.5)
+            add(t["frame"] - 6, "burn" if film else "whoosh", dur=6, gain=0.5)
             continue
         if tape and t["type"] == "glitch":
             add(t["frame"] - 3, "glitch", dur=7, gain=0.8)
+        elif film and t["type"] == "burn":
+            add(t["frame"] - t["half"], "burn", dur=t["half"], gain=0.8)
         else:
             add(t["frame"] - t["half"], "whoosh", dur=t["half"], gain=0.8)
         if t["to"] in ("build", "scan", "outro"):
@@ -694,7 +730,12 @@ def cue_sheet(reel, tl, theme) -> dict:
         add(o["band"], "blip", pitch=4)
     if "title" in mk:
         m = mk["title"]
-        add(m["name"], "whoosh", dur=6, gain=0.5)
+        if grind:                     # the name is stamped on the hero beat, then the saw starts
+            add(m["hero"], "slap", gain=1.0)
+            add(m["hero"], "hit", gain=0.5)
+            add(m["hero"] + 3, "chainsaw", gain=0.9)
+        else:
+            add(m["name"], "whoosh", dur=6, gain=0.5)
         for f in range(m["count0"], m["count1"], 3):
             add(f, "tick", gain=0.35)
         add(m["count1"], "pop", gain=0.8)
@@ -753,7 +794,7 @@ def cue_sheet(reel, tl, theme) -> dict:
         add(s["start"], "riser", dur=(s["end"] - s["start"]) // 2, gain=0.6)
     if "colourways" in mk:
         for w in mk["colourways"]["wipes"]:
-            add(w[0], "glitch" if tape else "whoosh", dur=w[1] - w[0], gain=0.7)
+            add(w[0], "glitch" if tape else "burn" if film else "whoosh", dur=w[1] - w[0], gain=0.7)
         for f in mk["colourways"]["labels"]:
             add(f, "pop", gain=0.6)
     if "booklet" in reel and "booklet" in mk:
@@ -783,6 +824,10 @@ def cue_sheet(reel, tl, theme) -> dict:
     for e in ev:                                  # theme flavour
         if theme_music == "playful" and e["type"] == "pop":
             e["type"] = "boing" if e.get("gain", 1) > 0.5 else "pop"
+        elif grind and e["type"] in ("blip", "pop", "type"):
+            e["type"] = "typewriter"              # labels are typed, results stamped
+        elif grind and e["type"] == "pass":
+            e["type"] = "slap"
     sections = [{"name": s["name"], "start": s["start"], "end": s["end"],
                  "mood": MOODS.get(s["name"], "groove")} for s in tl["segments"]]
     return {"fps": tl["fps"], "frames": tl["frames"], "beat_frames": B, "style": theme_music,

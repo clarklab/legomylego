@@ -61,7 +61,7 @@ def test_segments_follow_the_model(sample):
 def test_segments_with_everything(engine):
     model = _rigged(engine)
     segs = T.plan_segments(model, booklet=True, beat=16, variants=["a", "b"])
-    assert [s["name"] for s in segs] == list(T.ORDER)
+    assert [s["name"] for s in segs] == [n for n in T.ORDER if n != "cold_open"]   # opt-in
     _contiguous(segs)
     cw = next(s for s in segs if s["name"] == "colourways")
     assert cw["beats"] == T.BEATS["colourway"] * 3
@@ -319,6 +319,188 @@ def test_themes():
     assert themes.theme_for({"theme": "tape", "theme_overrides": {"accent": "#000000"}})["accent"] == "#000000"
     with pytest.raises(SystemExit):
         themes.theme_for({"theme": "nope"})
+
+
+def test_grindhouse_theme():
+    th = themes.theme_for({"theme": "grindhouse"})
+    for name, other in themes.THEMES.items():
+        assert set(other) <= set(th), name                  # every token the others have
+        assert set(other["grade"]) <= set(th["grade"])
+    assert (th["transition"], th["title"], th["callout"], th["overlay"], th["music"]) == (
+        "burn", "stamp", "tag", "film", "grindhouse")
+    bundled = {"Fredoka", "Space Mono", "Share Tech Mono", "VT323"}      # web/fonts, core.js
+    assert th["display"] in bundled and th["mono"] in bundled
+    from brickkit.video import audio as A
+    assert th["music"] in A.STYLES and th["music"] in A.PROG
+    assert 90 < 60 * T.FPS / th["beat"] < 110                 # a slower, heavier pulse
+
+
+def test_trial_theme():
+    """`brickkit video --theme`: another theme for one run, the model's overrides left out; over
+    the model's rendered plates it keeps their tempo and backdrop."""
+    cfg = {"theme": "playful", "theme_overrides": {"accent": "#000000"}}
+    for name in (None, "playful"):
+        c, th, trial = themes.trial_theme(cfg, name)
+        assert not trial and c is cfg and th["accent"] == "#000000"
+    c, th, trial = themes.trial_theme(cfg, "grindhouse")
+    assert trial and c["theme"] == "grindhouse" and th["name"] == "grindhouse"
+    assert th == dict(themes.theme_for({"theme": "grindhouse"}))
+    _, kept, _ = themes.trial_theme(cfg, "grindhouse", keep_plates=True)
+    own = themes.THEMES["playful"]
+    assert (kept["beat"], kept["backdrop"]) == (own["beat"], own["backdrop"])
+    assert kept["transition"] == "burn" and kept["accent"] == th["accent"]
+    with pytest.raises(SystemExit):
+        themes.trial_theme(cfg, "nope")
+
+
+def test_grindhouse_cues(engine, tmp_path):
+    """The grindhouse edit: burns on its cuts, the name stamped on the title's hero beat and the
+    chainsaw after it, labels typed and results stamped instead of blips and chimes."""
+    model = _rigged(engine)
+    theme = themes.theme_for({"theme": "grindhouse"})
+    segs = T.plan_segments(model, booklet=False, beat=theme["beat"])
+    tl = T.build_timeline(engine, model, segs, beat=theme["beat"], backdrop=theme["backdrop"])
+    rp = R.plan_reel(engine, Project("_sample"), model, tl, theme, tmp_path, tmp_path,
+                     log=lambda m: None)
+    cues = rp["cues"]
+    ev, hero = cues["events"], rp["marks"]["title"]["hero"]
+    assert cues["style"] == "grindhouse" and cues["beat_frames"] == 18
+    assert [e["frame"] for e in ev if e["type"] == "chainsaw"] == [hero + 3]
+    assert any(e["type"] == "slap" and e["frame"] == hero for e in ev)
+    burns = [t for t in rp["transitions"] if t["type"] == "burn"]
+    assert burns
+    for t in burns:
+        assert any(e["type"] == "burn" and e["frame"] == t["frame"] - t["half"] for e in ev)
+    types = {e["type"] for e in ev}
+    assert "typewriter" in types and not types & {"blip", "pop", "type", "pass"}
+    # the other themes keep their sound
+    other = R.cue_sheet(rp, tl, themes.theme_for({"theme": "brand"}))
+    assert not {e["type"] for e in other["events"]} & {"chainsaw", "burn", "typewriter"}
+
+
+# ---------------------------------------------------------------------------- cold open
+def test_cold_open_segments(sample):
+    """Opt-in: first, a whole number of beats (the performance, then a beat of black); without
+    it the edit is unchanged."""
+    plain = T.plan_segments(sample, booklet=False, beat=18, cfg={})
+    cold = T.plan_segments(sample, booklet=False, beat=18,
+                           cfg={"cold_open": {"scene": "sunset_road", "seconds": 7}})
+    assert cold[0]["name"] == "cold_open" and cold[0]["kind"] == "cold"
+    n = cold[0]["end"]
+    assert n == (round(7 * T.FPS / 18) + T.COLD_BLACK_BEATS) * 18
+    _contiguous(cold)
+    assert [dict(s, start=s["start"] + n, end=s["end"] + n) for s in plain] == cold[1:]
+    with pytest.raises(SystemExit):
+        T.plan_segments(sample, booklet=False, cfg={"cold_open": {"scene": "moon"}})
+
+
+def _cold_timeline(engine, performance=False):
+    model = _rigged(engine)
+    model.meta["video"] = {"cold_open": {"scene": "sunset_road", "seconds": 4, "spin_turns": 1.5,
+                                         "hide_tags": ["left"]}}
+    if performance:                         # a loop: the roof flaps twice per cycle
+        from brickkit.ldraw.matrix import rot, transform
+
+        def perf(u):
+            h = np.array([0.0, -72.0, -20.0])
+            R_ = transform((0, 0, 0), rot(x=-30 * (1 - math.cos(4 * math.pi * u))))
+            return {"roof": translate(*h) @ R_ @ translate(*(-h))}
+        model.meta["performance"] = perf
+        model.meta["performance_info"] = {"ground_y": 0.0, "pivot": [5.0, -3.0], "cycle_s": 2.0}
+    theme = themes.theme_for({"theme": "grindhouse"})
+    segs = T.plan_segments(model, booklet=False, beat=theme["beat"])
+    return model, theme, segs, T.build_timeline(engine, model, segs, beat=theme["beat"],
+                                                backdrop=theme["backdrop"])
+
+
+def test_cold_open_plan(engine):
+    model, theme, segs, tl = _cold_timeline(engine)
+    co, seg = tl["cold_open"], segs[0]
+    m = co["cut"] - co["start"]
+    assert co["cut"] == seg["end"] - T.COLD_BLACK_BEATS * theme["beat"]
+    assert len(co["frames"]) == len(co["spin"]) == len(co["u"]) == len(co["rev"]) == m
+    assert len(co["camera"]["pos"]) == m
+    placed = model.flatten()
+    assert co["hidden"] == [p.index for p in placed if "left" in p.tags] and co["hidden"]
+    assert co["groups"]["names"] == ["roof"]
+    assert all(co["groups"]["instance"][i] == -1 for i in co["hidden"])
+    # without a performance the pose swings 0..1..0; it comes up to speed after the catch
+    u = np.array(co["u"])
+    assert u.min() >= 0 and u.max() <= 1 and u.max() > 0.9
+    assert np.allclose(u[:int(T.COLD_START * T.FPS)], 0.0)
+    # the spin: staggered, easing in and out, 1.5 turns about the pivot (which stays put)
+    yaw = np.array(co["yaw"])
+    assert yaw[0] == 0 and yaw[-1] == pytest.approx(540.0) and (np.diff(yaw) >= -1e-9).all()
+    px, pz = co["pivot"]
+    for M in co["spin"][::20]:
+        M = np.array(M).reshape(4, 4)
+        assert np.allclose(M @ [px, co["ground_y"], pz, 1.0], [px, co["ground_y"], pz, 1.0])
+    # the engine idles until it catches; the revs follow the swing
+    rev = np.array(co["rev"])
+    catch = co["catch"] - co["start"]
+    assert (rev[:catch] == 0).all() and 0 <= rev.min() and rev.max() <= 1 and rev.max() > 0.5
+    # three shots, hard cuts: long lens wide, then closer and wider; the figure stays in frame
+    assert [n for _, n in co["shots"]] == ["wide", "low", "close"]
+    lens = [co["camera"]["lens"][f] for f, _ in co["shots"]]
+    assert lens == sorted(lens, reverse=True) and lens[0] >= 200
+    H = co["height"]
+    for k in range(0, m, 7):
+        c = co["camera"]
+        feet, head = T.project(np.array([[px, co["ground_y"], pz], [px, co["ground_y"] - H, pz]]),
+                               c["pos"][k], c["target"][k], c["lens"][k], 1080.0)
+        assert 0 < feet[0] < 1080 and 1080 * co["letterbox"] < feet[1] < 1080 * (1 - co["letterbox"])
+        assert head[1] > 0 and head[2] > 0
+        assert c["pos"][k][1] > co["ground_y"] - 0.5 * H          # a low camera (LDraw -Y up)
+    # the wide shot: the sun above the figure, the figure under it
+    g = R.cold_open_graphics(tl)
+    assert len(g["sun"]) == m
+    x, y = g["sun"][0]
+    head = T.project(np.array([[px, co["ground_y"] - H, pz]]), co["camera"]["pos"][0],
+                     co["camera"]["target"][0], co["camera"]["lens"][0], 1080.0)[0]
+    assert abs(x - 540) < 60 and y < head[1] and y > 1080 * co["letterbox"]
+    json.dumps(co)
+
+
+def test_cold_open_performance(engine):
+    """meta["performance"] loops at its own speed (cycle_s), about performance_info's pivot."""
+    model, theme, segs, tl = _cold_timeline(engine, performance=True)
+    co = tl["cold_open"]
+    assert co["pivot"] == [5.0, -3.0] and co["ground_y"] == 0.0
+    u = np.array(co["u"])
+    assert (np.diff(u) < -0.5).sum() >= 1                 # it wraps round: a loop, not a swing
+    t = np.arange(len(u)) / T.FPS
+    tp = np.cumsum(T.smootherstep((t - T.COLD_START) / T.COLD_RAMP)) / T.FPS
+    assert np.allclose(u, (tp / 2.0) % 1.0, atol=1e-4)
+    M = np.array(co["frames"][40][0]).reshape(4, 4)
+    assert not np.allclose(M, np.eye(4))
+
+
+def test_cold_open_reel_and_cues(engine, tmp_path):
+    model, theme, segs, tl = _cold_timeline(engine)
+    rp = R.plan_reel(engine, Project("_sample"), model, tl, theme, tmp_path, tmp_path,
+                     log=lambda m: None)
+    co = tl["cold_open"]
+    # a straight cut out of the black into the reel; the reel's own marks move along
+    assert all(t["from"] != "cold_open" for t in rp["transitions"])
+    assert rp["marks"]["cold_open"]["cut"] == co["cut"]
+    assert rp["marks"]["open"]["drop"] == segs[1]["start"] + theme["beat"] // 4
+    cues = rp["cues"]
+    assert cues["sections"][0] == {"name": "cold_open", "start": 0, "end": segs[0]["end"],
+                                   "mood": "cold"}
+    bed = [e for e in cues["events"] if e["type"] == "chainsaw_bed"]
+    assert len(bed) == 1 and bed[0]["frame"] == 0 and bed[0]["dur"] == co["cut"]
+    assert bed[0]["curve"] == co["rev"] and bed[0]["catch"] == co["catch"]
+    assert any(e["type"] == "wind" and e["dur"] == co["cut"] for e in cues["events"])
+    # nothing sounds in the black
+    assert not [e for e in cues["events"] if co["cut"] <= e["frame"] < segs[0]["end"]]
+    # its plates are keyed to the cold open and its set, not the studio's backdrop
+    from brickkit.video import segment_digest
+    q = {"size": 64, "samples": 1, "engine": "eevee", "device": "gpu"}
+    d = segment_digest(tl, segs[0], q)
+    tl2 = dict(tl, scene=dict(tl["scene"], backdrop="#000000", ground_color="#000000"))
+    assert segment_digest(tl2, segs[0], q) == d
+    tl3 = dict(tl, cold_open=dict(co, sun=dict(co["sun"], elevation=3.0)))
+    assert segment_digest(tl3, segs[0], q) != d
 
 
 def test_booklet_step_pages():

@@ -16,6 +16,10 @@ scene; the model-scene segments are planned here, frame by frame, for render/ble
                 tap switches them off again
     lift        everything but `exclude_tag` rises and hovers         (meta["video"]["lift"])
     colourways  slow push round the model; each colourway renders its own frames (variants)
+    cold_open   (opt-in, first) the model performs in a scene of its own - "sunset_road": on a
+                two-lane road into a low sun - looping meta["performance"] (else swinging
+                model.pose) while it spins, in three shots, then a hard cut to black for a beat
+                (`cold_open_plan`; config [video.cold_open])
 
 `build_timeline(engine, model, segments, ...)` returns a JSON-able dict; every frame number is
 absolute (frame 0 is the first frame of the video, at `fps`):
@@ -33,6 +37,8 @@ absolute (frame 0 is the first frame of the video, at `fps`):
     lights              LEDs and per scene frame levels (dim, led, glow); power-on frame
     variants            colourways: per variant the instance colours and the frames it shows
     mechanism           per mechanism frame the pose parameter u (0..1) and the groups' angles
+    cold_open           (only with one) its own scene, motion, camera and rev curve: see
+                        `cold_open_plan`
 
 Per-model tweaks go in `model.meta["video"]` or model.toml [video] (all optional), e.g.
     {"lift": {"exclude_tag": "stand", "height": 80}, "beats": {"build": 28}, "drop": 24,
@@ -58,9 +64,9 @@ LENS = 70.0
 MARGIN = 1.3              # frame = 1/MARGIN of the image is model (a little air round it)
 DROP = 24.0               # LDU a part travels as it drops in (about a stud)
 DROP_FRAMES = 8           # how long a drop takes
-ORDER = ("open", "title", "build", "scan", "mechanism", "lights", "lift", "colourways",
-         "booklet", "outro")
-KIND = {"open": "gfx", "title": "gfx", "outro": "gfx", "booklet": "booklet"}
+ORDER = ("cold_open", "open", "title", "build", "scan", "mechanism", "lights", "lift",
+         "colourways", "booklet", "outro")
+KIND = {"open": "gfx", "title": "gfx", "outro": "gfx", "booklet": "booklet", "cold_open": "cold"}
 BEATS = {"open": 6, "title": 8, "build": 36, "scan": 12, "mechanism": 12, "lights": 8,
          "lift": 6, "colourway": 4, "booklet": 12, "outro": 8}
 LIGHTS_OFF_BEATS = 2      # extra lights beats when the lights also switch off again
@@ -250,7 +256,12 @@ def plan_segments(model, *, booklet: bool, beat: int = BEAT, variants=(), fps: i
     for k, v in (cfg.get("seconds") or {}).items():          # older configs: seconds
         beats[k] = max(1, round(float(v) * fps / beat))
     beats.update({k: int(v) for k, v in (cfg.get("beats") or {}).items()})
+    co = cold_open_config(model, cfg)
+    if co is not None and "cold_open" not in (cfg.get("beats") or {}):
+        # the performance, then a beat of black
+        beats["cold_open"] = max(2, round(co["seconds"] * fps / beat)) + COLD_BLACK_BEATS
     has = {
+        "cold_open": co is not None,
         "open": True, "title": True, "build": True, "scan": True, "outro": True,
         "mechanism": model.pose is not None and bool(model.groups),
         "lights": bool(model.lights) or bool(model.glow_tags),
@@ -696,12 +707,226 @@ def colourway_plan(seg: dict, names: list[str], beat: int) -> dict:
     return {"order": list(names), "wipes": wipes, "frames": frames}
 
 
+# ---------------------------------------------------------------------------- cold open
+# [video.cold_open] (model.toml) over these; model.meta["performance_info"] holds the model's own
+# facts (hide_tags, ground_y, pivot [x, z], cycle seconds, rev_tag)
+COLD = {"scene": "sunset_road", "seconds": 7.0, "motion": "performance", "spin_turns": 1.5,
+        "hide_tags": [], "cycle": 2.5, "sun_elevation": 2.4, "sun_azimuth": 0.0,
+        "sun_size": 1.4, "letterbox": 0.09, "rev_tag": "saw"}
+COLD_SCENES = ("sunset_road",)
+COLD_BLACK_BEATS = 1          # the hard cut to black before the reel proper
+COLD_CATCH = 0.45             # s: the engine catches (the pull-start before it)
+COLD_START, COLD_RAMP = 0.55, 0.9   # s: the performance comes up to speed
+# shots: (from, name, lens mm, camera height / figure height, camera azimuth deg (0: looking
+# into the sun), feet and head as fractions of the picture's height (None: the wide shot, its
+# head just under the sun's middle so the swing crosses it), dolly: how much closer it ends,
+# exposure (EV, stopped down when looking into the sun)
+COLD_SHOTS = ((0.0, "wide", 300.0, 0.3, 0.0, 0.18, None, 0.05, -2.2),
+              (0.42, "low", 70.0, 0.2, -12.0, 0.14, 0.8, 0.04, -0.4),
+              (0.72, "close", 38.0, 0.07, 24.0, 0.14, 0.9, 0.07, 0.0))
+
+
+def cold_open_config(model, cfg) -> dict | None:
+    """The cold open's settings ([video.cold_open] over the defaults), or None without one."""
+    co = cfg.get("cold_open")
+    if not co:
+        return None
+    out = dict(COLD)
+    info = model.meta.get("performance_info") or {}
+    for k, keys in (("cycle", ("cycle", "cycle_s")), ("rev_tag", ("rev_tag",))):
+        for key in keys:
+            if key in info:
+                out[k] = info[key]
+    out.update(co if isinstance(co, dict) else {})
+    out["hide_tags"] = sorted(set(out.get("hide_tags") or []) | set(info.get("hide_tags") or []))
+    if out["scene"] not in COLD_SCENES:
+        raise SystemExit(f"unknown cold open scene {out['scene']!r}; choose from "
+                         f"{', '.join(COLD_SCENES)}")
+    if out["motion"] not in ("performance", "pose"):
+        raise SystemExit(f"cold open motion {out['motion']!r}: performance or pose")
+    return out
+
+
+def spin_curve(n: int, turns: float) -> np.ndarray:
+    """Degrees turned by each frame: `turns` in three lurches (30 %, 40 %, 30 % of it), each
+    easing in and out, overlapping a little so the turn never quite stops."""
+    k = np.arange(n) / max(1, n - 1)
+    out = np.zeros(n)
+    for (a, b), share in zip(((0.1, 0.42), (0.38, 0.7), (0.66, 0.98)), (0.3, 0.4, 0.3)):
+        out += share * smootherstep((k - a) / (b - a))
+    return 360.0 * float(turns) * out
+
+
+def _frame_shot(H: float, R: float, hc: float, lens: float, feet: float, top: float | None,
+                sun: tuple[float, float] | None = None) -> tuple[float, float]:
+    """(horizontal distance, pitch deg) for a camera hc above the ground framing a figure H
+    tall and R round (spinning): its feet at `feet` of the frame's height and its head at `top`;
+    with top None, its head just under the middle of the sun (elevation, size deg), the sun
+    above it. The figure's width stays inside."""
+    a = math.atan(18.0 / lens)
+    if top is None:
+        el, size = sun
+        head = math.radians(max(el - 0.3 * size, 0.2))
+        d = (H - hc) / math.tan(head)
+    else:
+        want = 2 * a * (top - feet)
+        lo, hi = H * 0.02, H * 5000.0
+        for _ in range(80):                   # the figure's angular height shrinks with d
+            mid = math.sqrt(lo * hi)
+            got = math.atan((H - hc) / mid) + math.atan(hc / mid)
+            lo, hi = (mid, hi) if got > want else (lo, mid)
+        d = hi
+    d = max(d, 1.25 * R / math.tan(0.8 * a))   # the swing's reach fits across
+    p = -math.atan(hc / d) + a - 2 * a * feet
+    return d, math.degrees(p)
+
+
+def cold_open_plan(engine, model, placed, C, seg: dict, co: dict, fps: int, beat: int) -> dict:
+    """The cold open, frame by frame (frames relative to its start, the performance only: the
+    last COLD_BLACK_BEATS are black). JSON-able:
+        start, end, cut        its frames; black from `cut`
+        scene, sun             the set ("sunset_road"), the sun's elevation/azimuth/size (deg;
+                               azimuth 0 is straight ahead of the camera, down the road, +Z)
+        ground_y, pivot        the road's height and the spin's axis ([x, z]) in LDU
+        height, radius         how tall the figure is and how far its swing reaches
+        hidden                 instances not shown (hide_tags: a display stand)
+        groups                 {names, instance}: the moving groups (the mechanism's groups)
+        frames                 per frame, per group a 4x4 world matrix (LDraw, row-major)
+        spin                   per frame the figure's turn about the pivot (4x4 LDraw)
+        u                      per frame the performance's phase (pose parameter as fallback)
+        camera                 per frame pos, target (LDU), lens (mm) and exposure (EV);
+                               `shots` [[frame, name]]
+        rev                    per frame 0..1: how hard the engine revs (the saw's speed)
+        catch                  the frame the engine catches"""
+    n = seg["end"] - seg["start"]
+    m = n - COLD_BLACK_BEATS * beat
+    info = model.meta.get("performance_info") or {}
+    hide = set(co["hide_tags"])
+    hidden = [p.index for p in placed if hide & set(p.tags)]
+    vis = np.ones(len(placed), bool)
+    vis[hidden] = False
+    if not vis.any():
+        vis[:] = True
+        hidden = []
+    Cv = C[vis].reshape(-1, 3)
+    ground_y = float(info.get("ground_y", Cv[:, 1].max()))
+    px, pz = info.get("pivot", ((Cv[:, 0].min() + Cv[:, 0].max()) / 2,
+                                (Cv[:, 2].min() + Cv[:, 2].max()) / 2))
+    pivot = np.array([float(px), ground_y, float(pz)])
+    # the motion: the performance loop (or the pose swinging 0..1..0), coming up to speed
+    perf = model.meta.get("performance") if co["motion"] == "performance" else None
+    fn = perf or model.pose
+    t = np.arange(m) / fps
+    tp = np.cumsum(smootherstep((t - COLD_START) / COLD_RAMP)) / fps
+    cyc = float(co["cycle"])
+    u = (tp / cyc) % 1.0 if perf else 0.5 - 0.5 * np.cos(2 * np.pi * tp / cyc)
+    names, inst = [], [-1] * len(placed)
+    if fn is not None:
+        probe = fn(0.0) or {}
+        for p in placed:
+            g = model.group_of(p)
+            if g is not None and g in probe and vis[p.index]:
+                if g not in names:
+                    names.append(g)
+                inst[p.index] = names.index(g)
+    ident = np.eye(4)
+    mats = np.zeros((m, len(names), 4, 4))
+    for k in range(m):
+        P = (fn(float(u[k])) or {}) if names else {}
+        for j, g in enumerate(names):
+            mats[k, j] = np.asarray(P.get(g, ident), float)
+    yaw = spin_curve(m, float(co["spin_turns"]))
+    from ..ldraw.matrix import rot, transform
+    spins = np.array([translate(*pivot) @ transform((0, 0, 0), rot(y=a)) @ translate(*(-pivot))
+                      for a in yaw])
+    # every part's centre per frame (for the height, the reach and the saw's speed)
+    gi = np.array(inst)
+    ctr = C.mean(1)
+    step = max(1, m // 60)
+
+    def centres(k, sel):
+        c = np.c_[ctr[sel], np.ones(int(sel.sum()))]
+        out = np.empty((int(sel.sum()), 3))
+        gs = gi[sel]
+        for j in set(gs.tolist()):
+            M = spins[k] @ (mats[k, j] if j >= 0 else ident)
+            out[gs == j] = (c[gs == j] @ M.T)[:, :3]
+        return out
+    tops, reach = [], []
+    for k in range(0, m, step):
+        pts = []
+        for j in set(gi[vis].tolist()):
+            M = mats[k, j] if j >= 0 else ident
+            sel = vis & (gi == j)
+            pts.append(apply(M, C[sel].reshape(-1, 3)))
+        q = np.concatenate(pts)
+        tops.append(q[:, 1].min())
+        reach.append(float(np.hypot(q[:, 0] - pivot[0], q[:, 2] - pivot[2]).max()))
+    H = float(ground_y - min(tops))
+    R = float(max(reach))
+    # the engine revs with the saw's speed
+    saw = vis & np.array([co["rev_tag"] in p.tags for p in placed])
+    if not saw.any():
+        saw = vis & (gi >= 0) if (gi >= 0).any() else vis
+    path = np.array([centres(k, saw).mean(0) for k in range(m)])
+    speed = np.r_[0.0, np.linalg.norm(np.diff(path, axis=0), axis=1)] * fps
+    speed = _gauss(speed, 1.5)
+    top = float(np.percentile(speed, 95)) or 1.0
+    rev = np.clip(speed / top, 0.0, 1.0) ** 0.8
+    catch = int(round(COLD_CATCH * fps))
+    rev = rev * smootherstep((t - COLD_START) / COLD_RAMP)
+    rev[:catch] = 0.0
+    # the camera: hard cuts between the shots, each a slow move
+    el = float(co["sun_elevation"])
+    band = float(co["letterbox"])
+    pos = np.zeros((m, 3))
+    tgt = np.zeros((m, 3))
+    lens = np.zeros(m)
+    ev = np.zeros(m)
+    shots = []
+    for i, (a0, name, ln, hc_k, az, feet, top_k, dolly, ev_k) in enumerate(COLD_SHOTS):
+        f0 = int(round(a0 * m))
+        f1 = int(round(COLD_SHOTS[i + 1][0] * m)) if i + 1 < len(COLD_SHOTS) else m
+        if f1 <= f0:
+            continue
+        shots.append([f0, name])
+        feet_f = band + (1 - 2 * band) * feet
+        top_f = None if top_k is None else band + (1 - 2 * band) * top_k
+        hc = hc_k * H
+        d, pitch = _frame_shot(H, R, hc, ln, feet_f, top_f, (el, float(co["sun_size"])))
+        for k in range(f0, f1):
+            e = float(smootherstep((k - f0) / max(1, f1 - f0 - 1)))
+            dk = d * (1 - dolly * e)
+            fov = 2 * math.degrees(math.atan(18.0 / ln))           # a slow arc: a tenth of a frame
+            azk = math.radians(az + (0.1 if az >= 0 else -0.1) * fov * e * (az != 0))
+            fwd = np.array([math.sin(azk), 0.0, math.cos(azk)])
+            cam = pivot - fwd * dk + np.array([0.0, -hc, 0.0])
+            pr = math.radians(pitch)
+            look = np.array([fwd[0] * math.cos(pr), -math.sin(pr), fwd[2] * math.cos(pr)])
+            pos[k], tgt[k], lens[k], ev[k] = cam, cam + look * dk, ln, ev_k
+    r5 = lambda a: np.round(a, 5).tolist()   # noqa: E731
+    return {
+        "start": seg["start"], "end": seg["end"], "cut": seg["start"] + m, "scene": co["scene"],
+        "sun": {"elevation": el, "azimuth": float(co["sun_azimuth"]), "size": float(co["sun_size"])},
+        "ground_y": ground_y, "pivot": [float(pivot[0]), float(pivot[2])], "height": H,
+        "radius": R, "hidden": hidden, "letterbox": band,
+        "groups": {"names": names, "instance": inst},
+        "frames": [[r5(M.reshape(-1)) for M in row] for row in mats],
+        "spin": [r5(M.reshape(-1)) for M in spins], "u": r5(u), "yaw": r5(yaw),
+        "camera": {"pos": r5(pos), "target": r5(tgt), "lens": lens.tolist(),
+                   "exposure": ev.tolist()}, "shots": shots,
+        "rev": r5(rev), "catch": seg["start"] + catch,
+    }
+
+
 # ---------------------------------------------------------------------------- timeline
 def build_timeline(engine, model, segments: list[dict], *, fps: int = FPS, beat: int = BEAT,
-                   variants: dict | None = None, backdrop: str | None = None) -> dict:
+                   variants: dict | None = None, backdrop: str | None = None,
+                   cfg: dict | None = None) -> dict:
     """`variants`: {name: {"title": str, "model": Model}} colourways with the same parts in
-    the same places as `model` (see make_video)."""
-    cfg = video_config(model)
+    the same places as `model` (see make_video); `cfg` the video config (default the model's,
+    video_config)."""
+    cfg = video_config(model) if cfg is None else cfg
     seg = {s["name"]: s for s in segments}
     scene_segs = [s for s in segments if s["kind"] == "scene"]
     total = segments[-1]["end"]
@@ -862,6 +1087,10 @@ def build_timeline(engine, model, segments: list[dict], *, fps: int = FPS, beat:
     cam, shots = plan_camera(model, segments, seg, front, shape, C, appear, seq, sections,
                              moving, group_names, inst_group, pose_frames, lifted, lift_frames,
                              placed, fps, beat, s0, s1, engine)
+    cold = None
+    if "cold_open" in seg:
+        cold = cold_open_plan(engine, model, placed, C, seg["cold_open"],
+                              cold_open_config(model, cfg), fps, beat)
 
     return {
         "fps": fps, "beat": beat, "frames": total, "segments": segments, "scene": scene,
@@ -882,7 +1111,7 @@ def build_timeline(engine, model, segments: list[dict], *, fps: int = FPS, beat:
                  "frames": lift_frames},
         "lights": {"leds": leds, "dim": dim.tolist(), "led": led.tolist(), "glow": led.tolist(),
                    "start": s0, "power_on": power_on, "power_off": power_off},
-        "variants": var_out, "colourways": cw,
+        "variants": var_out, "colourways": cw, "cold_open": cold,
     }
 
 

@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import argparse
+from pathlib import Path
 
 from . import paths
 
@@ -119,6 +120,12 @@ def main(argv=None) -> int:
     p.add_argument("--no-render", action="store_true",
                    help="compose from the plates already rendered (grey where missing)")
     p.add_argument("--stills", help="comma list of frames: write composed PNGs, no video")
+    p.add_argument("--theme", help="try another theme for this run (brand, scan, tape, playful, "
+                                   "grindhouse): out/video_THEME*.mp4, the model's own left alone")
+    p.add_argument("--cold-open", metavar="SCENE", help="try a cold open (sunset_road) for "
+                   "this run: tagged outputs like --theme; --segments cold_open for just it")
+    p.add_argument("--scratch", metavar="DIR", help="write this run's work and outputs under DIR "
+                   "(the model's out/ is only read)")
     p.add_argument("--workers", type=int, default=4, help="parallel compositor pages")
     p = sub.add_parser("viewer", help="export the model (and its colourways) to the viewer site")
     p.add_argument("slug")
@@ -177,7 +184,9 @@ def main(argv=None) -> int:
         out = make_video(engine, proj, model, _out(proj, model.variant), preview=args.preview,
                          segments=segs, force=args.force, render_engine=args.engine,
                          device=args.device, audio=not args.no_audio,
-                         render=not args.no_render, stills=stills, workers=args.workers)
+                         render=not args.no_render, stills=stills, workers=args.workers,
+                         theme_name=args.theme, cold_open=args.cold_open,
+                         scratch=Path(args.scratch).resolve() if args.scratch else None)
         print(f"video -> {out}")
         return 0
     if args.cmd == "viewer":

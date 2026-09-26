@@ -62,6 +62,7 @@ const WIPES = {
   band(f, p, t) {
     const th = TH.name;
     if (th === 'tape') { vhsGlitch(f, 1 - Math.abs(p), 0.5); return; }
+    if (th === 'grindhouse') { frameSlip(f, p, t, 0.16); return; }
     if (th === 'scan') {
       const x = lerp(-60, L + 60, (p + 1) / 2);
       CX.save(); CX.globalCompositeOperation = 'screen';
@@ -135,12 +136,108 @@ const WIPES = {
     }
     CX.restore();
   },
+  // grindhouse: the print catches in the gate and burns - a blister of white-hot emulsion with
+  // a charred rim eats the picture, the cut is spliced in with a slip and a flash, the burn clears
+  burn(f, p, t) {
+    const R = rng(t.frame * 97 + 13);
+    const a0 = R() * Math.PI * 2;
+    const ox = L / 2 + Math.cos(a0) * L * 0.2, oy = L / 2 + Math.sin(a0) * L * 0.2;
+    const ph = [0, 0, 1, 2, 3, 4, 5].map(() => R() * Math.PI * 2);
+    // the hole grows from a spot, slowly then all at once; after the cut the light clears
+    const q = p < 0 ? clamp(1 + p) : clamp(1 - p);
+    const c = p < 0 ? Math.pow(q, 2.2) : Math.pow(q, 1.6);
+    // the picture over-exposes towards amber as the burn takes hold
+    CX.save();
+    CX.globalCompositeOperation = 'screen';
+    CX.fillStyle = rgba('#FF8A2A', 0.45 * q * q * q * (0.85 + 0.3 * hash(f, 91)));
+    CX.fillRect(0, 0, L, L);
+    CX.restore();
+    if (p > 0) frameSlip(f, p * 0.6, t, 0.12);           // spliced in: settles as it clears
+    if (c < 0.003) return;
+    const rad = c * L * 1.3;
+    const edge = (a, k) => rad * k * (1 + 0.16 * (Math.sin(2 * a + ph[1] + f * 0.07)
+      + Math.sin(3 * a + ph[2] - f * 0.05) / 2 + Math.sin(5 * a + ph[3] + f * 0.11) / 3
+      + Math.sin(7 * a + ph[4]) / 4 + Math.sin(11 * a + ph[5] - f * 0.13) / 5));
+    const blob = (k, grow = 0) => {
+      CX.beginPath();
+      for (let i = 0; i <= 96; i++) {
+        const a = i / 96 * Math.PI * 2;
+        const r = edge(a, k) + grow;
+        if (i === 0) CX.moveTo(ox + Math.cos(a) * r, oy + Math.sin(a) * r);
+        else CX.lineTo(ox + Math.cos(a) * r, oy + Math.sin(a) * r);
+      }
+      CX.closePath();
+    };
+    CX.save();
+    CX.globalAlpha = p > 0 ? Math.min(1, q * 1.6) : 1;
+    // a charred rim, then the molten orange, then the white-hot hole
+    CX.filter = `blur(${10 * S}px)`;
+    CX.fillStyle = rgba('#1C0A03', 0.85); blob(1.0, 26); CX.fill();
+    CX.filter = `blur(${4 * S}px)`;
+    const g = CX.createRadialGradient(ox, oy, 0, ox, oy, Math.max(1, rad * 1.1));
+    g.addColorStop(0, '#FFF8EA'); g.addColorStop(0.5, '#FFE3A6'); g.addColorStop(0.78, '#FFA23A');
+    g.addColorStop(0.93, '#E4460E'); g.addColorStop(1, '#6B1604');
+    CX.fillStyle = g; blob(1.0); CX.fill();
+    CX.filter = 'none';
+    // blisters bubbling up ahead of the edge
+    CX.filter = `blur(${2.5 * S}px)`;
+    for (let i = 0; i < 9; i++) {
+      const a = R() * Math.PI * 2, k = 1.06 + R() * 0.25, s = (4 + R() * 16) * clamp(c * 4);
+      const r = edge(a, k);
+      const x = ox + Math.cos(a) * r, y = oy + Math.sin(a) * r, sq = 0.6 + 0.4 * R(), rot = R() * Math.PI;
+      CX.fillStyle = rgba('#2A0E04', 0.75); CX.beginPath(); CX.ellipse(x, y, s + 4, (s + 4) * sq, rot, 0, Math.PI * 2); CX.fill();
+      CX.fillStyle = rgba('#FFB347', 0.95); CX.beginPath(); CX.ellipse(x, y, s, s * sq, rot, 0, Math.PI * 2); CX.fill();
+      CX.fillStyle = rgba('#FFF4DC', 0.9); CX.beginPath(); CX.ellipse(x, y, s * 0.45, s * 0.45 * sq, rot, 0, Math.PI * 2); CX.fill();
+    }
+    CX.filter = 'none';
+    CX.restore();
+    // at the cut the gate is all light
+    if (Math.abs(p) < 0.12) { CX.fillStyle = '#FFF6E6'; CX.fillRect(0, 0, L, L); }
+  },
 };
+
+// grindhouse: the film slips a frame in the gate - the picture jumps by `amt` of a frame, the
+// frame line and the sprocket holes show, the lamp flares; |p| < 1 is the slip's span
+function frameSlip(f, p, t, amt) {
+  const q = 1 - Math.abs(p);
+  if (q <= 0) return;
+  const dir = hash(t.frame, 5) < 0.5 ? 1 : -1;
+  const jolt = q > 0.62 ? 1 : q > 0.45 ? 0.4 : 0;          // it jumps, hangs, then catches
+  const dy = dir * jolt * amt * L * (0.85 + 0.3 * hash(f, 6));
+  if (Math.abs(dy) > 0.5) {
+    const [c, x] = off('slip');
+    x.setTransform(1, 0, 0, 1, 0, 0);
+    x.drawImage(CV, 0, 0);
+    const gap = 22;                                        // the black frame line
+    CX.save();
+    CX.fillStyle = '#050302'; CX.fillRect(0, 0, L, L);
+    CX.drawImage(c, 0, dy, L, L);
+    CX.drawImage(c, 0, dy - dir * (L + gap), L, L);       // the neighbouring frame
+    const ly = dy > 0 ? dy - gap : dy + L;
+    CX.fillStyle = '#050302'; CX.fillRect(0, ly, L, gap);
+    // the film's edge: sprocket holes passing the gate
+    CX.fillStyle = rgba('#050302', 0.9); CX.fillRect(0, 0, 46, L);
+    CX.fillStyle = rgba('#F4E6C8', 0.85);
+    const pitch = (L + gap) / 2;
+    for (let y = ((dy % pitch) + pitch) % pitch - pitch; y < L; y += pitch) {
+      rrect(10, y + pitch / 2 - 30, 24, 60, 6); CX.fill();
+    }
+    CX.restore();
+  }
+  // the lamp flares as the frame jumps
+  const fl = q > 0.7 ? (q - 0.7) / 0.3 * (0.35 + 0.35 * hash(f, 8)) : 0.08 * q * hash(f, 9);
+  if (fl > 0.01) {
+    CX.save(); CX.globalCompositeOperation = 'screen';
+    CX.fillStyle = rgba('#FFF1D8', fl); CX.fillRect(0, 0, L, L);
+    CX.restore();
+  }
+}
 
 function brickPalette() {
   const t = TH.name;
   if (t === 'scan') return ['#0B3A46', '#0F5563', '#35F2E0', '#072634', '#18B7FF', '#0A2F3A'];
   if (t === 'tape') return ['#2B0F47', '#FF3EA5', '#1C0B33', '#29E3FF', '#3D1766', '#FFD23F'];
+  if (t === 'grindhouse') return ['#2B2019', TH.accent, '#4A3A2E', TH.accent2, '#1A120E', TH.ink];
   if (t === 'playful') {
     const P = (D.palette || []).slice(0, 4).map(c => c.rgb);
     return [TH.bg2, TH.accent, TH.accent2, ...P];
@@ -220,10 +317,10 @@ function grain(f, amount) {
   CX.restore();
 }
 
-function vignette(a) {
+function vignette(a, r0 = 0.38, r1 = 0.78) {
   if (a <= 0) return;
   CX.save();
-  const g = CX.createRadialGradient(L / 2, L / 2, L * 0.38, L / 2, L / 2, L * 0.78);
+  const g = CX.createRadialGradient(L / 2, L / 2, L * r0, L / 2, L / 2, L * r1);
   g.addColorStop(0, 'rgba(0,0,0,0)'); g.addColorStop(1, `rgba(0,0,0,${a})`);
   CX.fillStyle = g; CX.fillRect(0, 0, L, L);
   CX.restore();
@@ -277,11 +374,104 @@ function vhsLook(f, s) {
   CX.restore();
 }
 
+// the grindhouse print: gate weave, a faded warm stock, exposure flicker, dust, hairs and
+// scratches that come and go, now and then a light leak, a heavy soft vignette. The artefacts
+// are frame-seeded (deterministic) and kept small and off the middle while the model builds.
+function filmLook(f, s) {
+  const build = s.name === 'build';
+  // gate weave: the whole picture wanders a pixel or so (scaled a touch so no edge shows)
+  const wx = (hash(f, 11) - 0.5) * 1.4 + Math.sin(f * 0.23) * 0.5;
+  const wy = (hash(f, 12) - 0.5) * 2.0 + Math.sin(f * 0.11 + 1.3) * 0.9;
+  const [c, x] = off('weave');
+  x.setTransform(1, 0, 0, 1, 0, 0);
+  x.drawImage(CV, 0, 0);
+  CX.save();
+  CX.setTransform(1, 0, 0, 1, 0, 0);
+  const k = 1.008;
+  CX.translate(CV.width / 2 + wx * S, CV.height / 2 + wy * S); CX.scale(k, k);
+  CX.translate(-CV.width / 2, -CV.height / 2);
+  CX.drawImage(c, 0, 0);
+  CX.restore();
+  CX.save();
+  // the stock: whites a little warm, blacks lifted to a brown
+  CX.globalCompositeOperation = 'multiply'; CX.fillStyle = '#FFF0D8'; CX.fillRect(0, 0, L, L);
+  CX.globalCompositeOperation = 'screen'; CX.fillStyle = '#140B06'; CX.fillRect(0, 0, L, L);
+  // exposure flicker
+  const fl = (hash(f, 13) - 0.5) * 0.08 + Math.sin(f * 0.61) * 0.015;
+  if (fl > 0) { CX.globalCompositeOperation = 'screen'; CX.fillStyle = rgba('#FFE9C8', fl); }
+  else { CX.globalCompositeOperation = 'source-over'; CX.fillStyle = rgba('#000000', -fl); }
+  CX.fillRect(0, 0, L, L);
+  CX.globalCompositeOperation = 'source-over';
+  // dust: specks for a frame each, mostly dark, sometimes a bright one
+  const R = rng(f * 7919 + 3);
+  const n = Math.floor(R() * (build ? 4 : 7));
+  for (let i = 0; i < n; i++) {
+    const px = R() * L, py = R() * L, big = R() < 0.12, sz = big ? 3 + R() * 5 : 0.8 + R() * 2.2;
+    if (build && Math.hypot(px - L / 2, py - L / 2) < L * 0.3 && sz > 2) continue;
+    CX.fillStyle = R() < 0.75 ? rgba('#0C0604', 0.55 + 0.35 * R()) : rgba('#FFF4DE', 0.45 + 0.3 * R());
+    CX.beginPath(); CX.ellipse(px, py, sz, sz * (0.5 + 0.5 * R()), R() * Math.PI, 0, Math.PI * 2); CX.fill();
+    if (big) { CX.beginPath(); CX.ellipse(px + sz * 0.8, py + sz * 0.3, sz * 0.5, sz * 0.4, 0, 0, Math.PI * 2); CX.fill(); }
+  }
+  // a hair caught in the gate: stays a few frames near an edge, trembling
+  const hw = Math.floor(f / 41), hr = rng(hw * 31 + 7);
+  if (hr() < 0.35) {
+    const h0 = hw * 41 + Math.floor(hr() * 20), h1 = h0 + 6 + Math.floor(hr() * 14);
+    if (f >= h0 && f < h1) {
+      const side = Math.floor(hr() * 4), along = 0.15 + hr() * 0.7, depth = 20 + hr() * 90;
+      let hx = side < 2 ? along * L : side === 2 ? depth : L - depth;
+      let hy = side < 2 ? (side === 0 ? depth : L - depth) : along * L;
+      hx += (hash(f, 14) - 0.5) * 3; hy += (hash(f, 15) - 0.5) * 3;
+      const len = 40 + hr() * 90, a = hr() * Math.PI * 2;
+      CX.strokeStyle = rgba('#0A0503', 0.7); CX.lineWidth = 1.3; CX.lineCap = 'round';
+      CX.beginPath(); CX.moveTo(hx, hy);
+      CX.bezierCurveTo(hx + Math.cos(a) * len * 0.4 + 20, hy + Math.sin(a) * len * 0.4 - 15,
+        hx + Math.cos(a + 0.8) * len * 0.8, hy + Math.sin(a + 0.8) * len * 0.8,
+        hx + Math.cos(a + 0.4) * len, hy + Math.sin(a + 0.4) * len);
+      CX.stroke();
+    }
+  }
+  // scratches: fine vertical lines that run for a second or so, drifting, flickering
+  for (let lane = 0; lane < 2; lane++) {
+    const W = 29 + lane * 17, w = Math.floor(f / W), sr = rng(w * 131 + lane * 977 + 5);
+    if (sr() > (build ? 0.4 : 0.55)) continue;
+    const sx = (0.08 + sr() * 0.84) * L + (f - w * W) * (sr() - 0.5) * 1.2;
+    if (build && Math.abs(sx - L / 2) < L * 0.18) continue;
+    const bright = sr() < 0.6;
+    CX.fillStyle = bright ? rgba('#FFF4DE', 0.12 + 0.18 * hash(f, 16 + lane))
+      : rgba('#0C0604', 0.2 + 0.2 * hash(f, 18 + lane));
+    let y = -20;
+    while (y < L) {                                   // broken where the emulsion held
+      const seg = 80 + sr() * 400;
+      CX.fillRect(sx + Math.sin(y * 0.01 + w) * 1.5, y, 1.4, seg);
+      y += seg + sr() * 60;
+    }
+  }
+  // a light leak now and then: warm flare bleeding in from an edge
+  const lw = Math.floor(f / 97), lr = rng(lw * 57 + 11);
+  if (lr() < 0.4) {
+    const l0 = lw * 97 + Math.floor(lr() * 60), l1 = l0 + 22 + Math.floor(lr() * 14);
+    if (f >= l0 && f < l1) {
+      const u = (f - l0) / (l1 - l0);
+      const amp = Math.sin(Math.PI * u) * (0.75 + 0.25 * hash(f, 19)) * (build || s.kind === 'scene' ? 0.2 : 0.42);
+      const side = Math.floor(lr() * 3), cx = side === 0 ? -80 : side === 1 ? L + 80 : lr() * L;
+      const cy = side === 2 ? -80 : (0.2 + lr() * 0.6) * L;
+      const g = CX.createRadialGradient(cx, cy, 10, cx, cy, L * 0.62);
+      g.addColorStop(0, rgba('#FFD08A', amp)); g.addColorStop(0.35, rgba('#FF6A1A', amp * 0.8));
+      g.addColorStop(1, rgba('#B01A00', 0));
+      CX.globalCompositeOperation = 'screen'; CX.fillStyle = g; CX.fillRect(0, 0, L, L);
+    }
+  }
+  CX.restore();
+  vignette(0.62, 0.26, 0.86);
+}
+
 function post(f, s) {
+  if (s.name === 'cold_open' && f >= D.cold_open.cut) return;      // the hard cut: black
   const t = TH.name;
   const isScene = s.kind === 'scene';
   if (t === 'tape') vhsLook(f, s);
   if (t === 'scan' && (isScene || s.name === 'title' || s.name === 'palette')) scanlines(f, 0.05, 3);
-  vignette(t === 'brand' ? 0.1 : t === 'playful' ? 0.08 : 0.3);
+  if (t === 'grindhouse') filmLook(f, s);
+  else vignette(t === 'brand' ? 0.1 : t === 'playful' ? 0.08 : 0.3);
   grain(f, TH.grain || 0);
 }

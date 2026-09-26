@@ -1,0 +1,5 @@
+0 brickkit overlay for "Brick 2 x 2 with Axlehole and Ball Socket Type 4" (67696)
+0 // The LDCad shadow library has no socket snap for this newer brick (LEGO's football
+0 // figures use it for the shoulders). Its socket is where 92013's and 62712's are
+0 // (s\92013s01.dat, s\62712s01.dat): 40 LDU out from the centre, 10 below the top.
+0 !LDCAD SNAP_GEN [group=techBallJnt] [gender=F] [bounding=sph 12.7] [match=size] [placement=free] [pos=40 10 0]
