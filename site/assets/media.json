@@ -19,8 +19,8 @@
      "size": 1613884
     },
     "model.json": {
-     "v": "53abfde7c9",
-     "size": 377559
+     "v": "be85c808c8",
+     "size": 377645
     },
     "parts.csv": {
      "v": "810adee2b3",
@@ -57,6 +57,10 @@
     "renders/renders_three_quarter.png": {
      "v": "1ab024dbc9",
      "size": 813609
+    },
+    "turntable.mp4": {
+     "v": "e2b1cc3a2b",
+     "size": 2924977
     },
     "video.mp4": {
      "v": "da3b296598",
