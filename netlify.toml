@@ -74,6 +74,12 @@
 
 # Data and pages change on every export: always revalidate.
 [[headers]]
+  for = "/*.mp4"
+  [headers.values]
+    # requested with ?v=<content hash> (see assets/media.json), so safe to keep for a year
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
   for = "/*.json"
   [headers.values]
     Cache-Control = "public, max-age=0, must-revalidate"

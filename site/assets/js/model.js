@@ -586,7 +586,12 @@ async function initViewer(d) {
       v.src = media.url(tt);
       v.addEventListener('playing', () => host.classList.add('is-turntable'), { once: true });
       poster.after(v);
-      v.play?.().catch(() => {});
+      // browsers skip autoplay in a hidden tab or before data arrives: keep nudging it
+      const go = () => { if (v.paused) v.play?.().catch(() => {}); };
+      v.addEventListener('canplay', go);
+      document.addEventListener('visibilitychange', go);
+      new IntersectionObserver((e) => { if (e[0].isIntersecting) go(); }).observe(v);
+      go();
       $('#viewer-loading').innerHTML = '';
       return;
     }

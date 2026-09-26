@@ -133,8 +133,8 @@
      "size": 773008
     },
     "model.json": {
-     "v": "3df4b127b2",
-     "size": 167075
+     "v": "ccaca153aa",
+     "size": 167161
     },
     "parts.csv": {
      "v": "9559bb7d7b",
@@ -168,13 +168,17 @@
      "v": "bf9b1cf403",
      "size": 829110
     },
+    "turntable.mp4": {
+     "v": "904ea00824",
+     "size": 495985
+    },
     "video.mp4": {
-     "v": "ecada463f4",
-     "size": 19556553
+     "v": "a417fbc9b3",
+     "size": 18539405
     },
     "video_poster.jpg": {
-     "v": "5adb8e165d",
-     "size": 113335
+     "v": "78b8fdac5e",
+     "size": 103335
     }
    },
    "images": {
@@ -225,8 +229,8 @@
      "size": 1238024
     },
     "model.json": {
-     "v": "4229f14d59",
-     "size": 93886
+     "v": "c1537886c4",
+     "size": 93972
     },
     "parts.csv": {
      "v": "1db45b516c",
@@ -237,8 +241,8 @@
      "size": 730
     },
     "price_estimate.md": {
-     "v": "df233e0aa3",
-     "size": 5756
+     "v": "d0ce4a28ff",
+     "size": 5842
     },
     "renders/hero_hero.png": {
      "v": "b98d989797",
@@ -263,6 +267,10 @@
     "renders/renders_three_quarter.png": {
      "v": "8f0a566430",
      "size": 662596
+    },
+    "turntable.mp4": {
+     "v": "2168732803",
+     "size": 781637
     },
     "vhs_tape.mpd": {
      "v": "7ebf4409c8",

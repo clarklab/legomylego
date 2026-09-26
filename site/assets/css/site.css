@@ -1713,3 +1713,6 @@ body > main { flex: 1 0 auto; }
 .video-card .more { margin-left: auto; display: inline-flex; align-items: center; gap: 6px; font-weight: 700; }
 .video-card .more .icon { width: 16px; height: 16px; }
 [data-page="videos"] .section-head h1 { font-size: clamp(2.2rem, 5vw, 3.4rem); margin-top: 10px; }
+
+/* No 3D: the still render or the turntable loop are square; show them whole on every screen */
+.viewer.is-fallback { height: auto; min-height: 0; aspect-ratio: 1 / 1; }
