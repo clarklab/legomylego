@@ -39,7 +39,7 @@ import numpy as np
 
 from . import timeline as T
 
-URL = "lego.superfun.games"
+URL = "bricks.superfun.games"
 DISCLAIMER = "Unofficial fan model · computer-checked, not yet built with real bricks"
 MOODS = {"cold_open": "cold", "open": "intro", "title": "rise", "build": "groove",
          "scan": "breakdown", "mechanism": "halftime", "lights": "feature", "lift": "feature",

@@ -36,7 +36,8 @@ from resvg_py import svg_to_bytes
 
 ROOT = Path(__file__).resolve().parents[1]
 SITE = ROOT / "site"
-ORIGIN = "https://lego.superfun.games"
+ORIGIN = "https://bricks.superfun.games"
+HOST = ORIGIN.removeprefix("https://")
 SITE_NAME = "Bricks"
 SHORT_NAME = "Bricks"
 SITE_DESC = ("Buildable models made from real LEGO parts. Every part, connection and step "
@@ -275,7 +276,7 @@ def og_home() -> None:
     tile = draw_mark(334)
     img.paste(tile, (798, 160), tile)
     d.line((64, 548, 1136, 548), fill=(226, 221, 207), width=1)
-    d.text((64, 573), "lego.superfun.games", font=font(20, 400), fill=MUTED, anchor="lt")
+    d.text((64, 573), HOST, font=font(20, 400), fill=MUTED, anchor="lt")
     save_png(img, SITE / "assets" / "og" / "home.png")
 
 
@@ -334,7 +335,7 @@ def og_model(m: dict, data: dict, slug_dir: Path) -> Path:
     steps = len(data.get("steps") or [])
     detail = f"{height} cm tall" + (f"  ·  {steps:,} build steps" if steps else "")
     d.text((66, y + 44), detail, font=font(22, 400), fill=MUTED, anchor="lt")
-    d.text((66, 554), "lego.superfun.games", font=font(20, 400), fill=MUTED, anchor="lt")
+    d.text((66, 554), HOST, font=font(20, 400), fill=MUTED, anchor="lt")
     out = SITE / "assets" / "og" / f"{m['slug']}.png"
     save_png(img, out)
     return out
@@ -441,7 +442,11 @@ def model_page(template: str, m: dict, data: dict, og_v: str, notice: str) -> st
     return page.replace("<!doctype html>", "<!doctype html>\n" + GENERATED, 1)
 
 
-STAMP_RE = re.compile(r'((?:href|src|srcset|content)=")((?:https://lego\.superfun\.games)?/(?!vendor/)[^"?#\s]+\.(?:png|webp|ico|svg|webmanifest|jpg))(?:\?v=[0-9a-f]+)?(")')
+STAMP_RE = re.compile(
+    r'((?:href|src|srcset|content)=")'
+    rf'((?:{re.escape(ORIGIN)})?/(?!vendor/)[^"?#\s]+\.(?:png|webp|ico|svg|webmanifest|jpg))'
+    r'(?:\?v=[0-9a-f]+)?(")'
+)
 BRAND_MARK_RE = re.compile(r'<!-- brand-mark:start -->.*?<!-- brand-mark:end -->', re.S)
 
 

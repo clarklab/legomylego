@@ -3,7 +3,7 @@ import { hydrateIcons } from './icons.js';
 
 export const SITE = {
   name: "Bricks",
-  url: 'https://lego.superfun.games',
+  url: 'https://bricks.superfun.games',
 };
 
 export const $ = (sel, root = document) => root.querySelector(sel);

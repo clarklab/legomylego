@@ -3,7 +3,7 @@ Make LEGO easier than a toaster
 
 Buildable models made only of real LEGO elements. They are designed in Python, checked by
 computer, and shipped with parts lists, an instruction booklet, a build video and a 3D viewer
-at **[lego.superfun.games](https://lego.superfun.games)**.
+at **[bricks.superfun.games](https://bricks.superfun.games)**.
 
 > Computer-checked, not yet built with real bricks. Every part/colour exists, every
 > connection is matched in 3D, nothing overlaps, every step can be built, the model balances
@@ -64,7 +64,7 @@ JVC KENWOOD Corporation.
 
 ## Site
 
-`site/` is a static site deployed by Netlify (`netlify.toml`) at lego.superfun.games.
+`site/` is a static site deployed by Netlify (`netlify.toml`) at bricks.superfun.games.
 
 Shared design tokens and page styles live in `site/assets/css/site.css`; the model viewer
 and detail sections use `site/assets/css/model.css`. Inter is served locally from

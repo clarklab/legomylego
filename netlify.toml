@@ -1,4 +1,4 @@
-# Netlify deploy for https://lego.superfun.games
+# Netlify deploy for https://bricks.superfun.games
 # The site is static with no build step. After exporting a model
 # (python -m brickkit viewer <slug>) run `python tools/site_assets.py` and commit site/.
 
