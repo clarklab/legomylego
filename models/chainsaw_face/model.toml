@@ -1,7 +1,7 @@
 [model]
 name = "Chainsaw Face"
 design = "design.py"
-description = "Chainsaw Face, a masked slasher in a butcher's apron, as a 30 cm (12 in) brick-built figure on a display stand: neck, shoulders, elbows, wrists, waist, hips, knees and ankles all pose, and he swings his chainsaw from high overhead down across his hips."
+description = "Chainsaw Face, a masked slasher in a butcher's apron, as a 31 cm (12 in) brick-built figure on a display stand: neck, shoulders, elbows, wrists, waist, hips, knees and ankles all pose, and he swings his chainsaw from high overhead down across his hips."
 palette_title = "Blood-spattered"
 
 [palette]
@@ -40,7 +40,7 @@ min_margin = 0.25
 min_tilt_deg = 10
 
 [booklet]
-subtitle = "A masked, chainsaw-swinging slasher in a butcher's apron, 30 cm (12 in) tall on a floorboard stand, his chainsaw raised high overhead in both fists. Every joint poses, like LEGO's big football figures."
+subtitle = "A masked, chainsaw-swinging slasher in a butcher's apron, 31 cm (12 in) tall on a floorboard stand, his chainsaw raised high overhead in both fists. Every joint poses, like LEGO's big football figures."
 intro = "Built from the ground up: the stand with its floorboards and blank nameplate, the shoes on its studs, the legs (ball joints at the ankles and hips, ratchet disks at the knees) and the hips, pinned to the stand's post from behind, with the apron's skirt pressed onto the front. The torso turns on a turntable at the waist and carries the bib, the tie and the shoulder balls; the head is a mask on a ball joint under a shaggy mop of hair. The arms swing on ball-joint shoulders, bend at ratchet elbows and end in fists on ball-joint wrists. Last, the chainsaw's two handles clip into his fists."
 notes = [
   "The face is a smooth panel of Tan tiles, the mask ready for painting: add its stitches, wrinkles and a snarl with a fine brush or a sticker if you like.",
@@ -58,7 +58,7 @@ works = [
 # Build video (brickkit video): labels and callouts; see docs/brickkit-guide.md, "Video".
 [video]
 theme = "grindhouse"
-facts = ["30 cm tall"]
+facts = ["31 cm tall"]
 
 [video.theme_overrides]
 grain = 0.06               # a touch less grain keeps the showreel under 40 MB

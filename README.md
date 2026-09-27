@@ -17,7 +17,7 @@ at **[lego.superfun.games](https://lego.superfun.games)**.
 | [Baby Metroid Lamp](models/baby_metroid/NOTES.md) | 2,903 | 18 cm across, 32 cm tall on its stand | a tap lamp: press it down and the fangs bite and the 3 nuclei light up (Power Functions), press again for off; lifts off its stand | $134-$428 |
 | [VHS Cassette](models/vhs_tape/NOTES.md) | 384 | 184 x 102 x 26 mm (real tape: 187 x 103 x 25) | full-length dust flap swings up on Technic pins; both reels turn on red spindles behind two clear windows; black or white (head cleaner) shell | $16-$56 |
 | [Ferret](models/ferret/NOTES.md) | 895 | 51 cm nose to tail | head turns on a turntable; sable, albino and cinnamon coats | $37-$117 |
-| [Chainsaw Face](models/chainsaw_face/NOTES.md) | 809 | 31.5 cm (12.4 in) tall on his stand, 29.6 cm soles to hair; 12.8 cm chainsaw | posable figure: ball joints at the neck, shoulders, wrists, hips and ankles, ratchet elbows and knees, a waist turntable; swings the chainsaw from overhead down across his hips in both fists; spattered or clean apron | $30-$109 |
+| [Chainsaw Face](models/chainsaw_face/NOTES.md) | 838 | 33.4 cm (13.1 in) tall on his stand, 31.4 cm soles to hair; 12.8 cm chainsaw | posable figure: ball joints at the neck, shoulders, wrists, hips and ankles, ratchet elbows and knees, a waist turntable; swings the chainsaw from overhead down across his hips in both fists; spattered or clean apron | $31-$113 |
 
 *Rough range from typical per-part prices (`out/price_estimate.md`), not live market data.
 Upload `out/bricklink_wanted.xml` to a BrickLink Wanted List for a real quote.

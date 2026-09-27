@@ -5,10 +5,10 @@
     {
       "name": "real_elements",
       "status": "pass",
-      "summary": "189 part/colour combinations: 0 not real, 0 rare",
+      "summary": "193 part/colour combinations: 0 not real, 0 rare",
       "items": [],
       "stats": {
-        "combinations": 189,
+        "combinations": 193,
         "not_real": 0,
         "rare": 0
       }
@@ -16,12 +16,12 @@
     {
       "name": "connections",
       "status": "pass",
-      "summary": "3283 connections (3136 stud, 110 pin, 22 axle, 9 ball, 6 clip); 1 separate piece(s)",
+      "summary": "3431 connections (3284 stud, 110 pin, 22 axle, 9 ball, 6 clip); 1 separate piece(s)",
       "items": [],
       "stats": {
-        "connections": 3283,
+        "connections": 3431,
         "by_kind": {
-          "stud": 3136,
+          "stud": 3284,
           "pin": 110,
           "axle": 22,
           "clip": 6,
@@ -33,7 +33,7 @@
     {
       "name": "collisions",
       "status": "pass",
-      "summary": "0 overlapping pair(s) among 809 parts",
+      "summary": "0 overlapping pair(s) among 838 parts",
       "items": [],
       "stats": {
         "pairs": 0
@@ -42,28 +42,28 @@
     {
       "name": "buildability",
       "status": "pass",
-      "summary": "736 insertions tried across 25 submodel(s); 0 problem(s)",
+      "summary": "765 insertions tried across 25 submodel(s); 0 problem(s)",
       "items": [],
       "stats": {
-        "insertions": 736
+        "insertions": 765
       }
     },
     {
       "name": "stability",
       "status": "pass",
-      "summary": "about 996 g; centre of mass inside the base (89% margin); tips at 16.9 deg",
+      "summary": "about 1035 g; centre of mass inside the base (88% margin); tips at 16.2 deg",
       "items": [],
       "stats": {
-        "mass_g": 996.07173651582,
+        "mass_g": 1034.6352981424686,
         "com": [
-          -2.244408714261998,
-          -410.28721094575315,
-          -15.501642045860308
+          -2.004770480522906,
+          -426.0784301896284,
+          -16.510135464075645
         ],
         "approx_parts": 0,
-        "margin": 0.8892739853867121,
-        "tip_angle_deg": 16.879999124559923,
-        "com_height_ldu": 410.28721094575315
+        "margin": 0.8820704609708883,
+        "tip_angle_deg": 16.163118498581728,
+        "com_height_ldu": 426.0784301896284
       }
     },
     {

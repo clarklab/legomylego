@@ -5,19 +5,22 @@ the torso's Technic ball in a wide ball socket brick (67696) behind the face, it
 facing back: the head nods, turns and tilts a little. The ball sits in the back half of the
 head, where a neck joins a skull.
 
-Cells: x in [-60, 60] (6 studs), z in [-80, 40] (6 studs). Two sections of brick + 2 plates
-(common levels every 40 LDU), so bricks with studs on the side (22885) in the front row
-carry the face: a panel of smooth tiles built flat and turned to face forward (paint the
-mask's details on it later), four rows: chin, bared teeth in a snarl, sunken eyes either
-side of the nose, the heavy brow. Hair: dark brown on the back, the sides and the crown,
-curved slopes falling every which way for a messy look, overhanging the head a stud all
-round, a fringe over the brow. Ears (round plates on bricks with side studs) either side.
-Chin to crown: 104 LDU (4.2 cm)."""
+Cells: x in [-60, 60] (6 studs), z in [-80, 40] (6 studs). Three sections of brick + 2
+plates (common levels every 40 LDU), so bricks with studs on the side (22885) in the front
+row carry the face: a panel of smooth tiles built flat and turned to face forward (paint the
+mask's details on it later), six rows from the chin up: the jaw and chin, bared teeth in a
+snarl, the nose, sunken eyes, the heavy brow, the forehead. Hair: dark brown on the back,
+the sides above the ears and the crown: a mop that overhangs the head a stud all round,
+curved slopes falling every which way over a raised middle, a fringe over the forehead and
+bricks hanging down the sides and the back. Ears (round plates on bricks with side studs) at
+the eyes' and nose's level. The ball sits low in the back of the head, behind the jaw.
+Chin to crown: 160 LDU (6.4 cm), 1.33 times the face's width."""
 from __future__ import annotations
 
 from kit import BR, PL, S, Grid, Seg, bbox, box_cells, rot
 
-FACE_ROWS = 4
+FACE_ROWS = 6
+K_CHIN, K_MOUTH, K_NOSE, K_EYES, K_BROW = -6, -5, -4, -3, -2   # face rows (K_BROW + 1: forehead)
 EARS = {(2, -3): 1, (-3, -3): -1}   # ear cells (bricks with a side stud) and which way out
 
 # the hair on the crown (8 x 8 studs: the head's 6 x 6 and a stud's overhang all round):
@@ -34,29 +37,29 @@ HAIR = ([("11477", 20 * i + 10, -80, 0) for i in range(-2, 2)]            # frin
 # hair hanging under the crown's overhang, down the sides (not over the ears) and the back,
 # longer at the back: (part, x, z, degrees, bricks long)
 HANG = ([(p, sg * 70, z, d, n) for sg in (1, -1)
-         for p, z, d, n in (("3005", -70, 0, 1), ("3004", -20, 90, 1), ("3004", 20, 90, 2))]
-        + [("3004", x, 50, 0, n) for x, n in ((-60, 2), (-20, 3), (20, 2), (60, 3))])
+         for p, z, d, n in (("3005", -70, 0, 1), ("3004", -20, 90, 1), ("3004", 20, 90, 3))]
+        + [("3004", x, 50, 0, n) for x, n in ((-60, 3), (-20, 4), (20, 3), (60, 4))])
 BOTTOM = 14                     # underside of the head (chin) below the ball
-TOP = -98                       # top of the hair above the ball
+TOP = -146                      # top of the hair above the ball
 
 
 def face_layout():
-    """Face panel cells (i: -3..2 from his right to his left, x = 20 i + 10; k: -4 (chin) ..
-    -1 (brow)) -> tile spec: a role for a plain tile, '@part:role:deg' for a single special
-    tile, or a name placed by build_face (teeth, nose, brow)."""
+    """Face panel cells (i: -3..2 from his right to his left, x = 20 i + 10; k: -6 (chin) ..
+    -1 (forehead)) -> tile spec: a role for a plain tile, '@part:role:deg' for a single
+    special tile, or a name placed by build_face (teeth, nose, brow)."""
     out = {(i, k): "mask" for i in range(-3, 3) for k in range(-FACE_ROWS, 0)}
-    out[(-3, -4)] = "@25269:mask:180"                    # rounded jaw
-    out[(2, -4)] = "@25269:mask:270"
-    out[(-1, -3)] = out[(0, -3)] = "teeth"               # bared teeth ...
-    out[(-2, -3)] = "@98138:mouth:0"                     # ... in a dark, open snarl
-    out[(1, -3)] = "@98138:mouth:0"
-    out[(-2, -2)] = "@98138:eye:0"                       # dark eye holes
-    out[(1, -2)] = "@98138:eye:0"
-    out[(-1, -2)] = out[(0, -2)] = "nose"                # the nose between them
-    out[(-3, -2)] = "@54200:hair:90"                     # hair over the temples
-    out[(2, -2)] = "@54200:hair:270"
+    out[(-3, K_CHIN)] = "@25269:mask:180"                # rounded jaw either side of the chin
+    out[(2, K_CHIN)] = "@25269:mask:270"
+    out[(-1, K_MOUTH)] = out[(0, K_MOUTH)] = "teeth"     # bared teeth ...
+    out[(-2, K_MOUTH)] = "@98138:mouth:0"                # ... in a dark, open snarl
+    out[(1, K_MOUTH)] = "@98138:mouth:0"
+    out[(-1, K_NOSE)] = out[(0, K_NOSE)] = "nose"        # the nose, broad at the bottom
+    out[(-2, K_EYES)] = "@98138:eye:0"                   # dark eye holes
+    out[(1, K_EYES)] = "@98138:eye:0"
     for i in (-3, -2, 1, 2):                             # heavy brow
-        out[(i, -1)] = "brow"
+        out[(i, K_BROW)] = "brow"
+    out[(-3, K_BROW + 1)] = "@54200:hair:90"             # hair over the temples
+    out[(2, K_BROW + 1)] = "@54200:hair:270"
     return out
 
 
@@ -64,8 +67,8 @@ def build_face(model):
     sub = model.submodel("face", "Face (the mask)")
     s = Seg(sub, Grid(0, 0))
     lay = face_layout()
-    s.step("The mask, built flat: a 4 x 6 plate", view="above")
-    s.put("3032", "mask", (0, -PL, -40))
+    s.step("The mask, built flat: a 6 x 6 plate", view="above")
+    s.put("3958", "mask", (0, -PL, -FACE_ROWS * S // 2))
     s.step("Tiles, the eyes, the teeth and the nose")
     plain = {}
     for (i, k), spec in lay.items():
@@ -79,11 +82,11 @@ def build_face(model):
         else:
             plain[(i, k)] = spec
     s.course("tile", plain, -2 * PL, prefer="x", bond=False)
-    s.put("2412b", "teeth", (0, -2 * PL, S * -3 + 10))                    # the teeth
-    s.put("85984", "mask", (0, -PL, S * -2 + 10), rot(y=180))    # the nose, broad below
+    s.put("2412b", "teeth", (0, -2 * PL, S * K_MOUTH + 10))                # the teeth
+    s.put("85984", "mask", (0, -PL, S * K_NOSE + 10), rot(y=180))  # the nose, broad below
     s.step("The heavy brow over the eyes")
     for i in (-3, 1):
-        s.put("85984", "mask", (S * i + 20, -PL, S * -1 + 10))    # brow ridge, falling down
+        s.put("85984", "mask", (S * i + 20, -PL, S * K_BROW + 10))  # brow ridge, falling down
     return sub
 
 
@@ -98,9 +101,9 @@ def build_head(model):
     ball = {(i, k) for i in (-1, 0) for k in (-1, 0)}
 
     def role(c, level):
-        """Hair on the back and, above the jaw, on the sides."""
+        """Hair on the back and, above the ears, on the sides."""
         i, k = c
-        if k >= Z1 - 1 or (level >= 1 and i in (X0, X1)):
+        if k >= Z1 - 1 or (level >= 2 and i in (X0, X1)):
             return "hair"
         return "mask"
 
@@ -148,11 +151,13 @@ def build_head(model):
     s.step("Messy hair: curved slopes falling over the edges all round, a fringe over the "
            "brow, and more falling every which way on top")
     yh = top_y - PL
-    s.course("plate", {(i, k): "hair" for i in range(-2, 2) for k in range(-3, 1)}, yh - PL,
-             prefer="x")
-    assert yh - PL - 16 == TOP, yh
+    middle = {(i, k): "hair" for i in range(-2, 2) for k in range(-3, 1)}
+    s.course("plate", middle, yh - PL, prefer="x")               # the middle stands higher
+    s.course("plate", middle, yh - 2 * PL, prefer="z")
+    assert yh - 2 * PL - 16 == TOP, yh
     for part, x, z, deg in HAIR:
-        s.put(part, "hair", (x, yh - PL * (abs(x) < 40 and -60 < z < 20), z), rot(y=deg))
+        up = 2 * PL if abs(x) < 40 and -60 < z < 20 else 0
+        s.put(part, "hair", (x, yh - up, z), rot(y=deg))
     s.step("Hair hanging down the sides and the back: bricks under the crown's overhang",
            view="below")
     for part, x, z, deg, n in HANG:

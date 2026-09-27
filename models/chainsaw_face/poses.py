@@ -19,8 +19,8 @@ import numpy as np
 import kin
 from head import TOP as HEAD_TOP
 
-HERO = dict(waist=0.0, head=(-12.0, 5.0, 0.0), saw=((-30, -875, -30), 105.0, 15.0, 0.0),
-            arm_nom={1: (147, 2, 16, 35, 13, -84, 16), -1: (157, 4, 16, 43, -170, 24, 22)})
+HERO = dict(waist=0.0, head=(-12.0, 5.0, 0.0), saw=((-20, -915, -40), 100.0, 10.0, 180.0),
+            arm_nom={1: (125, 6, 16, 75, -147, 31, 17), -1: (166, 7, 16, 19, -151, 78, 22)})
 LOWERED = dict(swing=-120.0, waist=-12.0, head=(10.0, -10.0, 0.0))
 ARMS = {-1: "front", 1: "rear"}   # right fist on the front handle, left on the rear
 HEAD_CLEARANCE = 20              # the raised saw stays this far above the head's crown

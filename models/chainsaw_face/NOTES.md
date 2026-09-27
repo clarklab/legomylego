@@ -15,22 +15,22 @@ Colourways: the default (`Blood-spattered`: Dark Red splatter on the apron) and 
 
 1 LDU = 0.4 mm (stud 8 mm, plate 3.2 mm, brick 9.6 mm).
 
-| | model | real | at 1:6.6 |
+| | model | real | at 1:6.1 |
 |---|---|---|---|
-| Soles to top of the hair | 740 LDU = **29.6 cm** | a 193 cm (6 ft 4) man | 29.2 cm |
-| Overall, stand to top of the hair | 788 LDU = 31.5 cm (12.4 in) | | |
-| Overall with the saw raised | 940 LDU = 37.6 cm | | |
+| Soles to top of the hair | 786 LDU = **31.4 cm** | a 193 cm (6 ft 4) man | 31.6 cm |
+| Overall, stand to top of the hair | 834 LDU = 33.4 cm (13.1 in) | | |
+| Overall with the saw raised | 996 LDU = 39.8 cm | | |
 | Torso block | 10 x 6 studs (8.0 x 4.8 cm), 12.4 studs across the shoulder balls | | |
 | Across the upper arms | about 20 studs (16.6 cm) | | |
-| Head, chin to crown (with hair) | 138 LDU = 5.5 cm; 8 studs (6.4 cm) across the hair | about 23 cm | 3.5 cm |
-| Chainsaw, rear handle to bar tip | 320 LDU = **12.8 cm** | a 1970s saw with a 50 cm bar, about 85 cm | 12.9 cm |
+| Head, chin to crown (with hair) | 160 LDU = **6.4 cm**, 1.33 x the 6-stud face's width; 8 studs (6.4 cm) across the hair | about 23 cm | 3.8 cm |
+| Chainsaw, rear handle to bar tip | 320 LDU = **12.8 cm** | a 1970s saw with a 50 cm bar, about 85 cm | 13.9 cm |
 | Stand | 16 x 14 studs (12.8 x 11.2 cm), deck 1.9 cm high | | |
 
 The body follows the football figures' proportions rather than a real man's: a big head, a
 barrel chest, 4-stud-thick arms and 4 x 4 legs. The head and shoulders are about 1.5 times
 true scale; height and the saw are to scale.
 
-809 parts in 189 lines, about 996 g, 138 steps. Rough cost $30-$109 (`out/price_estimate.md`).
+838 parts in 193 lines, about 1,035 g, 139 steps. Rough cost $31-$113 (`out/price_estimate.md`).
 
 ## Construction
 
@@ -59,14 +59,17 @@ Built from the ground up (`design.py` puts it together; one module per body part
    apron wraps round the front corners to the sides;
    the shoulder axles and balls in its top course, a collar of cheese slopes, rounded
    trapezius slopes, the straps running over the shoulders, and the neck ball on top.
-6. **Head** (`head.py`): a ball socket brick in the back half of the head (where a neck joins
-   a skull), side-stud bricks at the front for the **mask**: a 4 x 6 Tan panel of smooth tiles
-   built flat (a rounded jaw, bared White teeth in a dark open snarl, black eye holes either
-   side of the nose, a heavy brow). Ears: round plates on bricks with a side stud. The Dark
-   Brown hair is a shaggy mop: the crown's plates reach a stud past the head all round,
-   curved slopes fall over every edge (a fringe over the brow), four more tumble every which
-   way on a raised middle, and bricks of different lengths hang under the overhang down the
-   sides (behind the ears) and the back.
+6. **Head** (`head.py`): 160 LDU chin to crown, three sections of brick + 2 plates and a
+   tall crown. A ball socket brick low in the back of the head (behind the jaw, where a neck
+   joins a skull) and side-stud bricks at the front for the **mask**: a 6 x 6 Tan panel of
+   smooth tiles built flat, six rows from the chin up (a jaw rounded either side of the chin,
+   bared White teeth in a dark open snarl, the nose, black eye holes, a heavy brow, a
+   forehead with hair over the temples). Ears at the eyes' and nose's level: round plates on
+   bricks with a side stud. The Dark Brown hair is a shaggy mop: the crown's plates reach a
+   stud past the head all round, curved slopes fall over every edge (a fringe over the
+   forehead), four more tumble every which way on a middle raised two plates, and bricks of
+   different lengths hang under the overhang down the sides above and behind the ears and
+   down the back.
 7. **Arms** (`arms.py`): upper arm (the white short sleeve with a rounded shoulder cap and
    deltoid, bare Tan skin below it), bare Tan forearm (built upside down from the elbow end,
    with a grey bracelet band on the left wrist) and a fist (the ball socket brick, a plate
@@ -113,15 +116,19 @@ a note in `docs/brickkit-guide.md`.
 
 ## Poses
 
-The static model is **t = 0, chainsaw raised**: the saw's engine centred 35 cm above the stand,
-just to his right of his head, the bar pointing out to his right and up 15°, 29 LDU (1.2 cm) above
-his hair; the right fist on the front handle, the left fist on the rear handle, the head
-thrown back. `poses.hero()` solves both arms by inverse kinematics (exact grips).
+The static model is **t = 0, chainsaw raised**: the saw held up above his head on his raised
+fists, the engine centred 36.6 cm above the stand, the bar pointing out to his right and up
+10°, 34 LDU (1.4 cm) above his hair; the right fist on the front handle, the left fist on
+the rear handle, the head thrown back. The saw is held handles down, so the engine sits on
+top of the fists: with the taller head there isn't the reach to hold it higher by the tops
+of its handles, and held this way the same swing brings it down with the engine hanging
+under the fists, the way a saw is carried. `poses.hero()` solves both arms by inverse
+kinematics (exact grips).
 
 **t = 1, chainsaw lowered**: both shoulder axles lie on one line across the chest, so turning
 both arms by the same angle about it carries both fists and the saw as one rigid body: both
 grips stay exact without solving anything. From t = 0 to 1 the arms swing 120° forward and
-down (shoulder flexion 147°/157° to 27°/37°), the saw coming down across his hips with the
+down (shoulder flexion 125°/166° to 5°/46°), the saw coming down across his hips with the
 bar still pointing to his right; the waist turns 12° to his right and the head drops to look
 at the saw. Legs and shoes don't move. In the real model the pose is set the same way: turn
 both arms together at the shoulders.
@@ -131,8 +138,8 @@ both arms together at the shoulders.
 
 Checks along the way: the mechanism check sweeps 24 poses (no collisions, nothing comes
 apart), and `design.check_balance` (an extra check) sweeps 13 poses for the centre of mass:
-it stays 76 %-89 % of the way from the edge of the base to its centre (the static model is
-89 %, tipping at 17°).
+it stays 77 %-88 % of the way from the edge of the base to its centre (the static model is
+88 %, tipping at 16°).
 
 ## The chainsaw dance (`meta["performance"]`)
 
@@ -165,10 +172,10 @@ dance: `[video.cold_open]` scene `sunset_road`, 7 s, `motion = "performance"`, 1
 
 ## Checks
 
-All eight pass with `.venv/bin/python -m brickkit all chainsaw_face`: real elements (169
-part/colour lines, none rare), connections (one piece: 3,133 connections, 9 of them ball
-joints), collisions (none among 809 parts), buildability (736 insertions, every step
-reachable and connected), stability (996 g, 89 % margin, tips at 17°), mechanism (24 poses,
+All eight pass with `.venv/bin/python -m brickkit all chainsaw_face`: real elements (193
+part/colour lines, none rare), connections (one piece: 3,431 connections, 9 of them ball
+joints), collisions (none among 838 parts), buildability (765 insertions, every step
+reachable and connected), stability (1,035 g, 88 % margin, tips at 16°), mechanism (24 poses,
 plus the balance sweep), electrics, technique. The `clean` colourway passes too.
 
 ## Known limits

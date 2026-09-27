@@ -23,6 +23,7 @@ from scipy.optimize import least_squares
 
 from arms import ELBOW, FA_LEN, GRIP
 from body import NECK, PELVIS_BALL, SHOULDER
+from head import TOP as HEAD_TOP
 from legs import ANKLE, KNEE_XZ, KNEE_Y, SHOE_BALL
 from saw import FRONT_BAR, REAR_BAR
 
@@ -170,7 +171,8 @@ def obstacles(torso, head, saw):
              (saw, (-42, -82, -20), (42, -70, 160), ("fore", "hand")),         # handle posts
              (saw, (38, -42, -182), (58, 2, 82), ("upper", "fore")),            # guide bar
              (torso, (-102, -178, -98), (102, 2, 62), ("fore", "hand")),        # torso, bib
-             (head, (-62, -92, -98), (62, 16, 42), ("upper", "fore", "hand")),  # head
+             (head, (-82, HEAD_TOP - 2, -118), (82, 16, 62),                   # head, hair
+              ("upper", "fore", "hand")),
              (PELVIS, (-102, 0, -98), (102, 290, 62), ("fore", "hand"))]         # hips, apron
     return [(np.linalg.inv(M), np.array(lo, float), np.array(hi, float), segs)
             for M, lo, hi, segs in boxes]
@@ -289,12 +291,14 @@ SAW_PTS = [np.array([x, y, z, 1.0]) for x in (-40, 0, 40, 56) for y in (0, -36, 
 
 
 def head_clearance(saw: np.ndarray, head: np.ndarray, crown: float) -> float:
-    """How far the saw stays above the head's crown (LDU, head frame), over the head's
-    footprint (6 x 7 studs, plus a stud's margin)."""
+    """How far the saw stays above the hair (LDU, head frame), over the hair's footprint
+    (8 x 8 studs, plus a stud's margin): the raised middle (4 x 4 studs) is at `crown`, the
+    curved slopes round it a plate course (16 LDU) lower."""
     inv = np.linalg.inv(head)
     gaps = []
     for p in SAW_PTS:
         h = inv @ (saw @ p)
-        if -80 <= h[0] <= 80 and -116 <= h[2] <= 60:
-            gaps.append(crown - h[1])
+        if -100 <= h[0] <= 100 and -120 <= h[2] <= 80:
+            middle = -60 <= h[0] <= 60 and -80 <= h[2] <= 40
+            gaps.append(crown + (0 if middle else 16) - h[1])
     return min(gaps) if gaps else 1e9
