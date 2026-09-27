@@ -461,6 +461,14 @@ p { margin: 0; text-wrap: pretty; }
 .viewer-turntable { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; transition: opacity 0.5s ease; }
 .viewer.is-turntable .viewer-turntable { opacity: 1; }
 
+/* Full screen always fits the whole picture, never crops it. Chrome's own full-screen style
+   (object-fit: contain) loses to the page's `cover` rules, so a square video filled a tall
+   phone screen. Separate rules: a browser drops a whole selector list it can't parse. */
+video:fullscreen { object-fit: contain !important; background: #000; }
+video:-webkit-full-screen { object-fit: contain !important; background: #000; }
+.viewer:fullscreen .viewer-turntable, .viewer:fullscreen .viewer-poster { object-fit: contain; }
+.viewer:-webkit-full-screen .viewer-turntable, .viewer:-webkit-full-screen .viewer-poster { object-fit: contain; }
+
 .viewer-loading {
   position: absolute;
   inset: 0;
