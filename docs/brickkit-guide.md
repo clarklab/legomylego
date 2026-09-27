@@ -228,7 +228,9 @@ motion = "performance"          # meta["performance"] (else, or "pose": model.po
 spin_turns = 1.5                # the whole figure turns about its pivot, in three lurches
 hide_tags = ["stand"]           # parts left out (added to performance_info's)
 # optional: sun_elevation = 2.4, sun_size = 1.4 (deg), cycle = 2.5 (s), rev_tag = "saw",
-# letterbox = 0.09, exposure, sky_strength, sun_strength, sky_tint, haze
+# letterbox = 0.09; the set's look (defaults in render/blender_cold_open.py LOOK): exposure = -1.6
+# (EV), sky_strength = 0.45, sky_tint = "#FFB070", sun_strength = 5, sun_color = "#FF9A4A",
+# sun_disc = 90, fill_strength = 0.25, haze = 1900 (m), dust = 0.0015 (per m)
 
 [[video.callouts]]              # mechanism callouts; without any, one per moving group
 label = "Dust door"
@@ -244,13 +246,50 @@ in [0, 1) returning `{group: 4x4 world matrix}` like `model.pose` (one loop of t
 that speed once the engine catches (after about half a second), the figure spins about the
 pivot, and three shots cut hard: a 300 mm wide shot straight into the sun with the figure's
 head just under it, a low 70 mm and an ankle-height 38 mm shot. `sunset_road`
-(`render/blender_cold_open.py`, EEVEE): a physical sky with a warm sun lamp along the sun's line
-and a camera-only sun disc, a faded dashed centre line, gravel shoulders, dry grass fields and
-haze with distance, all scaled to the figure (a lane is two of its heights). The compositor
-adds letterbox bars, bloom, a flare that dies when something crosses the sun, and dust in the
-light; the sound is a chainsaw that is pulled, catches, idles and roars with the saw's speed
-(the `rev_tag` parts'), over wind, cut dead at the black. No music plays under it. Its plates
-render in about 0.5 s a frame at preview size. A model without one is unchanged.
+(`render/blender_cold_open.py`, EEVEE) treats the figure as life-size (a man about 2 m tall
+with his arms up) and builds everything procedurally: a physical sky with a dusty aureole and
+thin cloud bands, a warm sun lamp along the sun's line and a camera-only sun disc; a worn
+two-lane chip-seal road (patches, tar-filled cracks, polished wheel paths that take the sun's
+glare, a faded dashed yellow centre line, worn edge lines, crumbling edges, caliche
+shoulders); dry grass and seed stalks along the verges, lit through from behind; barbed-wire
+fences; a power line and a telephone line of leaning poles with sagging wires (phased so none
+stands out of the figure's head); mesquites, live oaks, a dead tree, a windpump, a farmhouse
+and barn, a tree line and two ridges of low hills; aerial haze with distance and a thin dust
+over the road. The lens focuses on the figure per shot (the wide shot deeper, the close shots
+softer behind, oval bokeh), blurs the swing a little (a 180° shutter), and Blender's
+compositor exposes each shot, blooms the highlights and throws sun beams from the visible part
+of the disc. The web compositor adds letterbox bars, a veil of flare, a thin anamorphic streak
+through the sun and aperture ghosts along the line through the middle (all dying when
+something crosses the sun), and dust in the light; the sound is a chainsaw that is pulled,
+catches, idles and roars with the saw's speed (the `rev_tag` parts'), over wind, cut dead at
+the black. No music plays under it. Its plates render in about 0.6 s a frame at preview size
+and 1.8 s at full size. A model without one is unchanged.
+
+**Recorded sounds** (optional). The music and effects are synthesised unless the model has
+`[video.audio]`: sound files in the model's `audio/` (committed, so the video rebuilds offline)
+by role. `tools/elevenlabs_sfx.py SLUG` generates them from `audio/sfx.toml` (`[[sfx]]` name,
+prompt, seconds, variants, loop) with ElevenLabs' sound-generation API, skipping files that
+exist and recording each file's prompt and settings in `audio/sfx_generated.json`; `--dry-run`
+lists what it would make, `--analyse` measures every file (length, loudness, true peak,
+silence, how it ends, band energy, engine periodicity, speech-like modulation) and ranks the
+variants. The API key is read from `ELEVENLABS_API_KEY` or `~/.config/brickkit/elevenlabs.env`
+and never printed or written. MP3s decode through ffmpeg.
+```toml
+[video.audio]
+pull_start = "pull_start_1.mp3"   # the cold open: pulled at its start...
+catch = 0.73                      # ...the engine catches this far in, the idle takes over
+idle = "idle_1.mp3"               # looped (crossfaded) to the cut, ducked under the screams
+screams = ["scream_3.mp3", ...]   # full throttle: on the swing's peaks (the saw's speed), and
+                                  # quieter on the build's section changes
+burst = "rev_burst_2.mp3"         # on the title's stamp (theme grindhouse), with the first...
+stings = ["string_stab_1.mp3", "string_stab_3.mp3"]   # ...sting; the rest, the hits and the
+hits = ["metal_hit_2.mp3"]        # booms take turns on the big cuts (a boom replaces the
+booms = ["boom_2.mp3"]            # synthesised hit there)
+levels = { scream = -8.5 }        # optional: peak dBFS per role (reel.SAMPLE_LEVEL)
+```
+Everything in the cold open stops dead at its cut; the synthesised music bed stays (ducked under
+the stings) and the mix is mastered to the same -16 LUFS / -1.5 dBTP. Without the table a model
+sounds exactly as before.
 
 Callout anchors are the centres of the matched parts, moved by their group's pose every
 frame and projected through the video camera, so the lines follow the real parts. Callouts

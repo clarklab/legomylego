@@ -28,6 +28,9 @@ Callouts come from model.toml [video.callouts] (or meta["video"]["callouts"]):
     xray = true              # also draw the parts' outlines, for parts hidden inside
 
 Without config, each moving group gets a callout.
+
+Recorded sounds (optional) come from model.toml [video.audio] (see `audio_assets`): a chainsaw
+pulled, idling and screaming in the cold open, horror stings on the title and the big cuts.
 """
 from __future__ import annotations
 
@@ -50,6 +53,10 @@ CHECK_TITLES = {"real_elements": "Real parts", "connections": "Connections",
                 "technique": "Technique"}
 MAX_PULSES = 28          # first parts of the build that get a landing ring
 MAX_POINTS = 1400        # connection points drawn in the scan
+# recorded sounds by role: peak level (dBFS, against the music bed at audio.MUSIC_REF)
+SAMPLE_LEVEL = {"pull_start": -9.0, "idle": -17.5, "scream": -8.5, "burst": -11.0,
+                "sting": -11.0, "hit": -11.5, "boom": -11.0, "band": -12.0}
+SCREAM_GAP = 1.4         # s: at least this between the cold open's screams
 
 
 # ---------------------------------------------------------------------------- config
@@ -641,7 +648,7 @@ def plan_reel(engine, proj, model, tl, theme, out_dir: Path, work: Path, *,
               "booklet": reel.get("booklet")}
     reel["marks"] = marks(tl, extras)
     reel["transitions"] = transitions(tl, theme)
-    reel["cues"] = cue_sheet(reel, tl, theme)
+    reel["cues"] = cue_sheet(reel, tl, theme, audio_assets(proj, cfg))
     return reel
 
 
@@ -690,10 +697,66 @@ def colourway_items(engine, proj, model, placed, tl, cfg) -> dict:
 
 
 # ---------------------------------------------------------------------------- sound cues
-def cue_sheet(reel, tl, theme) -> dict:
-    """The audio.py cue sheet: sections with moods, and every SFX on the frame it belongs."""
+def audio_assets(proj, cfg) -> dict | None:
+    """[video.audio]: the model's recorded sounds (files in its `dir`, default "audio/"):
+
+        pull_start = "pull_start_1.mp3"   the cold open's pull-start; `catch` = s into it where
+        catch = 0.73                      the engine catches (the running engine takes over)
+        idle = "idle_1.mp3"               the running engine, looped under the cold open
+        screams = ["scream_3.mp3", ...]   full-throttle revs: on the swing's peaks, the build's
+                                          section changes (and the title without a burst)
+        burst = "rev_burst_2.mp3"         rev-rev-REEEE on the title's stamp
+        stings = [...]                    horror stings: the first on the title's stamp, the
+        hits = [...]                      rest (with the metal hits and the booms, in turn) on
+        booms = [...]                     the big cuts
+        levels = { scream = -6 }          optional: peak dBFS per role (SAMPLE_LEVEL)
+
+    Returns {"samples": {name: {path, sha1}}, "roles": {role: [names]}, "catch", "levels"} or
+    None without the table."""
+    import hashlib
+    a = cfg.get("audio")
+    if not a:
+        return None
+    d = proj.dir / str(a.get("dir", "audio"))
+    samples, roles = {}, {}
+
+    def use(name):
+        p = d / str(name)
+        if not p.exists():
+            raise SystemExit(f"[video.audio]: {p} is missing (tools/elevenlabs_sfx.py makes it)")
+        samples[str(name)] = {"path": str(p), "sha1": hashlib.sha1(p.read_bytes()).hexdigest()}
+        return str(name)
+    for role in ("pull_start", "idle", "burst"):
+        if a.get(role):
+            roles[role] = [use(a[role])]
+    for role in ("screams", "stings", "hits", "booms"):
+        if a.get(role):
+            roles[role] = [use(x) for x in a[role]]
+    return {"samples": samples, "roles": roles, "catch": float(a.get("catch", 0.5)),
+            "levels": {**SAMPLE_LEVEL, **(a.get("levels") or {})}}
+
+
+def rev_peaks(curve, fps: float, gap: float = SCREAM_GAP, floor: float = 0.55,
+              after: int = 0) -> list[int]:
+    """Frames where the rev curve peaks (the saw's fastest moments), strongest first taken,
+    at least `gap` s apart, above `floor`, not before frame `after`; in time order."""
+    c = np.asarray(curve, float)
+    k = np.arange(1, len(c) - 1)
+    cand = [int(i) for i in k[(c[k] >= c[k - 1]) & (c[k] > c[k + 1]) & (c[k] >= floor)]
+            if i >= after]
+    out: list[int] = []
+    for i in sorted(cand, key=lambda i: -c[i]):
+        if all(abs(i - j) >= gap * fps for j in out):
+            out.append(i)
+    return sorted(out)
+
+
+def cue_sheet(reel, tl, theme, assets: dict | None = None) -> dict:
+    """The audio.py cue sheet: sections with moods, and every SFX on the frame it belongs.
+    With `assets` (audio_assets) recorded sounds take over the chainsaw and add horror stings."""
     B = tl["beat"]
     mk = reel["marks"]
+    fps = tl["fps"]
     ev = []
 
     def add(frame, kind, **kw):
@@ -702,15 +765,55 @@ def cue_sheet(reel, tl, theme) -> dict:
     tape = theme.get("transition") == "glitch"
     film = theme.get("transition") == "burn"
     grind = theme.get("music") == "grindhouse"
-    if "cold_open" in mk:                         # the engine and the wind, cut dead at the cut
+    roles = (assets or {}).get("roles", {})
+    lv = (assets or {}).get("levels", SAMPLE_LEVEL)
+
+    def play(frame, name, role, **kw):
+        add(frame, "sample", file=name, level=float(lv.get(role, -12.0)), **kw)
+    if "cold_open" in mk and "idle" in roles:     # the real chainsaw: pulled, running, screaming
+        m, co = mk["cold_open"], tl["cold_open"]
+        a, cut = co["start"], m["cut"]
+        n = cut - a
+        catch = min(n - 1, int(round((assets["catch"] if "pull_start" in roles else 0.0) * fps)))
+        screams = roles.get("screams", [])
+        peaks = rev_peaks(co["rev"][:n], fps, after=catch + int(0.3 * fps)) if screams else []
+        if "pull_start" in roles:
+            play(a, roles["pull_start"][0], "pull_start", until=min(cut, a + catch + int(0.6 * fps)),
+                 fade_out=0.4)
+        k = np.arange(catch, n)                   # the engine under the screams, ducked for them
+        gc = np.ones(len(k))
+        for p in peaks:
+            w = np.clip(1 - np.abs(k - p) / (0.8 * fps), 0.0, 1.0)
+            gc = np.minimum(gc, 1 - 0.6 * (0.5 - 0.5 * np.cos(np.pi * w)))
+        play(a + catch, roles["idle"][0], "idle", loop=True, dur=n - catch, until=cut,
+             fade_in=0.25 if "pull_start" in roles else 0.0, gain_curve=np.round(gc, 3).tolist())
+        for i, p in enumerate(peaks):
+            play(a + p, screams[i % len(screams)], "scream", align="peak", until=cut,
+                 fade_out=0.25)
+        add(a, "wind", dur=n, gain=0.8)
+    elif "cold_open" in mk:                       # the engine and the wind, cut dead at the cut
         m, co = mk["cold_open"], tl["cold_open"]
         n = m["cut"] - co["start"]
         add(co["start"], "chainsaw_bed", dur=n, curve=co["rev"][:n],
             catch=m["catch"] - co["start"], gain=1.0)
         add(co["start"], "wind", dur=n, gain=0.8)
+    # the big cuts' stings in turn: metal hit, boom, string stab, ...
+    cut_stings = []
+    for i in range(max(len(roles.get(r, [])) for r in ("hits", "booms", "stings"))):
+        for role, lst in (("hit", roles.get("hits", [])), ("boom", roles.get("booms", [])),
+                          ("sting", roles.get("stings", [])[1:])):
+            if i < len(lst):
+                cut_stings.append((role, lst[i]))
+    bands = 0
+    big = 0
     for t in reel["transitions"]:
         if t["type"] == "band":
             add(t["frame"] - 6, "burn" if film else "whoosh", dur=6, gain=0.5)
+            if roles.get("screams"):              # a rev under the build's section change
+                sc = roles["screams"]
+                play(t["frame"], sc[(bands + 1) % len(sc)], "band", align="peak", fade_out=0.3,
+                     duck=[3.0, 0.4])
+                bands += 1
             continue
         if tape and t["type"] == "glitch":
             add(t["frame"] - 3, "glitch", dur=7, gain=0.8)
@@ -718,7 +821,15 @@ def cue_sheet(reel, tl, theme) -> dict:
             add(t["frame"] - t["half"], "burn", dur=t["half"], gain=0.8)
         else:
             add(t["frame"] - t["half"], "whoosh", dur=t["half"], gain=0.8)
-        if t["to"] in ("build", "scan", "outro"):
+        boom = False
+        stamp = t["to"] == "title" and grind and bool(roles.get("stings") or roles.get("burst"))
+        if cut_stings and not stamp:              # a horror sting on the cut (the title's stamp
+            #                                       has its own a moment later)
+            role, name = cut_stings[big % len(cut_stings)]
+            play(t["frame"], name, role, align="peak", duck=[4.0, 0.7])
+            boom = role == "boom"
+            big += 1
+        if t["to"] in ("build", "scan", "outro") and not boom:
             add(t["frame"], "hit", gain=0.9 if t["to"] == "build" else 0.7)
     if "open" in mk:
         o = mk["open"]
@@ -730,7 +841,15 @@ def cue_sheet(reel, tl, theme) -> dict:
         add(o["band"], "blip", pitch=4)
     if "title" in mk:
         m = mk["title"]
-        if grind:                     # the name is stamped on the hero beat, then the saw starts
+        if grind and (roles.get("stings") or roles.get("burst") or roles.get("screams")):
+            add(m["hero"], "slap", gain=1.0)      # the stamp: a string stab and a real saw
+            if roles.get("stings"):
+                play(m["hero"], roles["stings"][0], "sting", align="peak", duck=[5.0, 0.8])
+            if roles.get("burst"):
+                play(m["hero"] + 2, roles["burst"][0], "burst", fade_out=0.3)
+            elif roles.get("screams"):
+                play(m["hero"] + 2, roles["screams"][0], "scream", fade_out=0.3)
+        elif grind:                   # the name is stamped on the hero beat, then the saw starts
             add(m["hero"], "slap", gain=1.0)
             add(m["hero"], "hit", gain=0.5)
             add(m["hero"] + 3, "chainsaw", gain=0.9)
@@ -830,6 +949,9 @@ def cue_sheet(reel, tl, theme) -> dict:
             e["type"] = "slap"
     sections = [{"name": s["name"], "start": s["start"], "end": s["end"],
                  "mood": MOODS.get(s["name"], "groove")} for s in tl["segments"]]
-    return {"fps": tl["fps"], "frames": tl["frames"], "beat_frames": B, "style": theme_music,
-            "seed": sum(map(ord, reel["model"]["slug"])), "sections": sections,
-            "events": sorted(ev, key=lambda e: e["frame"])}
+    out = {"fps": tl["fps"], "frames": tl["frames"], "beat_frames": B, "style": theme_music,
+           "seed": sum(map(ord, reel["model"]["slug"])), "sections": sections,
+           "events": sorted(ev, key=lambda e: e["frame"])}
+    if assets:
+        out["samples"] = assets["samples"]
+    return out

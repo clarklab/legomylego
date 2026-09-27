@@ -714,6 +714,10 @@ COLD = {"scene": "sunset_road", "seconds": 7.0, "motion": "performance", "spin_t
         "hide_tags": [], "cycle": 2.5, "sun_elevation": 2.4, "sun_azimuth": 0.0,
         "sun_size": 1.4, "letterbox": 0.09, "rev_tag": "saw"}
 COLD_SCENES = ("sunset_road",)
+# the set's look: [video.cold_open] keys handed to the set as they are (render/blender_cold_open.py
+# LOOK has the defaults and the units)
+COLD_LOOK = ("exposure", "sky_strength", "sky_tint", "sun_strength", "sun_color", "sun_disc",
+             "fill_strength", "haze", "dust")
 COLD_BLACK_BEATS = 1          # the hard cut to black before the reel proper
 COLD_CATCH = 0.45             # s: the engine catches (the pull-start before it)
 COLD_START, COLD_RAMP = 0.55, 0.9   # s: the performance comes up to speed
@@ -787,6 +791,7 @@ def cold_open_plan(engine, model, placed, C, seg: dict, co: dict, fps: int, beat
         start, end, cut        its frames; black from `cut`
         scene, sun             the set ("sunset_road"), the sun's elevation/azimuth/size (deg;
                                azimuth 0 is straight ahead of the camera, down the road, +Z)
+        look                   the set's look overrides from the config (COLD_LOOK keys)
         ground_y, pivot        the road's height and the spin's axis ([x, z]) in LDU
         height, radius         how tall the figure is and how far its swing reaches
         hidden                 instances not shown (hide_tags: a display stand)
@@ -908,6 +913,7 @@ def cold_open_plan(engine, model, placed, C, seg: dict, co: dict, fps: int, beat
     return {
         "start": seg["start"], "end": seg["end"], "cut": seg["start"] + m, "scene": co["scene"],
         "sun": {"elevation": el, "azimuth": float(co["sun_azimuth"]), "size": float(co["sun_size"])},
+        "look": {k: co[k] for k in COLD_LOOK if k in co},
         "ground_y": ground_y, "pivot": [float(pivot[0]), float(pivot[2])], "height": H,
         "radius": R, "hidden": hidden, "letterbox": band,
         "groups": {"names": names, "instance": inst},

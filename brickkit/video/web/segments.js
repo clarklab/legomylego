@@ -386,9 +386,12 @@ function visor(f, s, title) {
 }
 
 // ------------------------------------------------------------------------------ cold open
-// the model performing in a set of its own (render/blender_cold_open.py), before the reel: the
-// plates full frame under the theme's look, the low sun blooming and flaring (the flare dies
-// when something crosses the sun), dust hanging in the light, letterbox bars; black from the cut
+// the model performing in a set of its own (render/blender_cold_open.py, which already blooms
+// the highlights and throws sun beams through the silhouette), before the reel: the plates
+// full frame under the theme's look, then the lens - a veil of flare over the whole picture, a
+// thin horizontal anamorphic streak through the sun and ghosts of the aperture strung along the
+// line from the sun through the middle, all of it dying when the figure or the saw crosses the
+// sun - dust hanging in the light, letterbox bars; black from the cut
 SEG.cold_open = {
   async prepare(f) { return f < D.cold_open.cut ? plate('cold_open', f) : null; },
   draw(f, s, bm) {
@@ -400,13 +403,17 @@ SEG.cold_open = {
     const lit = sunLight(bm, sun, C, k);
     if (bm) sunBloom(bm, sun, lit);
     motes(f, sun, lit);
-    if (sun) flare(sun, lit);
+    if (sun) flare(f, sun, lit, sunRadius(C, k));
     const bar = C.letterbox * L;
     CX.fillStyle = '#000000'; CX.fillRect(0, 0, L, bar); CX.fillRect(0, L - bar, L, bar);
-    osd(f, s, '\u25B6 PLAY');
+    osd(f, s, '▶ PLAY');
     visor(f, s, 'COLD OPEN');
   },
 };
+// the sun's radius on screen (px): its size over the lens's field of view
+function sunRadius(C, k) {
+  return Math.max(6, 0.5 * C.size / (2 * Math.atan(18 / C.lens[k]) * 180 / Math.PI) * L);
+}
 // how much of the sun gets through: the plate's brightness over the disc (0 when the figure or
 // the saw is in front of it), less as it goes off the frame
 function sunLight(bm, sun, C, k) {
@@ -414,7 +421,7 @@ function sunLight(bm, sun, C, k) {
   const [x, y] = sun;
   const out = Math.max(0, -x, x - L, -y, y - L);
   if (out > 0) return 0.5 * clamp(1 - out / 400);
-  const r = Math.max(6, 0.5 * C.size / (2 * Math.atan(18 / C.lens[k]) * 180 / Math.PI) * L);
+  const r = sunRadius(C, k);
   const c = off('sunprobe', 8, 8)[0];
   const x2 = c.getContext('2d', { willReadFrequently: true });
   x2.setTransform(1, 0, 0, 1, 0, 0);
@@ -423,45 +430,88 @@ function sunLight(bm, sun, C, k) {
   const d = x2.getImageData(0, 0, c.width, c.height).data;
   let hot = 0;
   for (let i = 0; i < d.length; i += 4) if (d[i] > 235 && d[i + 1] > 150) hot++;
-  return hot / (d.length / 4);
+  return clamp(hot / (d.length / 4) / 0.8);        // the disc fills ~80 % of its square
 }
+// a little more glow round what is already blown out, and the sun's own warm core; then the
+// veiling glare: the flare's light scattered over the whole picture, lifting the blacks
 function sunBloom(bm, sun, lit) {
   const [c, x] = off('coldbloom');
   x.filter = `brightness(0.8) contrast(6) saturate(1.4) blur(${24 * S}px)`;   // highlights only
   x.drawImage(bm, 0, 0, L, L);
   x.filter = 'none';
   CX.save();
-  CX.globalCompositeOperation = 'screen'; CX.globalAlpha = 0.4;
+  CX.globalCompositeOperation = 'screen'; CX.globalAlpha = 0.16;
   CX.setTransform(1, 0, 0, 1, 0, 0); CX.drawImage(c, 0, 0);
   CX.restore();
   CX.setTransform(S, 0, 0, S, 0, 0);
   if (!sun || lit <= 0) return;
-  const g = CX.createRadialGradient(sun[0], sun[1], 0, sun[0], sun[1], 360);
-  g.addColorStop(0, rgba('#FFD49A', 0.35 * lit)); g.addColorStop(0.3, rgba('#FF8A30', 0.14 * lit));
-  g.addColorStop(1, rgba('#FF6A1A', 0));
-  CX.save(); CX.globalCompositeOperation = 'screen'; CX.fillStyle = g; CX.fillRect(0, 0, L, L); CX.restore();
+  CX.save(); CX.globalCompositeOperation = 'screen';
+  const g = CX.createRadialGradient(sun[0], sun[1], 0, sun[0], sun[1], L * 0.85);
+  g.addColorStop(0, rgba('#FFC98A', 0.14 * lit)); g.addColorStop(0.25, rgba('#FF9A4A', 0.06 * lit));
+  g.addColorStop(1, rgba('#B8481C', 0.025 * lit));
+  CX.fillStyle = g; CX.fillRect(0, 0, L, L);
+  CX.restore();
 }
-// a lens flare: a streak through the sun and ghosts along the line through the middle
-function flare(sun, lit) {
+// the lens flare: a thin horizontal streak through the sun (the anamorphic lens's squeeze),
+// soft rings round it, and ghosts of the aperture - hexagons and discs with brighter rims and
+// coloured fringes - along the line from the sun through the middle of the frame
+function flare(f, sun, lit, rs) {
   if (lit <= 0.01) return;
   const [x, y] = sun;
+  const fl = lit * (0.92 + 0.08 * Math.sin(f * 0.9) * Math.sin(f * 0.37));   // a flicker of dust
   CX.save();
   CX.globalCompositeOperation = 'screen';
-  const st = CX.createLinearGradient(x - L * 0.7, 0, x + L * 0.7, 0);
-  st.addColorStop(0, rgba('#FF8A3C', 0)); st.addColorStop(0.5, rgba('#FFD9A0', 0.4 * lit));
-  st.addColorStop(1, rgba('#FF8A3C', 0));
-  CX.fillStyle = st; CX.fillRect(x - L * 0.7, y - 2, L * 1.4, 4);
+  // the streak: a hairline core in a soft band, out past both edges of the frame
+  const reach = L * 1.1;
+  for (const [h, a] of [[1.6, 0.85], [4.5, 0.32], [11, 0.12], [26, 0.05]]) {
+    const st = CX.createLinearGradient(x - reach, 0, x + reach, 0);
+    st.addColorStop(0, rgba('#FF6A2A', 0)); st.addColorStop(0.28, rgba('#FF8A3C', 0.25 * a * fl));
+    st.addColorStop(0.44, rgba('#FFC27A', 0.7 * a * fl)); st.addColorStop(0.5, rgba('#FFF2D6', a * fl));
+    st.addColorStop(0.56, rgba('#FFC27A', 0.7 * a * fl)); st.addColorStop(0.72, rgba('#FF8A3C', 0.25 * a * fl));
+    st.addColorStop(1, rgba('#FF6A2A', 0));
+    CX.fillStyle = st; CX.fillRect(x - reach, y - h / 2, 2 * reach, h);
+  }
+  // a faint ring round the sun, reddish outside (the lens's own halo)
+  const hr = Math.max(rs * 2.6, 150);
+  const ring = CX.createRadialGradient(x, y, hr * 0.82, x, y, hr * 1.08);
+  ring.addColorStop(0, rgba('#FFD08A', 0)); ring.addColorStop(0.45, rgba('#FFD08A', 0.05 * fl));
+  ring.addColorStop(0.7, rgba('#FF7A40', 0.04 * fl)); ring.addColorStop(1, rgba('#A0C8FF', 0));
+  CX.fillStyle = ring; circle(x, y, hr * 1.1); CX.fill();
+  // ghosts: t along sun -> middle -> beyond (1 is the middle), radius, colour, strength, shape
   const cx = L / 2 - x, cy = L / 2 - y;
-  for (const [t, r, col, a] of [[0.55, 38, '#FFB347', 0.1], [0.9, 16, '#9FD3FF', 0.14],
-    [1.25, 70, '#FF7A30', 0.06], [1.55, 24, '#C8FF9A', 0.1], [1.9, 120, '#FF9A3C', 0.045]]) {
-    const gx = x + cx * t * 2, gy = y + cy * t * 2;
+  const rot = Math.atan2(cy, cx) + 0.3;
+  for (const [t, r, col, a, sh] of [[0.32, 12, '#FFD27A', 0.16, 'disc'], [0.55, 34, '#FF9A50', 0.07, 'ring'],
+    [0.82, 7, '#9FE0FF', 0.2, 'disc'], [1.08, 58, '#FFB070', 0.05, 'hex'], [1.3, 22, '#C8FF9A', 0.08, 'hex'],
+    [1.52, 110, '#FF8A40', 0.03, 'disc'], [1.78, 16, '#FF6A3A', 0.1, 'hex'], [2.05, 44, '#8FB8FF', 0.035, 'ring']]) {
+    const gx = x + cx * t, gy = y + cy * t;
     const g = CX.createRadialGradient(gx, gy, 0, gx, gy, r);
-    g.addColorStop(0, rgba(col, a * lit)); g.addColorStop(0.7, rgba(col, a * lit * 0.8)); g.addColorStop(1, rgba(col, 0));
-    CX.fillStyle = g; circle(gx, gy, r); CX.fill();
+    if (sh === 'ring') {
+      g.addColorStop(0, rgba(col, 0)); g.addColorStop(0.72, rgba(col, 0.25 * a * fl));
+      g.addColorStop(0.9, rgba(col, a * fl)); g.addColorStop(1, rgba(col, 0));
+    } else {
+      g.addColorStop(0, rgba(col, 0.55 * a * fl)); g.addColorStop(0.8, rgba(col, 0.75 * a * fl));
+      g.addColorStop(0.93, rgba(col, a * fl)); g.addColorStop(1, rgba(col, 0));
+    }
+    CX.fillStyle = g;
+    if (sh === 'hex') {
+      CX.beginPath();
+      for (let i = 0; i < 6; i++) {
+        const a6 = rot + i * Math.PI / 3;
+        CX[i ? 'lineTo' : 'moveTo'](gx + r * Math.cos(a6), gy + r * Math.sin(a6));
+      }
+      CX.closePath();
+    } else circle(gx, gy, r);
+    CX.fill();
+    // a thin fringe of the complementary colour just outside the bigger ghosts
+    if (r > 30) {
+      CX.strokeStyle = rgba('#7FC4FF', 0.25 * a * fl); CX.lineWidth = 2;
+      circle(gx, gy, r * 1.03); CX.stroke();
+    }
   }
   CX.restore();
 }
-// dust in the air: specks drifting across, lit up by the sun behind them
+// dust in the air: specks drifting across, lit up by the sun behind them, and now and then a
+// bigger mote close to the lens, out of focus: a soft oval of light
 function motes(f, sun, lit) {
   CX.save();
   CX.globalCompositeOperation = 'screen';
@@ -474,6 +524,20 @@ function motes(f, sun, lit) {
     const a = (0.12 + 0.75 * near * (0.3 + 0.7 * lit)) * (0.6 + 0.4 * Math.sin(f * 0.2 + i * 3));
     if (a <= 0.02) continue;
     CX.fillStyle = rgba('#FFD9A8', a); circle(x, y, sz); CX.fill();
+  }
+  for (let i = 0; i < 9; i++) {
+    const R = rng(i * 104729 + 5);
+    const vx = (R() - 0.5) * 1.6, vy = (R() - 0.7) * 0.7, rr = 10 + R() * 22;
+    const x = (((R() * L + vx * f + 20 * Math.sin(f * 0.02 + i)) % (L + 80)) + L + 80) % (L + 80) - 40;
+    const y = (((R() * L + vy * f) % (L + 80)) + L + 80) % (L + 80) - 40;
+    const near = sun ? Math.exp(-Math.hypot(x - sun[0], y - sun[1]) / 300) : 0;
+    const a = 0.1 * near * (0.2 + 0.8 * lit) * (0.7 + 0.3 * Math.sin(f * 0.13 + i));
+    if (a <= 0.004) continue;
+    const g = CX.createRadialGradient(x, y, 0, x, y, rr);
+    g.addColorStop(0, rgba('#FFE2B8', a * 0.6)); g.addColorStop(0.8, rgba('#FFE2B8', a));
+    g.addColorStop(1, rgba('#FFE2B8', 0));
+    CX.fillStyle = g;
+    CX.beginPath(); CX.ellipse(x, y, rr * 0.7, rr, 0, 0, Math.PI * 2); CX.fill();
   }
   CX.restore();
 }
@@ -1579,7 +1643,7 @@ SEG.booklet = {
     files.forEach((fl, k) => {
       const t0 = m.chips[k] || m.chips[m.chips.length - 1];
       const q = ramp(f, t0, t0 + 9);
-      const save = TH; TH = Object.assign({}, TH, { name: 'brand', mono: 'Space Mono', ink: TH.brand.black, bg2: TH.brand.yellow, bg: TH.brand.cream, hud_ink: TH.brand.cream });
+      const save = TH; TH = Object.assign({}, TH, { name: 'brand', mono: TH.brand_mono, ink: TH.brand.black, bg2: TH.brand.yellow, bg: TH.brand.cream, hud_ink: TH.brand.cream });
       const w = chip('', fl, x, L - M - 62, q, k, { h: 56 });
       TH = save;
       x += w + 12;
@@ -1592,13 +1656,14 @@ SEG.outro = {
   shake(f) { shakeAt(f, [D.marks.outro.logo + 6], 6, 8); },
   draw(f, s) {
     const m = D.marks.outro, b = B();
-    const Y = TH.brand.yellow, K = TH.brand.black;
-    CX.fillStyle = Y; CX.fillRect(0, 0, L, L);
-    for (let x = 30; x < L; x += 60) for (let y = 30; y < L; y += 60) stud(x, y, 20, mix(Y, '#ffffff', 0.08), CX, 0.55);
+    // the site's look: cream paper with faint studs, the Bricks logo, the URL on a yellow pill
+    const Y = TH.brand.yellow, K = TH.brand.black, P = TH.brand.cream;
+    CX.fillStyle = P; CX.fillRect(0, 0, L, L);
+    for (let x = 30; x < L; x += 60) for (let y = 30; y < L; y += 60) stud(x, y, 20, mix(P, K, 0.05), CX, 0.35);
     const logo = IMG.get(D.logo);
     const lp = ramp(f, m.logo, m.logo + 16);
     if (logo && lp > 0) {
-      const w = 560, h = logo.height * w / logo.width;
+      const w = 600, h = logo.height * w / logo.width;
       const sc = E.spring(lp, 1.4, 5.5);
       const drop = (1 - E.outCubic(clamp(lp * 2.2))) * -500;
       CX.save(); CX.translate(L / 2, 430 + drop); CX.scale(sc, sc); CX.rotate((1 - sc) * 0.2);
@@ -1609,15 +1674,15 @@ SEG.outro = {
     const url = D.model.url;
     const n = Math.floor(clamp((f - m.url) / 0.7, 0, url.length));
     if (f >= m.url) {
-      const fnt = font(44, 600, 'Space Mono');
+      const fnt = font(fitSize(url, 44, L - 2 * M - 80, 600, TH.brand_mono), 600, TH.brand_mono);   // long URLs shrink
       const full = measure(url, fnt);
       const x = L / 2 - full / 2, y = 780;
       CX.save();
-      CX.fillStyle = K; rrect(x - 30, y - 50, full + 60, 72, 36); CX.fill();
-      text(url.slice(0, n), x, y, { font: fnt, color: Y });
+      CX.fillStyle = Y; rrect(x - 30, y - 50, full + 60, 72, 36); CX.fill();
+      text(url.slice(0, n), x, y, { font: fnt, color: K });
       if (n < url.length || (f % 16) < 8) {
         const cw = measure(url.slice(0, n), fnt);
-        CX.fillStyle = Y; CX.fillRect(x + cw + 4, y - 34, 4, 42);
+        CX.fillStyle = K; CX.fillRect(x + cw + 4, y - 34, 4, 42);
       }
       CX.restore();
     }

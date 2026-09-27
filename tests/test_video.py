@@ -475,6 +475,26 @@ def test_cold_open_performance(engine):
     assert not np.allclose(M, np.eye(4))
 
 
+def test_cold_open_look(engine):
+    """[video.cold_open]'s look keys reach the set (and its plates' cache key); nothing else
+    does, and without them the look is empty (the set's defaults)."""
+    model, theme, segs, tl = _cold_timeline(engine)
+    assert tl["cold_open"]["look"] == {}
+    cfg = {"cold_open": {"scene": "sunset_road", "seconds": 4, "haze": 900.0,
+                         "sky_tint": "#FF9050", "spin_turns": 1.0}}
+    co = T.cold_open_config(model, cfg)
+    placed = model.flatten()
+    look = T.cold_open_plan(engine, model, placed, T.corners(engine, placed), segs[0], co,
+                            T.FPS, theme["beat"])["look"]
+    assert look == {"haze": 900.0, "sky_tint": "#FF9050"}
+    assert set(T.COLD_LOOK) >= set(look)
+    json.dumps(look)
+    from brickkit.video import segment_digest
+    q = {"size": 64, "samples": 1, "engine": "eevee", "device": "gpu"}
+    tl2 = dict(tl, cold_open=dict(tl["cold_open"], look=look))
+    assert segment_digest(tl2, segs[0], q) != segment_digest(tl, segs[0], q)
+
+
 def test_cold_open_reel_and_cues(engine, tmp_path):
     model, theme, segs, tl = _cold_timeline(engine)
     rp = R.plan_reel(engine, Project("_sample"), model, tl, theme, tmp_path, tmp_path,
@@ -501,6 +521,102 @@ def test_cold_open_reel_and_cues(engine, tmp_path):
     assert segment_digest(tl2, segs[0], q) == d
     tl3 = dict(tl, cold_open=dict(co, sun=dict(co["sun"], elevation=3.0)))
     assert segment_digest(tl3, segs[0], q) != d
+
+
+# ---------------------------------------------------------------------------- recorded sounds
+def test_rev_peaks():
+    c = np.zeros(300)
+    for at, h in ((40, 0.9), (60, 1.0), (150, 0.7), (200, 0.5), (260, 0.95)):
+        c[at - 5:at + 6] = h * np.hanning(11)
+    assert R.rev_peaks(c, 30.0) == [60, 150, 260]        # 40 is too close to 60, 200 too low
+    assert R.rev_peaks(c, 30.0, after=100) == [150, 260]
+
+
+def _assets(tmp_path):
+    from types import SimpleNamespace
+    from brickkit.video import audio as A
+    d = tmp_path / "audio"
+    names = ["pull.wav", "idle.wav", "s1.wav", "s2.wav", "burst.wav", "st1.wav", "st2.wav",
+             "hit.wav", "boom.wav"]
+    for k, n in enumerate(names):
+        A.write_wav(d / n, np.full((4800, 2), 0.1 * (k + 1) / len(names)), 48000)
+    cfg = {"audio": {"pull_start": "pull.wav", "catch": 0.5, "idle": "idle.wav",
+                     "screams": ["s1.wav", "s2.wav"], "burst": "burst.wav",
+                     "stings": ["st1.wav", "st2.wav"], "hits": ["hit.wav"], "booms": ["boom.wav"],
+                     "levels": {"boom": -3.0}}}
+    return R.audio_assets(SimpleNamespace(dir=tmp_path), cfg), cfg
+
+
+def test_audio_assets(tmp_path):
+    from types import SimpleNamespace
+    assets, cfg = _assets(tmp_path)
+    assert set(assets["samples"]) == {"pull.wav", "idle.wav", "s1.wav", "s2.wav", "burst.wav",
+                                      "st1.wav", "st2.wav", "hit.wav", "boom.wav"}
+    assert all(len(v["sha1"]) == 40 for v in assets["samples"].values())
+    assert assets["roles"]["screams"] == ["s1.wav", "s2.wav"] and assets["catch"] == 0.5
+    assert assets["levels"]["boom"] == -3.0 and assets["levels"]["scream"] == R.SAMPLE_LEVEL["scream"]
+    assert R.audio_assets(SimpleNamespace(dir=tmp_path), {}) is None
+    bad = {"audio": dict(cfg["audio"], idle="nope.wav")}
+    with pytest.raises(SystemExit):
+        R.audio_assets(SimpleNamespace(dir=tmp_path), bad)
+
+
+def test_recorded_sound_cues(engine, tmp_path):
+    """The real chainsaw in the cold open (pull, the engine from the catch, screams on the
+    swing's peaks, all stopped at the cut), a sting and a rev burst on the title's stamp, stings
+    on the big cuts (a boom instead of the synthesised hit), revs on the build's section
+    changes; without assets the cue sheet is exactly what it was."""
+    model, theme, segs, tl = _cold_timeline(engine)
+    rp = R.plan_reel(engine, Project("_sample"), model, tl, theme, tmp_path, tmp_path,
+                     log=lambda m: None)
+    build = next(s_ for s_ in segs if s_["name"] == "build")     # (the sample builds in one band)
+    rp["transitions"] = sorted(rp["transitions"] + [{"frame": build["start"] + 90, "type": "band",
+                                                     "half": 9, "from": "build", "to": "build"}],
+                               key=lambda t: t["frame"])
+    rp["cues"] = R.cue_sheet(rp, tl, theme)
+    assets, _ = _assets(tmp_path)
+    plain = R.cue_sheet(rp, tl, theme)
+    assert R.cue_sheet(rp, tl, theme, None) == plain == rp["cues"]
+    assert "samples" not in plain and not [e for e in plain["events"] if e["type"] == "sample"]
+    cues = R.cue_sheet(rp, tl, theme, assets)
+    assert cues["samples"] == assets["samples"]
+    fps, co = tl["fps"], tl["cold_open"]
+    cut = co["cut"]
+    smp = [e for e in cues["events"] if e["type"] == "sample"]
+    types = {e["type"] for e in cues["events"]}
+    assert "chainsaw_bed" not in types and "chainsaw" not in types and "wind" in types
+    # the cold open
+    cold = [e for e in smp if e["frame"] < cut]
+    pull = [e for e in cold if e["file"] == "pull.wav"]
+    assert len(pull) == 1 and pull[0]["frame"] == co["start"] and pull[0]["until"] <= cut
+    idle = [e for e in cold if e["file"] == "idle.wav"]
+    catch = co["start"] + round(0.5 * fps)
+    assert len(idle) == 1 and idle[0]["frame"] == catch and idle[0]["loop"]
+    assert idle[0]["until"] == cut and idle[0]["dur"] == cut - catch
+    assert len(idle[0]["gain_curve"]) == cut - catch and min(idle[0]["gain_curve"]) < 0.5
+    screams = [e for e in cold if e["file"] in ("s1.wav", "s2.wav")]
+    peaks = R.rev_peaks(co["rev"][:cut - co["start"]], fps, after=catch - co["start"] + int(0.3 * fps))
+    assert [e["frame"] - co["start"] for e in screams] == peaks and peaks
+    assert all(e["align"] == "peak" and e["until"] == cut for e in screams)
+    assert np.all(np.diff(peaks) >= R.SCREAM_GAP * fps)
+    assert not [e for e in cues["events"] if cut <= e["frame"] < segs[0]["end"]]   # black: silent
+    # the title's stamp: the first sting on it, then the burst; no sting on the cut into it
+    hero = rp["marks"]["title"]["hero"]
+    assert any(e["file"] == "st1.wav" and e["frame"] == hero and e["align"] == "peak" for e in smp)
+    assert any(e["file"] == "burst.wav" and e["frame"] == hero + 2 for e in smp)
+    into_title = next(t for t in rp["transitions"] if t["to"] == "title")
+    assert not [e for e in smp if e["frame"] == into_title["frame"]]
+    # the other big cuts: hit, boom, the second sting, ... (a boom replaces the synthesised hit)
+    big = [t for t in rp["transitions"] if t["type"] != "band" and t["to"] != "title"]
+    on_cuts = [next(e["file"] for e in smp if e["frame"] == t["frame"]) for t in big]
+    assert on_cuts == (["hit.wav", "boom.wav", "st2.wav"] * 3)[:len(big)]
+    for t, f in zip(big, on_cuts):
+        hits = [e for e in cues["events"] if e["type"] == "hit" and e["frame"] == t["frame"]]
+        assert not hits if f == "boom.wav" else len(hits) == (t["to"] in ("build", "scan", "outro"))
+    bands = [t for t in rp["transitions"] if t["type"] == "band"]
+    assert bands and all(any(e["frame"] == t["frame"] and e["file"] in ("s1.wav", "s2.wav")
+                             for e in smp) for t in bands)
+    json.dumps(cues)
 
 
 def test_booklet_step_pages():

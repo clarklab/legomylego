@@ -21,9 +21,12 @@ Cue sheet (the video's edit plan produces it):
                     intro, rise, groove_light, groove, breakdown, halftime, feature, end,
                     cold (a cold open: no music)
                     (every section start is a cut: it gets a crash/impact and a fresh phrase)
-    events          [{frame, type, gain?, pitch?, dur?, pan?}] SFX placed sample-accurately at
-                    frame / fps; types in SFX.LEVEL, unknown types are ignored (chainsaw_bed
-                    also takes `curve`, 0..1 per frame, and `catch`, a frame)
+    events          [{frame, type, gain?, pitch?, dur?, pan?, duck?}] SFX placed sample-accurately
+                    at frame / fps; types in SFX.LEVEL, unknown types are ignored (chainsaw_bed
+                    also takes `curve`, 0..1 per frame, and `catch`, a frame; "sample" plays a
+                    recorded sound, see SFX.fx_sample); `duck` [dB, release s] ducks the music
+    samples         optional {name: {path, sha1}}: recorded sounds the "sample" events play
+                    (WAV, or anything ffmpeg decodes)
 
 Layout: utilities - loudness and mastering - instruments (Voices) - SFX - arrangement (STYLES,
 Arranger) - render_audio - demo:  python -m brickkit.video.audio playful out.wav [seconds]
@@ -482,6 +485,38 @@ def read_wav(path: Path) -> tuple[np.ndarray, int]:
     return v.reshape(-1, ch), sr
 
 
+# ------------------------------------------------------------------ recorded sounds
+_SAMPLES: dict = {}
+
+
+def load_sample(path, sr: int = 48000) -> np.ndarray:
+    """A recorded sound as float stereo (n, 2) at `sr`: a WAV read here (resampled if need be),
+    anything else (MP3, ...) decoded by ffmpeg (deterministic). Cached per (path, sr, mtime)."""
+    path = Path(path)
+    key = (str(path), sr, path.stat().st_mtime_ns)
+    if key in _SAMPLES:
+        return _SAMPLES[key]
+    if path.suffix.lower() == ".wav":
+        x, rate = read_wav(path)
+        if rate != sr:
+            from math import gcd
+            g = gcd(sr, rate)
+            x = signal.resample_poly(x, sr // g, rate // g, axis=0)
+    else:
+        import shutil
+        import subprocess
+        ffmpeg = shutil.which("ffmpeg")
+        if ffmpeg is None:
+            raise RuntimeError(f"ffmpeg is needed to decode {path.name}")
+        raw = subprocess.run([ffmpeg, "-v", "error", "-i", str(path), "-f", "f32le", "-ac", "2",
+                              "-ar", str(sr), "-"], capture_output=True, check=True).stdout
+        x = np.frombuffer(raw, "<f4").astype(float).reshape(-1, 2)
+    if x.ndim == 1 or x.shape[1] == 1:
+        x = np.repeat(x.reshape(-1, 1), 2, axis=1)
+    _SAMPLES[key] = x[:, :2]
+    return _SAMPLES[key]
+
+
 # ================================================================================ instruments
 class Voices:
     """Instrument voices: `get(name, midi, dur, var, **params)` renders one note/hit (mono, or
@@ -861,7 +896,7 @@ class SFX:
              "power": -11.0, "motor": -19.0, "glitch": -17.0, "boing": -16.0, "page": -16.0,
              "type": -21.0, "pop": -17.0, "riffle": -17.0, "flick": -19.0, "slap": -12.0,
              "power_off": -13.0, "chainsaw": -6.0, "burn": -14.0, "typewriter": -18.0,
-             "chainsaw_bed": -5.5, "wind": -30.0}
+             "chainsaw_bed": -5.5, "wind": -30.0, "sample": 0.0}
     DUR = {"whoosh": 8, "riser": 30, "scan": 30, "power": 36, "motor": 30, "glitch": 6,
            "riffle": 60, "chainsaw": 54, "burn": 10}
     DUCK = {"hit": (7.0, 0.7), "power": (5.0, 0.9), "snap": (4.0, 0.35),     # dB, release s
@@ -870,8 +905,9 @@ class SFX:
             "boing": 0.2, "tick": 0.1, "click": 0.08, "slap": 0.18, "flick": 0.08,
             "typewriter": 0.12}
 
-    def __init__(self, sr: int, fps: float, seed: int):
+    def __init__(self, sr: int, fps: float, seed: int, samples: dict | None = None):
         self.sr, self.fps, self.seed = sr, float(fps), int(seed) % (2 ** 63)
+        self.samples = samples or {}                   # recorded sounds: name -> {path, ...}
 
     def _t(self, seconds: float):
         n = max(1, int(seconds * self.sr))
@@ -895,6 +931,9 @@ class SFX:
             typ = ev["type"]
             rng = np.random.default_rng([self.seed, zlib.crc32(typ.encode()), k])
             buf = getattr(self, "fx_" + typ)(ev, rng)
+            lead = 0
+            if isinstance(buf, tuple):                  # starts before its frame (a sample's peak)
+                buf, lead = buf
             gain = float(db2amp(self.LEVEL[typ])) * float(np.clip(ev.get("gain", 1.0), 0.0, 1.0))
             if typ == "click" and len(clicks):      # dense runs: thinner, so they never buzz
                 near = np.count_nonzero(np.abs(clicks - at / sr) < 0.25)
@@ -907,9 +946,10 @@ class SFX:
             if typ in self.ROOM:
                 buf = np.concatenate([buf, np.zeros((int(0.3 * sr), 2))])
                 buf = buf + self.ROOM[typ] * _norm(convolve(buf, room), np.abs(buf).max())
-            add(out, _fade(buf, sr, 0.0, 0.004), at, gain)
-            if typ in self.DUCK:
-                depth, rel = self.DUCK[typ]
+            add(out, _fade(buf, sr, 0.0, 0.004), at - lead, gain)
+            ducks = ev.get("duck") or self.DUCK.get(typ)
+            if ducks:
+                depth, rel = ducks
                 depth *= float(np.clip(ev.get("gain", 1.0), 0.0, 1.0))
                 a0 = max(0, at - int(0.004 * sr))
                 m = min(n - a0, int((rel * 5 + 0.05) * sr))
@@ -1182,6 +1222,45 @@ class SFX:
         y = osc_sine(f, n, sr) * env_perc(n, sr, 0.03, 0.0008)
         y += 0.2 * bw(rng.standard_normal(n), "high", 3000.0, sr) * np.exp(-t / 0.002)
         return _norm(_fade(y, sr, 0.0, 0.01))
+
+    def fx_sample(self, ev, rng):
+        """A recorded sound, cues["samples"][`file`]: its peak set to `level` dBFS, played from
+        `offset` s in, looped (crossfaded) to `dur` frames with `loop`, faded (`fade_in`,
+        `fade_out` s), shaped by `gain_curve` (per frame from the event's), stopped dead at
+        frame `until`. `align` "peak": its loudest moment lands on the event's frame (so it
+        starts earlier). Returns (buffer, samples before the frame)."""
+        sr, fps = self.sr, self.fps
+        info = self.samples.get(ev.get("file"))
+        if info is None:
+            raise KeyError(f"sample {ev.get('file')!r} is not in the cue sheet's samples")
+        x = load_sample(info["path"], sr)
+        x = x[int(round(float(ev.get("offset", 0.0)) * sr)):]
+        x = x / (float(np.percentile(np.abs(x), 99.95)) + _TINY)
+        if ev.get("dur") is not None:
+            need = int(round(float(ev["dur"]) / fps * sr))
+            if ev.get("loop") and len(x) < need:          # loop it, crossfading the joins
+                xf = min(int(0.25 * sr), len(x) // 4)
+                r = _ramp(xf)[:, None]
+                y = x.copy()
+                while len(y) < need:
+                    y = np.concatenate([y[:-xf], y[-xf:] * np.sqrt(1 - r) + x[:xf] * np.sqrt(r),
+                                        x[xf:]])
+                x = y
+            x = x[:need]
+        x = _fade(x.copy(), sr, float(ev.get("fade_in", 0.0)), float(ev.get("fade_out", 0.004)))
+        lead = 0
+        if ev.get("align") == "peak":                     # the loudest 30 ms on the frame
+            h = int(0.03 * sr)
+            e = np.convolve((x ** 2).sum(axis=1), np.ones(h), "valid")
+            lead = int(np.argmax(e)) + h // 2
+        if ev.get("gain_curve"):
+            g = np.asarray(ev["gain_curve"], float)
+            fr = (np.arange(len(x)) - lead) / sr * fps
+            x = x * np.interp(fr, np.arange(len(g)), g)[:, None]
+        if ev.get("until") is not None:                   # stopped dead at the cut
+            at = int(round(float(ev["frame"]) / fps * sr))
+            x = x[:max(0, int(round(float(ev["until"]) / fps * sr)) - (at - lead))]
+        return x * float(db2amp(float(ev.get("level", -12.0)))), lead
 
     # engine speed (firings a second) through a chainsaw's start and revs, at times in s of 1.8
     SAW_RPM = ((0.0, 16.0), (0.1, 26.0), (0.17, 14.0), (0.26, 40.0), (0.36, 52.0), (0.5, 48.0),
@@ -1977,7 +2056,7 @@ def render_stems(cues: dict, sr: int = 48000) -> dict:
     'arranger'}, each (n, 2) with n = round(frames / fps * sr)."""
     A = Arranger(cues, sr)
     music = A.render()
-    sfx, duck = SFX(sr, A.fps, A.seed).render(cues.get("events") or [], A.n)
+    sfx, duck = SFX(sr, A.fps, A.seed, cues.get("samples")).render(cues.get("events") or [], A.n)
     return {"music": music * db2amp(-duck)[:, None], "sfx": sfx, "duck_db": duck, "arranger": A}
 
 

@@ -7,10 +7,24 @@ job.json as for blender_animate.py: {"timeline", "frames": [[frame, "out.png"], 
 "samples", "engine", "device"}. The parts, their materials and the engine settings are the
 animator's (blender_scene.SceneBuilder, blender_animate's settings); the set is built here:
 
-    sunset_road   a flat two-lane road running straight into a low sun: a physical sky (the sun
-                  disc for the camera; the light itself from a warm sun lamp along the same line
-                  and the sky without its disc), faded dashed centre line, gravel shoulders,
-                  dry grass either side, the ground hazing into the horizon with distance
+    sunset_road   a worn two-lane blacktop running dead straight into a huge low sun, the figure
+                  treated as life-size (a man about 2 m tall with his arms up: the set is
+                  scaled from its height). A physical sky with a dusty aureole round the sun and
+                  thin streaks of cloud, lit by a warm sun lamp on the same line (the disc
+                  itself a camera-only card at infinity). The road: chip seal, patched,
+                  crack-sealed, polished wheel paths that take the sun's glare, a faded dashed
+                  yellow centre line, worn edge lines, crumbling edges, caliche shoulders.
+                  Round it, all procedural geometry: dry grass and seed stalks along the verges
+                  (lit through from behind), barbed-wire fences on cedar posts, a power line
+                  and a telephone line of leaning poles with sagging wires, mesquites, live
+                  oaks and a dead tree in the pastures, a windpump, a farmhouse and barn, a tree
+                  line and low hills on the horizon. Everything fades into the sky's colour
+                  with distance (aerial haze); a thin dust hangs over the road.
+                  The lens: focused on the figure, the background softer the closer the shot
+                  (oval, anamorphic bokeh), a 180-degree shutter's motion blur on the swing;
+                  the compositor exposes each shot, blooms the highlights and throws sun beams
+                  from the visible part of the disc (so they die where the figure covers it).
+                  The streak, ghosts and veil of the flare are the web compositor's.
 
 The figure stands at the pivot on the road's centre line with its display stand hidden; the
 parts hang on a rig (spin empty > group empties > parts): the spin turns the whole figure, the
@@ -25,6 +39,7 @@ import time
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 import bpy  # noqa: E402
+import numpy as np  # noqa: E402
 from mathutils import Matrix, Vector  # noqa: E402
 
 import blender_animate as ba  # noqa: E402
@@ -32,79 +47,148 @@ import blender_scene as bs  # noqa: E402
 
 TO_B = bs.TO_BLENDER
 LDU = bs.LDU
+MAN = 2.05          # m: how tall the figure stands in its world (arms up): sets the set's scale
+DISC_AT = 1500.0    # Blender m: where the sun disc hangs, along the sun's line from the camera
+
+# the set's look; [video.cold_open] can override any of these (the plan's "look")
+LOOK = {"exposure": -1.6,          # EV (each shot adds its own)
+        "sky_strength": 0.45, "sky_tint": "#FFB070",
+        "sun_strength": 5.0, "sun_color": "#FF9A4A", "sun_disc": 90.0,
+        "fill_strength": 0.25,     # violet fill from the sky behind the camera
+        "haze": 1900.0,            # m: the air takes 63 % of a thing's colour this far off
+        "dust": 0.0015,            # the dust over the road: extinction per metre at the ground
+        "look": "AgX - Punchy"}
 
 
-def _node(nt, kind, **inputs):
-    n = nt.nodes.new(kind)
-    for k, v in inputs.items():
-        if k in n.inputs:
-            n.inputs[k].default_value = v
-        else:
-            setattr(n, k, v)
-    return n
+# ---------------------------------------------------------------------------- shader nodes
+class NB:
+    """Node building: inputs by name, a constant or a socket wherever a value goes."""
 
+    def __init__(self, nt):
+        self.nt = nt
 
-def _math(nt, op, a, b=None, clamp=False):
-    n = nt.nodes.new("ShaderNodeMath")
-    n.operation = op
-    n.use_clamp = clamp
-    for i, v in enumerate((a, b)):
-        if v is None:
-            continue
-        if isinstance(v, (int, float)):
-            n.inputs[i].default_value = float(v)
-        else:
-            nt.links.new(v, n.inputs[i])
-    return n.outputs[0]
+    def clear(self, keep):
+        for n in list(self.nt.nodes):
+            if n.type != keep:
+                self.nt.nodes.remove(n)
+        return next(n for n in self.nt.nodes if n.type == keep)
 
-
-def _smooth(nt, v, lo, hi):
-    """0 below lo, 1 above hi, smoothstep between (hi < lo inverts)."""
-    n = nt.nodes.new("ShaderNodeMapRange")
-    ba._try(n, "interpolation_type", "SMOOTHSTEP")
-    n.inputs["From Min"].default_value = lo
-    n.inputs["From Max"].default_value = hi
-    nt.links.new(v, n.inputs["Value"])
-    return n.outputs["Result"]
-
-
-def _mix_rgb(nt, fac, a, b):
-    n = nt.nodes.new("ShaderNodeMix")
-    n.data_type = "RGBA"
-    nt.links.new(fac, n.inputs["Factor"])
-    for sock, v in ((n.inputs[6], a), (n.inputs[7], b)):
-        if isinstance(v, (tuple, list)):
+    def set(self, sock, v):
+        if isinstance(v, bpy.types.NodeSocket):
+            self.nt.links.new(v, sock)
+        elif isinstance(v, (tuple, list)) and len(v) == 3 and sock.type == "RGBA":
             sock.default_value = (*v, 1.0)
         else:
-            nt.links.new(v, sock)
-    return n.outputs[2]
+            sock.default_value = v
 
+    def node(self, kind, **kw):
+        n = self.nt.nodes.new(kind)
+        for k, v in kw.items():
+            if k in n.inputs:
+                self.set(n.inputs[k], v)
+            else:
+                setattr(n, k, v)
+        return n
 
-def _sky(nt, sun, disc):
-    s = nt.nodes.new("ShaderNodeTexSky")
-    for kind in ("MULTIPLE_SCATTERING", "SINGLE_SCATTERING", "NISHITA"):
-        if ba._try(s, "sky_type", kind):
-            break
-    s.sun_disc = disc
-    s.sun_elevation = math.radians(sun["elevation"])
-    s.sun_rotation = math.radians(sun["azimuth"])       # 0: along +Y (LDraw +Z), down the road
-    s.sun_size = math.radians(sun["size"])
-    ba._try(s, "sun_intensity", 1.0)
-    ba._try(s, "altitude", 20.0)
-    ba._try(s, "air_density", 1.2)
-    ba._try(s, "aerosol_density", 3.0)                  # dusty: a big soft orange sun
-    return s
+    def math(self, op, a, b=None, c=None):
+        n = self.nt.nodes.new("ShaderNodeMath")
+        n.operation = op
+        for i, v in enumerate((a, b, c)):
+            if v is not None:
+                self.set(n.inputs[i], float(v) if isinstance(v, (int, float)) else v)
+        return n.outputs[0]
 
+    def add(self, a, b):
+        return self.math("ADD", a, b)
 
-def _tinted(nt, color, tint):
-    """The sky warmed towards a dusty sunset (a filter over the physical sky)."""
-    n = nt.nodes.new("ShaderNodeMix")
-    n.data_type = "RGBA"
-    n.blend_type = "MULTIPLY"
-    n.inputs["Factor"].default_value = 1.0
-    nt.links.new(color, n.inputs[6])
-    n.inputs[7].default_value = tint
-    return n.outputs[2]
+    def sub(self, a, b):
+        return self.math("SUBTRACT", a, b)
+
+    def mul(self, a, b):
+        return self.math("MULTIPLY", a, b)
+
+    def vec(self, op, a, b=None, out=0):
+        n = self.nt.nodes.new("ShaderNodeVectorMath")
+        n.operation = op
+        for i, v in enumerate((a, b)):
+            if v is None:
+                continue
+            if op == "SCALE" and i == 1:
+                self.set(n.inputs["Scale"], float(v) if isinstance(v, (int, float)) else v)
+            else:
+                self.set(n.inputs[i], v)
+        return n.outputs[out]
+
+    def xyz(self, v):
+        n = self.node("ShaderNodeSeparateXYZ")
+        self.set(n.inputs[0], v)
+        return n.outputs
+
+    def comb(self, x, y, z):
+        n = self.node("ShaderNodeCombineXYZ")
+        for i, v in enumerate((x, y, z)):
+            self.set(n.inputs[i], float(v) if isinstance(v, (int, float)) else v)
+        return n.outputs[0]
+
+    def smooth(self, v, lo, hi):
+        """0 below lo, 1 above hi, smoothstep between (hi < lo inverts)."""
+        n = self.nt.nodes.new("ShaderNodeMapRange")
+        ba._try(n, "interpolation_type", "SMOOTHSTEP")
+        self.set(n.inputs["From Min"], lo)
+        self.set(n.inputs["From Max"], hi)
+        self.set(n.inputs["Value"], v)
+        return n.outputs["Result"]
+
+    def mix(self, fac, a, b, blend="MIX"):
+        """Colours: a to b by fac (or blended, "MULTIPLY"...)."""
+        n = self.nt.nodes.new("ShaderNodeMix")
+        n.data_type = "RGBA"
+        n.blend_type = blend
+        self.set(n.inputs["Factor"], float(fac) if isinstance(fac, (int, float)) else fac)
+        for sock, v in ((n.inputs[6], a), (n.inputs[7], b)):
+            if isinstance(v, (tuple, list)):
+                sock.default_value = (*v[:3], 1.0)
+            else:
+                self.nt.links.new(v, sock)
+        return n.outputs[2]
+
+    def tint(self, color, rgb):
+        return self.mix(1.0, color, rgb, "MULTIPLY")
+
+    def fmix(self, fac, a, b):
+        """Values: a to b by fac."""
+        return self.math("MULTIPLY_ADD", fac, self.sub(b, a), a)
+
+    def noise(self, vec, scale, detail=2.0, rough=0.5, out="Fac"):
+        n = self.node("ShaderNodeTexNoise", Scale=scale, Detail=detail, Roughness=rough)
+        self.set(n.inputs["Vector"], vec)
+        return n.outputs[out]
+
+    def voronoi(self, vec, scale, feature="F1", out="Distance", rnd=1.0):
+        n = self.node("ShaderNodeTexVoronoi", Scale=scale)
+        n.feature = feature
+        self.set(n.inputs["Randomness"], rnd)
+        self.set(n.inputs["Vector"], vec)
+        return n.outputs[out]
+
+    def shader_mix(self, fac, a, b):
+        n = self.node("ShaderNodeMixShader")
+        self.set(n.inputs[0], float(fac) if isinstance(fac, (int, float)) else fac)
+        self.nt.links.new(a, n.inputs[1])
+        self.nt.links.new(b, n.inputs[2])
+        return n.outputs[0]
+
+    def group(self, tree, **kw):
+        n = self.nt.nodes.new("ShaderNodeGroup")
+        n.node_tree = tree
+        for k, v in kw.items():
+            self.set(n.inputs[k], v)
+        return n
+
+    def angle_to(self, d, target):
+        """Radians between the unit vector d and a fixed direction."""
+        c = self.vec("DOT_PRODUCT", d, tuple(target), out=1)
+        return self.math("ARCCOSINE", self.math("MINIMUM", c, 1.0))
 
 
 def sun_direction(sun) -> Vector:
@@ -112,187 +196,858 @@ def sun_direction(sun) -> Vector:
     return Vector((math.sin(a) * math.cos(e), math.cos(a) * math.cos(e), math.sin(e)))
 
 
-# ---------------------------------------------------------------------------- sets
+# ---------------------------------------------------------------------------- meshes
+class Mesh:
+    """Triangles gathered with numpy, built into one object (metres; `_place` puts it in the
+    set). `attrs`: per-vertex floats for the material ("rnd", "h")."""
+
+    def __init__(self):
+        self.V, self.F, self.A, self.n = [], [], {}, 0
+
+    def tris(self, V, F, **attrs):
+        V = np.asarray(V, np.float32).reshape(-1, 3)
+        F = np.asarray(F, np.int64).reshape(-1, 3)
+        for k in set(self.A) | set(attrs):
+            self.A.setdefault(k, [np.zeros(self.n, np.float32)] if self.n else [])
+            a = np.asarray(attrs.get(k, 0.0), np.float32)
+            self.A[k].append(np.broadcast_to(a, (len(V),)).copy())
+        self.V.append(V)
+        self.F.append(F + self.n)
+        self.n += len(V)
+
+    def tube(self, pts, radii, sides=6, cap=True):
+        """A tube along a polyline, a radius per point (a pole, a branch, a wire)."""
+        P = np.asarray(pts, float)
+        r = np.broadcast_to(np.asarray(radii, float), (len(P),))
+        t = np.gradient(P, axis=0)
+        t /= np.linalg.norm(t, axis=1, keepdims=True) + 1e-12
+        up = np.where(np.abs(t[:, 2:3]) > 0.9, [[1.0, 0, 0]], [[0, 0, 1.0]])
+        a = np.cross(t, up)
+        a /= np.linalg.norm(a, axis=1, keepdims=True) + 1e-12
+        b = np.cross(t, a)
+        ang = np.linspace(0, 2 * np.pi, sides, endpoint=False)
+        ring = np.cos(ang)[None, :, None] * a[:, None] + np.sin(ang)[None, :, None] * b[:, None]
+        V = (P[:, None] + ring * r[:, None, None]).reshape(-1, 3)
+        k = len(P)
+        i = np.arange(k - 1)[:, None] * sides
+        j = np.arange(sides)[None, :]
+        a0, a1 = i + j, i + (j + 1) % sides
+        F = np.concatenate([np.stack([a0, a1, a1 + sides], -1).reshape(-1, 3),
+                            np.stack([a0, a1 + sides, a0 + sides], -1).reshape(-1, 3)])
+        if cap:
+            V = np.vstack([V, P[-1:]])
+            top = (k - 1) * sides
+            F = np.vstack([F, np.stack([top + np.arange(sides), np.full(sides, len(V) - 1),
+                                        top + (np.arange(sides) + 1) % sides], -1)])
+        self.tris(V, F)
+
+    def box(self, center, size, R=None):
+        c = np.array([[x, y, z] for z in (-1, 1) for y in (-1, 1) for x in (-1, 1)], float)
+        V = c * np.asarray(size, float) / 2
+        if R is not None:
+            V = V @ np.asarray(R, float).T
+        V += np.asarray(center, float)
+        q = [(0, 1, 3, 2), (4, 6, 7, 5), (0, 4, 5, 1), (2, 3, 7, 6), (0, 2, 6, 4), (1, 5, 7, 3)]
+        self.tris(V, [(a, b, c_) for a, b, c_, d in q] + [(a, c_, d) for a, b, c_, d in q])
+
+    def quad(self, P):
+        self.tris(P, [(0, 1, 2), (0, 2, 3)])
+
+    def build(self, name, mat, M, origin, smooth=False):
+        if not self.V:
+            return None
+        V = np.concatenate(self.V)
+        F = np.concatenate(self.F).astype(np.int32)
+        me = bpy.data.meshes.new(name)
+        me.vertices.add(len(V))
+        me.vertices.foreach_set("co", V.ravel())
+        me.loops.add(F.size)
+        me.loops.foreach_set("vertex_index", F.ravel())
+        me.polygons.add(len(F))
+        me.polygons.foreach_set("loop_start", np.arange(0, F.size, 3, dtype=np.int32))
+        if smooth:
+            me.polygons.foreach_set("use_smooth", np.ones(len(F), bool))
+        me.update(calc_edges=True)
+        for k, parts in self.A.items():
+            me.attributes.new(k, "FLOAT", "POINT").data.foreach_set("value", np.concatenate(parts))
+        me.materials.append(mat)
+        ob = bpy.data.objects.new(name, me)
+        bpy.context.scene.collection.objects.link(ob)
+        ob.location = origin
+        ob.scale = (M, M, M)
+        return ob
+
+
+def _rot(yaw=0.0, tilt=0.0, tilt_dir=0.0):
+    """A rotation: yaw about z, then leaning `tilt` towards `tilt_dir` (radians)."""
+    cz, sz = math.cos(yaw), math.sin(yaw)
+    Rz = np.array([[cz, -sz, 0], [sz, cz, 0], [0, 0, 1]])
+    ax = np.array([-math.sin(tilt_dir), math.cos(tilt_dir), 0.0])
+    K = np.array([[0, -ax[2], ax[1]], [ax[2], 0, -ax[0]], [-ax[1], ax[0], 0]])
+    return (np.eye(3) + math.sin(tilt) * K + (1 - math.cos(tilt)) * K @ K) @ Rz
+
+
+def _leaves(m, rng, centres, radii, n, size, flat=0.6, rnd=0.0):
+    """Leaf cards (small triangles) in flattened ellipsoids round `centres`, crowded towards
+    their skins so the crowns have ragged, see-through edges against the sky."""
+    C = np.repeat(np.asarray(centres, float), n, axis=0)
+    R = np.repeat(np.asarray(radii, float), n)
+    d = rng.normal(size=(len(C), 3))
+    d /= np.linalg.norm(d, axis=1, keepdims=True)
+    P = C + d * (R * rng.uniform(0.35, 1.0, len(C)) ** 0.4)[:, None] * np.array([1.0, 1.0, flat])
+    u = rng.normal(size=(len(C), 3))
+    u /= np.linalg.norm(u, axis=1, keepdims=True)
+    v = np.cross(u, rng.normal(size=(len(C), 3)))
+    v /= np.linalg.norm(v, axis=1, keepdims=True) + 1e-9
+    s = size * rng.uniform(0.6, 1.4, len(C))[:, None]
+    V = np.stack([P, P + u * s, P + (0.5 * u + 0.8 * v) * s], 1).reshape(-1, 3)
+    m.tris(V, np.arange(len(V)).reshape(-1, 3), rnd=rnd)
+
+
+# ---------------------------------------------------------------------------- the set
+class SunsetRoad:
+    """The world, the sun, the road, the country round it, the air and the lens. Distances in
+    the set are metres of the figure's world (self.M Blender units each), x across the road
+    (the centre line at 0), y along it towards the sun, z up from the road."""
+
+    BLUR = {"wide": 0.012, "low": 0.016, "close": 0.02}   # far background's blur / frame width
+    TRIM = {"wide": -0.45}          # EV on the plan's: the long lens sees nothing but bright sky
+    ROAD = 3.62                     # m from the centre line to the edge of the blacktop
+
+    def __init__(self, sc, co, eevee):
+        self.sc, self.co, self.eevee = sc, co, eevee
+        self.look = dict(LOOK, **(co.get("look") or {}))
+        self.sun = co["sun"]
+        self.U = co["height"] * LDU                     # the figure's height, Blender m
+        self.M = self.U / MAN                           # a metre of its world
+        px, pz = co["pivot"]
+        self.O = Vector((px * LDU, pz * LDU, -co["ground_y"] * LDU))
+        self.sun_dir = sun_direction(self.sun)
+        self.strength = float(self.look["sky_strength"])
+        self.rng = np.random.default_rng(1974)
+        self.looks = {}
+        self.country = None
+        self.sky_group = self._sky_group()
+        self.haze_group = self._haze_group()
+        self.world()
+        self.lights()
+        self.ground()
+        self.verges()
+        self.poles()
+        self.fences()
+        self.trees()
+        self.far_country()
+        self.dust()
+        self.sun_disc()
+        self.compositor()
+        ee = sc.eevee
+        # depth of field gathered, never scattered: bokeh sprites ring every dark silhouette
+        # against the sky, and the sun
+        ba._try(ee, "bokeh_threshold", 1e5)
+        ba._try(ee, "bokeh_max_size", 64.0)
+        sc.view_settings.view_transform = "AgX"
+        ba._try(sc.view_settings, "look", self.look["look"])
+        sc.view_settings.exposure = 0.0                 # exposed in the compositor (expose)
+
+    # -- sky ----------------------------------------------------------------------------------
+    def _sky_group(self):
+        """The sky's colour in a direction: the physical sky (no disc) warmed by the tint, gold
+        round the sun where the dust scatters its light forward (a tight aureole and a broad
+        glow), darker and redder overhead."""
+        g = bpy.data.node_groups.new("sunset_sky", "ShaderNodeTree")
+        g.interface.new_socket("Dir", in_out="INPUT", socket_type="NodeSocketVector")
+        g.interface.new_socket("Color", in_out="OUTPUT", socket_type="NodeSocketColor")
+        nb = NB(g)
+        gi, go = nb.node("NodeGroupInput"), nb.node("NodeGroupOutput")
+        d = nb.vec("NORMALIZE", gi.outputs[0])
+        s = g.nodes.new("ShaderNodeTexSky")
+        for kind in ("MULTIPLE_SCATTERING", "SINGLE_SCATTERING", "NISHITA"):
+            if ba._try(s, "sky_type", kind):
+                break
+        s.sun_disc = False
+        s.sun_elevation = math.radians(self.sun["elevation"])
+        s.sun_rotation = math.radians(self.sun["azimuth"])    # 0: along +Y, down the road
+        s.sun_size = math.radians(self.sun["size"])
+        ba._try(s, "sun_intensity", 1.0)
+        ba._try(s, "altitude", 20.0)
+        ba._try(s, "air_density", 1.2)
+        ba._try(s, "aerosol_density", 3.0)                  # dusty: a big soft orange sun
+        nb.set(s.inputs["Vector"], d)
+        col = nb.tint(s.outputs[0], bs.hex_to_linear(self.look["sky_tint"]))
+        th = nb.angle_to(d, self.sun_dir)
+        k = nb.add(nb.mul(nb.math("EXPONENT", nb.math("DIVIDE", th, -math.radians(1.6))), 0.9),
+                   nb.mul(nb.math("EXPONENT", nb.math("DIVIDE", th, -math.radians(12.0))), 0.4))
+        col = nb.vec("ADD", col, nb.vec("SCALE", nb.tint(col, (1.0, 1.05, 0.5)), k))
+        high = nb.smooth(nb.xyz(d)[2], 0.05, 0.6)
+        col = nb.mix(nb.mul(high, 0.55), col, nb.tint(col, (0.55, 0.3, 0.32)))
+        g.links.new(col, go.inputs[0])
+        return g
+
+    def _haze_group(self):
+        """Aerial perspective: a surface fades towards the sky's colour behind it with distance
+        (never quite all the way: the far hills keep a trace of their own)."""
+        g = bpy.data.node_groups.new("sunset_haze", "ShaderNodeTree")
+        g.interface.new_socket("Shader", in_out="INPUT", socket_type="NodeSocketShader")
+        g.interface.new_socket("Shader", in_out="OUTPUT", socket_type="NodeSocketShader")
+        nb = NB(g)
+        gi, go = nb.node("NodeGroupInput"), nb.node("NodeGroupOutput")
+        cam = nb.node("ShaderNodeCameraData")
+        dist = nb.math("DIVIDE", cam.outputs["View Distance"], self.M * float(self.look["haze"]))
+        h = nb.mul(nb.sub(1.0, nb.math("EXPONENT", nb.mul(dist, -1.0))), 0.88)
+        v = nb.xyz(nb.vec("SCALE", nb.node("ShaderNodeNewGeometry").outputs["Incoming"], -1.0))
+        d = nb.comb(v[0], v[1], nb.math("MAXIMUM", v[2], 0.012))    # the ground: its horizon
+        em = nb.node("ShaderNodeEmission", Strength=self.strength)
+        nb.set(em.inputs["Color"], nb.group(self.sky_group, Dir=d).outputs[0])
+        g.links.new(nb.shader_mix(h, gi.outputs[0], em.outputs[0]), go.inputs[0])
+        return g
+
+    def hazed(self, name, build):
+        """A material: build(nb) returns its surface shader; the haze goes over it. (Each one
+        costs EEVEE a sky table every frame: keep them few.)"""
+        m = bpy.data.materials.new(name)
+        nb = NB(m.node_tree)
+        out = nb.clear("OUTPUT_MATERIAL")
+        hz = nb.group(self.haze_group)
+        m.node_tree.links.new(build(nb), hz.inputs[0])
+        m.node_tree.links.new(hz.outputs[0], out.inputs["Surface"])
+        return m
+
+    def world(self):
+        """The camera sees the sky and a few streaks of cloud; everything is lit by the sky
+        alone (the sun is the lamp)."""
+        world = bpy.data.worlds.new("sunset")
+        self.sc.world = world
+        nb = NB(world.node_tree)
+        out = nb.clear("OUTPUT_WORLD")
+        d = nb.vec("NORMALIZE", nb.node("ShaderNodeTexCoord").outputs["Generated"])
+        sky = nb.group(self.sky_group, Dir=d).outputs[0]
+        light_bg = nb.node("ShaderNodeBackground", Strength=self.strength)
+        nb.set(light_bg.inputs["Color"], sky)
+        cam_bg = nb.node("ShaderNodeBackground", Strength=self.strength)
+        nb.set(cam_bg.inputs["Color"], self._clouds(nb, d, sky))
+        lp = nb.node("ShaderNodeLightPath")
+        mix = nb.shader_mix(lp.outputs["Is Camera Ray"], light_bg.outputs[0], cam_bg.outputs[0])
+        world.node_tree.links.new(mix, out.inputs["Surface"])
+        ba._try(world, "sun_threshold", 1e6)          # EEVEE: no second sun pulled from the sky
+        ba._try(world, "use_sun_shadow", False)
+
+    def _clouds(self, nb, d, sky):
+        """Long thin stratus bands on a flat layer (so they crowd towards the horizon): dark
+        bellies with burning edges near the sun, dusky mauve away from it; none on the sun."""
+        dx, dy, dz = nb.xyz(d)
+        z = nb.math("MAXIMUM", dz, 0.004)
+        uv = nb.comb(nb.math("DIVIDE", dx, z), nb.math("DIVIDE", dy, z), 0.0)
+        warp = nb.noise(nb.vec("MULTIPLY", uv, (0.05, 0.05, 1.0)), 1.0, 2.0, 0.5, out="Color")
+        st = nb.vec("ADD", nb.vec("MULTIPLY", uv, (0.3, 0.9, 1.0)), nb.vec("SCALE", warp, 1.6))
+        n1 = nb.noise(st, 0.55, 6.0, 0.62)
+        n2 = nb.noise(nb.vec("MULTIPLY", uv, (0.35, 0.07, 1.0)), 0.8, 3.0, 0.5)
+        dens = nb.mul(nb.smooth(n1, 0.5, 0.64), nb.smooth(n2, 0.4, 0.56))
+        el = nb.mul(nb.smooth(dz, 0.012, 0.05), nb.smooth(dz, 0.5, 0.2))  # lost low in the haze
+        th = nb.angle_to(d, self.sun_dir)
+        clear = nb.smooth(th, math.radians(1.1), math.radians(2.6))
+        dens = nb.mul(nb.mul(dens, el), clear)
+        near = nb.math("EXPONENT", nb.math("DIVIDE", th, -math.radians(16.0)))
+        thin = nb.sub(1.0, nb.smooth(n1, 0.55, 0.7))
+        lit = nb.mix(nb.mul(thin, near), nb.tint(sky, (0.36, 0.24, 0.26)), nb.tint(sky, (2.2, 1.7, 0.8)))
+        cloud = nb.mix(nb.sub(1.0, near), lit, nb.tint(sky, (0.42, 0.3, 0.4)))
+        return nb.mix(nb.mul(dens, 0.85), sky, cloud)
+
+    def lights(self):
+        sd = bpy.data.lights.new("sun", "SUN")
+        sd.color = tuple(bs.hex_to_linear(self.look["sun_color"]))
+        sd.energy = float(self.look["sun_strength"])
+        sd.angle = math.radians(self.sun["size"])
+        ba._try(sd, "use_shadow_jitter", False)
+        so = bpy.data.objects.new("sun", sd)
+        self.sc.collection.objects.link(so)
+        so.rotation_euler = (-self.sun_dir).to_track_quat("-Z", "Y").to_euler()
+        # the rest of the sky bouncing back from the camera's side: a faint violet fill
+        fd = bpy.data.lights.new("fill", "SUN")
+        fd.color = tuple(bs.hex_to_linear("#8C7CC8"))
+        fd.energy = float(self.look["fill_strength"])
+        fd.angle = math.radians(40.0)
+        ba._try(fd, "use_shadow", False)
+        ba._try(fd, "volume_factor", 0.0)
+        fo = bpy.data.objects.new("fill", fd)
+        self.sc.collection.objects.link(fo)
+        fo.rotation_euler = Vector((0.0, 1.0, -0.5)).normalized().to_track_quat("-Z", "Y").to_euler()
+
+    # -- the ground: road, shoulders, pasture --------------------------------------------------
+    def ground(self):
+        size = max(4000.0, 3000.0 * self.U)
+        bpy.ops.mesh.primitive_plane_add(size=size, location=(self.O.x, self.O.y + size * 0.4, self.O.z))
+        ob = bpy.context.object
+        ob.name = "ground"
+        ob.data.materials.append(self.hazed("sunset_road", self._road))
+
+    def _road(self, nb):
+        """Two 3.4 m lanes of old chip seal, its shoulders and the pasture beyond."""
+        geo = nb.node("ShaderNodeNewGeometry")
+        p = nb.vec("SCALE", nb.vec("SUBTRACT", geo.outputs["Position"], tuple(self.O)), 1.0 / self.M)
+        x, y, _ = nb.xyz(p)
+        ax = nb.math("ABSOLUTE", x)
+        # the edge of the blacktop crumbles; the caliche shoulder frays into the grass
+        e1 = nb.noise(p, 0.45, 3.0, 0.6)
+        e2 = nb.noise(p, 4.0, 2.0, 0.6)
+        edge = nb.add(self.ROAD, nb.add(nb.mul(nb.sub(e1, 0.5), 0.55), nb.mul(nb.sub(e2, 0.5), 0.22)))
+        road = nb.smooth(ax, nb.add(edge, 0.02), nb.sub(edge, 0.02))
+        sh_edge = nb.add(5.1, nb.mul(nb.sub(nb.noise(p, 0.3, 3.0, 0.6), 0.5), 1.6))
+        field = nb.smooth(ax, nb.sub(sh_edge, 0.4), nb.add(sh_edge, 0.5))
+        # chip seal: pale stones in a dark binder, sun-bleached in blotches
+        stone = nb.smooth(nb.voronoi(p, 38.0), 0.42, 0.22)
+        fine = nb.noise(p, 90.0, 2.0, 0.5)
+        blotch = nb.noise(p, 0.18, 4.0, 0.62)
+        asphalt = nb.mix(stone, (0.06, 0.057, 0.053), (0.2, 0.185, 0.165))
+        asphalt = nb.mix(nb.mul(nb.smooth(blotch, 0.35, 0.7), 0.6), asphalt, (0.11, 0.1, 0.09))
+        asphalt = nb.mix(nb.mul(fine, 0.25), asphalt, (0.03, 0.028, 0.026))
+        # wheel paths: the binder flushed up by the tyres, darker and polished (the sun's glare)
+        w = nb.math("ABSOLUTE", nb.sub(ax, 1.7))
+        wp = nb.smooth(nb.math("ABSOLUTE", nb.sub(w, 0.9)), 0.42, 0.12)
+        wp = nb.mul(wp, nb.smooth(nb.noise(nb.vec("MULTIPLY", p, (1.0, 0.06, 1.0)), 1.2, 2.0), 0.4, 0.62))
+        asphalt = nb.mix(nb.mul(wp, 0.45), asphalt, (0.05, 0.047, 0.043))
+        # patches of newer blacktop, part of a lane wide, a few metres long, ragged
+        pw = nb.vec("ADD", nb.vec("MULTIPLY", p, (0.55, 0.2, 1.0)),
+                    nb.vec("SCALE", nb.noise(p, 0.9, 2.0, 0.5, out="Color"), 0.12))
+        pr = nb.xyz(nb.voronoi(pw, 1.0, "F1", "Color", rnd=0.3))[0]
+        patch = nb.mul(nb.smooth(pr, 0.94, 0.945), nb.smooth(ax, 3.2, 3.0))
+        asphalt = nb.mix(nb.mul(patch, 0.55), asphalt, nb.mix(stone, (0.045, 0.043, 0.04), (0.08, 0.075, 0.07)))
+        # cracks with tar poured in them (thin black snakes, here and there), the centre joint
+        warp = nb.vec("ADD", nb.vec("MULTIPLY", p, (0.9, 0.5, 1.0)),
+                      nb.vec("SCALE", nb.noise(nb.vec("MULTIPLY", p, (1.3, 1.3, 1.0)), 1.0, 4.0, 0.6, out="Color"), 0.9))
+        cr = nb.voronoi(warp, 1.0, "DISTANCE_TO_EDGE")
+        crack = nb.mul(nb.smooth(cr, 0.009, 0.003), nb.smooth(nb.noise(p, 0.2, 2.0), 0.52, 0.62))
+        joint = nb.mul(nb.smooth(nb.math("ABSOLUTE", nb.add(x, nb.mul(nb.sub(e2, 0.5), 0.12))), 0.022, 0.01),
+                       nb.smooth(nb.noise(p, 0.4, 2.0), 0.5, 0.58))
+        tar = nb.mul(nb.math("MAXIMUM", crack, joint), road)
+        asphalt = nb.mix(tar, asphalt, (0.012, 0.011, 0.01))
+        # paint: a faded dashed yellow centre line (3 m in 12) and worn white edge lines
+        wear = nb.smooth(nb.noise(p, 3.0, 4.0, 0.6), 0.36, 0.6)
+        wear = nb.mul(wear, nb.add(0.35, nb.mul(stone, 0.65)))
+        dash = nb.smooth(nb.math("FRACT", nb.math("DIVIDE", nb.add(y, 1.5), 12.0)), 0.25, 0.245)
+        cl = nb.mul(nb.mul(nb.smooth(ax, 0.07, 0.055), dash), wear)
+        el = nb.smooth(nb.math("ABSOLUTE", nb.sub(ax, 3.3)), 0.055, 0.04)
+        el = nb.mul(nb.mul(el, nb.add(0.4, nb.mul(wear, 0.6))),
+                    nb.smooth(nb.noise(nb.vec("MULTIPLY", p, (1, 0.02, 1)), 2.0, 2.0), 0.3, 0.42))
+        col = nb.mix(nb.mul(cl, 0.9), asphalt, (0.5, 0.33, 0.035))
+        col = nb.mix(nb.mul(el, 0.6), col, (0.3, 0.285, 0.26))
+        # caliche shoulder: pale limestone gravel, darker where the grass creeps in
+        gravel = nb.mix(nb.smooth(nb.voronoi(p, 22.0), 0.5, 0.2), (0.16, 0.12, 0.085), (0.34, 0.28, 0.2))
+        gravel = nb.mix(nb.mul(nb.smooth(nb.noise(p, 0.9, 3.0), 0.45, 0.7), 0.7), gravel, (0.12, 0.085, 0.05))
+        col = nb.mix(road, gravel, col)
+        # the pasture: dry grass, bare dirt, dark brush
+        g1 = nb.noise(p, 0.06, 5.0, 0.62)
+        grass = nb.mix(nb.noise(p, 1.6, 4.0, 0.6), (0.2, 0.13, 0.055), (0.42, 0.3, 0.14))
+        grass = nb.mix(nb.smooth(g1, 0.56, 0.66), grass, (0.05, 0.04, 0.02))
+        grass = nb.mix(nb.mul(nb.smooth(g1, 0.36, 0.3), 0.8), grass, (0.26, 0.18, 0.11))
+        col = nb.mix(field, col, grass)
+        rough = nb.fmix(road, 0.88, nb.fmix(wp, 0.46, 0.39))
+        rough = nb.fmix(tar, rough, 0.36)
+        rough = nb.fmix(patch, rough, nb.add(rough, 0.05))
+        rough = nb.fmix(nb.math("MAXIMUM", cl, el), rough, 0.38)    # paint: glossy, beaded
+        bump = nb.node("ShaderNodeBump", Strength=0.07, Distance=0.004 * self.M)
+        nb.set(bump.inputs["Height"], nb.add(nb.mul(stone, road), nb.mul(fine, 0.3)))
+        bsdf = nb.node("ShaderNodeBsdfPrincipled")
+        nb.set(bsdf.inputs["Base Color"], col)
+        nb.set(bsdf.inputs["Roughness"], rough)
+        nb.set(bsdf.inputs["Specular IOR Level"], nb.fmix(road, 0.25, 0.5))
+        nb.set(bsdf.inputs["Normal"], bump.outputs["Normal"])
+        # dry grass seen against the light glows a little at grazing angles
+        nb.set(bsdf.inputs["Sheen Weight"], nb.mul(field, 0.6))
+        nb.set(bsdf.inputs["Sheen Tint"], (1.0, 0.75, 0.4))
+        return bsdf.outputs[0]
+
+    # -- the country's one material -----------------------------------------------------------
+    def plain(self, name, color, rough=0.8, spec=0.3, translucent=0.0, var=0.0, tip=None):
+        """A look for the country's shared material, set on each object as properties (every
+        material with the haze's sky costs a sky table a frame, so the country shares one).
+        `var`: how much darker by the vertices' "rnd"; `tip`: the colour blades take towards
+        their tips ("h"); `translucent`: lit through from behind."""
+        look = {"base": list(color), "rough": rough, "spec": spec, "trans": translucent,
+                "var": var, "tipc": list(tip or color), "tip": 1.0 if tip else 0.0}
+        self.looks[name] = look
+        return look
+
+    def _country(self):
+        if self.country is not None:
+            return self.country
+
+        def build(nb):
+            def prop(name, out="Fac"):
+                n = nb.node("ShaderNodeAttribute", attribute_name=name)
+                n.attribute_type = "OBJECT"
+                return n.outputs[out]
+
+            def vert(name):
+                return nb.node("ShaderNodeAttribute", attribute_name=name).outputs["Fac"]
+            base = prop("base", "Color")
+            col = nb.mix(nb.mul(vert("rnd"), prop("var")), base, nb.tint(base, (0.45, 0.45, 0.45)))
+            col = nb.mix(nb.mul(nb.math("POWER", vert("h"), 1.5), prop("tip")), col, prop("tipc", "Color"))
+            bsdf = nb.node("ShaderNodeBsdfPrincipled")
+            nb.set(bsdf.inputs["Base Color"], col)
+            nb.set(bsdf.inputs["Roughness"], prop("rough"))
+            nb.set(bsdf.inputs["Specular IOR Level"], prop("spec"))
+            tr = nb.node("ShaderNodeBsdfTranslucent")
+            nb.set(tr.inputs["Color"], nb.tint(col, (1.6, 1.25, 0.8)))
+            return nb.shader_mix(prop("trans"), bsdf.outputs[0], tr.outputs[0])
+        self.country = self.hazed("country", build)
+        return self.country
+
+    def place(self, m, name, look, smooth=False, shadow=True):
+        """A Mesh into the set with its look; far things cast no shadows (they'd fall out of
+        sight, and cost)."""
+        ob = m.build(name, self._country(), self.M, tuple(self.O), smooth)
+        if ob is None:
+            return None
+        for k, v in look.items():
+            ob[k] = v
+        if not shadow:
+            ba._try(ob, "visible_shadow", False)
+        return ob
+
+    # -- grass and weeds along the verges ------------------------------------------------------
+    def verges(self):
+        """Tussocks of dry grass along both verges, thick by the figure, thinning (and, for the
+        long lens, growing) down the road; seed stalks nodding over them."""
+        rng = self.rng
+        m = Mesh()
+        bands = [   # y from, y to, [(|x| from, to, clumps per m2)]
+            (-9.0, 45.0, [(4.3, 5.2, 0.35), (5.2, 9.0, 2.2), (9.0, 16.0, 1.1)]),
+            (45.0, 140.0, [(4.6, 9.0, 0.9), (9.0, 16.0, 0.35)]),
+            (140.0, 420.0, [(4.8, 12.0, 0.18)]),
+        ]
+        cx, cy, far = [], [], []
+        for y0, y1, xs in bands:
+            for x0, x1, dens in xs:
+                n = int(dens * (y1 - y0) * (x1 - x0) * 2)
+                cx.append(rng.uniform(x0, x1, n) * rng.choice([-1, 1], n))
+                cy.append(rng.uniform(y0, y1, n))
+                far.append(np.full(n, min(2.0, max(0.0, y0 / 140.0))))
+        cx, cy, far = np.concatenate(cx), np.concatenate(cy), np.concatenate(far)
+        k = len(cx)
+        idx = np.repeat(np.arange(k), rng.integers(10, 26, k))
+        n = len(idx)
+        big = 1.0 + 0.8 * far[idx]
+        spread = 0.14 * big * np.sqrt(rng.uniform(0, 1, n))
+        a = rng.uniform(0, 2 * np.pi, n)
+        self._blades(m, rng, cx[idx] + spread * np.cos(a), cy[idx] + spread * np.sin(a),
+                     tall=rng.uniform(0.35, 0.95, k)[idx] * rng.uniform(0.55, 1.1, n) * big,
+                     lean=rng.uniform(0.15, 0.9, n) * (0.35 + spread / (0.14 * big)),
+                     head=a + rng.normal(0, 0.5, n),              # leaning out of the tussock
+                     wid=rng.uniform(0.006, 0.013, n) * big, rnd=rng.uniform(0, 1, k)[idx])
+        # seed stalks: taller, thin, a nodding plume on each
+        j = np.nonzero(rng.uniform(0, 1, k) < 0.45)[0]
+        sj = np.repeat(j, rng.integers(1, 5, len(j)))
+        ns = len(sj)
+        self._blades(m, rng, cx[sj] + rng.normal(0, 0.08, ns), cy[sj] + rng.normal(0, 0.08, ns),
+                     tall=rng.uniform(0.8, 1.45, ns) * (1.0 + 0.8 * far[sj]),
+                     lean=rng.uniform(0.1, 0.35, ns), head=rng.uniform(0, 2 * np.pi, ns),
+                     wid=np.full(ns, 0.004), rnd=rng.uniform(0, 1, ns), seeds=True)
+        self.place(m, "verges", self.plain("dry_grass", (0.45, 0.32, 0.14), 0.55, 0.35,
+                                           translucent=0.65, var=0.8, tip=(0.75, 0.58, 0.32)))
+
+    @staticmethod
+    def _blades(m, rng, x, y, tall, lean, head, wid, rnd, segs=4, seeds=False):
+        """Grass blades: ribbons narrowing to a point, bending over as they rise."""
+        n = len(x)
+        t = np.linspace(0, 1, segs + 1)
+        bend = lean[:, None] * t[None, :] ** 1.8 * tall[:, None]
+        z = tall[:, None] * (t[None, :] - 0.25 * lean[:, None] ** 2 * t[None, :] ** 2)
+        bx = x[:, None] + np.cos(head)[:, None] * bend
+        by = y[:, None] + np.sin(head)[:, None] * bend
+        side = head + np.pi / 2 + rng.normal(0, 0.6, n)
+        w = wid[:, None] * (1 - t[None, :]) ** 0.7
+        ox, oy = np.cos(side)[:, None] * w, np.sin(side)[:, None] * w
+        V = np.stack([np.stack([bx - ox, by - oy, z], -1), np.stack([bx + ox, by + oy, z], -1)], 2)
+        s = np.arange(segs)[None, :, None] * 2
+        F = np.concatenate([np.concatenate([s, s + 1, s + 3], -1),
+                            np.concatenate([s, s + 3, s + 2], -1)], 1) \
+            + (np.arange(n) * 2 * (segs + 1))[:, None, None]
+        h = np.broadcast_to(np.repeat(t, 2)[None, :], (n, 2 * (segs + 1)))
+        m.tris(V.reshape(-1, 3), F.reshape(-1, 3), rnd=np.repeat(rnd, 2 * (segs + 1)),
+               h=h.reshape(-1))
+        if seeds:
+            k = 7
+            P = np.stack([bx[:, -1], by[:, -1], z[:, -1]], -1)[:, None] \
+                + rng.normal(0, 1, (n, k, 3)) * np.array([0.03, 0.03, 0.05]) - np.array([0, 0, 0.04])
+            Vs = np.stack([P, P + rng.normal(0, 0.02, (n, k, 3)), P + rng.normal(0, 0.02, (n, k, 3))],
+                          2).reshape(-1, 3)
+            m.tris(Vs, np.arange(len(Vs)).reshape(-1, 3), rnd=np.repeat(rnd, 3 * k), h=1.0)
+
+    # -- poles, wires, fences ------------------------------------------------------------------
+    def poles(self):
+        """A power line down the left of the road (tall poles, one crossarm, three wires, now
+        and then a transformer) and a telephone line down the right (shorter, two crossarms of
+        insulators), their wires sagging between leaning poles."""
+        wood, wires = Mesh(), Mesh()
+        up = np.array([0.0, 0.0, 1.0])
+        # (x, first pole's y, span, height, crossarms): phased so that no pole stands up out of
+        # the figure's head in the low or the close shot
+        for x0, y0, span, ht, arms in ((-8.5, -60.0, 60.0, 11.0, 1), (9.5, -38.0, 48.0, 8.2, 2)):
+            rng = np.random.default_rng(int(span))
+            ys = y0 + span * np.arange(int((2600.0 - y0) / span)) + rng.uniform(-1.5, 1.5, int((2600.0 - y0) / span))
+            tops = []
+            for y in ys:
+                at = np.array([x0 + rng.normal(0, 0.25), y, 0.0])
+                h = ht * rng.uniform(0.94, 1.06)
+                R = _rot(rng.normal(0, 0.03), abs(rng.normal(0, 0.022)), rng.uniform(0, 2 * np.pi))
+                wood.tube(np.array([[0, 0, -0.5], [0, 0, h * 0.5], [0, 0, h]]) @ R.T + at,
+                          [0.16, 0.135, 0.11], 7)
+                ends = []
+                for a in range(arms):
+                    z = h - 0.35 - a * 0.75
+                    wood.box(np.array([0, 0, z]) @ R.T + at, (2.5 if arms == 1 else 1.9, 0.1, 0.11), R)
+                    for s in (-1, 1):                          # braces
+                        wood.tube(np.array([[s * 0.1, 0, z - 0.75], [s * 0.72, 0, z - 0.03]]) @ R.T + at,
+                                  0.025, 4, cap=False)
+                    for u in ([-1.1, 0.0, 1.1] if arms == 1 else [-0.85, -0.45, 0.45, 0.85]):
+                        zz = h + 0.18 if arms == 1 and u == 0 else z + 0.16
+                        ins = np.array([[u, 0, zz - 0.18], [u, 0, zz]]) @ R.T + at
+                        wood.tube(ins, 0.05 if arms == 1 else 0.035, 6)
+                        ends.append(ins[-1])
+                if arms == 1 and rng.uniform() < 0.12:           # a transformer can
+                    c = np.array([0.28, 0, h - 2.1]) @ R.T + at
+                    wood.tube([c - 0.45 * up, c + 0.45 * up], 0.26, 10)
+                tops.append(np.array(ends))
+            t = np.linspace(0, 1, 16)[:, None]
+            for a, b in zip(tops, tops[1:]):                      # catenaries
+                for p, q in zip(a, b):
+                    sag = (0.013 * np.linalg.norm(q - p) + rng.uniform(0, 0.25)) * 4 * t * (1 - t)
+                    wires.tube(p + (q - p) * t - up * sag, 0.011, 3, cap=False)
+        self.place(wood, "poles", self.plain("weathered_wood", (0.09, 0.075, 0.06), 0.85, 0.2))
+        self.place(wires, "wires", self.plain("wire", (0.03, 0.03, 0.03), 0.4, 0.6))
+
+    def fences(self):
+        """Barbed-wire fences along the right of way: crooked cedar posts every few metres,
+        now and then a steel T-post, four strands."""
+        rng = self.rng
+        posts, strands = Mesh(), Mesh()
+        seg = np.linspace(0, 1, 4)[:, None]
+        for x0 in (-15.5, 16.0):
+            y, pts = -40.0, []
+            while y < 1400.0:
+                x = x0 + rng.normal(0, 0.06)
+                h = rng.uniform(1.15, 1.4)
+                if rng.uniform() < 0.18:
+                    posts.tube([[x, y, -0.3], [x, y, h - 0.1]], 0.025, 4)
+                else:
+                    wx, wy = rng.normal(0, 0.05, 2)
+                    posts.tube([[x, y, -0.3], [x + wx, y + wy, h * 0.5], [x + 1.6 * wx, y + 1.6 * wy, h]],
+                               [0.075, 0.065, 0.05], 5)
+                pts.append((x, y))
+                y += rng.uniform(3.4, 4.3)
+            P = np.array(pts)
+            for z in (0.4, 0.68, 0.95, 1.18):
+                zz = z + rng.normal(0, 0.03, len(P))
+                for i in range(0, len(P) - 1, 6):                 # a strand, six posts at a time
+                    line = []
+                    for j in range(i, min(i + 6, len(P) - 1)):
+                        a, b = np.array([*P[j], zz[j]]), np.array([*P[j + 1], zz[j + 1]])
+                        line.append((a + (b - a) * seg - np.array([0, 0, 0.24]) * seg * (1 - seg))[:-1])
+                    line.append(np.array([[*P[j + 1], zz[j + 1]]]))
+                    strands.tube(np.concatenate(line), 0.0045, 3, cap=False)
+        self.place(posts, "fence_posts", self.looks["weathered_wood"])
+        self.place(strands, "fence_wire", self.looks["wire"])
+
+    # -- trees ---------------------------------------------------------------------------------
+    def _branch(self, wood, tips, rng, p, d, length, r, depth, kind):
+        k = 3 if r > 0.06 else 2
+        pts = [p]
+        dd = np.array(d, float)
+        for _ in range(k):
+            dd = dd + rng.normal(0, 0.18, 3) * (0.5 if kind == "oak" else 1.0)
+            if kind == "oak" and depth < 2:
+                dd[2] *= 0.85
+            dd /= np.linalg.norm(dd)
+            pts.append(pts[-1] + dd * length / k)
+        wood.tube(np.array(pts), np.linspace(r, r * 0.62, k + 1),
+                  6 if r > 0.15 else 4 if r > 0.05 else 3, cap=False)
+        if depth == 0 or r < 0.03:
+            tips.append(pts[-1])
+            return
+        for _ in range(rng.integers(2, 4)):
+            nd = dd + rng.normal(0, 0.55, 3)
+            nd[2] = abs(nd[2]) * (0.5 if kind == "oak" else 1.0) + (0.1 if kind == "oak" else 0.25)
+            self._branch(wood, tips, rng, pts[-1], nd / np.linalg.norm(nd),
+                         length * rng.uniform(0.55, 0.78), r * 0.62, depth - 1, kind)
+
+    def tree(self, wood, leaves, x, y, kind, scale=1.0, leaf=1.0):
+        """A mesquite (a few leaning stems, a wide lacy crown), a live oak (a thick trunk,
+        long low limbs, a broad dense dome) or a dead tree (bare limbs)."""
+        rng = np.random.default_rng(int(abs(x) * 131 + abs(y) * 17) % 100000)
+        tips = []
+        base = np.array([x, y, -0.2])
+        if kind == "mesquite":
+            for _ in range(rng.integers(2, 4)):
+                a = rng.uniform(0, 2 * np.pi)
+                d = np.array([math.cos(a) * 0.45, math.sin(a) * 0.45, 1.0])
+                self._branch(wood, tips, rng, base, d / np.linalg.norm(d), 2.4 * scale,
+                             0.14 * scale, 3, kind)
+            _leaves(leaves, rng, np.array(tips), np.full(len(tips), 1.3 * scale), int(70 * leaf),
+                    0.22 * scale, 0.45, rnd=rng.uniform())
+        elif kind == "oak":
+            top = base + [0, 0, 2.4 * scale]
+            wood.tube([base, top], [0.45 * scale, 0.38 * scale], 8, cap=False)
+            for _ in range(rng.integers(4, 7)):
+                a = rng.uniform(0, 2 * np.pi)
+                d = np.array([math.cos(a), math.sin(a), rng.uniform(0.25, 0.7)])
+                self._branch(wood, tips, rng, top, d / np.linalg.norm(d), 3.4 * scale,
+                             0.24 * scale, 3, kind)
+            _leaves(leaves, rng, np.array(tips) + [0, 0, 0.6 * scale], np.full(len(tips), 1.9 * scale),
+                    int(110 * leaf), 0.3 * scale, 0.55, rnd=rng.uniform())
+        else:
+            d = np.array([rng.normal(0, 0.15), rng.normal(0, 0.15), 1.0])
+            self._branch(wood, tips, rng, base, d / np.linalg.norm(d), 3.2 * scale,
+                         0.28 * scale, 4, "dead")
+
+    def trees(self):
+        """Pasture trees placed for the three shots: within a few degrees of the sun for the
+        wide shot (the long lens stacks them up), to the left for the low shot, to the right
+        for the close one; then a scatter further out."""
+        rng = self.rng
+        near, far = (Mesh(), Mesh()), (Mesh(), Mesh())          # (wood, leaves)
+        for x, y, kind, s in (
+                (-24.0, 330.0, "mesquite", 1.3), (31.0, 610.0, "oak", 1.4), (-44.0, 820.0, "oak", 1.6),
+                (12.0, 1150.0, "mesquite", 1.5), (58.0, 1350.0, "oak", 1.8), (-80.0, 1500.0, "oak", 2.0),
+                (-36.0, 120.0, "mesquite", 1.1), (-60.0, 70.0, "dead", 1.3), (-95.0, 210.0, "oak", 1.5),
+                (-150.0, 330.0, "mesquite", 1.3), (-210.0, 160.0, "oak", 1.7), (-120.0, 480.0, "oak", 1.6),
+                (40.0, 55.0, "mesquite", 1.2), (75.0, 140.0, "oak", 1.6), (130.0, 95.0, "mesquite", 1.3),
+                (150.0, 260.0, "oak", 1.9), (230.0, 180.0, "mesquite", 1.4), (95.0, 400.0, "dead", 1.6),
+                (300.0, 420.0, "oak", 2.0), (-330.0, 640.0, "oak", 1.9), (-240.0, 900.0, "mesquite", 1.6)):
+            self.tree(*(near if math.hypot(x, y) < 260 else far), x, y, kind, s)
+        for _ in range(26):
+            y = rng.uniform(250, 1800)
+            self.tree(*far, rng.choice([-1, 1]) * rng.uniform(30, 0.6 * y), y,
+                      "mesquite" if rng.uniform() < 0.55 else "oak", rng.uniform(1.2, 1.9), leaf=0.6)
+        bark = self.plain("bark", (0.05, 0.04, 0.032), 0.9, 0.2)
+        green = self.plain("leaves", (0.05, 0.055, 0.025), 0.7, 0.3, translucent=0.35, var=0.5)
+        for (wood, leaves), tag, shadow in ((near, "tree", True), (far, "far_tree", False)):
+            self.place(wood, tag + "_wood", bark, shadow=shadow)
+            self.place(leaves, tag + "_leaves", green, shadow=shadow)
+
+    # -- far off: a windpump, a farmhouse and barn, the tree line, the hills ------------------
+    def far_country(self):
+        rng = self.rng
+        iron, farm, crowns, hills = Mesh(), Mesh(), Mesh(), Mesh()
+        self._windpump(iron, -34.0, 720.0)
+        self._farm(farm, 72.0, 330.0)
+        # the tree line: crowns only, along field edges a kilometre or three out
+        for row_y, n, spread in ((1300.0, 60, 1300.0), (2000.0, 90, 2600.0), (2900.0, 90, 4400.0)):
+            for x in rng.uniform(-spread, spread, n):
+                y = row_y + rng.normal(0, 120)
+                h = rng.uniform(7, 13)
+                k = rng.integers(3, 6)
+                C = np.stack([x + rng.normal(0, h * 0.45, k), y + rng.normal(0, h * 0.3, k),
+                              h * rng.uniform(0.45, 0.8, k)], -1)
+                _leaves(crowns, rng, C, rng.uniform(0.3, 0.45, k) * h, 70, 0.9, 0.6, rnd=rng.uniform())
+        # two ridges of low hills, the nearer lower
+        xs = np.linspace(-14000, 14000, 420)
+        n = len(xs)
+        i = np.arange(n - 1)
+        for y0, hmin, hmax, amp in ((2400.0, 10.0, 38.0, 500.0), (4600.0, 40.0, 120.0, 1200.0)):
+            f, hh = np.zeros(n), np.zeros(n)
+            for k in range(6):
+                fr = rng.uniform(0.3, 1.0) * 2 ** k / 14000 * 2 * np.pi
+                ph = rng.uniform(0, 2 * np.pi, 2)
+                f += np.sin(xs * fr + ph[0]) / (k + 1)
+                hh += np.sin(xs * fr * 1.3 + ph[1]) / (k + 1) ** 1.2
+            hh = hmin + (hmax - hmin) * (hh - hh.min()) / (np.ptp(hh) + 1e-9)
+            ys = y0 + f * amp / 2
+            V = np.concatenate([np.stack([xs, ys - hh * 6, np.full(n, -2.0)], -1),
+                                np.stack([xs, ys, hh], -1),
+                                np.stack([xs, ys + hh * 8, np.full(n, -2.0)], -1)])
+            hills.tris(V, np.concatenate([np.stack([i, i + 1, n + i + 1], -1),
+                                          np.stack([i, n + i + 1, n + i], -1),
+                                          np.stack([n + i, n + i + 1, 2 * n + i + 1], -1),
+                                          np.stack([n + i, 2 * n + i + 1, 2 * n + i], -1)]))
+        self.place(iron, "windpump", self.plain("iron", (0.03, 0.028, 0.026), 0.6, 0.5), shadow=False)
+        self.place(farm, "farm", self.plain("boards", (0.1, 0.09, 0.08), 0.8, 0.3), shadow=False)
+        self.place(crowns, "tree_line", self.plain("far_leaves", (0.035, 0.035, 0.02), 0.8, 0.2),
+                   shadow=False)
+        self.place(hills, "hills", self.plain("hills", (0.05, 0.04, 0.03), 0.9, 0.2), smooth=True,
+                   shadow=False)
+
+    @staticmethod
+    def _windpump(m, x, y):
+        """A lattice tower with its wheel of blades turned to the wind, a tail vane, a stock
+        tank at its foot."""
+        h, b, t = 10.0, 1.6, 0.35
+        for sx in (-1, 1):
+            for sy in (-1, 1):
+                m.tube([[x + sx * b, y + sy * b, -0.2], [x + sx * t, y + sy * t, h]], 0.05, 4)
+        step = (h - 1.3) / 5
+        corners = ((-1, -1), (1, -1), (1, 1), (-1, 1))
+        for z in np.linspace(0.3, h - 1.0, 6):                 # girts and diagonal braces
+            w = b + (t - b) * z / h
+            w2 = b + (t - b) * min(h, z + step) / h
+            for (ax, ay), (bx, by) in zip(corners, corners[1:] + corners[:1]):
+                m.tube([[x + ax * w, y + ay * w, z], [x + bx * w, y + by * w, z]], 0.025, 3, cap=False)
+                m.tube([[x + ax * w, y + ay * w, z], [x + bx * w2, y + by * w2, z + step]], 0.018, 3,
+                       cap=False)
+        m.box((x, y, h + 0.05), (1.0, 1.0, 0.08))               # the platform
+        hub = np.array([x, y - 0.7, h + 0.9])
+        ang = math.radians(35)
+        ax = np.array([math.sin(ang), -math.cos(ang), 0.0])
+        u = np.array([math.cos(ang), math.sin(ang), 0.0])
+        v = np.array([0.0, 0.0, 1.0])
+        for k in range(18):
+            a = 2 * np.pi * k / 18
+            dr, dt = math.cos(a) * u + math.sin(a) * v, -math.sin(a) * u + math.cos(a) * v
+            m.quad([hub + dr * 0.5, hub + dr * 1.8, hub + dr * 1.8 + dt * 0.3 + ax * 0.08,
+                    hub + dr * 0.5 + dt * 0.12])
+        for r in (0.5, 1.2, 1.8):                                # the wheel's rims
+            m.tube([hub + r * (math.cos(a) * u + math.sin(a) * v) for a in np.linspace(0, 2 * np.pi, 25)],
+                   0.03, 3, cap=False)
+        tail = hub - ax * 3.2
+        m.tube([hub, tail], 0.04, 4)
+        m.quad([tail + v * 0.8, tail - v * 0.3, tail - ax * 1.5 - v * 0.1, tail - ax * 1.5 + v * 0.7])
+        m.tube([[x - 1.5, y + 3.5, -0.2], [x - 1.5, y + 3.5, 1.0]], 2.4, 20)
+
+    def _farm(self, m, x, y):
+        """A farmhouse with a porch and a chimney, a gambrel-roofed barn, a pecan by the house."""
+        at = np.array([x, y, 0.0])
+        R = _rot(0.4)
+        w, d, wall, rh = 9.0, 7.0, 3.0, 4.5 * math.tan(math.radians(38))
+        m.box(np.array([0, 0, wall / 2 - 0.3]) @ R.T + at, (w, d, wall + 0.6), R)
+        for s in (-1, 1):
+            m.quad(np.array([[s * (w / 2 + 0.4), -d / 2 - 0.3, wall - 0.25], [0, -d / 2 - 0.3, wall + rh],
+                             [0, d / 2 + 0.3, wall + rh], [s * (w / 2 + 0.4), d / 2 + 0.3, wall - 0.25]]) @ R.T + at)
+            m.tris(np.array([[-w / 2, s * d / 2, wall], [0, s * d / 2, wall + rh],
+                             [w / 2, s * d / 2, wall]]) @ R.T + at, [(0, 1, 2)])
+        m.box(np.array([2.2, 0.8, wall + rh]) @ R.T + at, (0.6, 0.6, 2.4), R)   # chimney
+        for px in (-4.0, -1.3, 1.3, 4.0):                        # the porch
+            m.tube(np.array([[px, -5.2, 0], [px, -5.2, 2.5]]) @ R.T + at, 0.08, 4)
+        m.quad(np.array([[-4.6, -3.5, 2.9], [4.6, -3.5, 2.9], [4.6, -5.6, 2.4], [-4.6, -5.6, 2.4]]) @ R.T + at)
+        bat = at + [26.0, 30.0, 0.0]
+        R2 = _rot(-0.25)
+        m.box(np.array([0, 0, 2.2]) @ R2.T + bat, (12.0, 16.0, 5.0), R2)
+        prof = [(-6.4, 4.6), (-4.6, 7.4), (0.0, 9.2), (4.6, 7.4), (6.4, 4.6)]
+        for a, b in zip(prof, prof[1:]):
+            m.quad(np.array([[a[0], -8.3, a[1]], [b[0], -8.3, b[1]], [b[0], 8.3, b[1]], [a[0], 8.3, a[1]]]) @ R2.T + bat)
+        for s in (-1, 1):
+            m.tris(np.array([[p[0], s * 8.0, p[1]] for p in prof] + [[0, s * 8.0, 4.6]]) @ R2.T + bat,
+                   [(5, 0, 1), (5, 1, 2), (5, 2, 3), (5, 3, 4)])
+        wood, leaves = Mesh(), Mesh()
+        self.tree(wood, leaves, x - 9.0, y + 6.0, "oak", 1.9)
+        self.place(wood, "farm_tree_wood", self.looks["bark"], shadow=False)
+        self.place(leaves, "farm_tree_leaves", self.looks["leaves"], shadow=False)
+
+    # -- the air -------------------------------------------------------------------------------
+    def dust(self):
+        """A thin dust over the road round the figure, thinning with height, that the low sun
+        shines through."""
+        if not self.eevee:
+            return
+        M, O = self.M, self.O
+        bpy.ops.mesh.primitive_cube_add(size=1.0, location=(O.x, O.y + 10 * M, O.z + 7 * M))
+        ob = bpy.context.object
+        ob.name = "dust"
+        ob.scale = (80 * M, 140 * M, 14 * M)
+        ba._try(ob, "visible_shadow", False)
+        m = bpy.data.materials.new("dust")
+        nb = NB(m.node_tree)
+        out = nb.clear("OUTPUT_MATERIAL")
+        vol = nb.node("ShaderNodeVolumePrincipled", Anisotropy=0.72)
+        nb.set(vol.inputs["Color"], (1.0, 0.86, 0.7))
+        z = nb.xyz(nb.vec("SCALE", nb.vec("SUBTRACT", nb.node("ShaderNodeNewGeometry").outputs["Position"],
+                                          tuple(O)), 1 / M))[2]
+        nb.set(vol.inputs["Density"], nb.mul(nb.math("EXPONENT", nb.math("DIVIDE", z, -3.5)),
+                                             float(self.look["dust"]) / M))
+        m.node_tree.links.new(vol.outputs[0], out.inputs["Volume"])
+        ob.data.materials.append(m)
+        ee = self.sc.eevee
+        ba._try(ee, "volumetric_tile_size", "8")
+        ba._try(ee, "volumetric_samples", 48)
+        ba._try(ee, "use_volumetric_shadows", True)
+        ba._try(ee, "volumetric_shadow_samples", 12)
+        ba._try(ee, "volumetric_start", 0.02 * M)
+        ba._try(ee, "volumetric_end", 90 * M)
+
+    # -- the sun as the camera sees it ---------------------------------------------------------
+    def sun_disc(self):
+        """An emissive card facing the camera, as wide as the sun, white-gold in the middle
+        reddening to the limb, a touch flattened by the air at the horizon. Camera rays only;
+        kept at infinity (moved with the camera, see ColdOpen.apply)."""
+        r0 = DISC_AT * math.tan(math.radians(self.sun["size"]) / 2)
+        bpy.ops.mesh.primitive_circle_add(vertices=96, radius=r0, fill_type="TRIFAN")
+        ob = bpy.context.object
+        ob.name = "sun_disc"
+        ob.scale = (1.0, 0.93, 1.0)
+        for flag in ("visible_shadow", "visible_diffuse", "visible_glossy", "visible_transmission",
+                     "visible_volume_scatter"):
+            ba._try(ob, flag, False)
+        m = bpy.data.materials.new("sun_disc")
+        nb = NB(m.node_tree)
+        out = nb.clear("OUTPUT_MATERIAL")
+        r = nb.math("DIVIDE", nb.vec("LENGTH", nb.node("ShaderNodeTexCoord").outputs["Object"], out=1), r0)
+        em = nb.node("ShaderNodeEmission", Strength=float(self.look["sun_disc"]))
+        nb.set(em.inputs["Color"], nb.mix(nb.smooth(r, 0.15, 1.0), (1.0, 0.62, 0.24), (0.95, 0.2, 0.025)))
+        tr = nb.node("ShaderNodeBsdfTransparent")
+        m.node_tree.links.new(nb.shader_mix(nb.smooth(r, 0.93, 1.0), em.outputs[0], tr.outputs[0]),
+                              out.inputs["Surface"])
+        ba._try(m, "surface_render_method", "BLENDED")
+        ob.data.materials.append(m)
+
+    # -- the lens: exposure, bloom, sun beams --------------------------------------------------
+    def compositor(self):
+        """The exposure first (so the glare's thresholds hold in every shot), then bloom from
+        every highlight and sun beams from the sun's disc alone: the picture through an ellipse
+        round the disc (moved every frame), so where the figure hides the sun its beams are
+        missing."""
+        sc = self.sc
+        ng = bpy.data.node_groups.new("cold_open_lens", "CompositorNodeTree")
+        ng.interface.new_socket("Image", in_out="OUTPUT", socket_type="NodeSocketColor")
+        sc.compositing_node_group = ng
+        ba._try(sc.render, "use_compositing", True)
+        ba._try(sc.render, "compositor_device", "GPU")
+        nb = NB(ng)
+        rl = nb.node("CompositorNodeRLayers")
+        self.gain = nb.node("ShaderNodeMix", data_type="RGBA", blend_type="MULTIPLY", Factor=1.0)
+        ng.links.new(rl.outputs["Image"], self.gain.inputs[6])
+        img = self.gain.outputs[2]
+        self.mask = nb.node("CompositorNodeEllipseMask")
+        src = nb.mix(1.0, img, self.mask.outputs["Mask"], "MULTIPLY")
+
+        def glare(source, kind, **kw):
+            g = nb.node("CompositorNodeGlare", Type=kind, Quality="High")
+            for k, v in kw.items():
+                nb.set(g.inputs[k], v)
+            ng.links.new(source, g.inputs["Image"])
+            return g.outputs["Glare"]
+        bloom = glare(img, "Bloom", Threshold=1.4, Smoothness=0.5, Strength=0.4, Size=0.75,
+                      Tint=(1.0, 0.78, 0.55))
+        self.beams = glare(src, "Sun Beams", Threshold=1.0, Smoothness=0.5, Strength=0.18,
+                           Size=0.3, Tint=(1.0, 0.72, 0.45)).node
+        out = nb.mix(1.0, nb.mix(1.0, img, bloom, "ADD"), self.beams.outputs["Glare"], "ADD")
+        ng.links.new(out, nb.node("NodeGroupOutput").inputs[0])
+
+    # -- per frame -----------------------------------------------------------------------------
+    def frame(self, cam, shot, ev, focus):
+        """The lens for this frame: exposed (`ev`, trimmed per shot) and focused on the figure
+        (`focus`: a point on it); the sun beams and their mask follow the sun on screen."""
+        g = 2.0 ** (ev + self.TRIM.get(shot, 0.0))
+        sock = self.gain.inputs[7]
+        if abs(sock.default_value[0] - g) > 1e-6:
+            sock.default_value = (g, g, g, 1.0)
+        cd = cam.data
+        mw = cam.matrix_world
+        s = max(0.05, (focus - mw.translation).dot(-(mw.to_3x3() @ Vector((0, 0, 1)))))
+        f = cd.lens / 1000.0
+        b = self.BLUR.get(shot, 0.012) * cd.sensor_width / 1000.0   # the blur of infinity
+        cd.dof.use_dof = True
+        cd.dof.focus_distance = s
+        cd.dof.aperture_fstop = max(0.5, f * f / (b * max(1e-3, s - f)))
+        cd.dof.aperture_blades = 0
+        cd.dof.aperture_ratio = 1.6                                   # oval, anamorphic bokeh
+        from bpy_extras.object_utils import world_to_camera_view
+        p = world_to_camera_view(self.sc, cam, mw.translation + self.sun_dir * DISC_AT)
+        w = 1.6 * self.sun["size"] / math.degrees(2 * math.atan(cd.sensor_width / 2 / cd.lens))
+        self.beams.inputs["Sun Position"].default_value = (p.x, p.y)
+        self.mask.inputs["Position"].default_value = (p.x, p.y)
+        self.mask.inputs["Size"].default_value = (w, w * 0.93)
+
+
 def sunset_road(sc, co, eevee):
-    """The world, the sun, the road and the fields. Sizes follow the figure: it stands as tall as
-    a man, so a lane is two of its heights wide."""
-    sun = co["sun"]
-    U = co["height"] * LDU                        # the figure's height, metres in Blender
-    px, pz = co["pivot"]
-    cx, cy = px * LDU, pz * LDU                   # LDraw (x, z) -> Blender (x, y)
-    gz = -co["ground_y"] * LDU
-    strength = float(co.get("sky_strength", 0.45))
-    # sky: the camera sees the sun disc; everything else is lit by the sky without it
-    world = bpy.data.worlds.new("sunset")
-    sc.world = world
-    nt = world.node_tree
-    out = next(n for n in nt.nodes if n.type == "OUTPUT_WORLD")
-    for n in list(nt.nodes):
-        if n.name != out.name:
-            nt.nodes.remove(n)
-    cam_bg = _node(nt, "ShaderNodeBackground", Strength=strength)
-    light_bg = _node(nt, "ShaderNodeBackground", Strength=strength)
-    tint = (*bs.hex_to_linear(co.get("sky_tint", "#FFB070")), 1.0)
-    nt.links.new(_tinted(nt, _sky(nt, sun, True).outputs[0], tint), cam_bg.inputs["Color"])
-    light_sky = _sky(nt, sun, False)
-    nt.links.new(_tinted(nt, light_sky.outputs[0], tint), light_bg.inputs["Color"])
-    lp = nt.nodes.new("ShaderNodeLightPath")
-    mix = nt.nodes.new("ShaderNodeMixShader")
-    nt.links.new(lp.outputs["Is Camera Ray"], mix.inputs["Fac"])
-    nt.links.new(light_bg.outputs[0], mix.inputs[1])
-    nt.links.new(cam_bg.outputs[0], mix.inputs[2])
-    nt.links.new(mix.outputs[0], out.inputs["Surface"])
-    ba._try(world, "sun_threshold", 1e6)          # EEVEE: no second sun pulled from the sky
-    # the sun itself: low, warm, long soft shadows towards the camera
-    sd = bpy.data.lights.new("sun", "SUN")
-    sd.color = tuple(bs.hex_to_linear(co.get("sun_color", "#FF9A4A")))
-    sd.energy = float(co.get("sun_strength", 5.0))
-    sd.angle = math.radians(sun["size"])
-    ba._try(sd, "use_shadow_jitter", False)
-    so = bpy.data.objects.new("sun", sd)
-    sc.collection.objects.link(so)
-    so.rotation_euler = (-sun_direction(sun)).to_track_quat("-Z", "Y").to_euler()
-    # the rest of the sky bouncing back from the camera's side: a faint violet fill
-    fd = bpy.data.lights.new("fill", "SUN")
-    fd.color = tuple(bs.hex_to_linear("#8C7CC8"))
-    fd.energy = float(co.get("fill_strength", 0.25))
-    fd.angle = math.radians(40.0)
-    ba._try(fd, "use_shadow", False)
-    fo = bpy.data.objects.new("fill", fd)
-    sc.collection.objects.link(fo)
-    back = Vector((0.0, -1.0, 0.5)).normalized()
-    fo.rotation_euler = (-back).to_track_quat("-Z", "Y").to_euler()
-    # the ground: one big plane, road, shoulders and fields all in its material
-    size = max(4000.0, 3000.0 * U)
-    bpy.ops.mesh.primitive_plane_add(size=size, location=(cx, cy + size * 0.4, gz))
-    ground = bpy.context.object
-    ground.name = "ground"
-    tint = (*bs.hex_to_linear(co.get("sky_tint", "#FFB070")), 1.0)
-    ground.data.materials.append(road_material(co, U, cx, sun, strength, tint))
-    sun_disc(sc, co)
-    sc.view_settings.view_transform = "AgX"
-    ba._try(sc.view_settings, "look", co.get("look", "AgX - Punchy"))
-    sc.view_settings.exposure = float(co.get("exposure", -1.6))
-
-
-DISC_AT = 1500.0          # m: where the sun disc hangs, along the sun's direction from the camera
-
-
-def sun_disc(sc, co):
-    """The sun as the camera sees it: an emissive disc facing the camera, as wide as the sun,
-    yellow-white in the middle darkening to orange at the limb, soft-edged. (EEVEE draws the
-    sky from a probe too coarse for the sky texture's own disc.) Camera rays only; it's kept
-    at infinity (moved with the camera, see ColdOpen.apply)."""
-    size = math.radians(co["sun"]["size"])
-    bpy.ops.mesh.primitive_circle_add(vertices=64, radius=DISC_AT * math.tan(size / 2),
-                                      fill_type="TRIFAN")
-    ob = bpy.context.object
-    ob.name = "sun_disc"
-    for flag in ("visible_shadow", "visible_diffuse", "visible_glossy", "visible_transmission",
-                 "visible_volume_scatter"):
-        ba._try(ob, flag, False)
-    m = bpy.data.materials.new("sun_disc")
-    nt = m.node_tree
-    out = next(n for n in nt.nodes if n.type == "OUTPUT_MATERIAL")
-    for n in list(nt.nodes):
-        if n.name != out.name:
-            nt.nodes.remove(n)
-    tc = nt.nodes.new("ShaderNodeTexCoord")
-    ln = nt.nodes.new("ShaderNodeVectorMath")
-    ln.operation = "LENGTH"
-    nt.links.new(tc.outputs["Object"], ln.inputs[0])
-    r = _math(nt, "DIVIDE", ln.outputs["Value"], DISC_AT * math.tan(size / 2))
-    limb = _smooth(nt, r, 0.2, 1.0)
-    col = _mix_rgb(nt, limb, (1.0, 0.56, 0.2), (0.95, 0.2, 0.025))
-    em = _node(nt, "ShaderNodeEmission", Strength=float(co.get("sun_disc", 140.0)))
-    nt.links.new(col, em.inputs["Color"])
-    edge = _smooth(nt, r, 0.9, 1.0)
-    tr = nt.nodes.new("ShaderNodeBsdfTransparent")
-    mix = nt.nodes.new("ShaderNodeMixShader")
-    nt.links.new(edge, mix.inputs["Fac"])
-    nt.links.new(em.outputs[0], mix.inputs[1])
-    nt.links.new(tr.outputs[0], mix.inputs[2])
-    nt.links.new(mix.outputs[0], out.inputs["Surface"])
-    ba._try(m, "surface_render_method", "BLENDED")
-    ob.data.materials.append(m)
-    return ob
-
-
-def road_material(co, U, cx, sun, strength, tint):
-    m = bpy.data.materials.new("sunset_road")
-    nt = m.node_tree
-    out = next(n for n in nt.nodes if n.type == "OUTPUT_MATERIAL")
-    for n in list(nt.nodes):
-        if n.name != out.name:
-            nt.nodes.remove(n)
-    geo = nt.nodes.new("ShaderNodeNewGeometry")
-    sep = nt.nodes.new("ShaderNodeSeparateXYZ")
-    nt.links.new(geo.outputs["Position"], sep.inputs[0])
-    x = _math(nt, "SUBTRACT", sep.outputs["X"], cx)
-    ax = _math(nt, "ABSOLUTE", x)
-    y = sep.outputs["Y"]
-    half = 1.95 * U                                # a lane each side of the centre line
-    fine = _node(nt, "ShaderNodeTexNoise", Scale=1.0 / (0.012 * U), Detail=6.0)
-    coarse = _node(nt, "ShaderNodeTexNoise", Scale=1.0 / (0.9 * U), Detail=4.0, Roughness=0.6)
-    nt.links.new(geo.outputs["Position"], fine.inputs["Vector"])
-    nt.links.new(geo.outputs["Position"], coarse.inputs["Vector"])
-    # masks: road, shoulder (gravel), field (grass)
-    road = _smooth(nt, ax, half + 0.02 * U, half - 0.02 * U)
-    field = _smooth(nt, ax, half + 0.25 * U, half + 0.8 * U)
-    # a faded dashed centre line (dashes 3 m of every 12 m, at the figure's scale)
-    line_w = _smooth(nt, ax, 0.032 * U, 0.022 * U)
-    period = 6.6 * U
-    ph = _math(nt, "FRACT", _math(nt, "DIVIDE", y, period))
-    dash = _smooth(nt, ph, 0.46, 0.43)
-    wear = _smooth(nt, fine.outputs["Fac"], 0.35, 0.65)
-    faded = _math(nt, "ADD", _math(nt, "MULTIPLY", wear, 0.5), 0.25)
-    line = _math(nt, "MULTIPLY", _math(nt, "MULTIPLY", line_w, dash), faded)
-    asphalt = _mix_rgb(nt, fine.outputs["Fac"], (0.028, 0.026, 0.024), (0.075, 0.07, 0.064))
-    asphalt = _mix_rgb(nt, _smooth(nt, coarse.outputs["Fac"], 0.3, 0.7), asphalt, (0.05, 0.047, 0.043))
-    col = _mix_rgb(nt, line, asphalt, (0.42, 0.3, 0.06))
-    gravel = _mix_rgb(nt, fine.outputs["Fac"], (0.1, 0.075, 0.05), (0.2, 0.16, 0.11))
-    col = _mix_rgb(nt, road, gravel, col)
-    grass = _mix_rgb(nt, coarse.outputs["Fac"], (0.11, 0.065, 0.02), (0.36, 0.23, 0.07))
-    grass = _mix_rgb(nt, _smooth(nt, fine.outputs["Fac"], 0.62, 0.72), grass, (0.05, 0.035, 0.015))
-    col = _mix_rgb(nt, field, col, grass)
-    rough = _math(nt, "ADD", _math(nt, "MULTIPLY", _math(nt, "SUBTRACT", 1.0, road), 0.5), 0.45)
-    spec = _math(nt, "ADD", _math(nt, "MULTIPLY", road, 0.4), 0.12)
-    bump = _node(nt, "ShaderNodeBump", Strength=0.25, Distance=0.004 * U)
-    nt.links.new(fine.outputs["Fac"], bump.inputs["Height"])
-    bsdf = _node(nt, "ShaderNodeBsdfPrincipled")
-    nt.links.new(spec, bsdf.inputs["Specular IOR Level"])     # the road's sheen, dull fields
-    nt.links.new(col, bsdf.inputs["Base Color"])
-    nt.links.new(rough, bsdf.inputs["Roughness"])
-    nt.links.new(bump.outputs["Normal"], bsdf.inputs["Normal"])
-    # haze: with distance the ground takes the colour of the sky at the horizon behind it
-    cam = nt.nodes.new("ShaderNodeCameraData")
-    dist = cam.outputs["View Distance"]
-    haze = _math(nt, "SUBTRACT", 1.0, _math(nt, "EXPONENT", _math(nt, "DIVIDE", dist, -float(co.get("haze", 220.0)) * U)))
-    view = nt.nodes.new("ShaderNodeVectorMath")
-    view.operation = "SCALE"
-    nt.links.new(geo.outputs["Incoming"], view.inputs[0])
-    view.inputs["Scale"].default_value = -1.0
-    flat = nt.nodes.new("ShaderNodeVectorMath")
-    flat.operation = "MULTIPLY"
-    nt.links.new(view.outputs[0], flat.inputs[0])
-    flat.inputs[1].default_value = (1.0, 1.0, 0.0)
-    lift = nt.nodes.new("ShaderNodeVectorMath")
-    lift.operation = "ADD"
-    nt.links.new(flat.outputs[0], lift.inputs[0])
-    lift.inputs[1].default_value = (0.0, 0.0, 0.02)
-    norm = nt.nodes.new("ShaderNodeVectorMath")
-    norm.operation = "NORMALIZE"
-    nt.links.new(lift.outputs[0], norm.inputs[0])
-    sky = _sky(nt, sun, False)
-    nt.links.new(norm.outputs[0], sky.inputs["Vector"])
-    em = _node(nt, "ShaderNodeEmission", Strength=strength)
-    nt.links.new(_tinted(nt, sky.outputs[0], tint), em.inputs["Color"])
-    mix = nt.nodes.new("ShaderNodeMixShader")
-    nt.links.new(haze, mix.inputs["Fac"])
-    nt.links.new(bsdf.outputs[0], mix.inputs[1])
-    nt.links.new(em.outputs[0], mix.inputs[2])
-    nt.links.new(mix.outputs[0], out.inputs["Surface"])
-    return m
+    return SunsetRoad(sc, co, eevee)
 
 
 SETS = {"sunset_road": sunset_road}
@@ -300,6 +1055,8 @@ SETS = {"sunset_road": sunset_road}
 
 # ---------------------------------------------------------------------------- the shoot
 class ColdOpen:
+    BLUR_AT = 100             # the scene frame the rig is keyed round, for motion blur
+
     def __init__(self, tl, job):
         self.tl = tl
         co = self.co = tl["cold_open"]
@@ -322,8 +1079,8 @@ class ColdOpen:
         sc.render.image_settings.compression = 15
         for sock, _ in ba.glow_inputs(self.eevee):     # EEVEE glass; glowing parts stay dark
             sock.default_value = 0.0
-        SETS[co["scene"]](sc, co, self.eevee)
-        self.exposure = sc.view_settings.exposure
+        self.set = SETS[co["scene"]](sc, co, self.eevee)
+        self.exposure = float((co.get("look") or {}).get("exposure", LOOK["exposure"]))
         self.disc = bpy.data.objects.get("sun_disc")
         self.sun_dir = sun_direction(co["sun"])
         self._rig()
@@ -335,6 +1092,16 @@ class ColdOpen:
         self.cam = bpy.data.objects.new("cold_cam", cd)
         sc.collection.objects.link(self.cam)
         sc.camera = self.cam
+        self.shots = sorted(co.get("shots") or [[0, "wide"]])
+        # a little motion blur on the swing: a 180-degree shutter (EEVEE)
+        self.blur = self.eevee
+        if self.blur:
+            sc.render.use_motion_blur = True
+            sc.render.motion_blur_shutter = 0.5
+            ba._try(sc.render, "motion_blur_position", "CENTER")
+            ba._try(sc.eevee, "motion_blur_steps", 1)
+            ba._try(sc.eevee, "motion_blur_max", 48)
+            bpy.context.preferences.edit.keyframe_new_interpolation_type = "LINEAR"
 
     def _rig(self):
         co, objs = self.co, self.b.objects
@@ -360,12 +1127,44 @@ class ColdOpen:
             ob.matrix_parent_inverse = Matrix.Identity(4)
             ob.matrix_basis = TO_B @ Matrix(inst["matrix"])
 
+    def _pose(self, k):
+        """The rig's transforms at plan frame k (spin, then the groups)."""
+        k = min(max(k, 0), len(self.co["spin"]) - 1)
+        return [ba.to_blender(ba.ld_matrix(self.co["spin"][k]))] + \
+            [ba.to_blender(ba.ld_matrix(self.co["frames"][k][j])) for j in range(len(self.groups))]
+
+    def _key_rig(self, k):
+        """Key the rig linearly at the frames either side of k, so the motion blur sees the
+        figure move through this frame (the camera isn't keyed: no blur across the cuts)."""
+        T = self.BLUR_AT
+        poses = {dk: self._pose(k + dk) for dk in (-1, 0, 1)}
+        for i, ob in enumerate([self.spin] + self.groups):
+            ob.animation_data_clear()
+            ob.rotation_mode = "QUATERNION"
+            prev = None
+            for dk in (-1, 0, 1):
+                loc, rot, scl = poses[dk][i].decompose()
+                if prev is not None and rot.dot(prev) < 0:
+                    rot.negate()
+                prev = rot
+                ob.location, ob.rotation_quaternion, ob.scale = loc, rot, scl
+                for path in ("location", "rotation_quaternion", "scale"):
+                    ob.keyframe_insert(path, frame=T + dk)
+        self.sc.frame_set(T)
+
+    def shot(self, k):
+        return [n for f, n in self.shots if f <= k][-1] if k >= self.shots[0][0] else self.shots[0][1]
+
     def apply(self, f):
         co = self.co
         k = min(max(f - co["start"], 0), len(co["spin"]) - 1)
-        self.spin.matrix_basis = ba.to_blender(ba.ld_matrix(co["spin"][k]))
-        for j, e in enumerate(self.groups):
-            e.matrix_basis = ba.to_blender(ba.ld_matrix(co["frames"][k][j]))
+        if self.blur:
+            self._key_rig(k)
+        else:
+            pose = self._pose(k)
+            self.spin.matrix_basis = pose[0]
+            for e, M in zip(self.groups, pose[1:]):
+                e.matrix_basis = M
         cam = co["camera"]
         loc = TO_B @ Vector(cam["pos"][k])
         tgt = TO_B @ Vector(cam["target"][k])
@@ -375,7 +1174,14 @@ class ColdOpen:
         if self.disc is not None:                     # the sun stays at infinity
             self.disc.location = loc + self.sun_dir * DISC_AT
             self.disc.rotation_euler = self.sun_dir.to_track_quat("Z", "Y").to_euler()
-        self.sc.view_settings.exposure = self.exposure + float(cam.get("exposure", [0.0] * (k + 1))[k])
+        ev = self.exposure + float(cam.get("exposure", [0.0] * (k + 1))[k])
+        if hasattr(self.set, "frame"):
+            px, pz = co["pivot"]
+            chest = TO_B @ Vector((px, co["ground_y"] - 0.6 * co["height"], pz))
+            bpy.context.view_layer.update()
+            self.set.frame(self.cam, self.shot(k), ev, chest)
+        else:
+            self.sc.view_settings.exposure = ev
 
     def render(self, frames):
         for f, path in frames:

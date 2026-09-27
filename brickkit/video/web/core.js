@@ -105,6 +105,7 @@ async function loadFonts() {
     ['Space Mono', 'fonts/SpaceMono-Bold.ttf', { weight: '700' }],
     ['Share Tech Mono', 'fonts/ShareTechMono-Regular.ttf', { weight: '400' }],
     ['VT323', 'fonts/VT323-Regular.ttf', { weight: '400' }],
+    ['Inter', 'fonts/InterVariable.woff2', { weight: '100 900' }],   // the site's typeface
   ];
   for (const [fam, url, desc] of faces) {
     const ff = new FontFace(fam, `url(${url})`, desc);
@@ -151,7 +152,8 @@ function keyLogo() {
 const MONO_UPPER = () => TH.mono !== 'Fredoka';
 function font(size, weight = 700, fam = null, stretch = null) {
   const f = fam || TH.display;
-  return `${stretch ? stretch + ' ' : ''}${weight} ${size}px "${f}"`;
+  const ff = f.includes(',') ? f : `"${f}"`;   // a font stack ("Menlo, monospace") goes in as is
+  return `${stretch ? stretch + ' ' : ''}${weight} ${size}px ${ff}`;
 }
 function monoFont(size) { return font(size, TH.mono === 'Fredoka' ? 600 : 400, TH.mono); }
 

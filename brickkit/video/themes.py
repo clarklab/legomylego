@@ -10,11 +10,16 @@ transition and title styles, the overlay and the music style. Pick one in model.
     [video.theme_overrides]
     accent = "#FF3EA5"
 
+Fonts (`display`, `mono`, `brand_mono` for the outro URL and booklet chips) name a face
+bundled in web/fonts (Fredoka, Space Mono, Share Tech Mono, VT323, Inter) or a font stack
+("Menlo, monospace").
+
 `brickkit video SLUG --theme NAME` tries another theme for one run.
 """
 from __future__ import annotations
 
-BRAND = {"yellow": "#FEDB05", "red": "#EB152C", "black": "#111010", "cream": "#FFFCF3"}
+# the site's brand colours (site/assets/css/site.css): LEGO yellow, brick red, ink, cream
+BRAND = {"yellow": "#FEDB05", "red": "#A34C32", "black": "#24221C", "cream": "#FFFDF5"}
 
 THEMES: dict[str, dict] = {
     # the house style: cream and brand yellow, red accents, stud wipes
@@ -92,6 +97,7 @@ def theme_for(cfg: dict) -> dict:
     if name not in THEMES:
         raise SystemExit(f"unknown video theme {name!r}; choose from {', '.join(THEMES)}")
     th = dict(THEMES[name], name=name, brand=dict(BRAND))
+    th.setdefault("brand_mono", "Menlo, monospace")   # the outro URL and booklet file chips
     th.update(cfg.get("theme_overrides") or {})
     return th
 

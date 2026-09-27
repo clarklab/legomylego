@@ -271,6 +271,54 @@ def test_cold_open_sound(tmp_path):
     assert again == info
 
 
+def test_recorded_samples(tmp_path):
+    """"sample" events: the file's loudest moment on the frame (align peak), its peak at
+    `level`, looped to `dur`, stopped dead at `until`, from `offset`; the music ducks; an MP3
+    decodes like a WAV; the same cues give the same samples."""
+    t = np.arange(SR) / SR
+    burst = np.where((t > 0.3) & (t < 0.34), 1.0, 0.02) * np.sin(2 * np.pi * 440 * t)
+    A.write_wav(tmp_path / "burst.wav", np.stack([burst, burst], 1), SR)
+    hum = 0.5 * np.sin(2 * np.pi * 110 * t[:SR // 2])
+    A.write_wav(tmp_path / "hum.wav", np.stack([hum, hum], 1), 44100)     # resampled on load
+    samples = {"burst.wav": {"path": str(tmp_path / "burst.wav")},
+               "hum.wav": {"path": str(tmp_path / "hum.wav")}}
+    sfx = A.SFX(SR, FPS, seed=1, samples=samples)
+    n = 5 * SR
+    y, duck = sfx.render([{"frame": 45, "type": "sample", "file": "burst.wav", "level": -6.0,
+                           "align": "peak", "duck": [4.0, 0.5]}], n)
+    at = round(45 / FPS * SR)
+    loud = int(np.argmax(np.abs(y).max(axis=1)))
+    assert abs(loud - at) < 0.03 * SR                                  # the peak on the frame
+    assert np.abs(y).max() == pytest.approx(A.db2amp(-6.0), rel=0.05)
+    assert duck[at + int(0.02 * SR)] > 3.0
+    y, _ = sfx.render([{"frame": 30, "type": "sample", "file": "hum.wav", "loop": True, "dur": 60,
+                        "until": 75, "level": -12.0}], n)                 # 2 s asked, cut at 2.5 s
+    on = np.nonzero(np.abs(y).max(axis=1) > 1e-6)[0]
+    assert abs(on[0] - round(30 / FPS * SR)) <= 2 and abs(on[-1] - round(75 / FPS * SR)) <= 2
+    mid = y[round(40 / FPS * SR):round(70 / FPS * SR), 0]              # looped: no gap
+    assert np.sqrt((mid.reshape(-1, 480) ** 2).mean(1)).min() > 0.5 * A.db2amp(-12.0) / np.sqrt(2)
+    y2, _ = sfx.render([{"frame": 30, "type": "sample", "file": "burst.wav", "offset": 0.25}], n)
+    loud = int(np.argmax(np.abs(y2).max(axis=1)))                      # its burst 0.05 s in
+    assert abs(loud - (round(30 / FPS * SR) + int(0.05 * SR))) < 0.03 * SR
+    with pytest.raises(KeyError):
+        sfx.render([{"frame": 1, "type": "sample", "file": "nope.wav"}], n)
+    import shutil
+    if shutil.which("ffmpeg"):                                          # an MP3 decodes the same way
+        import subprocess
+        subprocess.run(["ffmpeg", "-v", "error", "-y", "-i", str(tmp_path / "burst.wav"), "-b:a",
+                        "192k", str(tmp_path / "burst.mp3")], check=True)
+        x = A.load_sample(tmp_path / "burst.mp3")
+        assert x.shape[1] == 2 and abs(len(x) - SR) < 0.06 * SR
+        assert abs(int(np.argmax(np.abs(x[:, 0]))) - int(0.32 * SR)) < 0.03 * SR
+    cues = {"fps": FPS, "frames": 120, "beat_frames": 15, "style": "brand", "seed": 2,
+            "samples": samples, "sections": [{"name": "a", "start": 0, "end": 120, "mood": "groove"}],
+            "events": [{"frame": 30, "type": "sample", "file": "burst.wav", "align": "peak"}]}
+    a = A.render_audio(cues, tmp_path / "a.wav")
+    b = A.render_audio(cues, tmp_path / "b.wav")
+    assert (tmp_path / "a.wav").read_bytes() == (tmp_path / "b.wav").read_bytes() and a == b
+    assert a["lufs"] == pytest.approx(-16.0, abs=0.5) and a["true_peak_db"] <= -1.0
+
+
 def test_minimal_cues_and_unknown_things(tmp_path):
     cues = {"fps": 25, "frames": 60, "beat_frames": 12, "style": "no-such-style",
             "events": [{"frame": 5, "type": "mystery"}, {"frame": 500, "type": "snap"}]}
