@@ -1,0 +1,64 @@
+# Sound effects for the showreel, generated with ElevenLabs' sound-generation API (Creator
+# plan: commercial use allowed) by tools/elevenlabs_sfx.py. Each [[sfx]] makes NAME_1.mp3 ..
+# NAME_<variants>.mp3 here; sfx_generated.json records the prompt and settings behind every
+# file. The files are committed: the video rebuilds without calling the API, and a rerun of
+# the tool only makes files that are missing. [video.audio] in model.toml picks the ones used.
+
+[defaults]
+prompt_influence = 0.55      # 0..1: how literally the prompt is followed (API default 0.3)
+model_id = "eleven_text_to_sound_v2"
+
+[[sfx]]
+name = "pull_start"
+seconds = 2.5
+variants = 2
+prompt = """An old two-stroke chainsaw being pull-started outdoors: one sharp recoil cord yank, \
+the engine sputters and coughs, then catches and settles into a rough, rattling idle. Close \
+microphone, dry, no music, no voices."""
+
+[[sfx]]
+name = "idle"
+seconds = 8.0
+variants = 2
+loop = true
+prompt = """A 1970s two-stroke chainsaw engine idling outdoors: a rough, uneven, rattling \
+putter with small throttle blips, continuous and steady. Close microphone, no music, no \
+voices."""
+
+[[sfx]]
+name = "scream"
+seconds = 2.0
+variants = 5
+prompt = """A 1970s two-stroke chainsaw revved hard to full throttle: a screaming, high-pitched, \
+wide-open REEEEEE that holds for a moment, then drops back to idle. Raw and aggressive, \
+outdoors, close microphone, no music, no voices."""
+
+[[sfx]]
+name = "rev_burst"
+seconds = 3.2
+variants = 2
+prompt = """A two-stroke chainsaw revving in bursts: two quick throttle revs, then one long \
+screaming full-throttle REEEEEE, then back to idle. Outdoors, close microphone, no music, no \
+voices."""
+
+[[sfx]]
+name = "string_stab"
+seconds = 2.5
+variants = 3
+prompt = """Horror film sound effect: a sudden screeching stab of dissonant high violins, a \
+shrieking REEEE string cluster with fast tremolo, sharp attack and a short decay. No drums, no \
+voices."""
+
+[[sfx]]
+name = "metal_hit"
+seconds = 2.5
+variants = 2
+prompt = """Horror sound effect: a heavy steel meat hook scraping across metal, then a loud \
+clanging metal hit with a long ringing tail. No music, no voices."""
+
+[[sfx]]
+name = "boom"
+seconds = 3.0
+variants = 2
+prompt = """A deep cinematic horror boom: a massive low sub-bass impact with a dark, rumbling \
+tail. No music, no voices."""

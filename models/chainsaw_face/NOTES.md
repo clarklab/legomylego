@@ -170,6 +170,12 @@ further back than 14° before the back of the head meets the collar.
 The build video (`model.toml` `[video]`) uses the `grindhouse` theme and opens cold on the
 dance: `[video.cold_open]` scene `sunset_road`, 7 s, `motion = "performance"`, 1.5 spin turns.
 
+**Sounds**: the chainsaw (pull-start, idle, full-throttle screams, a rev burst) and the horror
+stings (string stabs, metal hits, booms) in `audio/` are generated with ElevenLabs' sound
+generation API (Creator plan, commercial use) by `tools/elevenlabs_sfx.py`: the prompts are in
+`audio/sfx.toml`, the settings and date behind each file in `audio/sfx_generated.json`.
+`[video.audio]` picks the ones used (by analysis: see the tool's `--analyse`).
+
 ## Checks
 
 All eight pass with `.venv/bin/python -m brickkit all chainsaw_face`: real elements (193

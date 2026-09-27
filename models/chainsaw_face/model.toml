@@ -62,12 +62,45 @@ facts = ["31 cm tall"]
 
 [video.theme_overrides]
 grain = 0.06               # a touch less grain keeps the showreel under 40 MB
+# the site's type and colours (site/assets/css/site.css, dark scheme) over the grindhouse film look
+display = "Inter"
+mono = "Menlo, monospace"
+bg = "#191919"
+bg2 = "#202020"
+ink = "#faf7ec"
+muted = "#b0a998"
+accent = "#a34c32"
+accent2 = "#fedb05"
+ok = "#94c6a4"
+warn = "#dfbd76"
+hud = "#faf7ec"
+hud_ink = "#191919"
+panel = "rgba(37,37,37,0.9)"
+panel_ink = "#faf7ec"
+line = "#d3cec0"
+paper = "#fff8e3"
+xray = "#fedb05"
+xray_bg = "#191919"
 
 [video.cold_open]
 scene = "sunset_road"
 seconds = 7
 motion = "performance"
 spin_turns = 1.5
+
+# Recorded sounds (ElevenLabs sound generation, Creator plan; prompts in audio/sfx.toml,
+# settings in audio/sfx_generated.json; tools/elevenlabs_sfx.py). Picked by analysis: steady,
+# periodic engine sound, clean ends, the least clipped screams.
+[video.audio]
+dir = "audio"
+pull_start = "pull_start_1.mp3"   # the cord, then the engine catches...
+catch = 0.73                      # ...0.73 s in: the running engine takes over there
+idle = "idle_1.mp3"               # loops seamlessly under the cold open
+screams = ["scream_3.mp3", "scream_1.mp3", "scream_5.mp3", "scream_4.mp3"]  # on the swing's peaks
+burst = "rev_burst_2.mp3"         # rev-rev-REEEE on the name's stamp
+stings = ["string_stab_1.mp3", "string_stab_3.mp3"]   # the first with the stamp
+hits = ["metal_hit_2.mp3", "metal_hit_1.mp3"]         # these, the booms and the second sting
+booms = ["boom_2.mp3", "boom_1.mp3"]                  # take turns on the big cuts
 
 [[video.callouts]]
 label = "Chainsaw"

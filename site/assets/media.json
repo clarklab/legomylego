@@ -114,113 +114,113 @@
   "chainsaw_face": {
    "files": {
     "booklet.pdf": {
-     "v": "c11281e1c3",
-     "size": 23410736
+     "v": "a798f3393b",
+     "size": 22210519
     },
     "bricklink_wanted.xml": {
-     "v": "38d2a55d1b",
-     "size": 17439
+     "v": "9c55e3e44d",
+     "size": 17804
     },
     "chainsaw_face.mpd": {
-     "v": "0bfe22a0a4",
-     "size": 46619
+     "v": "8659f45663",
+     "size": 47945
     },
     "model.glb": {
-     "v": "c8974f1216",
-     "size": 4031492
+     "v": "8306fbeda4",
+     "size": 4040712
     },
     "model.json": {
-     "v": "d3234c74e1",
-     "size": 209491
+     "v": "5cd746290c",
+     "size": 213925
     },
     "parts.csv": {
-     "v": "753aa4a9bd",
-     "size": 12982
+     "v": "1a4ef1d486",
+     "size": 13192
     },
     "pick_a_brick.csv": {
-     "v": "5d2cebbec5",
-     "size": 2069
+     "v": "747c266bda",
+     "size": 2113
     },
     "price_estimate.md": {
-     "v": "ebe9f8535d",
-     "size": 15581
+     "v": "21e6bca841",
+     "size": 15832
     },
     "renders/hero_hero.png": {
-     "v": "4dfe5bd25e",
-     "size": 1087685
+     "v": "1fe3689c9f",
+     "size": 1089367
     },
     "renders/hero_open_hero.png": {
-     "v": "7b96bdde6f",
-     "size": 1096271
+     "v": "13a0e83c43",
+     "size": 1089196
     },
     "renders/renders_back.png": {
-     "v": "070a412228",
-     "size": 1060584
+     "v": "1fc7cd1c3e",
+     "size": 1060241
     },
     "renders/renders_front.png": {
-     "v": "f2371a6ebb",
-     "size": 1072240
+     "v": "416ee4c26c",
+     "size": 1074254
     },
     "renders/renders_side.png": {
-     "v": "0e565da9d5",
-     "size": 1049283
+     "v": "089a48aa84",
+     "size": 1049425
     },
     "renders/renders_three_quarter.png": {
-     "v": "812795bce1",
-     "size": 1090366
+     "v": "4c061cbeb9",
+     "size": 1090375
     },
     "turntable.mp4": {
-     "v": "40b5b821c1",
-     "size": 717809
+     "v": "c3f9abeceb",
+     "size": 704045
     },
     "video.mp4": {
-     "v": "d428f47506",
-     "size": 41416538
+     "v": "b973840b27",
+     "size": 41289042
     },
     "video_poster.jpg": {
-     "v": "3296f94017",
-     "size": 157449
+     "v": "3f15e1d279",
+     "size": 161159
     }
    },
    "images": {
     "renders/hero_hero.png": {
      "w": 1000,
      "h": 1000,
-     "lg": "/assets/img/chainsaw_face/hero_hero.webp?v=d3c27c06fe",
-     "sm": "/assets/img/chainsaw_face/hero_hero-480.webp?v=6c44b4a617"
+     "lg": "/assets/img/chainsaw_face/hero_hero.webp?v=9550eff8bf",
+     "sm": "/assets/img/chainsaw_face/hero_hero-480.webp?v=f0b1d50759"
     },
     "renders/hero_open_hero.png": {
      "w": 1000,
      "h": 1000,
-     "lg": "/assets/img/chainsaw_face/hero_open_hero.webp?v=5d468d41da",
-     "sm": "/assets/img/chainsaw_face/hero_open_hero-480.webp?v=088d431f84"
+     "lg": "/assets/img/chainsaw_face/hero_open_hero.webp?v=78733040a6",
+     "sm": "/assets/img/chainsaw_face/hero_open_hero-480.webp?v=2eaff2ac37"
     },
     "renders/renders_back.png": {
      "w": 1000,
      "h": 1000,
-     "lg": "/assets/img/chainsaw_face/renders_back.webp?v=a70702131d",
-     "sm": "/assets/img/chainsaw_face/renders_back-480.webp?v=1c4a4558b0"
+     "lg": "/assets/img/chainsaw_face/renders_back.webp?v=745b0dbdf7",
+     "sm": "/assets/img/chainsaw_face/renders_back-480.webp?v=e40745e707"
     },
     "renders/renders_front.png": {
      "w": 1000,
      "h": 1000,
-     "lg": "/assets/img/chainsaw_face/renders_front.webp?v=05b0810e41",
-     "sm": "/assets/img/chainsaw_face/renders_front-480.webp?v=0ccc73a19f"
+     "lg": "/assets/img/chainsaw_face/renders_front.webp?v=4038523f99",
+     "sm": "/assets/img/chainsaw_face/renders_front-480.webp?v=feb21a5a2c"
     },
     "renders/renders_side.png": {
      "w": 1000,
      "h": 1000,
-     "lg": "/assets/img/chainsaw_face/renders_side.webp?v=488c766c10",
-     "sm": "/assets/img/chainsaw_face/renders_side-480.webp?v=4ab5851367"
+     "lg": "/assets/img/chainsaw_face/renders_side.webp?v=7667970520",
+     "sm": "/assets/img/chainsaw_face/renders_side-480.webp?v=cfea97225c"
     },
     "renders/renders_three_quarter.png": {
      "w": 1000,
      "h": 1000,
-     "lg": "/assets/img/chainsaw_face/renders_three_quarter.webp?v=aad1025ab5",
-     "sm": "/assets/img/chainsaw_face/renders_three_quarter-480.webp?v=dea6afa84a"
+     "lg": "/assets/img/chainsaw_face/renders_three_quarter.webp?v=2d6a2b1483",
+     "sm": "/assets/img/chainsaw_face/renders_three_quarter-480.webp?v=751432b688"
     }
    },
-   "og": "/assets/og/chainsaw_face.png?v=7d85b01764"
+   "og": "/assets/og/chainsaw_face.png?v=e7e98b19b0"
   },
   "ferret": {
    "files": {
