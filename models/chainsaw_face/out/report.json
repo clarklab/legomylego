@@ -1,0 +1,93 @@
+{
+  "title": "Chainsaw Face",
+  "status": "pass",
+  "checks": [
+    {
+      "name": "real_elements",
+      "status": "pass",
+      "summary": "189 part/colour combinations: 0 not real, 0 rare",
+      "items": [],
+      "stats": {
+        "combinations": 189,
+        "not_real": 0,
+        "rare": 0
+      }
+    },
+    {
+      "name": "connections",
+      "status": "pass",
+      "summary": "3283 connections (3136 stud, 110 pin, 22 axle, 9 ball, 6 clip); 1 separate piece(s)",
+      "items": [],
+      "stats": {
+        "connections": 3283,
+        "by_kind": {
+          "stud": 3136,
+          "pin": 110,
+          "axle": 22,
+          "clip": 6,
+          "ball": 9
+        },
+        "pieces": 1
+      }
+    },
+    {
+      "name": "collisions",
+      "status": "pass",
+      "summary": "0 overlapping pair(s) among 809 parts",
+      "items": [],
+      "stats": {
+        "pairs": 0
+      }
+    },
+    {
+      "name": "buildability",
+      "status": "pass",
+      "summary": "736 insertions tried across 25 submodel(s); 0 problem(s)",
+      "items": [],
+      "stats": {
+        "insertions": 736
+      }
+    },
+    {
+      "name": "stability",
+      "status": "pass",
+      "summary": "about 996 g; centre of mass inside the base (89% margin); tips at 16.9 deg",
+      "items": [],
+      "stats": {
+        "mass_g": 996.07173651582,
+        "com": [
+          -2.244408714261998,
+          -410.28721094575315,
+          -15.501642045860308
+        ],
+        "approx_parts": 0,
+        "margin": 0.8892739853867121,
+        "tip_angle_deg": 16.879999124559923,
+        "com_height_ldu": 410.28721094575315
+      }
+    },
+    {
+      "name": "mechanism",
+      "status": "pass",
+      "summary": "24 poses swept for 14 moving group(s); 0 gear pair(s); 0 problem(s)",
+      "items": [],
+      "stats": {
+        "poses": 24
+      }
+    },
+    {
+      "name": "electrics",
+      "status": "pass",
+      "summary": "no electrics in this model",
+      "items": [],
+      "stats": {}
+    },
+    {
+      "name": "technique",
+      "status": "pass",
+      "summary": "0 note(s)",
+      "items": [],
+      "stats": {}
+    }
+  ]
+}

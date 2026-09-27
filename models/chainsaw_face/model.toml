@@ -1,0 +1,90 @@
+[model]
+name = "Chainsaw Face"
+design = "design.py"
+description = "Chainsaw Face, a masked slasher in a butcher's apron, as a 30 cm (12 in) brick-built figure on a display stand: neck, shoulders, elbows, wrists, waist, hips, knees and ankles all pose, and he swings his chainsaw from high overhead down across his hips."
+palette_title = "Blood-spattered"
+
+[palette]
+mask = "Tan"                 # the skin mask: face, ears (paint the details on later)
+skin = "Tan"                 # bare forearms and hands
+hair = "Dark Brown"          # messy hair on top and at the back
+eye = "Black"                # dark sunken eye holes
+mouth = "Dark Red"           # inside the open, snarling mouth
+teeth = "White"
+shirt = "White"              # short-sleeved dress shirt
+tie = "Black"
+apron = "Yellow"             # butcher's bib apron and its neck strap
+splatter = "Dark Red"        # blood on the apron (the clean colourway sets it to Yellow)
+jeans = "Dark Blue"
+shoe = "Black"
+bracelet = "Light Bluish Gray"
+saw = "Yellow"               # chainsaw engine body
+saw_dark = "Dark Bluish Gray" # engine parts, bar mount
+saw_bar = "Light Bluish Gray" # guide bar
+chain = "Black"              # chain around the bar
+handle = "Black"             # the saw's handles
+base = "Black"               # display stand and support post
+floor = "Reddish Brown"      # floorboards
+floor2 = "Dark Brown"
+plaque = "Black"             # nameplate, left blank for a sticker
+
+[variants.clean]
+title = "Clean apron"
+splatter = "Yellow"
+
+[checks]
+enabled = ["real_elements", "connections", "collisions", "buildability", "stability",
+           "mechanism", "electrics", "technique"]
+[checks.stability]
+min_margin = 0.25
+min_tilt_deg = 10
+
+[booklet]
+subtitle = "A masked, chainsaw-swinging slasher in a butcher's apron, 30 cm (12 in) tall on a floorboard stand, his chainsaw raised high overhead in both fists. Every joint poses, like LEGO's big football figures."
+intro = "Built from the ground up: the stand with its floorboards and blank nameplate, the shoes on its studs, the legs (ball joints at the ankles and hips, ratchet disks at the knees) and the hips, pinned to the stand's post from behind, with the apron's skirt pressed onto the front. The torso turns on a turntable at the waist and carries the bib, the tie and the shoulder balls; the head is a mask on a ball joint under a shaggy mop of hair. The arms swing on ball-joint shoulders, bend at ratchet elbows and end in fists on ball-joint wrists. Last, the chainsaw's two handles clip into his fists."
+notes = [
+  "The face is a smooth panel of Tan tiles, the mask ready for painting: add its stitches, wrinkles and a snarl with a fine brush or a sticker if you like.",
+  "The elbows and knees are LEGO's big rotation joint disks (44224 + 44225): they click in steps and hold the pose, even with the saw overhead.",
+  "The two long pins from the stand's black post go into the back of the hips, so he stands firm on his shoes' studs whatever you do with his arms.",
+  "To swing the saw, turn both arms together at the shoulders: the fists keep hold of the handles.",
+  "The nameplate at the front of the stand is left blank for your own sticker.",
+]
+works = [
+  { title = "Chainsaw raised", text = "The hero pose: the saw held high overhead, the right fist on the front handle and the left on the rear handle, the bar pointing out to his right, the head thrown back.", image = "hero/hero.png" },
+  { title = "Chainsaw lowered", text = "Swing both arms forward and down together at the shoulders and the saw comes down across his hips, still in both fists; turn his waist and drop his head to look at it.", image = "hero_open/hero.png" },
+  { title = "Every joint poses", text = "Ball joints at the neck, shoulders, wrists, hips and ankles; ratchet disks at the elbows and knees; a turntable at the waist.", image = "renders/side.png" },
+]
+
+# Build video (brickkit video): labels and callouts; see docs/brickkit-guide.md, "Video".
+[video]
+theme = "grindhouse"
+facts = ["30 cm tall"]
+
+[video.theme_overrides]
+grain = 0.06               # a touch less grain keeps the showreel under 40 MB
+
+[video.cold_open]
+scene = "sunset_road"
+seconds = 7
+motion = "performance"
+spin_turns = 1.5
+
+[[video.callouts]]
+label = "Chainsaw"
+tag = "saw"
+sub = "12.8 cm, in both fists"
+
+[[video.callouts]]
+label = "Ball-joint shoulders"
+tag = "upper_arm_*"
+
+[[video.callouts]]
+label = "Waist turntable"
+part = "61485"
+xray = true
+sub = "the torso turns"
+
+[[video.callouts]]
+label = "Head"
+tag = "head"
+sub = "nods on a ball joint"

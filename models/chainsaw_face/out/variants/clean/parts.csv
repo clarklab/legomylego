@@ -1,0 +1,190 @@
+qty,part,name,colour,ldraw_colour,rebrickable_part,rebrickable_colour,bricklink_part,bricklink_colour,element_id,rare
+4,15068,Brick Curved 2 x 2 x 2/3,Black,0,15068,0,15068,11,6053077,0
+4,2412b,Tile Special 1 x 2 Grille with Bottom Groove,Black,0,2412b,0,2412b,11,241226,0
+12,2431,Tile 1 x 4 with Groove,Black,0,2431,0,2431,11,243126,0
+8,2780,Technic Pin with Friction Ridges Lengthwise and Center Slots,Black,0,2780,0,2780,11,4121715,0
+5,3001,Brick 2 x 4,Black,0,3001,0,3001,11,300126,0
+4,3002,Brick 2 x 3,Black,0,3002,0,3002,11,300226,0
+7,3003,Brick 2 x 2,Black,0,3003,0,3003,11,4103587,0
+20,3004,Brick 1 x 2,Black,0,3004,0,3004,11,300426,0
+1,3007,Brick 2 x 8,Black,0,3007,0,3007,11,6037390,0
+8,3008,Brick 1 x 8,Black,0,3008,0,3008,11,300826,0
+4,3010,Brick 1 x 4,Black,0,3010,0,3010,11,301026,0
+2,3020,Plate 2 x 4,Black,0,3020,0,3020,11,302026,0
+1,3022,Plate 2 x 2,Black,0,3022,0,3022,11,302226,0
+1,3023b,Plate 1 x 2,Black,0,3023,0,3023,11,302326,0
+2,3027,Plate 6 x 16,Black,0,3027,0,3027,11,302726,0
+1,3029,Plate 4 x 12,Black,0,3029,0,3029,11,302926,0
+2,3032,Plate 4 x 6,Black,0,3032,0,3032,11,303226,0
+2,3034,Plate 2 x 8,Black,0,3034,0,3034,11,303426,0
+2,30374,Bar 4L (Lightsaber Blade / Wand),Black,0,30374,0,30374,11,6116604,0
+2,3069b,Tile 1 x 2 with Groove,Black,0,3069b,0,3069b,11,306926,0
+23,3070b,Tile 1 x 1 with Groove,Black,0,3070b,0,3070b,11,307026,0
+7,32062,Technic Axle 2 Notched,Black,0,32062,0,32062,11,4109810,0
+2,3456,Plate 6 x 14,Black,0,3456,0,3456,11,345626,0
+6,3622,Brick 1 x 3,Black,0,3622,0,3622,11,362226,0
+6,3700,Technic Brick 1 x 2 [1 Pin Hole],Black,0,3700,0,3700,11,370026,0
+2,3710,Plate 1 x 4,Black,0,3710,0,3710,11,371026,0
+1,4162,Tile 1 x 8 with Groove,Black,0,4162,0,4162,11,416226,0
+7,53585,Technic Ball Joint with Through Axle Hole,Black,0,53585,0,53585,11,4286267,0
+1,60474,Plate Round 4 x 4 with Pin Hole,Black,0,60474,0,60474,11,4515350,0
+4,61252,Plate Special 1 x 1 with Clip Horizontal [Thick Open O Clip],Black,0,61252,0,61252,11,6308000,0
+1,61485,"Turntable 4 x 4 Square Base, Locking",Black,0,61485,0,61485,11,4517986,0
+2,67696,"Technic Brick Special 2 x 2 with Ball Socket Wide and Axle Hole, No Arm Holes",Black,0,67696,0,67696,11,6360825,0
+2,87079,Tile 2 x 4 with Groove,Black,0,87079,0,87079,11,4560182,0
+2,92438,Plate 8 x 16,Black,0,92438,0,92438,11,6094066,0
+2,98138,Tile Round 1 x 1,Black,0,98138,0,98138,11,6284070,0
+2,2431,Tile 1 x 4 with Groove,Dark Blue,272,2431,272,2431,63,6103985,0
+1,2456,Brick 2 x 6,Dark Blue,272,2456,272,2456,63,6100239,0
+14,3001,Brick 2 x 4,Dark Blue,272,3001,272,3001,63,6275133,0
+5,3002,Brick 2 x 3,Dark Blue,272,3002,272,3002,63,6385309,0
+7,3004,Brick 1 x 2,Dark Blue,272,3004,272,3004,63,4249891,0
+8,3005,Brick 1 x 1,Dark Blue,272,3005,272,3005,63,6554189,0
+4,3007,Brick 2 x 8,Dark Blue,272,3007,272,3007,63,6482811,0
+3,3008,Brick 1 x 8,Dark Blue,272,3008,272,3008,63,6277303,0
+17,3010,Brick 1 x 4,Dark Blue,272,3010,272,3010,63,4264569,0
+1,3020,Plate 2 x 4,Dark Blue,272,3020,272,3020,63,6554194,0
+10,3021,Plate 2 x 3,Dark Blue,272,3021,272,3021,63,6554192,0
+2,3022,Plate 2 x 2,Dark Blue,272,3022,272,3022,63,6037890,0
+10,3023b,Plate 1 x 2,Dark Blue,272,3023,272,3023,63,6554191,0
+1,3033,Plate 6 x 10,Dark Blue,272,3033,272,3033,63,6200659,0
+2,3068b,Tile 2 x 2 with Groove,Dark Blue,272,3068b,272,3068b,63,4205004,0
+6,3069b,Tile 1 x 2 with Groove,Dark Blue,272,3069b,272,3069b,63,6554190,0
+4,3070b,Tile 1 x 1 with Groove,Dark Blue,272,3070b,272,3070b,63,6554193,0
+2,3460,Plate 1 x 8,Dark Blue,272,3460,272,3460,63,6250216,0
+8,3622,Brick 1 x 3,Dark Blue,272,3622,272,3622,63,6554218,0
+10,3623,Plate 1 x 3,Dark Blue,272,3623,272,3623,63,6554187,0
+10,3710,Plate 1 x 4,Dark Blue,272,3710,272,3710,63,4502089,0
+1,3795,Plate 2 x 6,Dark Blue,272,3795,272,3795,63,6097420,0
+4,39789,Brick Special 2 x 4 with 3 Axle Holes,Dark Blue,272,39789,272,39789,63,6384912,0
+2,4162,Tile 1 x 8 with Groove,Dark Blue,272,4162,272,4162,63,4507080,0
+16,6541,Technic Brick 1 x 1 with Pin Hole,Dark Blue,272,6541,272,6541,63,6293318,0
+2,67696,"Technic Brick Special 2 x 2 with Ball Socket Wide and Axle Hole, No Arm Holes",Dark Blue,272,67696,272,67696,63,6479467,0
+1,69729,Tile 2 x 6,Dark Blue,272,69729,272,69729,63,6326191,0
+1,87079,Tile 2 x 4 with Groove,Dark Blue,272,87079,272,87079,63,4569836,0
+4,44224,Technic Rotation Joint Disk with Pin Hole and 3L Beam Thick,Dark Bluish Gray,72,44224,72,44224,85,4182751,0
+1,87079,Tile 2 x 4 with Groove,Dark Bluish Gray,72,87079,72,87079,85,4560184,0
+16,11477,Brick Curved 2 x 1 No Studs [1/2 Bow],Dark Brown,308,11477,308,11477,120,6046943,0
+8,15068,Brick Curved 2 x 2 x 2/3,Dark Brown,308,15068,308,15068,120,6047037,0
+4,2431,Tile 1 x 4 with Groove,Dark Brown,308,2431,308,2431,120,6313874,0
+1,3001,Brick 2 x 4,Dark Brown,308,3001,308,3001,120,6353072,0
+3,3003,Brick 2 x 2,Dark Brown,308,3003,308,3003,120,6092677,0
+19,3004,Brick 1 x 2,Dark Brown,308,3004,308,3004,120,6058257,0
+2,3005,Brick 1 x 1,Dark Brown,308,3005,308,3005,120,6226437,0
+3,3020,Plate 2 x 4,Dark Brown,308,3020,308,3020,120,6226792,0
+1,3022,Plate 2 x 2,Dark Brown,308,3022,308,3022,120,6494115,0
+1,3023b,Plate 1 x 2,Dark Brown,308,3023,308,3023,120,6058221,0
+2,3024,Plate 1 x 1,Dark Brown,308,3024,308,3024,120,6194729,0
+2,3035,Plate 4 x 8,Dark Brown,308,3035,308,3035,120,6447571,0
+6,3069b,Tile 1 x 2 with Groove,Dark Brown,308,3069b,308,3069b,120,4566688,0
+8,3070b,Tile 1 x 1 with Groove,Dark Brown,308,3070b,308,3070b,120,6516867,0
+1,3666,Plate 1 x 6,Dark Brown,308,3666,308,3666,120,6223039,0
+6,3710,Plate 1 x 4,Dark Brown,308,3710,308,3710,120,6252667,0
+1,3795,Plate 2 x 6,Dark Brown,308,3795,308,3795,120,4518687,0
+1,4162,Tile 1 x 8 with Groove,Dark Brown,308,4162,308,4162,120,6447565,0
+2,54200,Brick Sloped 30° 1 x 1 x 2/3 (Cheese Slope),Dark Brown,308,54200,308,54200,120,6259071,0
+1,6636,Tile 1 x 6 with Groove,Dark Brown,308,6636,308,6636,120,6295366,0
+2,98138,Tile Round 1 x 1,Dark Red,320,98138,320,98138,59,6284585,0
+1,25269,Tile Round 1 x 1 Quarter,Light Bluish Gray,71,25269,71,25269,86,6176433,0
+3,3069b,Tile 1 x 2 with Groove,Light Bluish Gray,71,3069b,71,3069b,86,4211414,0
+1,3070b,Tile 1 x 1 with Groove,Light Bluish Gray,71,3070b,71,3070b,86,4211415,0
+2,3673,Technic Pin without Friction Ridges Lengthwise,Light Bluish Gray,71,3673,71,3673,86,4211807,0
+4,44225,Technic Rotation Joint Disk with Pin and 3L Beam Thick,Light Bluish Gray,71,44225,71,44225,86,6332151,0
+2,4519,Technic Axle 3,Light Bluish Gray,71,4519,71,4519,86,4211815,0
+1,63864,Tile 1 x 3,Light Bluish Gray,71,63864,71,63864,86,4558169,0
+1,6636,Tile 1 x 6 with Groove,Light Bluish Gray,71,6636,71,6636,86,4211549,0
+4,2431,Tile 1 x 4 with Groove,Reddish Brown,70,2431,70,2431,88,4211194,0
+1,3069b,Tile 1 x 2 with Groove,Reddish Brown,70,3069b,70,3069b,88,4211151,0
+6,3070b,Tile 1 x 1 with Groove,Reddish Brown,70,3070b,70,3070b,88,4211288,0
+1,4162,Tile 1 x 8 with Groove,Reddish Brown,70,4162,70,4162,88,4585337,0
+4,63864,Tile 1 x 3,Reddish Brown,70,63864,70,63864,88,6100769,0
+2,11476,Plate Special 1 x 2 with Clip Horizontal on Side,Tan,19,11476,19,11476,2,6313119,0
+2,11477,Brick Curved 2 x 1 No Studs [1/2 Bow],Tan,19,11477,19,11477,2,6046922,0
+6,22885,Brick Special 1 x 2 x 1 2/3 with 4 Studs on 1 Side,Tan,19,22885,19,22885,2,6214334,0
+1,2431,Tile 1 x 4 with Groove,Tan,19,2431,19,2431,2,4550324,0
+2,25269,Tile Round 1 x 1 Quarter,Tan,19,25269,19,25269,2,6145570,0
+4,3002,Brick 2 x 3,Tan,19,3002,19,3002,2,4159739,0
+2,3020,Plate 2 x 4,Tan,19,3020,19,3020,2,4114309,0
+5,3021,Plate 2 x 3,Tan,19,3021,19,3021,2,4118790,0
+4,3022,Plate 2 x 2,Tan,19,3022,19,3022,2,4114084,0
+12,3023b,Plate 1 x 2,Tan,19,3023,19,3023,2,4113917,0
+6,3024,Plate 1 x 1,Tan,19,3024,19,3024,2,4159553,0
+1,3032,Plate 4 x 6,Tan,19,3032,19,3032,2,4114001,0
+3,3069b,Tile 1 x 2 with Groove,Tan,19,3069b,19,3069b,2,4114026,0
+3,3070b,Tile 1 x 1 with Groove,Tan,19,3070b,19,3070b,2,4125253,0
+8,32556b,Technic Pin Long without Friction Ridges,Tan,19,32556,19,32556,2,,0
+10,3622,Brick 1 x 3,Tan,19,3622,19,3622,2,4162465,0
+6,3623,Plate 1 x 3,Tan,19,3623,19,3623,2,4121921,0
+4,3710,Plate 1 x 4,Tan,19,3710,19,3710,2,4113233,0
+1,3795,Plate 2 x 6,Tan,19,3795,19,3795,2,4113993,0
+2,4032a,Plate Round 2 x 2 with Axle Hole Type 1 (+ Opening),Tan,19,4032a,19,4032a,2,4140562,0
+2,53585,Technic Ball Joint with Through Axle Hole,Tan,19,53585,19,53585,2,6559236,0
+4,6141,Plate Round 1 x 1 with Solid Stud,Tan,19,6141,19,6141,2,4161734,0
+1,63864,Tile 1 x 3,Tan,19,63864,19,63864,2,6131896,0
+12,6541,Technic Brick 1 x 1 with Pin Hole,Tan,19,6541,19,6541,2,4179771,0
+3,67696,"Technic Brick Special 2 x 2 with Ball Socket Wide and Axle Hole, No Arm Holes",Tan,19,67696,19,67696,2,6559239,0
+3,85984,Brick Sloped 30° 1 x 2 x 2/3,Tan,19,85984,19,85984,2,4624086,0
+2,87087,Brick Special 1 x 1 with Stud on 1 Side,Tan,19,87087,19,87087,2,4579260,0
+1,11211,Brick Special 1 x 2 with 2 Studs on 1 Side,White,15,11211,15,11211,1,6550150,0
+2,11477,Brick Curved 2 x 1 No Studs [1/2 Bow],White,15,11477,15,11477,1,6552145,0
+4,15068,Brick Curved 2 x 2 x 2/3,White,15,15068,15,15068,1,6552147,0
+3,22885,Brick Special 1 x 2 x 1 2/3 with 4 Studs on 1 Side,White,15,22885,15,22885,1,6603759,0
+1,2412b,Tile Special 1 x 2 Grille with Bottom Groove,White,15,2412b,15,2412b,1,6601902,0
+1,2431,Tile 1 x 4 with Groove,White,15,2431,15,2431,1,6548255,0
+1,2456,Brick 2 x 6,White,15,2456,15,2456,1,6552122,0
+7,3001,Brick 2 x 4,White,15,3001,15,3001,1,6552094,0
+2,3003,Brick 2 x 2,White,15,3003,15,3003,1,6552095,0
+2,3004,Brick 1 x 2,White,15,3004,15,3004,1,6548257,0
+2,3005,Brick 1 x 1,White,15,3005,15,3005,1,6552096,0
+7,3007,Brick 2 x 8,White,15,3007,15,3007,1,6619309,0
+4,3008,Brick 1 x 8,White,15,3008,15,3008,1,6550134,0
+4,3010,Brick 1 x 4,White,15,3010,15,3010,1,6550135,0
+5,3020,Plate 2 x 4,White,15,3020,15,3020,1,6552098,0
+3,3023b,Plate 1 x 2,White,15,3023,15,3023,1,6552100,0
+6,3035,Plate 4 x 8,White,15,3035,15,3035,1,6609533,0
+1,3036,Plate 6 x 8,White,15,3036,15,3036,1,303651,0
+8,3062b,Brick Round 1 x 1 Open Stud,White,15,3062b,15,3062b,1,6619283,0
+2,3068b,Tile 2 x 2 with Groove,White,15,3068b,15,3068b,1,6548263,0
+6,3069b,Tile 1 x 2 with Groove,White,15,3069b,15,3069b,1,6548264,0
+6,3070b,Tile 1 x 1 with Groove,White,15,3070b,15,3070b,1,6550138,0
+7,3460,Plate 1 x 8,White,15,3460,15,3460,1,6550141,0
+6,3622,Brick 1 x 3,White,15,3622,15,3622,1,6550143,0
+12,3623,Plate 1 x 3,White,15,3623,15,3623,1,6552105,0
+4,3700,Technic Brick 1 x 2 [1 Pin Hole],White,15,3700,15,3700,1,6619284,0
+2,3710,Plate 1 x 4,White,15,3710,15,3710,1,6552108,0
+1,3795,Plate 2 x 6,White,15,3795,15,3795,1,6550146,0
+1,39789,Brick Special 2 x 4 with 3 Axle Holes,White,15,39789,15,39789,1,6244919,0
+8,54200,Brick Sloped 30° 1 x 1 x 2/3 (Cheese Slope),White,15,54200,15,54200,1,6550179,0
+16,6141,Plate Round 1 x 1 with Solid Stud,White,15,6141,15,6141,1,6601919,0
+4,6541,Technic Brick 1 x 1 with Pin Hole,White,15,6541,15,6541,1,6609542,0
+2,67696,"Technic Brick Special 2 x 2 with Ball Socket Wide and Axle Hole, No Arm Holes",White,15,67696,15,67696,1,6360826,0
+1,87079,Tile 2 x 4 with Groove,White,15,87079,15,87079,1,6548271,0
+2,87087,Brick Special 1 x 1 with Stud on 1 Side,White,15,87087,15,87087,1,6550190,0
+13,22885,Brick Special 1 x 2 x 1 2/3 with 4 Studs on 1 Side,Yellow,14,22885,14,22885,3,6313592,0
+12,2431,Tile 1 x 4 with Groove,Yellow,14,2431,14,2431,3,243124,0
+3,2456,Brick 2 x 6,Yellow,14,2456,14,2456,3,4181143,0
+5,25269,Tile Round 1 x 1 Quarter,Yellow,14,25269,14,25269,3,6195183,0
+2,26603,Tile 2 x 3,Yellow,14,26603,14,26603,3,6388483,0
+1,3004,Brick 1 x 2,Yellow,14,3004,14,3004,3,4613966,0
+2,3008,Brick 1 x 8,Yellow,14,3008,14,3008,3,300824,0
+1,3009,Brick 1 x 6,Yellow,14,3009,14,3009,3,300924,0
+2,3010,Brick 1 x 4,Yellow,14,3010,14,3010,3,301024,0
+2,3020,Plate 2 x 4,Yellow,14,3020,14,3020,3,302024,0
+1,3021,Plate 2 x 3,Yellow,14,3021,14,3021,3,302124,0
+1,3023b,Plate 1 x 2,Yellow,14,3023,14,3023,3,302324,0
+4,3032,Plate 4 x 6,Yellow,14,3032,14,3032,3,303224,0
+4,3062b,Brick Round 1 x 1 Open Stud,Yellow,14,3062b,14,3062b,3,306844,0
+1,3068b,Tile 2 x 2 with Groove,Yellow,14,3068b,14,3068b,3,6388487,0
+10,3069b,Tile 1 x 2 with Groove,Yellow,14,3069b,14,3069b,3,306924,0
+6,3070b,Tile 1 x 1 with Groove,Yellow,14,3070b,14,3070b,3,307024,0
+4,3460,Plate 1 x 8,Yellow,14,3460,14,3460,3,346024,0
+2,3623,Plate 1 x 3,Yellow,14,3623,14,3623,3,362324,0
+2,3666,Plate 1 x 6,Yellow,14,3666,14,3666,3,366624,0
+3,3710,Plate 1 x 4,Yellow,14,3710,14,3710,3,371024,0
+3,3795,Plate 2 x 6,Yellow,14,3795,14,3795,3,379524,0
+2,3958,Plate 6 x 6,Yellow,14,3958,14,3958,3,6376458,0
+1,4162,Tile 1 x 8 with Groove,Yellow,14,4162,14,4162,3,6388482,0
+8,6141,Plate Round 1 x 1 with Solid Stud,Yellow,14,6141,14,6141,3,614124,0
+3,63864,Tile 1 x 3,Yellow,14,63864,14,63864,3,4558172,0
+12,87079,Tile 2 x 4 with Groove,Yellow,14,87079,14,87079,3,6388490,0
+4,98138,Tile Round 1 x 1,Yellow,14,98138,14,98138,3,6284577,0
