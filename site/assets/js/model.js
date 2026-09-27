@@ -34,20 +34,39 @@ function bestRender(renders = []) {
   return renders.find((r) => /hero/i.test(r)) || renders.find((r) => /three.?quarter/i.test(r)) || renders[0] || null;
 }
 
-function setMeta(d, slug) {
+function setMeta(d, slug, shareImage) {
   const title = `${d.name}: buildable LEGO model | ${SITE.name}`;
+  const socialTitle = `${d.name}: buildable LEGO model`;
   const desc = ledeFor(d);
   const url = `${SITE.url}/m/${encodeURIComponent(slug)}/`;
   document.title = title;
   const set = (sel, attr, val) => { const el = document.head.querySelector(sel); if (el) el.setAttribute(attr, val); };
   set('meta[name="description"]', 'content', desc);
   set('link[rel="canonical"]', 'href', url);
-  set('meta[property="og:title"]', 'content', title);
+  set('meta[property="og:title"]', 'content', socialTitle);
   set('meta[property="og:description"]', 'content', desc);
   set('meta[property="og:url"]', 'content', url);
-  set('meta[name="twitter:title"]', 'content', title);
+  set('meta[name="twitter:title"]', 'content', socialTitle);
   set('meta[name="twitter:description"]', 'content', desc);
-  document.head.querySelector('meta[name="robots"]')?.remove();
+  if (shareImage) {
+    const image = new URL(shareImage, SITE.url).href;
+    const alt = `${d.name}, a model built from ${fmtInt(d.pieces ?? d.parts)} real LEGO parts, beside the Bricks logo`;
+    set('meta[property="og:image"]', 'content', image);
+    set('meta[name="twitter:image"]', 'content', image);
+    set('meta[property="og:image:alt"]', 'content', alt);
+    set('meta[name="twitter:image:alt"]', 'content', alt);
+  }
+  const structured = document.createElement('script');
+  structured.type = 'application/ld+json';
+  structured.textContent = JSON.stringify({
+    '@context': 'https://schema.org', '@type': 'CreativeWork',
+    name: d.name, description: desc, url,
+    image: document.head.querySelector('meta[property="og:image"]')?.content,
+    isPartOf: { '@type': 'WebSite', name: SITE.name, url: `${SITE.url}/` },
+    keywords: `LEGO, MOC, building instructions, parts list, ${d.name}`,
+  });
+  document.head.append(structured);
+  set('meta[name="robots"]', 'content', 'max-image-preview:large');
 }
 
 function notFound(slug) {
@@ -700,7 +719,7 @@ async function main() {
   const want = new URLSearchParams(location.search).get('c');
   const vi = (d.variants || []).findIndex((v) => v.name === want);
   if (vi > 0) state.variant = vi;
-  if (!document.body.dataset.slug) setMeta(d, slug);
+  if (!document.body.dataset.slug) setMeta(d, slug, mediaJson?.models?.[slug]?.og);
   renderNotices([noticeFor(slug, d, conf)]);
 
   renderTitle(d);

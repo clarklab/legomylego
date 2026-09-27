@@ -1,4 +1,4 @@
-# legomylego
+# Bricks
 Make LEGO easier than a toaster
 
 Buildable models made only of real LEGO elements. They are designed in Python, checked by
@@ -71,3 +71,8 @@ and detail sections use `site/assets/css/model.css`. Inter is served locally fro
 `site/assets/fonts/` (license included). Edit `site/model.html` for model-page markup,
 then run `.venv/bin/python tools/site_assets.py` to refresh the generated `site/m/` pages.
 Preview locally with `.venv/bin/python -m http.server 4401 --directory site`.
+
+The Bricks mark lives in `site/assets/brand/bricks.svg`, using the supplied SVG path.
+The asset script inlines it into page headers and footers and renders the icons, social
+previews, and `logo.png` export artwork with resvg and Pillow. Regenerate these assets
+after changing the mark; `logo.png` is derived artwork, not the source.

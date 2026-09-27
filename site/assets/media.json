@@ -108,7 +108,8 @@
      "lg": "/assets/img/baby_metroid/renders_three_quarter.webp?v=b0c9dde3d1",
      "sm": "/assets/img/baby_metroid/renders_three_quarter-480.webp?v=dc8f4aabcb"
     }
-   }
+   },
+   "og": "/assets/og/baby_metroid.png?v=35dada7b4d"
   },
   "chainsaw_face": {
    "files": {
@@ -218,7 +219,8 @@
      "lg": "/assets/img/chainsaw_face/renders_three_quarter.webp?v=aad1025ab5",
      "sm": "/assets/img/chainsaw_face/renders_three_quarter-480.webp?v=dea6afa84a"
     }
-   }
+   },
+   "og": "/assets/og/chainsaw_face.png?v=26c14727fd"
   },
   "ferret": {
    "files": {
@@ -326,7 +328,8 @@
      "lg": "/assets/img/ferret/renders_three_quarter.webp?v=aa1a5713d7",
      "sm": "/assets/img/ferret/renders_three_quarter-480.webp?v=332f73c994"
     }
-   }
+   },
+   "og": "/assets/og/ferret.png?v=8776fe2fea"
   },
   "vhs_tape": {
    "files": {
@@ -446,7 +449,8 @@
      "lg": "/assets/img/vhs_tape/renders_white.webp?v=b82674669b",
      "sm": "/assets/img/vhs_tape/renders_white-480.webp?v=5799d76587"
     }
-   }
+   },
+   "og": "/assets/og/vhs_tape.png?v=27a5f5af0f"
   }
  }
 }

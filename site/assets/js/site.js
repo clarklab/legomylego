@@ -2,7 +2,7 @@
 import { hydrateIcons } from './icons.js';
 
 export const SITE = {
-  name: "L'Eggo my LEGO",
+  name: "Bricks",
   url: 'https://lego.superfun.games',
 };
 
@@ -138,6 +138,10 @@ function initTheme() {
     const dark = effective() === 'dark';
     btn.setAttribute('aria-label', dark ? 'Switch to light theme' : 'Switch to dark theme');
     btn.title = btn.getAttribute('aria-label');
+    // The explicit site preference can differ from the operating-system theme.
+    for (const tag of document.head.querySelectorAll('meta[name="theme-color"]')) {
+      tag.setAttribute('content', dark ? '#191919' : '#fffdf5');
+    }
   };
   btn.addEventListener('click', () => {
     const next = effective() === 'dark' ? 'light' : 'dark';

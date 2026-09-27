@@ -1,4 +1,4 @@
-/* L'Eggo my LEGO — shared design system and collection. */
+/* Bricks — shared design system and collection. */
 @font-face {
   font-family: "InterVariable";
   src: url("/assets/fonts/InterVariable.woff2") format("woff2");
@@ -76,9 +76,9 @@ p { margin: 0; text-wrap: pretty; }
 .site-header { position: sticky; top: 0; z-index: 50; height: var(--header-h); background: var(--bg); border-bottom: 1px solid var(--line); }
 .site-header .wrap { height: 100%; display: flex; align-items: center; gap: 26px; }
 .brand { display: inline-flex; align-items: center; gap: 13px; text-decoration: none; flex: none; }
-.brand img { width: 51px; height: auto; border-radius: 7px; }
-.brand-name { font-size: 21px; font-weight: 650; letter-spacing: -.06em; line-height: 1.05; }
-.brand-name > span { display: block; font-size: 13px; font-weight: 500; letter-spacing: .005em; margin-top: 4px; }
+.brand-symbol { display: grid; place-items: center; flex: none; width: 44px; height: 44px; padding: 6px; border-radius: 9px; background: var(--yellow); color: var(--black); }
+.brand-mark { width: 100%; height: 100%; fill: currentColor; }
+.brand-name { font-size: 30px; font-weight: 650; letter-spacing: -.06em; line-height: 1.05; }
 .nav { display: flex; align-items: center; gap: 30px; margin-left: auto; }
 .nav a { position: relative; padding: 10px 0; font-weight: 500; font-size: 14px; text-decoration: none; color: var(--muted); }
 .nav a:hover, .nav a[aria-current="page"] { color: var(--ink); }
@@ -202,8 +202,8 @@ p { margin: 0; text-wrap: pretty; }
 .site-footer .wrap { display: grid; gap: 30px; }
 .footer-top { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 24px; }
 .footer-brand { display: flex; align-items: center; gap: 12px; text-decoration: none; color: var(--ink); }
-.footer-brand img { width: 44px; height: auto; border-radius: 6px; }
-.footer-brand span { font-size: 17px; font-weight: 600; letter-spacing: -.045em; }
+.footer-brand .brand-symbol { width: 36px; height: 36px; padding: 5px; border-radius: 7px; }
+.footer-brand span { font-size: 24px; font-weight: 600; letter-spacing: -.045em; }
 .footer-links { display: flex; flex-wrap: wrap; gap: 20px; }
 .footer-links a { color: var(--ink-2); text-decoration: none; font-size: 12px; }
 .footer-links a:hover { text-decoration: underline; text-underline-offset: 4px; }
@@ -239,10 +239,9 @@ p { margin: 0; text-wrap: pretty; }
 }
 @media (max-width: 560px) {
   :root { --header-h: 72px; }
-  .brand img { width: 42px; }
+  .brand .brand-symbol { width: 36px; height: 36px; padding: 5px; border-radius: 7px; }
   .brand { gap: 9px; }
-  .brand-name { font-size: 17px; }
-  .brand-name > span { font-size: 11px; }
+  .brand-name { font-size: 26px; }
   .site-header .wrap { gap: 15px; }
   .nav { gap: 17px; }
   .nav a { font-size: 12px; }
@@ -273,7 +272,6 @@ p { margin: 0; text-wrap: pretty; }
   .footer-links { gap: 18px; }
 }
 @media (max-width: 380px) {
-  .brand-name { display: none; }
   .hero h1 { font-size: 47px; }
   .benefits .wrap { gap: 16px 12px; }
   .checks-strip { grid-template-columns: 1fr; }
