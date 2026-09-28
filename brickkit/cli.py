@@ -128,6 +128,15 @@ def main(argv=None) -> int:
     p.add_argument("--scratch", metavar="DIR", help="write this run's work and outputs under DIR "
                    "(the model's out/ is only read)")
     p.add_argument("--workers", type=int, default=4, help="parallel compositor pages")
+    p = sub.add_parser("sizzle", help="brand sizzle reel of several models, cut on the music's "
+                                      "beats (showreel/sizzle.toml -> showreel/sizzle.mp4)")
+    p.add_argument("slugs", nargs="*", help="models (default: the config's, in its order)")
+    p.add_argument("--config", help="the reel's TOML (default showreel/sizzle.toml)")
+    p.add_argument("--out", help="output folder (default: the config's folder)")
+    p.add_argument("--stills", help="comma list of frames: write composed PNGs, no video")
+    p.add_argument("--preview", action="store_true", help="540x540 at 15 fps")
+    p.add_argument("--no-audio", action="store_true")
+    p.add_argument("--workers", type=int, default=4, help="parallel compositor pages")
     p = sub.add_parser("viewer", help="export the model (and its colourways) to the viewer site")
     p.add_argument("slug")
     p.add_argument("--site", help="site directory (default: site/)")
@@ -145,6 +154,14 @@ def main(argv=None) -> int:
         return 0
     if args.cmd == "new":
         return _new(args.slug, args.name)
+    if args.cmd == "sizzle":                  # no model to build: it uses their showreels' footage
+        from .video.sizzle import CONFIG, make_sizzle
+        stills = [int(x) for x in args.stills.split(",") if x.strip()] if args.stills else None
+        out = make_sizzle(Path(args.config) if args.config else CONFIG, args.slugs or None,
+                          Path(args.out) if args.out else None, stills=stills,
+                          preview=args.preview, audio=not args.no_audio, workers=args.workers)
+        print(f"sizzle -> {out}")
+        return 0
 
     from .engine import Engine
     engine = Engine()

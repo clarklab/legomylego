@@ -25,6 +25,7 @@ The cache location can be overridden with `BRICKKIT_CACHE` (useful in git worktr
 | `brickkit booklet SLUG [--no-render]` | instruction booklet `out/booklet.pdf` (pictures in `out/booklet/`) |
 | `brickkit viewer SLUG` | export `site/models/SLUG/` (GLB + model.json + files) for the viewer site |
 | `brickkit turntable SLUG [--preview]` | `out/turntable.mp4`: a 12 s photoreal (Cycles) orbit with the mechanism and lights working, muted and seamless; the site plays it where WebGL is missing (`meta["turntable"]`: `program` tap/swing/lights, `cycles`, `taps`) |
+| `brickkit sizzle [SLUG ...] [--stills F,F] [--preview]` | `showreel/sizzle.mp4`: one quick brand reel of several models cut on the music's beats, from their showreels' footage (config `showreel/sizzle.toml`; see Video) |
 | `python tools/hero.py SLUG` | hero stills: `out/hero/`, `out/hero_lit/` (lights), `out/hero_open/` (pose 1) |
 | `brickkit find "words" [--color C]` | search real LEGO parts by name, ranked by how many sets used them in that colour |
 
@@ -348,6 +349,73 @@ plates (EEVEE, always under the machine-wide `blender_slot()` lock, 40 frames pe
 `video/compose.py`) and `video/audio.py` synthesises the music and effects (numpy, mastered to
 -16 LUFS). Plates are cached per segment, numbered from the segment's start, with a hash, so
 editing graphics never re-renders 3D and moving a segment in the edit keeps its renders.
+
+### Sizzle reel
+
+`brickkit sizzle [SLUG ...] [--config FILE] [--out DIR] [--stills 60,240] [--preview]
+[--no-audio]` cuts one quick brand reel from several models' showreels: by default
+`showreel/sizzle.toml` -> `showreel/sizzle.mp4` (1080×1080, 30 fps, about 37 s, ~12 MB),
+`sizzle_poster.jpg` (the finale's grid) and `sizzle_contact.jpg`. It renders nothing in 3D:
+the footage is each model's last `brickkit video` run, read-only (its cached plates in
+`out/video_frames/full/<segment>/`, `out/turntable.mp4`, the hero cut-out), and the frames it
+uses are copied into `showreel/work/footage/` first (git-ignored), so a showreel re-rendering
+at the same time doesn't matter. Run `brickkit video SLUG` for a model before adding it.
+
+Everything sits on the music's beats. With `music` set, the track's beats are found in the
+track itself (`video/beats.py`: the tempo from the onsets' autocorrelation, the beats by
+dynamic programming, moved onto the kick if they locked to an off-beat hat, bars from the
+claps on 2 and 4; cached in `work/beats.json`); without it a fixed grid at `bpm` drives the
+house synth. Sections are counted in bars: the open (the logo, the tagline slammed on beats,
+then one beat per model: its cut-out on a coloured card, in the bar before the drop), each
+model (its name slammed on yellow bars over quick cuts of its own footage, a caption, stat
+chips), the finale (the turntables in a 2×2 grid popping in on the beats, then "4 models ·
+N pieces · every brick checked") and the outro (logo, URL, small print and the models'
+notices). Wipes are the brand's: a brick wall at the drop, then studs in yellow and brick red.
+```toml
+title = "Bricks"
+url = "bricks.superfun.games"
+music = "audio/track_1.mp3"   # next to the config; omit for the synthesised music
+bpm = 128                     # a hint for the beat tracker (or the synth's tempo)
+whoosh = "audio/whoosh_1.mp3" # on every wipe (else the synthesised whoosh)
+line = "{n} models · {pieces} pieces|every brick checked"   # the finale; | breaks the line
+disclaimer = "Unofficial fan models · ..."
+[theme]                       # overrides on the brand theme (the site's colours)
+bg = "#FFFDF5"
+bg2 = "#FEDB05"
+[timeline]                    # bars
+open = 4
+finale = 3
+outro = 2
+open_words = [["Real", 4], ["LEGO.", 6], ["Checked by", 8], ["computer.", 10]]  # [word, beat]
+
+[[model]]                     # in order; `brickkit sizzle ferret vhs_tape` keeps a subset
+slug = "baby_metroid"
+bars = 3
+chips = ["pieces", "headline"]   # or steps, colours; in on the section's beats 4 and 6 (from 0)
+[[model.shot]]                # shots follow each other, `beats` long (the last runs to the end)
+source = "build"              # a plate segment of the model's video, or "turntable"
+from = 0.2                    # a stretch of it (0..1), sped to fit...
+to = 1.0
+beats = 3
+[[model.shot]]
+source = "cold_open"
+at = 30                       # ...or this frame of the segment lands `lead` (whole) beats in,
+lead = 1                      # played at `speed` (default 1), so the moment hits the beat
+beats = 3
+caption = "Tap: lights on"
+sfx = "../models/baby_metroid/audio/snap_on_1.mp3"   # a sound on that beat...
+sfx_align = "peak"            # ...its loudest moment on it (else its start)
+sfx_level = -1.0              # peak dBFS against the music (default -9); it stops at the cut
+```
+The sound is `video/audio.py`'s: the track as a bed (`cues["track"]`: balanced to the same
+level as the synthesised music, faded out at the reel's end, which is the bar where the music
+ends), the models' own sounds ducking it, clicks on the cuts, pops on the chips, snaps on the
+slams, mastered to -16 LUFS / -2 dBTP (the AAC encode adds a few tenths; the file stays
+under -1.5 dBTP). The track, whoosh and clunk are ElevenLabs'
+(`showreel/audio/sfx.toml`: a `[[music]]` entry goes through the music API - prompt, seconds,
+instrumental - and `[[sfx]]` through sound generation, as for a model: `python
+tools/elevenlabs_sfx.py showreel/audio`). To choose a shot's `at`, look through the plates
+(for example the frame a lamp snaps on or a door lands) and preview with `--stills`.
 
 ## Shape helpers
 `brickkit.shapes.rings`: `ring_cells(r_out, r_in)`, `pack_cells(cells, lengths, offset, mode)`

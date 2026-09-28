@@ -1,14 +1,16 @@
-"""Sound effects for a model's showreel, generated with ElevenLabs' sound-generation API.
+"""Sound effects (and music) for a showreel, generated with ElevenLabs' APIs.
 
     .venv/bin/python tools/elevenlabs_sfx.py SLUG             # make the files that are missing
     .venv/bin/python tools/elevenlabs_sfx.py SLUG --dry-run   # list what it would make
     .venv/bin/python tools/elevenlabs_sfx.py SLUG --analyse   # measure every file, rank them
 
-Reads models/SLUG/audio/sfx.toml:
+SLUG is a model (models/SLUG/audio/) or a folder holding an sfx.toml (showreel/audio). Reads:
 
     [defaults]                  prompt_influence, model_id, output_format (optional)
     [[sfx]]                     name, prompt, seconds, variants (default 1), loop (default
                                 false), prompt_influence (overrides the default)
+    [[music]]                   name, prompt, seconds, variants, instrumental (default true):
+                                music from POST /v1/music (model music_v1, mp3_48000_192)
 
 and writes models/SLUG/audio/NAME_K.mp3 for K = 1..variants, with sfx_generated.json beside
 them recording the prompt and settings that made each file. Files that exist are skipped, so a
@@ -48,6 +50,7 @@ ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 
 API = "https://api.elevenlabs.io/v1/sound-generation"
+MUSIC_API = "https://api.elevenlabs.io/v1/music"
 KEY_FILE = Path.home() / ".config" / "brickkit" / "elevenlabs.env"
 MAX_FILES = 25
 DEFAULTS = {"prompt_influence": 0.3, "model_id": "eleven_text_to_sound_v2",
@@ -57,11 +60,19 @@ DEFAULTS = {"prompt_influence": 0.3, "model_id": "eleven_text_to_sound_v2",
 # ---------------------------------------------------------------------------- the manifest
 def manifest(slug: str) -> tuple[Path, list[dict]]:
     """(audio dir, [{file, name, k, prompt, seconds, loop, prompt_influence, model_id,
-    output_format}]) for every file the model's sfx.toml asks for."""
-    d = ROOT / "models" / slug / "audio"
+    output_format, kind}]) for every file the sfx.toml asks for."""
+    d = Path(slug) if (Path(slug) / "sfx.toml").exists() else ROOT / "models" / slug / "audio"
     cfg = tomllib.loads((d / "sfx.toml").read_text())
     base = dict(DEFAULTS, **(cfg.get("defaults") or {}))
     out = []
+    for s in cfg.get("music", []):
+        for k in range(1, int(s.get("variants", 1)) + 1):
+            out.append({"file": f"{s['name']}_{k}.mp3", "name": s["name"], "k": k, "kind": "music",
+                        "prompt": " ".join(str(s["prompt"]).split()),
+                        "seconds": float(s["seconds"]), "loop": False,
+                        "instrumental": bool(s.get("instrumental", True)),
+                        "prompt_influence": 0.0, "model_id": s.get("model_id", "music_v1"),
+                        "output_format": "mp3_48000_192"})
     for s in cfg.get("sfx", []):
         for k in range(1, int(s.get("variants", 1)) + 1):
             ext = "mp3" if str(base["output_format"]).startswith("mp3") else "bin"
@@ -91,17 +102,22 @@ def api_key() -> str:
 
 
 def generate(item: dict, key: str, tries: int = 3) -> bytes:
-    body = {"text": item["prompt"], "duration_seconds": item["seconds"],
-            "prompt_influence": item["prompt_influence"], "model_id": item["model_id"]}
-    if item["loop"]:
-        body["loop"] = True
-    url = f"{API}?output_format={item['output_format']}"
+    if item.get("kind") == "music":
+        body = {"prompt": item["prompt"], "music_length_ms": int(item["seconds"] * 1000),
+                "model_id": item["model_id"], "force_instrumental": item["instrumental"]}
+        url = f"{MUSIC_API}?output_format={item['output_format']}"
+    else:
+        body = {"text": item["prompt"], "duration_seconds": item["seconds"],
+                "prompt_influence": item["prompt_influence"], "model_id": item["model_id"]}
+        if item["loop"]:
+            body["loop"] = True
+        url = f"{API}?output_format={item['output_format']}"
     for attempt in range(tries):
         req = urllib.request.Request(url, data=json.dumps(body).encode(), method="POST",
                                      headers={"xi-api-key": key, "Content-Type": "application/json",
                                               "Accept": "audio/mpeg"})
         try:
-            with urllib.request.urlopen(req, timeout=180) as r:
+            with urllib.request.urlopen(req, timeout=600) as r:
                 data = r.read()
             if len(data) < 1000:
                 raise RuntimeError(f"suspiciously small response ({len(data)} bytes)")
@@ -125,7 +141,7 @@ def make(slug: str, dry: bool = False) -> None:
     log_file = d / "sfx_generated.json"
     record = json.loads(log_file.read_text()) if log_file.exists() else {}
     todo = [it for it in items if not (d / it["file"]).exists()]
-    print(f"{len(items)} files in {d.relative_to(ROOT)}/sfx.toml, {len(todo)} to make")
+    print(f"{len(items)} files in {d.resolve().relative_to(ROOT)}/sfx.toml, {len(todo)} to make")
     if dry or not todo:
         for it in todo:
             print(f"  would make {it['file']} ({it['seconds']:g} s{', loop' if it['loop'] else ''})")
@@ -136,10 +152,12 @@ def make(slug: str, dry: bool = False) -> None:
         data = generate(it, key)
         (d / it["file"]).write_bytes(data)
         record[it["file"]] = {k: it[k] for k in ("name", "prompt", "seconds", "loop",
-                                                "prompt_influence", "model_id", "output_format")}
+                                                "prompt_influence", "model_id", "output_format")
+                              if k in it}
+        api = "music API" if it.get("kind") == "music" else "sound generation API"
         record[it["file"]].update(generated=date.today().isoformat(), bytes=len(data),
                                   sha1=hashlib.sha1(data).hexdigest(),
-                                  source="ElevenLabs sound generation API (Creator plan)")
+                                  source=f"ElevenLabs {api} (Creator plan)")
         log_file.write_text(json.dumps(record, indent=1, sort_keys=True) + "\n")
         print(f"  {it['file']}: {len(data) / 1024:.0f} KB in {time.time() - t0:.1f} s")
 

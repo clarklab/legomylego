@@ -52,7 +52,7 @@ def _resolver(roots: dict[str, Path], reel_bytes: bytes):
     return resolve
 
 
-async def _page(browser, size: int, resolve, reel: dict, log):
+async def _page(browser, size: int, resolve, reel: dict, log, page_name: str = "reel.html"):
     page = await browser.new_page(viewport={"width": size, "height": size},
                                   device_scale_factor=1)
     errors = []
@@ -73,7 +73,7 @@ async def _page(browser, size: int, resolve, reel: dict, log):
         else:
             await r.fulfill(path=str(body), content_type=ctype)
     await page.route(f"{HOST}/**", route)
-    await page.goto(f"{HOST}/reel.html")
+    await page.goto(f"{HOST}/{page_name}")
     await page.evaluate("async ([size]) => { const r = await fetch('reel.json'); "
                         "return init(size, await r.json()); }", [size])
     if errors:
@@ -82,14 +82,15 @@ async def _page(browser, size: int, resolve, reel: dict, log):
     return page
 
 
-async def _render(frames: list[int], size: int, roots, reel: dict, sink, workers: int, log):
+async def _render(frames: list[int], size: int, roots, reel: dict, sink, workers: int, log,
+                  page_name: str = "reel.html"):
     from playwright.async_api import async_playwright
     reel_bytes = json.dumps(reel).encode()
     resolve = _resolver(roots, reel_bytes)
     async with async_playwright() as p:
         browser = await p.chromium.launch(args=ARGS)
         try:
-            pages = await asyncio.gather(*[_page(browser, size, resolve, reel, log)
+            pages = await asyncio.gather(*[_page(browser, size, resolve, reel, log, page_name)
                                            for _ in range(workers)])
             done: dict[int, np.ndarray] = {}
             cond = asyncio.Condition()
@@ -127,7 +128,8 @@ async def _render(frames: list[int], size: int, roots, reel: dict, sink, workers
 
 
 def compose(frames: list[int], size: int, reel: dict, roots: dict[str, Path], sink,
-            workers: int = 4, log=print) -> None:
-    """Render `frames` at size x size; call sink(frame, rgb uint8 array) in order."""
+            workers: int = 4, log=print, page: str = "reel.html") -> None:
+    """Render `frames` at size x size; call sink(frame, rgb uint8 array) in order. `page`: the
+    compositor page in web/ (reel.html; sizzle.html for the sizzle reel)."""
     roots = {"": WEB, **roots}
-    asyncio.run(_render(frames, size, roots, reel, sink, max(1, workers), log))
+    asyncio.run(_render(frames, size, roots, reel, sink, max(1, workers), log, page))

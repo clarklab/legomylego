@@ -27,6 +27,8 @@ Cue sheet (the video's edit plan produces it):
                     recorded sound, see SFX.fx_sample); `duck` [dB, release s] ducks the music
     samples         optional {name: {path, sha1}}: recorded sounds the "sample" events play
                     (WAV, or anything ffmpeg decodes)
+    track           optional {path, offset?, fade_out?}: a recorded music bed (balanced to the
+                    music level, ducked like the synth; a "cold" section then leaves it alone)
 
 Layout: utilities - loudness and mastering - instruments (Voices) - SFX - arrangement (STYLES,
 Arranger) - render_audio - demo:  python -m brickkit.video.audio playful out.wav [seconds]
@@ -2070,18 +2072,26 @@ def render_stems(cues: dict, sr: int = 48000) -> dict:
     'arranger'}, each (n, 2) with n = round(frames / fps * sr)."""
     A = Arranger(cues, sr)
     music = A.render()
+    tr = cues.get("track")
+    if tr:                                               # a recorded music bed (the sizzle reel)
+        y = load_sample(tr["path"], sr)[int(round(float(tr.get("offset", 0.0)) * sr)):][:A.n]
+        y = np.pad(y, ((0, A.n - len(y)), (0, 0)))
+        y = _fade(y.copy(), sr, 0.0, float(tr.get("fade_out", 0.05)))
+        lv = measure_lufs(y, sr)
+        music = music + (y * db2amp(MUSIC_REF - lv) if np.isfinite(lv) else y)
     sfx, duck = SFX(sr, A.fps, A.seed, cues.get("samples")).render(cues.get("events") or [], A.n)
     return {"music": music * db2amp(-duck)[:, None], "sfx": sfx, "duck_db": duck, "arranger": A}
 
 
-def render_audio(cues: dict, out_wav: Path, *, sr: int = 48000, lufs: float = -16.0) -> dict:
+def render_audio(cues: dict, out_wav: Path, *, sr: int = 48000, lufs: float = -16.0,
+                 tp: float = TP_CEILING) -> dict:
     """Synthesise and master the track; write a 24-bit PCM stereo WAV of exactly
-    round(cues['frames'] / cues['fps'] * sr) samples. Returns {'lufs': float,
-    'true_peak_db': float, 'seconds': float} measured on the written samples."""
+    round(cues['frames'] / cues['fps'] * sr) samples, true peak at most `tp` dBTP. Returns
+    {'lufs': float, 'true_peak_db': float, 'seconds': float} measured on the written samples."""
     st = render_stems(cues, sr)
     A = st["arranger"]
     mix = (st["music"] + st["sfx"]) * A.end_fade(whole_mix=True)[:, None]
-    y, _, _ = master(mix, sr, lufs)
+    y, _, _ = master(mix, sr, lufs, tp)
     q = write_wav(Path(out_wav), y, sr, bits=24)
     return {"lufs": measure_lufs(q, sr), "true_peak_db": true_peak_db(q, sr), "seconds": A.n / sr}
 

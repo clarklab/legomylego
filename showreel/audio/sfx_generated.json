@@ -1,0 +1,67 @@
+{
+ "track_1.mp3": {
+  "bytes": 960813,
+  "generated": "2026-09-28",
+  "loop": false,
+  "model_id": "music_v1",
+  "name": "track",
+  "output_format": "mp3_48000_192",
+  "prompt": "Upbeat modern electronic pop instrumental at exactly 128 BPM, 4/4, for a fast, playful product sizzle reel: punchy four-on-the-floor kick from the first beat, crisp claps on 2 and 4, bright plucky synth hook, driving sidechained bass, shiny percussion and fills every 4 bars, a quick riser into a bigger chorus after 8 bars, confident and fun, ending with a clean final hit on the downbeat. Steady tempo throughout, no tempo changes, no vocals.",
+  "prompt_influence": 0.0,
+  "seconds": 40.0,
+  "sha1": "850f008bfa6487a3c0c84b9cf51db141dffe7a6f",
+  "source": "ElevenLabs music API (Creator plan)"
+ },
+ "vhs_clunk_1.mp3": {
+  "bytes": 30137,
+  "generated": "2026-09-28",
+  "loop": false,
+  "model_id": "eleven_text_to_sound_v2",
+  "name": "vhs_clunk",
+  "output_format": "mp3_44100_192",
+  "prompt": "A VHS cassette pushed into a VCR: a chunky plastic clunk and the mechanism clicking home, close and dry, no music, no voices.",
+  "prompt_influence": 0.6,
+  "seconds": 1.2,
+  "sha1": "76ad6d6833403fd5d564ae363e72408987e78990",
+  "source": "ElevenLabs sound generation API (Creator plan)"
+ },
+ "vhs_clunk_2.mp3": {
+  "bytes": 30137,
+  "generated": "2026-09-28",
+  "loop": false,
+  "model_id": "eleven_text_to_sound_v2",
+  "name": "vhs_clunk",
+  "output_format": "mp3_44100_192",
+  "prompt": "A VHS cassette pushed into a VCR: a chunky plastic clunk and the mechanism clicking home, close and dry, no music, no voices.",
+  "prompt_influence": 0.6,
+  "seconds": 1.2,
+  "sha1": "9a8ebfb367c37adb3ff61839d6ee9214ea890de1",
+  "source": "ElevenLabs sound generation API (Creator plan)"
+ },
+ "whoosh_1.mp3": {
+  "bytes": 20733,
+  "generated": "2026-09-28",
+  "loop": false,
+  "model_id": "eleven_text_to_sound_v2",
+  "name": "whoosh",
+  "output_format": "mp3_44100_192",
+  "prompt": "A fast, clean, modern swoosh for a video transition: a short airy whoosh that rises and cuts off, no music, no voices.",
+  "prompt_influence": 0.6,
+  "seconds": 0.8,
+  "sha1": "431389151344e8bd2a70b0e3754ed9f512f10fd8",
+  "source": "ElevenLabs sound generation API (Creator plan)"
+ },
+ "whoosh_2.mp3": {
+  "bytes": 20733,
+  "generated": "2026-09-28",
+  "loop": false,
+  "model_id": "eleven_text_to_sound_v2",
+  "name": "whoosh",
+  "output_format": "mp3_44100_192",
+  "prompt": "A fast, clean, modern swoosh for a video transition: a short airy whoosh that rises and cuts off, no music, no voices.",
+  "prompt_influence": 0.6,
+  "seconds": 0.8,
+  "sha1": "b05635ef3bfe6a68a223f2f94b62c6c8056e8dea",
+  "source": "ElevenLabs sound generation API (Creator plan)"
+ }
+}

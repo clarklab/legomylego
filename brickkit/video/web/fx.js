@@ -23,7 +23,7 @@ const WIPES = {
   // brand: a diagonal wave of studs grows over the frame, then shrinks away
   studs(f, p, t) {
     const cell = 90, rMax = cell * 0.74;
-    const col = t.to === 'outro' ? TH.brand.yellow : t.to === 'title' ? TH.brand.red : TH.accent;
+    const col = t.color || (t.to === 'outro' ? TH.brand.yellow : t.to === 'title' ? TH.brand.red : TH.accent);
     for (let x = cell / 2; x < L + cell; x += cell) for (let y = cell / 2; y < L + cell; y += cell) {
       const d = (x + y) / (2 * L);                 // 0 top-left .. 1 bottom-right
       let q;

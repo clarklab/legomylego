@@ -1,0 +1,32 @@
+# Music and sound effects for the Bricks sizzle reel (brickkit sizzle, showreel/sizzle.toml),
+# generated with ElevenLabs' music and sound-generation APIs (Creator plan: commercial use
+# allowed) by tools/elevenlabs_sfx.py showreel/audio. sfx_generated.json records the prompt and
+# settings behind each file; the files are committed so the reel rebuilds without the API.
+
+[defaults]
+prompt_influence = 0.6
+
+[[music]]
+name = "track"
+seconds = 40
+variants = 1
+instrumental = true
+prompt = """Upbeat modern electronic pop instrumental at exactly 128 BPM, 4/4, for a fast, \
+playful product sizzle reel: punchy four-on-the-floor kick from the first beat, crisp claps on \
+2 and 4, bright plucky synth hook, driving sidechained bass, shiny percussion and fills every \
+4 bars, a quick riser into a bigger chorus after 8 bars, confident and fun, ending with a \
+clean final hit on the downbeat. Steady tempo throughout, no tempo changes, no vocals."""
+
+[[sfx]]
+name = "vhs_clunk"
+seconds = 1.2
+variants = 2
+prompt = """A VHS cassette pushed into a VCR: a chunky plastic clunk and the mechanism \
+clicking home, close and dry, no music, no voices."""
+
+[[sfx]]
+name = "whoosh"
+seconds = 0.8
+variants = 2
+prompt = """A fast, clean, modern swoosh for a video transition: a short airy whoosh that \
+rises and cuts off, no music, no voices."""
