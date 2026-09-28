@@ -7,8 +7,8 @@
      "size": 138580
     },
     "booklet.pdf": {
-     "v": "8f1427ad47",
-     "size": 26444432
+     "v": "8f4dc867ff",
+     "size": 25111950
     },
     "bricklink_wanted.xml": {
      "v": "8cc0908207",
@@ -31,8 +31,8 @@
      "size": 703
     },
     "price_estimate.md": {
-     "v": "69e9476f5a",
-     "size": 6087
+     "v": "85468964a1",
+     "size": 6173
     },
     "renders/hero_hero.png": {
      "v": "08642f50d9",
@@ -63,12 +63,12 @@
      "size": 2924977
     },
     "video.mp4": {
-     "v": "8e6d46c89b",
-     "size": 21305521
+     "v": "fb13c9cf66",
+     "size": 22834487
     },
     "video_poster.jpg": {
-     "v": "79f7e5c3e1",
-     "size": 164539
+     "v": "e026e4490b",
+     "size": 166097
     }
    },
    "images": {
@@ -174,12 +174,12 @@
      "size": 704045
     },
     "video.mp4": {
-     "v": "b973840b27",
-     "size": 41289042
+     "v": "12716d52ae",
+     "size": 41250495
     },
     "video_poster.jpg": {
-     "v": "3f15e1d279",
-     "size": 161159
+     "v": "205f1b5249",
+     "size": 160864
     }
    },
    "images": {
@@ -225,16 +225,16 @@
   "ferret": {
    "files": {
     "booklet.pdf": {
-     "v": "9408b0178f",
-     "size": 21321250
+     "v": "84825fe969",
+     "size": 19989112
     },
     "booklet_albino.pdf": {
-     "v": "582a40c2b0",
-     "size": 21760180
+     "v": "eaee2a1874",
+     "size": 20428051
     },
     "booklet_cinnamon.pdf": {
-     "v": "add1e49c87",
-     "size": 21449556
+     "v": "34dc04fad0",
+     "size": 20117386
     },
     "bricklink_wanted.xml": {
      "v": "6168173973",
@@ -261,8 +261,8 @@
      "size": 834
     },
     "price_estimate.md": {
-     "v": "3c5a9c314b",
-     "size": 6101
+     "v": "9ab90d6285",
+     "size": 6187
     },
     "renders/hero_hero.png": {
      "v": "95fb83fa3f",
@@ -289,12 +289,12 @@
      "size": 495985
     },
     "video.mp4": {
-     "v": "a417fbc9b3",
-     "size": 18539405
+     "v": "efade182d5",
+     "size": 18377849
     },
     "video_poster.jpg": {
-     "v": "78b8fdac5e",
-     "size": 103335
+     "v": "609af0b51f",
+     "size": 104114
     }
    },
    "images": {
@@ -334,8 +334,8 @@
   "vhs_tape": {
    "files": {
     "booklet.pdf": {
-     "v": "d6866d55c9",
-     "size": 14392700
+     "v": "e845c2137e",
+     "size": 13061565
     },
     "bricklink_wanted.xml": {
      "v": "b2281041ec",
@@ -398,12 +398,12 @@
      "size": 20723
     },
     "video.mp4": {
-     "v": "f487066118",
-     "size": 29423915
+     "v": "ad1e0e2290",
+     "size": 29037636
     },
     "video_poster.jpg": {
-     "v": "a7c08423d6",
-     "size": 195056
+     "v": "7f45192b6c",
+     "size": 196453
     }
    },
    "images": {

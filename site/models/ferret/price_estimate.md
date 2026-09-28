@@ -2,7 +2,7 @@
 
 **Roughly $37 - $117** for 895 pieces in 72 lines, new parts on BrickLink, before shipping.
 
-This is a rough range from typical per-piece prices by part type (see `brickkit/data/price_bands.json`), scaled up for transparent colours and for part/colour combinations that appeared in few sets. It is not live market data.
+This is a rough range from typical per-piece prices by part type (see `brickkit/data/price_bands.json`), scaled up for transparent colours and for part/colour combinations that appeared in few sets. It is not live market data: set up BrickLink API credentials (see `brickkit/bom/live_price.py`) for dated prices.
 
 For a real quote, upload `bricklink_wanted.xml` as a BrickLink Wanted List and use Easy Buy. Parts still made can also be ordered from LEGO Pick a Brick with `pick_a_brick.csv`.
 
