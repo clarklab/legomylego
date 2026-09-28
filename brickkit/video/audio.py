@@ -896,7 +896,7 @@ class SFX:
              "power": -11.0, "motor": -19.0, "glitch": -17.0, "boing": -16.0, "page": -16.0,
              "type": -21.0, "pop": -17.0, "riffle": -17.0, "flick": -19.0, "slap": -12.0,
              "power_off": -13.0, "chainsaw": -6.0, "burn": -14.0, "typewriter": -18.0,
-             "chainsaw_bed": -5.5, "wind": -30.0, "sample": 0.0}
+             "chainsaw_bed": -5.5, "wind": -30.0, "sample": 0.0, "hum": -36.0}
     DUR = {"whoosh": 8, "riser": 30, "scan": 30, "power": 36, "motor": 30, "glitch": 6,
            "riffle": 60, "chainsaw": 54, "burn": 10}
     DUCK = {"hit": (7.0, 0.7), "power": (5.0, 0.9), "snap": (4.0, 0.35),     # dB, release s
@@ -1353,6 +1353,20 @@ class SFX:
         rumble = bw(pink(rng, (n, 2)), "low", 120.0, sr)
         y = (_norm(air) * gust[:, None] + 0.5 * _norm(rumble))
         return _norm(_fade(y, sr, 0.25, 0.0))
+
+    def fx_hum(self, ev, rng):
+        """A lamp's faint mains hum while it's lit, for `dur` frames, following `curve` (0..1
+        per frame from the event's): 60 Hz and its harmonics, with a soft transformer buzz."""
+        sr = self.sr
+        n, t = self._t(self._dur(ev))
+        y = sum(a * np.sin(2 * np.pi * 60.0 * h * t + rng.uniform(0, 2 * np.pi))
+                for h, a in ((1, 0.5), (2, 1.0), (3, 0.45), (4, 0.3), (5, 0.12), (6, 0.1)))
+        buzz = np.clip(4.0 * np.sin(2 * np.pi * 120.0 * t), -1.0, 1.0)
+        y = _norm(y) + 0.12 * _norm(filt(buzz, "bp", 1500.0, sr, 0.8))
+        y *= 1.0 + 0.05 * np.sin(2 * np.pi * 0.7 * t)
+        c = np.asarray(ev.get("curve") or [1.0], float)
+        g = np.interp(t * self.fps, np.arange(len(c)), c)
+        return _norm(y) * g
 
     def fx_burn(self, ev, rng):
         """Film burning in the gate: crackle thickening into a flaring rush that peaks at

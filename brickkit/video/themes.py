@@ -18,6 +18,9 @@ bundled in web/fonts (Fredoka, Space Mono, Share Tech Mono, VT323, Inter) or a f
 """
 from __future__ import annotations
 
+# the site's type (site/assets/css/site.css) for every theme: Inter for display (set tight),
+# monospace caps for small labels; the themes differ in colour, motion and texture
+SITE_DISPLAY, SITE_MONO = "Inter", "Menlo, monospace"
 # the site's brand colours (site/assets/css/site.css): LEGO yellow, brick red, ink, cream
 BRAND = {"yellow": "#FEDB05", "red": "#A34C32", "black": "#24221C", "cream": "#FFFDF5"}
 
@@ -30,7 +33,7 @@ THEMES: dict[str, dict] = {
         "accent": "#EB152C", "accent2": "#FEDB05", "ok": "#1FA35C", "warn": "#F29A0B",
         "hud": "#111010", "hud_ink": "#FFFCF3", "panel": "rgba(255,252,243,0.93)",
         "panel_ink": "#111010", "line": "#111010",
-        "display": "Fredoka", "mono": "Space Mono",
+        "display": SITE_DISPLAY, "mono": SITE_MONO,
         "transition": "studs", "title": "slam", "callout": "pill", "overlay": "none",
         "grain": 0.035, "xray": "#EB152C", "xray_bg": "#111010",
         "grade": {"tint": None, "amount": 0.0, "contrast": 1.0, "saturate": 1.0},
@@ -43,7 +46,7 @@ THEMES: dict[str, dict] = {
         "accent": "#35F2E0", "accent2": "#18B7FF", "ok": "#35F2E0", "warn": "#FFB547",
         "hud": "#5CF2FF", "hud_ink": "#03101A", "panel": "rgba(3,16,26,0.78)",
         "panel_ink": "#E3FCFF", "line": "#5CF2FF",
-        "display": "Fredoka", "mono": "Share Tech Mono",
+        "display": SITE_DISPLAY, "mono": SITE_MONO,
         "transition": "shutter", "title": "decode", "callout": "bracket", "overlay": "scanlines",
         "grain": 0.05, "xray": "#35F2E0", "xray_bg": "#021018",
         "grade": {"tint": "#0B3A46", "amount": 0.16, "contrast": 1.06, "saturate": 0.95},
@@ -56,7 +59,7 @@ THEMES: dict[str, dict] = {
         "accent": "#FF3EA5", "accent2": "#29E3FF", "ok": "#7CFFB2", "warn": "#FFD23F",
         "hud": "#F5F1FF", "hud_ink": "#140A24", "panel": "rgba(16,6,30,0.8)",
         "panel_ink": "#F5F1FF", "line": "#F5F1FF",
-        "display": "Fredoka", "mono": "VT323",
+        "display": SITE_DISPLAY, "mono": SITE_MONO,
         "transition": "glitch", "title": "osd", "callout": "osd", "overlay": "vhs",
         "grain": 0.07, "xray": "#29E3FF", "xray_bg": "#0E0620",
         "grade": {"tint": "#3A1650", "amount": 0.1, "contrast": 1.04, "saturate": 1.08},
@@ -69,7 +72,7 @@ THEMES: dict[str, dict] = {
         "accent": "#EB152C", "accent2": "#FF8A3D", "ok": "#2BB673", "warn": "#F29A0B",
         "hud": "#2A1A12", "hud_ink": "#FFF3DC", "panel": "rgba(255,249,236,0.95)",
         "panel_ink": "#2A1A12", "line": "#2A1A12",
-        "display": "Fredoka", "mono": "Fredoka",
+        "display": SITE_DISPLAY, "mono": SITE_MONO,
         "transition": "paws", "title": "bounce", "callout": "pill", "overlay": "none",
         "grain": 0.03, "xray": "#FF6B3D", "xray_bg": "#2A1A12",
         "grade": {"tint": "#FFE2B8", "amount": 0.05, "contrast": 1.03, "saturate": 1.06},
@@ -83,7 +86,7 @@ THEMES: dict[str, dict] = {
         "accent": "#C0181F", "accent2": "#E3B42C", "ok": "#A3B46A", "warn": "#E3862C",
         "hud": "#EBE0CA", "hud_ink": "#120D0A", "panel": "rgba(18,13,10,0.84)",
         "panel_ink": "#EBE0CA", "line": "#EBE0CA", "paper": "#E4D5B5",
-        "display": "Space Mono", "mono": "Space Mono",
+        "display": SITE_DISPLAY, "mono": SITE_MONO,
         "transition": "burn", "title": "stamp", "callout": "tag", "overlay": "film",
         "grain": 0.09, "xray": "#E3B42C", "xray_bg": "#0E0906",
         "grade": {"tint": "#8C5A2A", "amount": 0.2, "contrast": 1.12, "saturate": 0.7},
@@ -97,7 +100,7 @@ def theme_for(cfg: dict) -> dict:
     if name not in THEMES:
         raise SystemExit(f"unknown video theme {name!r}; choose from {', '.join(THEMES)}")
     th = dict(THEMES[name], name=name, brand=dict(BRAND))
-    th.setdefault("brand_mono", "Menlo, monospace")   # the outro URL and booklet file chips
+    th.setdefault("brand_mono", SITE_MONO)            # the outro URL and booklet file chips
     th.update(cfg.get("theme_overrides") or {})
     return th
 

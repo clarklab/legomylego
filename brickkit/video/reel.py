@@ -55,7 +55,8 @@ MAX_PULSES = 28          # first parts of the build that get a landing ring
 MAX_POINTS = 1400        # connection points drawn in the scan
 # recorded sounds by role: peak level (dBFS, against the music bed at audio.MUSIC_REF)
 SAMPLE_LEVEL = {"pull_start": -9.0, "idle": -17.5, "scream": -8.5, "burst": -11.0,
-                "sting": -11.0, "hit": -11.5, "boom": -11.0, "band": -12.0}
+                "sting": -11.0, "hit": -11.5, "boom": -11.0, "band": -12.0,
+                "click": -12.0, "snap_on": -11.0, "snap_off": -15.0, "room": -30.0}
 SCREAM_GAP = 1.4         # s: at least this between the cold open's screams
 
 
@@ -118,7 +119,7 @@ def model_stats(engine, proj, model, placed, tl, out_dir: Path, booklet_steps: i
             mass = c.get("stats", {}).get("mass_g")
     steps = booklet_steps or len(model.instruction_order())
     return {
-        "name": model.name, "slug": model.slug, "url": f"{URL}/m/{model.slug}",
+        "name": model.name, "slug": model.slug, "url": URL,   # the outro links to the site
         "pieces": int(sum(line.qty for line in lines)), "parts": len(placed),
         "steps": int(steps), "colours": len({line.color.name for line in lines}),
         "designs": len({line.ldraw_part for line in lines}), "lines": len(lines),
@@ -654,18 +655,29 @@ def plan_reel(engine, proj, model, tl, theme, out_dir: Path, work: Path, *,
 
 def cold_open_graphics(tl) -> dict:
     """What the compositor needs for the cold open: its frames, shots, letterbox, and where the
-    sun is on screen each frame ([x, y] px of 1080, or None behind the camera) for the flare."""
+    sun is on screen each frame ([x, y] px of 1080, or None behind the camera or indoors) for
+    the flare; with taps (a tap lamp) also the taps, the lights' level per frame and where the
+    lamp's head is on screen."""
     co = tl["cold_open"]
     e, a = np.radians(co["sun"]["elevation"]), np.radians(co["sun"]["azimuth"])
     d = np.array([np.sin(a) * np.cos(e), -np.sin(e), np.cos(a) * np.cos(e)])
     cam = co["camera"]
-    sun = []
+    outdoors = co["scene"] == "sunset_road"         # the sun (else there's none to flare)
+    sun, lamp = [], []
+    px, pz = co["pivot"]
+    glow = np.array([px, co["ground_y"] - 0.7 * co["height"], pz])      # a lamp's head
     for pos, tgt, lens in zip(cam["pos"], cam["target"], cam["lens"]):
         x, y, z = T.project((np.asarray(pos) + d * 1e7)[None], pos, tgt, lens, 1080.0)[0]
-        sun.append([round(float(x), 1), round(float(y), 1)] if z > 0 else None)
-    return {"start": co["start"], "end": co["end"], "cut": co["cut"],
-            "shots": [co["start"] + f for f, _ in co["shots"]], "letterbox": co["letterbox"],
-            "sun": sun, "size": co["sun"]["size"], "lens": cam["lens"]}
+        sun.append([round(float(x), 1), round(float(y), 1)] if z > 0 and outdoors else None)
+        if co.get("taps") is not None:
+            x, y, _ = T.project(glow[None], pos, tgt, lens, 1080.0)[0]
+            lamp.append([round(float(x), 1), round(float(y), 1)])
+    out = {"start": co["start"], "end": co["end"], "cut": co["cut"],
+           "shots": [co["start"] + f for f, _ in co["shots"]], "letterbox": co["letterbox"],
+           "sun": sun, "size": co["sun"]["size"], "lens": cam["lens"]}
+    if co.get("taps") is not None:                  # a tap lamp: when it clicks, how bright
+        out.update(scene=co["scene"], taps=co["taps"], led=co["led"], lamp=lamp)
+    return out
 
 
 def colourway_items(engine, proj, model, placed, tl, cfg) -> dict:
@@ -710,6 +722,11 @@ def audio_assets(proj, cfg) -> dict | None:
         hits = [...]                      rest (with the metal hits and the booms, in turn) on
         booms = [...]                     the big cuts
         levels = { scream = -6 }          optional: peak dBFS per role (SAMPLE_LEVEL)
+    and for a tap cold open (a tap lamp):
+        clicks = ["click_2.mp3", ...]     the switch, on each tap (in turn)
+        snaps_on = [...]                  a pop as the light comes on (in turn)...
+        snaps_off = [...]                 ...and a softer one as it goes off
+        room = "crickets_2.mp3"           the night outside, looped under it
 
     Returns {"samples": {name: {path, sha1}}, "roles": {role: [names]}, "catch", "levels"} or
     None without the table."""
@@ -726,12 +743,13 @@ def audio_assets(proj, cfg) -> dict | None:
             raise SystemExit(f"[video.audio]: {p} is missing (tools/elevenlabs_sfx.py makes it)")
         samples[str(name)] = {"path": str(p), "sha1": hashlib.sha1(p.read_bytes()).hexdigest()}
         return str(name)
-    for role in ("pull_start", "idle", "burst"):
+    for role in ("pull_start", "idle", "burst", "room"):
         if a.get(role):
             roles[role] = [use(a[role])]
-    for role in ("screams", "stings", "hits", "booms"):
+    for role in ("screams", "stings", "hits", "booms", "clicks", "snaps_on", "snaps_off"):
         if a.get(role):
-            roles[role] = [use(x) for x in a[role]]
+            v = a[role]
+            roles[role] = [use(x) for x in ([v] if isinstance(v, str) else v)]
     return {"samples": samples, "roles": roles, "catch": float(a.get("catch", 0.5)),
             "levels": {**SAMPLE_LEVEL, **(a.get("levels") or {})}}
 
@@ -749,6 +767,44 @@ def rev_peaks(curve, fps: float, gap: float = SCREAM_GAP, floor: float = 0.55,
         if all(abs(i - j) >= gap * fps for j in out):
             out.append(i)
     return sorted(out)
+
+
+def tap_cues(cut: int, co: dict, roles: dict, add, play) -> None:
+    """A tap cold open's sound: the switch clicking on every tap, a pop as the light comes on
+    and a softer one as it goes off (recorded, in turn; else synthesised: a plastic snap, the
+    power-up and power-down), the night outside under it all (the `room` recording, else a
+    faint wind) and a mains hum while it's lit; all of it stopped dead at the cut."""
+    a = co["start"]
+    n = cut - a
+    ons = offs = 0
+    for i, (f, state) in enumerate(co["taps"]):
+        if f >= cut:
+            continue
+        if roles.get("clicks"):
+            play(f, roles["clicks"][i % len(roles["clicks"])], "click", align="peak", until=cut)
+        else:
+            add(f, "snap", gain=0.8)
+        if state == "on":
+            if roles.get("snaps_on"):
+                play(f, roles["snaps_on"][ons % len(roles["snaps_on"])], "snap_on", align="peak",
+                     until=cut, fade_out=0.15)
+            else:
+                add(f, "power", gain=0.8)
+            ons += 1
+        else:
+            if roles.get("snaps_off"):
+                play(f, roles["snaps_off"][offs % len(roles["snaps_off"])], "snap_off", until=cut,
+                     fade_out=0.1)
+            else:
+                add(f, "power_off", gain=0.8)
+            offs += 1
+    if roles.get("room"):
+        play(a, roles["room"][0], "room", loop=True, dur=n, until=cut, fade_in=0.5)
+    else:
+        add(a, "wind", dur=n, gain=0.35)
+    led = np.clip(np.asarray(co.get("led") or [], float)[:n], 0.0, 1.0)
+    if len(led) and led.max() > 0:
+        add(a, "hum", dur=n, curve=np.round(led, 3).tolist(), gain=1.0)
 
 
 def cue_sheet(reel, tl, theme, assets: dict | None = None) -> dict:
@@ -770,7 +826,10 @@ def cue_sheet(reel, tl, theme, assets: dict | None = None) -> dict:
 
     def play(frame, name, role, **kw):
         add(frame, "sample", file=name, level=float(lv.get(role, -12.0)), **kw)
-    if "cold_open" in mk and "idle" in roles:     # the real chainsaw: pulled, running, screaming
+    cold = tl.get("cold_open") or {}
+    if "cold_open" in mk and cold.get("taps") is not None:
+        tap_cues(mk["cold_open"]["cut"], cold, roles, add, play)
+    elif "cold_open" in mk and "idle" in roles:   # the real chainsaw: pulled, running, screaming
         m, co = mk["cold_open"], tl["cold_open"]
         a, cut = co["start"], m["cut"]
         n = cut - a

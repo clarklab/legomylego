@@ -179,7 +179,7 @@ chromium`). A full render takes roughly an hour of GPU time per model; iterate w
 | `--segments build,scan` | only those segments → `out/video_build+scan.mp4` |
 | `--no-render` | no Blender: compose from the plates already rendered (grey where missing) |
 | `--stills 120,480` | write single composed frames to `out/video_frames/<q>/stills/`, no video |
-| `--cold-open SCENE` | try a cold open (`sunset_road`) for this run, tagged like `--theme` (`out/video_cold_open...`); `--segments cold_open,open` renders just it and the cut into the reel |
+| `--cold-open SCENE` | try a cold open (`sunset_road`, `night_desk`) for this run, tagged like `--theme` (`out/video_cold_open...`); `--segments cold_open,open` renders just it and the cut into the reel |
 | `--scratch DIR` | write the run's work and outputs under `DIR` (the model's `out/` is only read): previews of a model someone else is working on |
 | `--theme NAME` | try another theme for this run (model.toml's theme and its overrides left out): writes `out/video_NAME[...].mp4` and `out/video_frames/<q>@NAME/` (stills there too), never the model's own video, poster or plates; with `--no-render` it composes over the model's rendered plates read-only, keeping their tempo and backdrop so they line up |
 | `--no-audio` | no music or sound effects |
@@ -189,7 +189,7 @@ chromium`). A full render takes roughly an hour of GPU time per model; iterate w
 
 | Segment | Beats | Shows | When |
 |---|---:|---|---|
-| cold_open | seconds + 1 | the model performs in a set of its own before anything else, in three shots, then a hard cut to black for a beat and straight into the open (below) | `[video.cold_open]` |
+| cold_open | seconds + 1 | the model performs in a set of its own before anything else (a figure on a sunset road, a tap lamp on a desk at night), in two or three shots, then a hard cut to black for a beat and straight into the open (below) | `[video.cold_open]` |
 | open | 6 | a brick drops and snaps, stud wipe, REAL LEGO PIECES. / CHECKED BY COMPUTER. | always |
 | title | 8 | the name in kinetic type over a transparent Cycles hero, piece counter, one row of stats | always |
 | build | 36 | the time-lapse build growing up from the table (parts by the height of their lowest point, outward from the centre, each waiting for something to stand on or connect to, dropping a short way into place); one orbiting shot per height band; HUD: pieces placed, height, progress | always |
@@ -231,6 +231,10 @@ hide_tags = ["stand"]           # parts left out (added to performance_info's)
 # letterbox = 0.09; the set's look (defaults in render/blender_cold_open.py LOOK): exposure = -1.6
 # (EV), sky_strength = 0.45, sky_tint = "#FFB070", sun_strength = 5, sun_color = "#FF9A4A",
 # sun_disc = 90, fill_strength = 0.25, haze = 1900 (m), dust = 0.0015 (per m)
+# a tap lamp instead: scene = "night_desk", motion = "tap" (no spin, nothing hidden), optional
+# taps = [1.0, 3.0, 4.0] (s: on, off, on...; default beats 2, 6 and 8); the desk's look
+# (DESK_LOOK): exposure = 0.9, moon_strength = 3.4, moon_color = "#9DB8FF", lamp_gain = 2.5
+# (x the LEDs' own power), spill_strength = 2.2 (W), spill_color = "#FF7040"
 
 [[video.callouts]]              # mechanism callouts; without any, one per moving group
 label = "Dust door"
@@ -265,6 +269,26 @@ catches, idles and roars with the saw's speed (the `rev_tag` parts'), over wind,
 the black. No music plays under it. Its plates render in about 0.6 s a frame at preview size
 and 1.8 s at full size. A model without one is unchanged.
 
+A **tap lamp** (`motion = "tap"`, for a model with a press pose and LEDs, e.g. in
+`scene = "night_desk"`) is pressed and let go on three taps - on, off, on, then held into the
+cut - `model.pose` 0 -> 1 -> 0 with a little rebound, clicking at the bottom of its travel,
+where the push-on/push-off switch toggles its LEDs: they snap on with a flash that settles
+(and its glowing parts glow with them), and go off in a few frames. The camera punches in on
+each click and the picture jolts; the lamp doesn't spin. `night_desk` is a bedroom at night at
+the model's real size: a varnished desk against the wall under a window of moonlit blue night
+(a moon, stars and trees beyond), a curtain, books, a mug, a plant, a notebook and a print on
+the wall, the moon the only light until the lamp comes on; then the LEDs light the parts they
+glow in and a soft glow round them lights the room warm (light-linked, so the clear shell
+isn't washed out). Two shots: the room at 40 mm from above the desk, cutting in the dark
+before the third tap to a low 75 mm close with the moon through the window behind, both
+slowly pushing in with shallow focus on the lamp. The compositor adds a warm haze round the
+lamp while it's lit, a flash as it snaps on, and in the bottom bar what the last tap did
+(TAP · ON, TAP · OFF). The sound: the switch's click on every tap, a pop as the light comes on
+and a softer one as it goes off, the night under it all and a faint mains hum while it's lit
+(synthesised: a plastic snap, the power-up and -down and a quiet wind unless recorded, below).
+Its plates take about 0.7 s a frame at preview size and 1.7 s at full (the set renders at two
+thirds of the job's samples).
+
 **Recorded sounds** (optional). The music and effects are synthesised unless the model has
 `[video.audio]`: sound files in the model's `audio/` (committed, so the video rebuilds offline)
 by role. `tools/elevenlabs_sfx.py SLUG` generates them from `audio/sfx.toml` (`[[sfx]]` name,
@@ -286,6 +310,11 @@ stings = ["string_stab_1.mp3", "string_stab_3.mp3"]   # ...sting; the rest, the 
 hits = ["metal_hit_2.mp3"]        # booms take turns on the big cuts (a boom replaces the
 booms = ["boom_2.mp3"]            # synthesised hit there)
 levels = { scream = -8.5 }        # optional: peak dBFS per role (reel.SAMPLE_LEVEL)
+# a tap cold open (a tap lamp):
+clicks = ["click_2.mp3", ...]     # the switch, on each tap in turn
+snaps_on = ["snap_on_1.mp3", ...] # a pop as the light comes on (in turn)...
+snaps_off = ["snap_off_1.mp3"]    # ...and a soft one as it goes off
+room = "crickets_2.mp3"           # the night outside, looped under it
 ```
 Everything in the cold open stops dead at its cut; the synthesised music bed stays (ducked under
 the stings) and the mix is mastered to the same -16 LUFS / -1.5 dBTP. Without the table a model
@@ -295,15 +324,21 @@ Callout anchors are the centres of the matched parts, moved by their group's pos
 frame and projected through the video camera, so the lines follow the real parts. Callouts
 that match nothing are left out (with a note in the log).
 
-**Themes** (`brickkit/video/themes.py`) set the tempo, colours, fonts, wipes and overlay:
-`brand` (cream and yellow, stud wipes), `scan` (teal HUD, scan lines, blast-door wipes),
-`tape` (VCR on-screen display, tracking glitches, chroma bleed), `playful` (bouncy type,
+**Themes** (`brickkit/video/themes.py`) set the tempo, colours, wipes, title animation and
+overlay; they all share the site's type: Inter for display (700, set tight: -0.022 em for
+headings, -0.028 em for the name; figures in fixed cells so counters don't jitter), Menlo
+caps, tracked out, for small labels, Inter 500 for detail lines (tokens `display`, `mono`,
+`brand_mono`; another face gets scaled to the same cap height). `brand` (cream and yellow,
+stud wipes), `scan` (teal HUD, scan lines, blast-door wipes), `tape` (VCR on-screen display,
+tracking glitches, chroma bleed; the on-screen display itself - PLAY, SP, the timecode, the
+counters, CHAPTER, TRACKING - keeps a VCR's VT323 lettering), `playful` (bouncy type,
 paw-print slides), `grindhouse` (a 70s drive-in horror print at 100 BPM: warm near-black,
 bone type, blood red and apron yellow; gate weave, flicker, dust, hairs, scratches and light
 leaks; film-burn cuts spliced in with a frame slip, frame slips between build sections, a
 projector roll between colourways; the name rubber-stamped, typewritten labels, evidence-tag
 callouts; a heartbeat, drone, string swells and scraped metal, with a two-stroke chainsaw on
-the title). Fonts are bundled OFL fonts in `brickkit/video/web/fonts/`. Try one without
+the title). Fonts are bundled OFL fonts in `brickkit/video/web/fonts/` (Menlo is the
+system's; elsewhere it falls back to the default monospace). Try one without
 touching the model: `brickkit video SLUG --theme grindhouse --no-render --stills 90,150,600`.
 
 **How it's made:** `video/timeline.py` plans the 3D shots (no Blender), `video/reel.py` the

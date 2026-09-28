@@ -271,6 +271,18 @@ def test_cold_open_sound(tmp_path):
     assert again == info
 
 
+def test_hum():
+    """A lamp's hum follows its curve: silent while the curve is 0, steady where it's 1."""
+    sfx = A.SFX(SR, FPS, seed=5)
+    curve = [0.0] * 30 + [1.0] * 60 + [0.0] * 30
+    y = sfx.fx_hum({"type": "hum", "dur": 120, "curve": curve}, np.random.default_rng(1))
+    assert len(y) == round(4.0 * SR)
+    per = [np.abs(y[round(f / FPS * SR):round((f + 1) / FPS * SR)]).max() for f in range(120)]
+    assert max(per[:29]) == 0 and min(per[35:85]) > 0.5 and max(per[92:]) == 0
+    again = sfx.fx_hum({"type": "hum", "dur": 120, "curve": curve}, np.random.default_rng(1))
+    assert np.array_equal(y, again)
+
+
 def test_recorded_samples(tmp_path):
     """"sample" events: the file's loudest moment on the frame (align peak), its peak at
     `level`, looped to `dur`, stopped dead at `until`, from `offset`; the music ducks; an MP3

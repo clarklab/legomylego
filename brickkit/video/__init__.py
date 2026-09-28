@@ -12,7 +12,7 @@ A showreel of the model, cut to a beat and driven by the model's own data:
     lift        it lifts off its stand                                          ([video] lift)
     colourways  wipes between the colourways                                    (variants)
     booklet     the instruction booklet's pages turn                            (booklet.pdf)
-    outro       logo, the model's URL, the small print
+    outro       logo, the site's URL, the small print
 
 Pipeline:
   1. timeline.py plans the 3D shots frame by frame; reel.py plans the graphics and the sound

@@ -25,11 +25,21 @@ animator's (blender_scene.SceneBuilder, blender_animate's settings); the set is 
                   the compositor exposes each shot, blooms the highlights and throws sun beams
                   from the visible part of the disc (so they die where the figure covers it).
                   The streak, ghosts and veil of the flare are the web compositor's.
+    night_desk    a bedroom at night at the model's real size (a LEGO lamp is a real lamp): a
+                  wooden desk against the wall under a window of moonlit blue night (a moon,
+                  stars and trees beyond), a curtain, books, a mug, a plant, a notebook, a print
+                  on the wall. The moon through the window is the only light until the model's
+                  LEDs come on (the plan's `led`, a tap cold open's); then they light the parts
+                  they glow in, and a soft glow round them lights the desk, the wall and the
+                  props warm, light-linked so neither washes out the clear shell. Focused on
+                  the model, shallow; bloom from the highlights, pumped as the light snaps on.
 
-The figure stands at the pivot on the road's centre line with its display stand hidden; the
-parts hang on a rig (spin empty > group empties > parts): the spin turns the whole figure, the
-groups play the performance. Kept apart from blender_animate.py so the studio plates' cache
-keys (which hash that script) don't change when the sets do."""
+The model stands at the pivot (on the road's centre line, or on the desk) with any hide_tags
+parts hidden; the parts hang on a rig (spin empty > group empties > parts): the spin turns the
+whole figure, the groups play the performance (or the taps), keyed either side of each frame
+so a 180-degree shutter blurs what moves. The model's LEDs (a tap lamp's) ride on their parts
+at the plan's `led` level; its glowing parts glow with them. Kept apart from blender_animate.py
+so the studio plates' cache keys (which hash that script) don't change when the sets do."""
 import json
 import math
 import os
@@ -1046,11 +1056,400 @@ class SunsetRoad:
         self.mask.inputs["Size"].default_value = (w, w * 0.93)
 
 
+# ---------------------------------------------------------------------------- night_desk
+DESK_LOOK = {"exposure": 0.9,       # EV
+             "moon_strength": 3.4, "moon_color": "#9DB8FF",   # through the window, W/m2
+             "lamp_gain": 2.5,      # the model's LEDs (their own power, as the animator's) x this
+             "spill_strength": 2.2,  # W: the lamp's soft glow onto the room, at full brightness
+             "spill_color": "#FF7040",
+             "look": "AgX - Medium High Contrast"}
+
+
+class NightDesk:
+    """A bedroom at night, at the model's real size (a LEGO lamp is a real lamp): a wooden desk
+    against the wall under a window of moonlit blue night (a moon, stars, trees against the
+    sky), curtains, books, a mug, a plant and a notebook; the moon the only light until the
+    lamp comes on, then the lamp's LEDs (and a soft glow of its own round the dome) light the
+    desk, the wall and the props. Distances in metres: u across (right as the camera sees the
+    model's front), v into the room's back wall, z up from the desk top; the model stands at
+    the origin."""
+
+    BLUR = {"room": 0.018, "close": 0.04}   # the blur of infinity per shot, / frame width
+    TRIM = {}
+    SAMPLES = 2 / 3                         # of the job's: 2,900 parts of glass and plastic are
+    #                                         slow to sample, and 32 look the same as 48
+
+    def __init__(self, sc, co, eevee):
+        self.sc, self.co, self.eevee = sc, co, eevee
+        self.look = dict(DESK_LOOK, **(co.get("look") or {}))
+        px, pz = co["pivot"]
+        self.O = Vector((px * LDU, pz * LDU, -co["ground_y"] * LDU))
+        f = math.radians(float(co.get("front", 0.0)))
+        # the model's front (LDraw, view_basis) is (sin f, 0, -cos f): Blender (sin f, -cos f, 0);
+        # the room runs the other way, away from the camera
+        self.F = Vector((-math.sin(f), math.cos(f), 0.0))
+        self.R = self.F.cross(Vector((0.0, 0.0, 1.0)))
+        self.Mw = Matrix((self.R.to_4d(), self.F.to_4d(), (0, 0, 1, 0), (0, 0, 0, 1))).transposed()
+        self.Mw.translation = self.O
+        self.rng = np.random.default_rng(1983)
+        self.world()
+        self.room()
+        self.window_view()
+        self.desk_props()
+        self.lights()
+        self.compositor()
+        ee = sc.eevee
+        ba._try(ee, "bokeh_threshold", 1e5)
+        ba._try(ee, "bokeh_max_size", 80.0)
+        sc.view_settings.view_transform = "AgX"
+        ba._try(sc.view_settings, "look", self.look["look"])
+        sc.view_settings.exposure = 0.0
+
+    # -- helpers ------------------------------------------------------------------------------
+    def mat(self, name, color, rough=0.6, spec=0.4, build=None):
+        m = bpy.data.materials.new(name)
+        nb = NB(m.node_tree)
+        out = nb.clear("OUTPUT_MATERIAL")
+        bsdf = nb.node("ShaderNodeBsdfPrincipled", Roughness=rough)
+        nb.set(bsdf.inputs["Specular IOR Level"], spec)
+        nb.set(bsdf.inputs["Base Color"], color if build is None else build(nb))
+        m.node_tree.links.new(bsdf.outputs[0], out.inputs["Surface"])
+        return m, nb, bsdf
+
+    def place(self, mesh, name, mat, smooth=False, shadow=True):
+        ob = mesh.build(name, mat, 1.0, (0, 0, 0), smooth)
+        if ob is None:
+            return None
+        ob.scale = (1, 1, 1)
+        ob.matrix_world = self.Mw.copy()
+        if not shadow:
+            ba._try(ob, "visible_shadow", False)
+        return ob
+
+    def box(self, m, lo, hi, R=None):
+        lo, hi = np.asarray(lo, float), np.asarray(hi, float)
+        m.box((lo + hi) / 2, hi - lo, R)
+
+    # -- the room -----------------------------------------------------------------------------
+    def world(self):
+        """A faint blue night for whatever the window and the lamp don't reach."""
+        w = bpy.data.worlds.new("night")
+        self.sc.world = w
+        nb = NB(w.node_tree)
+        out = nb.clear("OUTPUT_WORLD")
+        bg = nb.node("ShaderNodeBackground", Strength=0.05)
+        nb.set(bg.inputs["Color"], (0.35, 0.45, 0.85))
+        w.node_tree.links.new(bg.outputs[0], out.inputs["Surface"])
+        ba._try(w, "sun_threshold", 1e6)
+
+    WIN = (-0.85, -0.05, 0.1, 1.2)         # window opening: u from, to; z from, to: its right
+    #                                        edge behind the model, plain wall to the right
+    WALL_V = 0.31                           # the wall's face behind the desk
+    WALL_T = 0.13                           # its thickness (the window's reveal)
+
+    def room(self):
+        wall, desk, frame, floor = Mesh(), Mesh(), Mesh(), Mesh()
+        u0, u1, z0, z1 = self.WIN
+        v, t = self.WALL_V, self.WALL_T
+        # the wall round the window: four slabs, and the reveal
+        for lo, hi in (((-3.0, v, -0.76), (u0, v + t, 2.2)), ((u1, v, -0.76), (3.0, v + t, 2.2)),
+                       ((u0, v, -0.76), (u1, v + t, z0)), ((u0, v, z1), (u1, v + t, 2.2))):
+            self.box(wall, lo, hi)
+        # a side wall far left, a ceiling (so the moon only comes in through the window)
+        self.box(wall, (-3.1, -3.0, -0.76), (-3.0, v + t, 2.2))
+        self.box(wall, (-3.0, -3.0, 2.2), (3.0, v + t, 2.3))
+        # the window: frame, mullions, sash bars, a sill inside
+        fw = 0.045
+        for lo, hi in (((u0, v + 0.05, z0), (u0 + fw, v + 0.09, z1)),
+                       ((u1 - fw, v + 0.05, z0), (u1, v + 0.09, z1)),
+                       ((u0, v + 0.05, z0), (u1, v + 0.09, z0 + fw)),
+                       ((u0, v + 0.05, z1 - fw), (u1, v + 0.09, z1)),
+                       (((u0 + u1) / 2 - 0.02, v + 0.055, z0), ((u0 + u1) / 2 + 0.02, v + 0.085, z1)),
+                       ((u0, v + 0.055, (z0 + z1) / 2 - 0.02), (u1, v + 0.085, (z0 + z1) / 2 + 0.02))):
+            self.box(frame, lo, hi)
+        self.box(frame, (u0 - 0.05, v - 0.035, z0 - 0.025), (u1 + 0.05, v + 0.07, z0))   # sill
+        # the desk: a top, an apron, legs; the floor
+        self.box(desk, (-0.78, -0.4, -0.035), (0.62, v - 0.005, 0.0))
+        self.box(desk, (-0.74, -0.37, -0.13), (0.58, -0.35, -0.035))
+        for uu in (-0.74, 0.54):
+            for vv in (-0.37, v - 0.05):
+                self.box(desk, (uu, vv, -0.76), (uu + 0.04, vv + 0.04, -0.035))
+        self.box(floor, (-3.0, -3.0, -0.78), (3.0, v, -0.76))
+        self.place(wall, "wall", self._wall_mat())
+        self.place(desk, "desk", self._wood_mat())
+        self.place(frame, "window_frame", self.mat("frame_paint", (0.62, 0.62, 0.6), 0.45, 0.4)[0])
+        self.place(floor, "floor", self.mat("floor", (0.08, 0.05, 0.035), 0.5, 0.4)[0])
+        self.curtains()
+        self.picture()
+
+    def _wall_mat(self):
+        def build(nb):
+            geo = nb.node("ShaderNodeNewGeometry")
+            n = nb.noise(geo.outputs["Position"], 60.0, 4.0, 0.6)
+            return nb.mix(nb.mul(n, 0.3), (0.42, 0.4, 0.37), (0.36, 0.34, 0.31))
+        return self.mat("wall_paint", None, 0.85, 0.25, build)[0]
+
+    def _wood_mat(self):
+        """Varnished walnut: grain along the desk, a glossy top that mirrors the lamp."""
+        def build(nb):
+            loc = nb.node("ShaderNodeTexCoord").outputs["Object"]
+            q = nb.vec("MULTIPLY", loc, (0.6, 18.0, 18.0))        # grain runs along the desk (u)
+            warp = nb.noise(nb.vec("MULTIPLY", loc, (1.0, 4.0, 4.0)), 2.0, 3.0, 0.6)
+            wave = nb.node("ShaderNodeTexWave", Scale=1.0, Distortion=4.0, Detail=4.0,
+                           **{"Detail Scale": 1.5})
+            wave.wave_type = "BANDS"
+            wave.bands_direction = "Y"
+            nb.set(wave.inputs["Vector"], nb.vec("ADD", q, nb.vec("SCALE", nb.comb(0, warp, warp), 0.8)))
+            g = nb.smooth(wave.outputs["Fac"], 0.15, 0.95)
+            fine = nb.noise(nb.vec("MULTIPLY", loc, (3.0, 400.0, 400.0)), 1.0, 2.0)
+            col = nb.mix(g, (0.11, 0.055, 0.026), (0.2, 0.105, 0.05))
+            return nb.mix(nb.mul(nb.smooth(fine, 0.4, 0.7), 0.4), col, (0.07, 0.035, 0.016))
+        return self.mat("walnut", None, 0.28, 0.5, build)[0]
+
+    def curtains(self):
+        """Two curtains drawn back either side of the window, hanging in soft folds."""
+        m = Mesh()
+        u0, u1, z0, z1 = self.WIN
+        for c, w in ((u0 - 0.22, 0.4),):
+            nu, nz = 48, 24
+            us = np.linspace(c - w / 2, c + w / 2, nu)
+            zs = np.linspace(-0.05, z1 + 0.22, nz)
+            U, Z = np.meshgrid(us, zs)
+            V = self.WALL_V - 0.06 - 0.035 * (0.5 + 0.5 * np.sin((U - c) / w * 2 * np.pi * 3.5)) \
+                - 0.01 * np.sin(Z * 7.0)
+            P = np.stack([U, V, Z], -1).reshape(-1, 3)
+            i = np.arange(nz - 1)[:, None] * nu + np.arange(nu - 1)[None, :]
+            F = np.concatenate([np.stack([i, i + 1, i + nu + 1], -1).reshape(-1, 3),
+                                np.stack([i, i + nu + 1, i + nu], -1).reshape(-1, 3)])
+            m.tris(P, F)
+        self.place(m, "curtains", self.mat("curtain", (0.16, 0.2, 0.26), 0.9, 0.2)[0], smooth=True)
+        rod = Mesh()
+        rod.tube([[u0 - 0.46, self.WALL_V - 0.06, z1 + 0.24], [u1 + 0.1, self.WALL_V - 0.06, z1 + 0.24]],
+                 0.012, 8)
+        self.place(rod, "curtain_rod", self.mat("brass", (0.35, 0.25, 0.12), 0.3, 0.8)[0])
+
+    def picture(self):
+        """A small framed print on the wall right of the window."""
+        m = Mesh()
+        self.box(m, (0.36, self.WALL_V - 0.02, 0.36), (0.66, self.WALL_V, 0.76))
+        self.place(m, "picture_frame", self.mat("frame_black", (0.02, 0.02, 0.02), 0.4, 0.5)[0])
+        p = Mesh()
+        self.box(p, (0.385, self.WALL_V - 0.022, 0.385), (0.635, self.WALL_V - 0.02, 0.735))
+        self.place(p, "picture", self.mat("print", None, 0.7, 0.3, lambda nb: nb.mix(
+            nb.smooth(nb.xyz(nb.node("ShaderNodeTexCoord").outputs["Object"])[2], 0.35, 0.65),
+            (0.55, 0.42, 0.3), (0.2, 0.3, 0.4)))[0])
+
+    # -- outside ------------------------------------------------------------------------------
+    def window_view(self):
+        """The night beyond the glass: a sky of deepening blue with stars and a low moon on a
+        far backdrop, and trees and a fence line between, dark against it."""
+        u0, u1, z0, z1 = self.WIN
+        D = 9.0                                            # the backdrop, metres out
+        W, Hh = 16.0, 9.0
+        bd = Mesh()
+        bd.quad([(-W / 2, D, -3.0), (W / 2, D, -3.0), (W / 2, D, Hh), (-W / 2, D, Hh)])
+        m = bpy.data.materials.new("night_sky")
+        nb = NB(m.node_tree)
+        out = nb.clear("OUTPUT_MATERIAL")
+        x, _, z = nb.xyz(nb.node("ShaderNodeTexCoord").outputs["Object"])
+        tc = nb.comb(x, 0.0, z)
+        h = nb.smooth(z, -0.5, 7.0)
+        sky = nb.mix(h, (0.045, 0.09, 0.22), (0.005, 0.01, 0.035))
+        glow = nb.math("EXPONENT", nb.mul(nb.vec("LENGTH", nb.vec("SUBTRACT", tc, self.MOON), out=1), -0.55))
+        sky = nb.vec("ADD", sky, nb.vec("SCALE", nb.comb(0.06, 0.09, 0.16), glow))
+        st = nb.voronoi(nb.vec("MULTIPLY", tc, (1.0, 1.0, 1.0)), 9.0, "F1", "Distance")
+        stars = nb.mul(nb.smooth(st, 0.035, 0.0), nb.smooth(nb.noise(tc, 3.0, 2.0), 0.55, 0.7))
+        stars = nb.mul(stars, nb.smooth(z, 1.0, 3.0))
+        sky = nb.vec("ADD", sky, nb.vec("SCALE", nb.comb(0.8, 0.85, 1.0), nb.mul(stars, 3.0)))
+        r = nb.vec("LENGTH", nb.vec("SUBTRACT", tc, self.MOON), out=1)
+        moon = nb.smooth(r, 0.27, 0.25)
+        crater = nb.smooth(nb.noise(tc, 4.0, 4.0, 0.6), 0.45, 0.7)
+        mc = nb.mix(nb.mul(crater, 0.35), (1.0, 0.97, 0.9), (0.72, 0.74, 0.78))
+        col = nb.mix(moon, sky, nb.vec("SCALE", mc, 5.0))
+        em = nb.node("ShaderNodeEmission", Strength=0.55)
+        nb.set(em.inputs["Color"], col)
+        m.node_tree.links.new(em.outputs[0], out.inputs["Surface"])
+        self.place(bd, "night_sky", m, shadow=False)
+        # trees and a fence line between the window and the sky
+        trees = Mesh()
+        rng = self.rng
+        for tu, tv, th, tw in ((-2.2, 5.2, 5.5, 2.6), (1.4, 6.5, 6.8, 3.2), (3.6, 4.4, 4.2, 2.0),
+                               (-4.6, 7.0, 6.0, 3.0), (5.8, 7.5, 7.0, 3.4)):
+            trees.tube([[tu, tv, -2.5], [tu + rng.normal(0, 0.1), tv, th * 0.55]], [0.18, 0.12], 6)
+            k = rng.integers(5, 9)
+            C = np.stack([tu + rng.normal(0, tw * 0.3, k), tv + rng.normal(0, 0.4, k),
+                          th * rng.uniform(0.5, 0.9, k)], -1)
+            _leaves(trees, rng, C, rng.uniform(0.35, 0.55, k) * tw, 420, 0.16, 0.8)
+        for fu in np.arange(-6.0, 6.0, 1.3):
+            trees.tube([[fu, 3.2, -2.5], [fu, 3.2, -1.3]], 0.04, 4)
+        trees.tube([[-6.0, 3.2, -1.5], [6.0, 3.2, -1.5]], 0.012, 4, cap=False)
+        trees.tube([[-6.0, 3.2, -1.8], [6.0, 3.2, -1.8]], 0.012, 4, cap=False)
+        self.place(trees, "night_trees", self.mat("silhouette", (0.01, 0.012, 0.018), 0.9, 0.2)[0],
+                   shadow=False)
+        # the ground outside, a dim grey-blue lawn
+        g = Mesh()
+        g.quad([(-10, 0.5, -2.5), (10, 0.5, -2.5), (10, 9.5, -2.5), (-10, 9.5, -2.5)])
+        self.place(g, "lawn", self.mat("lawn", (0.02, 0.03, 0.03), 0.9, 0.2)[0], shadow=False)
+
+    MOON = (-3.3, 0.0, 1.9)                 # on the backdrop (u, -, z): behind the close shot
+
+    # -- the desk's things --------------------------------------------------------------------
+    def desk_props(self):
+        rng = self.rng
+        # books: a stack of three, left and behind
+        for i, (w, d, h, col, rot) in enumerate(((0.25, 0.18, 0.032, (0.3, 0.05, 0.04), 0.1),
+                                                 (0.23, 0.165, 0.028, (0.42, 0.3, 0.06), -0.05),
+                                                 (0.2, 0.15, 0.036, (0.05, 0.16, 0.18), 0.18))):
+            z = sum(x[2] for x in ((0.25, 0.18, 0.032), (0.23, 0.165, 0.028), (0.2, 0.15, 0.036))[:i])
+            R = _rot(rot)
+            c = np.array([-0.44, 0.13, z + h / 2])
+            cover, pages = Mesh(), Mesh()
+            cover.box(c, (w, d, h), R)
+            pages.box(c + R @ np.array([0.004, 0.0, 0.0]), (w - 0.006, d + 0.002, h * 0.8), R)
+            self.place(cover, f"book_{i}", self.mat(f"book_{i}", col, 0.55, 0.35)[0])
+            self.place(pages, f"pages_{i}", self.mat(f"pages_{i}", (0.55, 0.5, 0.4), 0.8, 0.2)[0])
+        # a mug, right, in front
+        mug = Mesh()
+        mug.tube([[0.3, -0.07, 0.0], [0.3, -0.07, 0.098]], 0.042, 32)
+        handle = [[0.3 + 0.042 + 0.028 * math.sin(t), -0.07, 0.05 + 0.03 * math.cos(t)]
+                  for t in np.linspace(0.2, np.pi - 0.2, 12)]
+        mug.tube(handle, 0.007, 8)
+        self.place(mug, "mug", self.mat("ceramic", (0.55, 0.42, 0.18), 0.25, 0.6)[0], smooth=True)
+        # a plant in a clay pot, far left
+        pot, plant = Mesh(), Mesh()
+        pot.tube([[-0.66, 0.2, 0.0], [-0.66, 0.2, 0.09]], [0.045, 0.058], 28)
+        for k in range(26):
+            ang = rng.uniform(0, 2 * np.pi)
+            L = rng.uniform(0.09, 0.18)
+            up = rng.uniform(0.5, 1.2)
+            base = np.array([-0.66, 0.2, 0.085])
+            d = np.array([math.cos(ang), math.sin(ang), up])
+            d /= np.linalg.norm(d)
+            side = np.cross(d, [0, 0, 1.0])
+            side /= np.linalg.norm(side) + 1e-9
+            tip = base + d * L - np.array([0, 0, 0.35 * L * L / 0.18])
+            mid = base + d * L * 0.5
+            w = rng.uniform(0.012, 0.02)
+            plant.tris([base - side * w * 0.3, mid - side * w, tip, mid + side * w, base + side * w * 0.3],
+                       [(0, 1, 2), (0, 2, 3), (0, 3, 4)])
+        self.place(pot, "pot", self.mat("clay", (0.35, 0.14, 0.07), 0.8, 0.3)[0], smooth=True)
+        self.place(plant, "plant", self.mat("leaf", (0.04, 0.09, 0.03), 0.6, 0.35)[0])
+        # a notebook with a pencil, front right
+        nbk, pencil = Mesh(), Mesh()
+        R = _rot(-0.35)
+        nbk.box(np.array([0.2, -0.24, 0.006]), (0.21, 0.15, 0.012), R)
+        self.place(nbk, "notebook", self.mat("notebook", (0.3, 0.27, 0.22), 0.8, 0.2)[0])
+        a, b = np.array([0.13, -0.3, 0.017]), np.array([0.29, -0.2, 0.017])
+        pencil.tube([a, b], 0.0045, 6)
+        self.place(pencil, "pencil", self.mat("pencil", (0.6, 0.38, 0.03), 0.4, 0.4)[0])
+
+    # -- light --------------------------------------------------------------------------------
+    def lights(self):
+        """The moon through the window (a sun lamp from the moon's side, so the frame's bars
+        cross the desk), and the lamp's own soft glow round its dome (off until it's on)."""
+        lk = self.look
+        md = bpy.data.lights.new("moon", "SUN")
+        md.color = tuple(bs.hex_to_linear(lk["moon_color"]))
+        md.energy = float(lk["moon_strength"])
+        md.angle = math.radians(1.5)
+        ba._try(md, "use_shadow_jitter", False)
+        mo = bpy.data.objects.new("moon", md)
+        self.sc.collection.objects.link(mo)
+        into = (self.Mw.to_3x3() @ Vector((0.6, -0.55, -0.55))).normalized()     # moon -> room
+        ba._try(md, "specular_factor", 0.6)
+        mo.rotation_euler = into.to_track_quat("-Z", "Y").to_euler()
+        leds = self.co.get("leds") or []
+        if leds:
+            c = sum((TO_B @ Vector(L["pos"]) for L in leds), Vector()) / len(leds)
+        else:
+            c = self.O + Vector((0, 0, 0.2))
+        sd = bpy.data.lights.new("lamp_glow", "POINT")
+        sd.color = tuple(bs.hex_to_linear(lk["spill_color"]))
+        sd.energy = 0.0
+        sd.shadow_soft_size = 0.09                     # the dome's size
+        ba._try(sd, "use_shadow", False)               # the dome glows all round
+        so = bpy.data.objects.new("lamp_glow", sd)
+        self.sc.collection.objects.link(so)
+        so.location = c
+        self.spill, self.spill_ob = sd, so
+
+    def link_lamp(self, parts, leds):
+        """Light linking: the LEDs light only the glowing parts they sit in, the glow round
+        them lights everything else (the clear shell round them glows faintly from inside) but
+        not those (they'd wash out)."""
+        glass = bpy.data.collections.new("lamp_glass")
+        glowing = bpy.data.collections.new("lamp_glowing")
+        for ob in parts:
+            m = ob.active_material
+            if m is not None and getattr(m, "surface_render_method", "") == "BLENDED":
+                glass.objects.link(ob)
+                if m.name.endswith("_glow"):
+                    glowing.objects.link(ob)
+        if not glass.objects:
+            return
+        only = bpy.data.collections.new("led_receivers")
+        only.children.link(glowing if glowing.objects else glass)
+        for lo in leds:
+            lo.light_linking.receiver_collection = only
+        but = bpy.data.collections.new("glow_receivers")
+        but.children.link(glowing if glowing.objects else glass)
+        but.collection_children[0].light_linking.link_state = "EXCLUDE"
+        self.spill_ob.light_linking.receiver_collection = but
+
+    def lamp(self, level):
+        """The lamp's brightness this frame (0 off, 1 on, above 1 in the flash as it comes on)."""
+        self.spill.energy = float(self.look["spill_strength"]) * max(0.0, level)
+        g = min(2.0, max(0.0, level - 1.0))
+        self.bloom.inputs["Strength"].default_value = 0.35 + 0.45 * g
+
+    # -- the lens -----------------------------------------------------------------------------
+    def compositor(self):
+        sc = self.sc
+        ng = bpy.data.node_groups.new("cold_open_lens", "CompositorNodeTree")
+        ng.interface.new_socket("Image", in_out="OUTPUT", socket_type="NodeSocketColor")
+        sc.compositing_node_group = ng
+        ba._try(sc.render, "use_compositing", True)
+        ba._try(sc.render, "compositor_device", "GPU")
+        nb = NB(ng)
+        rl = nb.node("CompositorNodeRLayers")
+        self.gain = nb.node("ShaderNodeMix", data_type="RGBA", blend_type="MULTIPLY", Factor=1.0)
+        ng.links.new(rl.outputs["Image"], self.gain.inputs[6])
+        img = self.gain.outputs[2]
+        g = nb.node("CompositorNodeGlare", Type="Bloom", Quality="High")
+        for k, v in dict(Threshold=0.9, Smoothness=0.6, Strength=0.35, Size=0.8,
+                         Tint=(1.0, 0.85, 0.8)).items():
+            nb.set(g.inputs[k], v)
+        ng.links.new(img, g.inputs["Image"])
+        self.bloom = g
+        ng.links.new(nb.mix(1.0, img, g.outputs["Glare"], "ADD"), nb.node("NodeGroupOutput").inputs[0])
+
+    def frame(self, cam, shot, ev, focus):
+        """Exposed (`ev`) and focused on the model (`focus`), the background as soft as BLUR."""
+        g = 2.0 ** (ev + self.TRIM.get(shot, 0.0))
+        sock = self.gain.inputs[7]
+        if abs(sock.default_value[0] - g) > 1e-6:
+            sock.default_value = (g, g, g, 1.0)
+        cd = cam.data
+        mw = cam.matrix_world
+        s = max(0.05, (focus - mw.translation).dot(-(mw.to_3x3() @ Vector((0, 0, 1)))))
+        f = cd.lens / 1000.0
+        b = self.BLUR.get(shot, 0.02) * cd.sensor_width / 1000.0
+        cd.dof.use_dof = True
+        cd.dof.focus_distance = s
+        cd.dof.aperture_fstop = max(0.5, f * f / (b * max(1e-3, s - f)))
+        cd.dof.aperture_blades = 7
+        cd.dof.aperture_ratio = 1.0
+
+
+def night_desk(sc, co, eevee):
+    return NightDesk(sc, co, eevee)
+
+
 def sunset_road(sc, co, eevee):
     return SunsetRoad(sc, co, eevee)
 
 
-SETS = {"sunset_road": sunset_road}
+SETS = {"sunset_road": sunset_road, "night_desk": night_desk}
 
 
 # ---------------------------------------------------------------------------- the shoot
@@ -1077,10 +1476,14 @@ class ColdOpen:
         sc.render.image_settings.file_format = "PNG"
         sc.render.image_settings.color_mode = "RGB"
         sc.render.image_settings.compression = 15
-        for sock, _ in ba.glow_inputs(self.eevee):     # EEVEE glass; glowing parts stay dark
+        self.glow = ba.glow_inputs(self.eevee)         # EEVEE glass; glowing parts start dark
+        for sock, _ in self.glow:
             sock.default_value = 0.0
         self.set = SETS[co["scene"]](sc, co, self.eevee)
-        self.exposure = float((co.get("look") or {}).get("exposure", LOOK["exposure"]))
+        self.exposure = float(self.set.look["exposure"])
+        if self.eevee and getattr(self.set, "SAMPLES", 1.0) != 1.0:
+            sc.eevee.taa_render_samples = max(8, round(int(job["samples"]) * self.set.SAMPLES))
+        self._leds()
         self.disc = bpy.data.objects.get("sun_disc")
         self.sun_dir = sun_direction(co["sun"])
         self._rig()
@@ -1127,6 +1530,43 @@ class ColdOpen:
             ob.matrix_parent_inverse = Matrix.Identity(4)
             ob.matrix_basis = TO_B @ Matrix(inst["matrix"])
 
+    def _leds(self):
+        """The model's LEDs (a tap lamp's): point lights riding on their parts, dark until the
+        plan's `led` turns them up (with the set's lamp_gain)."""
+        self.leds, self.led_objects = [], []
+        gain = float(self.set.look.get("lamp_gain", 1.0)) * ba.LED_BOOST
+        for k, L in enumerate(self.co.get("leds") or []):
+            ob = self.b.objects[L["instance"]]
+            ld = bpy.data.lights.new(f"led{k}", "POINT")
+            ld.color = bs.hex_to_linear(L["color"])
+            ld.shadow_soft_size = 0.004
+            ld.energy = 0.0
+            ba._try(ld, "use_shadow", False)          # inside glass parts: shadows cost, add little
+            lo = bpy.data.objects.new(f"led{k}", ld)
+            self.sc.collection.objects.link(lo)
+            local = Matrix.Translation(Vector(L.get("offset", (0, 0, 0)))) @ Matrix.Scale(1 / LDU, 4)
+            if ob is not None:
+                lo.parent = ob
+                lo.matrix_parent_inverse = Matrix.Identity(4)
+                lo.matrix_basis = local
+            self.leds.append((ld, float(L["power"]) * gain))
+            self.led_objects.append(lo)
+        if hasattr(self.set, "link_lamp"):
+            self.set.link_lamp([ob for ob in self.b.objects if ob is not None], self.led_objects)
+
+    def _light(self, k):
+        """The lamp's brightness at plan frame k: LEDs, glowing parts, the set's own glow."""
+        led = self.co.get("led")
+        if not led:
+            return
+        v = max(0.0, float(led[min(k, len(led) - 1)]))
+        for data, power in self.leds:
+            data.energy = power * v
+        for sock, strength in self.glow:
+            sock.default_value = strength * min(v, 1.6)
+        if hasattr(self.set, "lamp"):
+            self.set.lamp(v)
+
     def _pose(self, k):
         """The rig's transforms at plan frame k (spin, then the groups)."""
         k = min(max(k, 0), len(self.co["spin"]) - 1)
@@ -1165,6 +1605,7 @@ class ColdOpen:
             self.spin.matrix_basis = pose[0]
             for e, M in zip(self.groups, pose[1:]):
                 e.matrix_basis = M
+        self._light(k)
         cam = co["camera"]
         loc = TO_B @ Vector(cam["pos"][k])
         tgt = TO_B @ Vector(cam["target"][k])

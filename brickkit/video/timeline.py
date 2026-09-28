@@ -18,8 +18,9 @@ scene; the model-scene segments are planned here, frame by frame, for render/ble
     colourways  slow push round the model; each colourway renders its own frames (variants)
     cold_open   (opt-in, first) the model performs in a scene of its own - "sunset_road": on a
                 two-lane road into a low sun - looping meta["performance"] (else swinging
-                model.pose) while it spins, in three shots, then a hard cut to black for a beat
-                (`cold_open_plan`; config [video.cold_open])
+                model.pose) while it spins, in three shots; or "night_desk", a tap lamp on a
+                desk at night, tapped on, off and on (motion "tap"), in two; then a hard cut to
+                black for a beat (`cold_open_plan`; config [video.cold_open])
 
 `build_timeline(engine, model, segments, ...)` returns a JSON-able dict; every frame number is
 absolute (frame 0 is the first frame of the video, at `fps`):
@@ -713,11 +714,13 @@ def colourway_plan(seg: dict, names: list[str], beat: int) -> dict:
 COLD = {"scene": "sunset_road", "seconds": 7.0, "motion": "performance", "spin_turns": 1.5,
         "hide_tags": [], "cycle": 2.5, "sun_elevation": 2.4, "sun_azimuth": 0.0,
         "sun_size": 1.4, "letterbox": 0.09, "rev_tag": "saw"}
-COLD_SCENES = ("sunset_road",)
+COLD_SCENES = ("sunset_road", "night_desk")
+COLD_MOTIONS = ("performance", "pose", "tap")
 # the set's look: [video.cold_open] keys handed to the set as they are (render/blender_cold_open.py
-# LOOK has the defaults and the units)
+# LOOK and DESK_LOOK have the defaults and the units)
 COLD_LOOK = ("exposure", "sky_strength", "sky_tint", "sun_strength", "sun_color", "sun_disc",
-             "fill_strength", "haze", "dust")
+             "fill_strength", "haze", "dust", "moon_strength", "moon_color", "lamp_gain",
+             "spill_strength", "spill_color")
 COLD_BLACK_BEATS = 1          # the hard cut to black before the reel proper
 COLD_CATCH = 0.45             # s: the engine catches (the pull-start before it)
 COLD_START, COLD_RAMP = 0.55, 0.9   # s: the performance comes up to speed
@@ -728,7 +731,16 @@ COLD_START, COLD_RAMP = 0.55, 0.9   # s: the performance comes up to speed
 COLD_SHOTS = ((0.0, "wide", 300.0, 0.3, 0.0, 0.18, None, 0.05, -2.2),
               (0.42, "low", 70.0, 0.2, -12.0, 0.14, 0.8, 0.04, -0.4),
               (0.72, "close", 38.0, 0.07, 24.0, 0.14, 0.9, 0.07, 0.0))
-
+# night_desk: the same fields, the azimuth from the model's front (as view_basis), `from` None
+# for the cut to the close shot: in the dark between the second and third taps (else halfway)
+DESK_SHOTS = ((0.0, "room", 40.0, 1.25, -28.0, 0.2, 0.72, 0.14, 0.0),
+              (None, "close", 75.0, 0.55, 14.0, -0.1, 0.8, 0.07, 0.0))
+# motion "tap" (a tap lamp): the pose pressed (0 -> 1) and let go, the lights toggling on each
+# press, push-on/push-off, starting dark. Taps at these beats from the start (on, off, on) unless
+# [video.cold_open] taps = [seconds, ...]
+TAP_BEATS = (2.0, 6.0, 8.0)
+TAP_DOWN, TAP_HOLD, TAP_UP = 4, 2, 7    # frames: pressed in, held at the bottom (the click), let go
+TAP_KICK = {"on": 0.05, "off": 0.025}   # the camera punches in on a tap: this much more lens
 
 def cold_open_config(model, cfg) -> dict | None:
     """The cold open's settings ([video.cold_open] over the defaults), or None without one."""
@@ -746,9 +758,52 @@ def cold_open_config(model, cfg) -> dict | None:
     if out["scene"] not in COLD_SCENES:
         raise SystemExit(f"unknown cold open scene {out['scene']!r}; choose from "
                          f"{', '.join(COLD_SCENES)}")
-    if out["motion"] not in ("performance", "pose"):
-        raise SystemExit(f"cold open motion {out['motion']!r}: performance or pose")
+    if out["motion"] not in COLD_MOTIONS:
+        raise SystemExit(f"cold open motion {out['motion']!r}: {', '.join(COLD_MOTIONS)}")
+    if out["motion"] == "tap" and "spin_turns" not in (co if isinstance(co, dict) else {}):
+        out["spin_turns"] = 0.0                   # a lamp stays put
     return out
+
+
+def tap_program(m: int, fps: int, beat: int, taps=None):
+    """A tap lamp pressed and let go: ([[frame, "on" | "off"]], u, led, kick) for m frames.
+    `taps` in seconds (default TAP_BEATS); each press clicks at the bottom of its travel (its
+    frame), where the push-on/push-off switch toggles the lights: on with a flash that settles
+    (led above 1 for a few frames), off in a few frames. u: the pose parameter (0 rest, 1 pressed,
+    a small rebound after); kick: 0..1 per frame, the camera's jolt after each click."""
+    at = [round(float(s) * fps) for s in taps] if taps else [round(b * beat) for b in TAP_BEATS]
+    at = [c for c in sorted(at) if TAP_DOWN <= c < m - TAP_HOLD - 2]
+    k = np.arange(m, dtype=float)
+    u, led, kick = np.zeros(m), np.zeros(m), np.zeros(m)
+    out = []
+    for i, c in enumerate(at):
+        state = "on" if i % 2 == 0 else "off"
+        out.append([int(c), state])
+        up0 = c + TAP_HOLD
+        p = smootherstep((k - (c - TAP_DOWN)) / TAP_DOWN) * (1 - smootherstep((k - up0) / TAP_UP))
+        r0 = up0 + TAP_UP
+        p += np.where((k >= r0) & (k < r0 + 6), 0.12 * np.sin(np.pi * (k - r0) / 6), 0.0)
+        u = np.maximum(u, p)
+        d = np.maximum(k - c, 0.0)
+        if state == "on":
+            led = np.where(k >= c, 1.0 + 0.9 * np.exp(-d / 2.2), led)
+        else:
+            led = np.where(k >= c, np.where(d < 5, np.exp(-d / 0.8), 0.0), led)
+        kick = np.maximum(kick, np.where(k >= c, np.exp(-d / 5.0), np.where(k == c - 1, 0.55, 0.0)))
+    return out, np.clip(u, 0.0, 1.0), led, kick
+
+
+def led_list(model, placed) -> list[dict]:
+    """The model's LEDs for the renderers: instance, colour, power, offset, position."""
+    leds = []
+    for light in model.lights:
+        found = model.find(light["part"], placed)
+        if found:
+            leds.append({"instance": found[0].index, "color": light["color"],
+                         "power": float(light["power"]), "name": light.get("name", ""),
+                         "offset": [float(v) for v in light.get("offset", (0, 0, 0))],
+                         "pos": model.light_position(light, placed).tolist()})
+    return leds
 
 
 def spin_curve(n: int, turns: float) -> np.ndarray:
@@ -802,7 +857,10 @@ def cold_open_plan(engine, model, placed, C, seg: dict, co: dict, fps: int, beat
         camera                 per frame pos, target (LDU), lens (mm) and exposure (EV);
                                `shots` [[frame, name]]
         rev                    per frame 0..1: how hard the engine revs (the saw's speed)
-        catch                  the frame the engine catches"""
+        catch                  the frame the engine catches
+    and with motion "tap" (tap_program): motion, taps [[frame, "on" | "off"]] (absolute), led
+    (per frame, above 1 in the flash as they come on), leds (led_list); scene night_desk adds
+    front (the model's azimuth_offset: the room is laid out behind it)"""
     n = seg["end"] - seg["start"]
     m = n - COLD_BLACK_BEATS * beat
     info = model.meta.get("performance_info") or {}
@@ -818,13 +876,17 @@ def cold_open_plan(engine, model, placed, C, seg: dict, co: dict, fps: int, beat
     px, pz = info.get("pivot", ((Cv[:, 0].min() + Cv[:, 0].max()) / 2,
                                 (Cv[:, 2].min() + Cv[:, 2].max()) / 2))
     pivot = np.array([float(px), ground_y, float(pz)])
-    # the motion: the performance loop (or the pose swinging 0..1..0), coming up to speed
+    # the motion: the performance loop (or the pose swinging 0..1..0), coming up to speed; or
+    # tapped, a tap lamp
+    tap = co["motion"] == "tap"
     perf = model.meta.get("performance") if co["motion"] == "performance" else None
     fn = perf or model.pose
     t = np.arange(m) / fps
     tp = np.cumsum(smootherstep((t - COLD_START) / COLD_RAMP)) / fps
     cyc = float(co["cycle"])
     u = (tp / cyc) % 1.0 if perf else 0.5 - 0.5 * np.cos(2 * np.pi * tp / cyc)
+    if tap:
+        taps, u, led, kick = tap_program(m, fps, beat, co.get("taps"))
     names, inst = [], [-1] * len(placed)
     if fn is not None:
         probe = fn(0.0) or {}
@@ -881,6 +943,9 @@ def cold_open_plan(engine, model, placed, C, seg: dict, co: dict, fps: int, beat
     catch = int(round(COLD_CATCH * fps))
     rev = rev * smootherstep((t - COLD_START) / COLD_RAMP)
     rev[:catch] = 0.0
+    if tap:                                       # no engine
+        rev[:] = 0.0
+        catch = 0
     # the camera: hard cuts between the shots, each a slow move
     el = float(co["sun_elevation"])
     band = float(co["letterbox"])
@@ -889,9 +954,15 @@ def cold_open_plan(engine, model, placed, C, seg: dict, co: dict, fps: int, beat
     lens = np.zeros(m)
     ev = np.zeros(m)
     shots = []
-    for i, (a0, name, ln, hc_k, az, feet, top_k, dolly, ev_k) in enumerate(COLD_SHOTS):
+    plan = COLD_SHOTS
+    if co["scene"] == "night_desk":               # azimuths from the model's front
+        front = float(model.meta.get("azimuth_offset", 0.0))
+        cut_at = ((taps[1][0] + taps[2][0]) / 2 / m if tap and len(taps) >= 3 else 0.5)
+        plan = tuple((cut_at if a0 is None else a0, name, ln, hc_k, -(front + az), feet, top_k,
+                      dolly, ev_k) for a0, name, ln, hc_k, az, feet, top_k, dolly, ev_k in DESK_SHOTS)
+    for i, (a0, name, ln, hc_k, az, feet, top_k, dolly, ev_k) in enumerate(plan):
         f0 = int(round(a0 * m))
-        f1 = int(round(COLD_SHOTS[i + 1][0] * m)) if i + 1 < len(COLD_SHOTS) else m
+        f1 = int(round(plan[i + 1][0] * m)) if i + 1 < len(plan) else m
         if f1 <= f0:
             continue
         shots.append([f0, name])
@@ -909,8 +980,19 @@ def cold_open_plan(engine, model, placed, C, seg: dict, co: dict, fps: int, beat
             pr = math.radians(pitch)
             look = np.array([fwd[0] * math.cos(pr), -math.sin(pr), fwd[2] * math.cos(pr)])
             pos[k], tgt[k], lens[k], ev[k] = cam, cam + look * dk, ln, ev_k
+    if tap:                                       # the jolt of each click: a quick punch-in
+        amp = np.zeros(m)
+        for c, state in taps:
+            amp[c - 1:] = TAP_KICK[state]
+        lens = lens * (1.0 + amp * kick)
     r5 = lambda a: np.round(a, 5).tolist()   # noqa: E731
-    return {
+    extra = {}
+    if tap:
+        extra.update(motion="tap", taps=[[seg["start"] + c, st] for c, st in taps], led=r5(led),
+                     leds=led_list(model, placed))
+    if co["scene"] == "night_desk":
+        extra["front"] = float(model.meta.get("azimuth_offset", 0.0))
+    return extra | {
         "start": seg["start"], "end": seg["end"], "cut": seg["start"] + m, "scene": co["scene"],
         "sun": {"elevation": el, "azimuth": float(co["sun_azimuth"]), "size": float(co["sun_size"])},
         "look": {k: co[k] for k in COLD_LOOK if k in co},
@@ -1062,14 +1144,7 @@ def build_timeline(engine, model, segments: list[dict], *, fps: int = FPS, beat:
             k2 = np.arange(n2)
             dim[a2:a2 + n2] = LIGHTS_DIM + (LIFT_DIM - LIGHTS_DIM) * smootherstep(k2 / (0.5 * n2))
             led[a2:a2 + n2] = 1.0
-    leds = []
-    for light in model.lights:
-        found = model.find(light["part"], placed)
-        if found:
-            leds.append({"instance": found[0].index, "color": light["color"],
-                         "power": float(light["power"]), "name": light.get("name", ""),
-                         "offset": [float(v) for v in light.get("offset", (0, 0, 0))],
-                         "pos": model.light_position(light, placed).tolist()})
+    leds = led_list(model, placed)
 
     # -- colourways --------------------------------------------------------------------------
     var_out, cw = {}, None

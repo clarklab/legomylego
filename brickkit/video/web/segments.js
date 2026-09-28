@@ -2,6 +2,8 @@
 'use strict';
 
 const SEG = {};
+const VCR = 'VT323';     // the tape theme's on-screen display (PLAY, SP, the timecode, the counters,
+                         // CHAPTER, TRACKING) keeps a VCR's own lettering; everything else is Inter/Menlo
 const B = () => D.beat;
 const UP = s => String(s).toUpperCase();
 const TOPY = () => (TH.name === 'tape' ? 176 : 96);      // first header line, clear of the OSD
@@ -163,10 +165,13 @@ function typed(str, x, y, o = {}) {
 // an evidence tag on a string: a paper card with a punched hole on the string's side, the
 // label typed on; it swings as it's hung and settles askew (the grindhouse callout)
 function evidenceTag(title, sub, x, y, side, p, k) {
-  const T = UP(title), U = sub ? UP(sub) : '';
-  const tf = font(28, 700), sf = monoFont(18);
+  const maxW = (side === 'center' ? 296 : 440) - 70;
+  const T = UP(title);
+  const tsz = Math.min(28, fitSize(T, 28, maxW, 700, null, -0.01));
+  const [U, usz] = fitMono(sub ? UP(sub) : '', 17, maxW);
+  const tf = font(tsz, 700), sf = monoFont(usz);
   const hole = 30;
-  const w = Math.max(measure(T, tf), measure(U, sf, 1)) + 40 + hole, h = U ? 84 : 58;
+  const w = Math.max(measure(T, tf, track(tsz)), measure(U, sf, monoSpace(usz))) + 40 + hole, h = U ? 84 : 58;
   const bx = side === 'left' ? x : side === 'center' ? x - w / 2 : x - w;
   const holeRight = side === 'left';                 // the string comes in from the model
   const hx = holeRight ? bx + w - 20 : bx + 20, hy = y + h / 2;
@@ -199,19 +204,28 @@ function evidenceTag(title, sub, x, y, side, p, k) {
   const tx = holeRight ? bx + 18 : bx + hole + 16;
   const n1 = Math.floor(clamp((p - 0.1) / 0.45) * T.length + 1e-6);
   const n2 = Math.floor(clamp((p - 0.45) / 0.45) * U.length + 1e-6);
-  typed(T, tx, y + 38, { font: tf, color: TH.bg, n: n1, seed: k * 7 + 1 });
-  if (U) typed(U, tx, y + 70, { font: sf, color: TH.accent, n: n2, seed: k * 7 + 4, spacing: 1 });
+  typed(T, tx, y + 38, { font: tf, color: TH.bg, n: n1, seed: k * 7 + 1, spacing: track(tsz) });
+  if (U) typed(U, tx, y + 70, { font: sf, color: TH.accent, n: n2, seed: k * 7 + 4, spacing: monoSpace(usz) });
   CX.restore();
 }
 
-// small uppercase label
+// small label: monospace caps, tracked out (the site's eyebrow labels)
 function label(str, x, y, o = {}) {
-  const mono = TH.mono;
-  const size = o.size || (mono === 'VT323' ? 32 : 22);
-  text(mono === 'Fredoka' ? str : UP(str), x, y, {
-    font: monoFont(size), spacing: mono === 'VT323' ? 1 : size * 0.14, color: o.color || TH.muted,
+  const size = o.size || 19;
+  text(UP(str), x, y, {
+    font: monoFont(size, o.weight || 400), spacing: monoSpace(size), color: o.color || TH.muted,
     align: o.align, alpha: o.alpha, base: o.base, shadow: o.shadow, blur: o.blur, ctx: o.ctx,
   });
+}
+const labelWidth = (str, size = 19) => measure(UP(str), monoFont(size), monoSpace(size));
+// mono caps in maxW: a size or two smaller, then cut with an ellipsis -> [text, size]
+function fitMono(str, size, maxW, min = 13) {
+  const wide = (x, s_) => measure(x, monoFont(s_), monoSpace(s_)) > maxW;
+  let s_ = size;
+  while (s_ > min && wide(str, s_)) s_--;
+  if (!wide(str, s_)) return [str, s_];
+  while (str.length > 4 && wide(str + '\u2026', s_)) str = str.slice(0, -1);
+  return [str.trimEnd() + '\u2026', s_];
 }
 
 // a panel behind HUD text, in the theme's style
@@ -280,12 +294,12 @@ function statusIcon(x, y, r, st, p, na = false) {
 function chip(value, lab, x, y, p, k = 0, o = {}) {
   const t = TH.name;
   const h = o.h || 62;
-  const vs = value ? (o.vsize || 32) : 0, ls = o.lsize || (TH.mono === 'VT323' ? 36 : 21);
+  const vs = value ? (o.vsize || 30) : 0, ls = o.lsize || 18;
   const vfont = font(vs, 700);
   const lfont = monoFont(ls);
-  const lab2 = TH.mono === 'Fredoka' ? lab : UP(lab);
-  const vw = value ? measure(value, vfont) : 0;
-  const lw = measure(lab2, lfont, TH.mono === 'VT323' ? 1 : ls * 0.1);
+  const lab2 = UP(lab);
+  const vw = value ? measure(value, vfont, track(vs)) : 0;
+  const lw = measure(lab2, lfont, monoSpace(ls));
   const gap = value ? 12 : 0;
   const w = vw + gap + lw + 44;
   if (p <= 0) return w;
@@ -319,19 +333,19 @@ function chip(value, lab, x, y, p, k = 0, o = {}) {
     CX.fillStyle = TH.ink; rrect(0, 0, w, h, h / 2); CX.fill();
     fg = TH.bg2; lc = TH.bg;
   }
-  const by = h / 2 + vs * 0.35;
-  if (value) text(value, 22, by, { font: vfont, color: fg });
-  text(lab2, 22 + vw + gap, h / 2 + ls * 0.36, { font: lfont, color: lc,
-    spacing: TH.mono === 'VT323' ? 1 : ls * 0.1, alpha: 0.92 });
+  const by = h / 2 + vs * 0.36;
+  if (value) text(value, 22, by, { font: vfont, color: fg, spacing: track(vs) });
+  text(lab2, 22 + vw + gap, h / 2 + ls * 0.36, { font: lfont, color: lc, spacing: monoSpace(ls),
+    alpha: 0.92 });
   CX.restore();
   return w;
 }
 
-// an odometer: the digits of `n` roll into place; returns width
+// an odometer: the digits of `n` roll into place, each in its own cell; returns width
 function odometer(n, x, y, size, p, o = {}) {
   const str = fmt(n);
   const fnt = font(size, 700);
-  const g = glyphs(str, fnt, -size * 0.02);
+  const g = tnumLayout(str, fnt, track(size));
   const digitH = size * 1.05;
   CX.save();
   CX.beginPath(); CX.rect(x - 10, y - size * 0.95, g.width + 20, size * 1.18); CX.clip();
@@ -365,12 +379,12 @@ function odometer(n, x, y, size, p, o = {}) {
 function osd(f, s, state) {
   if (TH.name !== 'tape') return;
   const size = 44;
-  const o = { font: font(size, 400, 'VT323'), color: TH.ink, shadow: rgba('#000000', 0.8), sx: 3, sy: 3, spacing: 2 };
+  const o = { font: font(size, 400, VCR), color: TH.ink, shadow: rgba('#000000', 0.8), sx: 3, sy: 3, spacing: 2 };
   if (state) text(state, M, M + 30, o);
   text('SP', L - M, M + 30, Object.assign({}, o, { align: 'right' }));
   const t = Math.floor(f / D.fps);
   const tc = `${Math.floor(t / 3600)}:${String(Math.floor(t / 60) % 60).padStart(2, '0')}:${String(t % 60).padStart(2, '0')}`;
-  text(tc, L - M, L - M + 6, Object.assign({}, o, { align: 'right', font: font(38, 400, 'VT323') }));
+  text(tc, L - M, L - M + 6, Object.assign({}, o, { align: 'right', font: font(38, 400, VCR) }));
 }
 
 // the sci-fi visor frame for the scan theme: corner brackets and live camera telemetry
@@ -394,22 +408,65 @@ function visor(f, s, title) {
 // sun - dust hanging in the light, letterbox bars; black from the cut
 SEG.cold_open = {
   async prepare(f) { return f < D.cold_open.cut ? plate('cold_open', f) : null; },
+  shake(f) {                                     // a tap lamp: each click jolts the picture
+    const C = D.cold_open;
+    if (!C.taps || f >= C.cut) return;
+    for (const [t, st] of C.taps) shakeAt(f, [t], st === 'on' ? 6 : 3.5, 7);
+  },
   draw(f, s, bm) {
     const C = D.cold_open;
     if (f >= C.cut) { CX.fillStyle = '#000000'; CX.fillRect(0, 0, L, L); return; }
     drawPlate(bm);
     const k = Math.min(f - C.start, C.sun.length - 1);
-    const sun = C.sun[k];
-    const lit = sunLight(bm, sun, C, k);
-    if (bm) sunBloom(bm, sun, lit);
-    motes(f, sun, lit);
-    if (sun) flare(f, sun, lit, sunRadius(C, k));
+    if (C.taps) {
+      lampGlow(C, k);
+    } else {
+      const sun = C.sun[k];
+      const lit = sunLight(bm, sun, C, k);
+      if (bm) sunBloom(bm, sun, lit);
+      motes(f, sun, lit);
+      if (sun) flare(f, sun, lit, sunRadius(C, k));
+    }
+    CX.setTransform(S, 0, 0, S, 0, 0);           // the bars (and words) hold still
     const bar = C.letterbox * L;
     CX.fillStyle = '#000000'; CX.fillRect(0, 0, L, bar); CX.fillRect(0, L - bar, L, bar);
-    osd(f, s, '▶ PLAY');
-    visor(f, s, 'COLD OPEN');
+    if (C.taps) tapCaption(f, C);
+    else {
+      osd(f, s, '\u25B6 PLAY');
+      visor(f, s, 'COLD OPEN');
+    }
   },
 };
+// in the bottom bar, what the last tap did: TAP · ON (warm) or TAP · OFF (moonlight blue)
+function tapCaption(f, C) {
+  let cur = null;
+  for (const t of C.taps) if (f >= t[0]) cur = t;
+  if (!cur) return;
+  const a = clamp((f - cur[0] + 1) / 3), on = cur[1] === 'on';
+  const size = 20, y = L - C.letterbox * L / 2 + 7;
+  const o = { font: monoFont(size, 700), spacing: monoSpace(size) * 2.2 };
+  const col = on ? '#FF7A4A' : '#9DB8FF';
+  text('TAP', L / 2 - 16, y, Object.assign({ align: 'right', color: rgba('#F2EDE6', 0.6 * a) }, o));
+  text(on ? 'ON' : 'OFF', L / 2 + 18, y, Object.assign({ align: 'left', color: rgba(col, a) }, o));
+  CX.fillStyle = rgba(col, a); circle(L / 2 + 1, y - 7, 3.5); CX.fill();
+}
+// a tap lamp's light in the lens: a warm haze round its head while it's on, and the moment
+// it snaps on, a flash that fills the frame and falls away in a few frames
+function lampGlow(C, k) {
+  const v = C.led[k] || 0, at = C.lamp[k];
+  if (!at || v <= 0.01) return;
+  const on = Math.min(v, 1), flash = clamp(v - 1);
+  CX.save();
+  CX.globalCompositeOperation = 'screen';
+  const r = L * (0.42 + 0.3 * flash);
+  const g = CX.createRadialGradient(at[0], at[1], 0, at[0], at[1], r);
+  g.addColorStop(0, rgba('#FF9A6A', 0.1 * on + 0.4 * flash));
+  g.addColorStop(0.35, rgba('#FF6A3A', 0.05 * on + 0.16 * flash));
+  g.addColorStop(1, rgba('#FF4A1A', 0));
+  CX.fillStyle = g; CX.fillRect(0, 0, L, L);
+  if (flash > 0.02) { CX.fillStyle = rgba('#FFE4D0', 0.16 * flash); CX.fillRect(0, 0, L, L); }
+  CX.restore();
+}
 // the sun's radius on screen (px): its size over the lens's field of view
 function sunRadius(C, k) {
   return Math.max(6, 0.5 * C.size / (2 * Math.atan(18 / C.lens[k]) * 180 / Math.PI) * L);
@@ -610,25 +667,25 @@ SEG.open = {
     }
     // REAL LEGO / PIECES. slam in word by word
     const words = [['REAL', 0], ['LEGO', 0], ['PIECES.', 1]];
-    const size = Math.min(210, fitSize('REAL LEGO', 210, 930, 700, null, -0.02));
-    const fnt = font(size, 700);
-    const line0 = measure('REAL LEGO', fnt, -4);
+    const size = Math.min(210, fitSize('REAL LEGO', 210, 930, 700, null, -0.022));
+    const fnt = font(size, 700), trk = track(size);
+    const line0 = measure('REAL LEGO', fnt, trk);
     const sp = measure(' ', fnt);
-    const wx = [L / 2 - line0 / 2, L / 2 - line0 / 2 + measure('REAL', fnt, -4) + sp, L / 2 - measure('PIECES.', fnt, -4) / 2];
+    const wx = [L / 2 - line0 / 2, L / 2 - line0 / 2 + measure('REAL', fnt, trk) + sp, L / 2 - measure('PIECES.', fnt, trk) / 2];
     const wy = [470, 470, 470 + size * 0.95];
     words.forEach(([w, _], i) => {
       const t0 = m.words[i];
       const q = ramp(f, t0, t0 + 7);
       if (q <= 0) return;
       const sc = 2.3 - 1.3 * E.outBack(q, 2.6);
-      const ww = measure(w, fnt, -4);
+      const ww = measure(w, fnt, trk);
       const gx = wx[i] + ww / 2, gy = wy[i] - size * 0.35;
       for (let g = 2; g >= 0; g--) {            // motion smear while it's fast
         const ghost = g > 0 ? clamp(1 - q * 3) * 0.18 : clamp(q * 4);
         if (ghost <= 0.005) continue;
         CX.save();
         CX.translate(gx, gy); CX.scale(sc * (1 + g * 0.18), sc * (1 + g * 0.18)); CX.rotate((1 - E.outCubic(q)) * -0.12);
-        text(w, -ww / 2, size * 0.35, { font: fnt, color: K, alpha: ghost, spacing: -4 });
+        text(w, -ww / 2, size * 0.35, { font: fnt, color: K, alpha: ghost, spacing: trk });
         CX.restore();
       }
     });
@@ -662,15 +719,17 @@ function heroRect(top = 262) {
   return { x: cx - (x0 + bw / 2) * w, y: cy - (y0 + bh / 2) * h, w, h, box: [cx - bw * sc / 2, cy - bh * sc / 2, cx + bw * sc / 2, cy + bh * sc / 2] };
 }
 
+const TITLE_TRACK = 0.028;            // the name, in capitals: set tight (the site's mixed case: -0.045 em)
 function nameLines(name, maxW, size) {
   const up = UP(name);
-  const one = measure(up, font(size, 700), -size * 0.02);
+  const one = measure(up, font(size, 700), -size * TITLE_TRACK);
   if (one * 104 / size <= maxW || !up.includes(' ')) return [up];   // one line if it fits at 104px
   const words = up.split(' ');
   let best = null;
   for (let i = 1; i < words.length; i++) {
     const a = words.slice(0, i).join(' '), b = words.slice(i).join(' ');
-    const w = Math.max(measure(a, font(size, 700)), measure(b, font(size, 700)));
+    const w = Math.max(measure(a, font(size, 700), -size * TITLE_TRACK),
+                       measure(b, font(size, 700), -size * TITLE_TRACK));
     if (!best || w < best[0]) best = [w, [a, b]];
   }
   return best[1];
@@ -718,7 +777,7 @@ SEG.title = {
     // hero still
     const bm = D.hero ? IMG.get(D.hero.url) : null;
     const lines = nameLines(D.model.name, L - 2 * M, 150);
-    let size = Math.min(150, ...lines.map(l => fitSize(l, 150, L - 2 * M, 700, null, -0.02)));
+    let size = Math.min(150, ...lines.map(l => fitSize(l, 150, L - 2 * M, 700, null, -TITLE_TRACK)));
     if (lines.length > 1) size = Math.min(size, 112);
     const y0 = lines.length > 1 ? 146 : 184;
     let nameBottom = y0 + (lines.length - 1) * size * 0.98 + size * 0.2;
@@ -815,9 +874,9 @@ SEG.title = {
           }
           const fl = clamp(1 - (f - lock) / 6);
           return { color: fl > 0 ? mix(TH.ink, '#ffffff', fl) : TH.ink };
-        }, { align: 'center', spacing: -size * 0.02 });
+        }, { align: 'center', spacing: -size * TITLE_TRACK });
         if (f >= m.name) {
-          const w = measure(ln, fnt, -size * 0.02);
+          const w = measure(ln, fnt, -size * TITLE_TRACK);
           const q = tw(f, m.name, m.name + b, E.outExpo);
           brackets(L / 2 - w / 2 - 24, y - size * 0.8, L / 2 + w / 2 + 24, y + size * 0.14, 22, rgba(TH.hud, q), 3);
         }
@@ -828,14 +887,14 @@ SEG.title = {
           const q = clamp((f - t0) / 4);
           const jit = (1 - q) * (hash(f, i) - 0.5) * 30;
           return { dx: jit, alpha: q > 0 ? 1 : 0 };
-        }, { align: 'center', spacing: -size * 0.02 });
+        }, { align: 'center', spacing: -size * TITLE_TRACK });
         // chroma ghosts
         CX.save(); CX.globalCompositeOperation = 'screen';
         const q = tw(f, m.name, m.name + b * 2);
-        text(ln, L / 2 - 6 * (1 - q) - 3, y, { font: fnt, color: TH.accent, alpha: 0.55, align: 'center', spacing: -size * 0.02 });
-        text(ln, L / 2 + 6 * (1 - q) + 3, y, { font: fnt, color: TH.accent2, alpha: 0.55, align: 'center', spacing: -size * 0.02 });
+        text(ln, L / 2 - 6 * (1 - q) - 3, y, { font: fnt, color: TH.accent, alpha: 0.55, align: 'center', spacing: -size * TITLE_TRACK });
+        text(ln, L / 2 + 6 * (1 - q) + 3, y, { font: fnt, color: TH.accent2, alpha: 0.55, align: 'center', spacing: -size * TITLE_TRACK });
         CX.restore();
-        text(ln, L / 2, y, { font: fnt, color: TH.ink, align: 'center', spacing: -size * 0.02,
+        text(ln, L / 2, y, { font: fnt, color: TH.ink, align: 'center', spacing: -size * TITLE_TRACK,
           alpha: clamp((f - m.name - (base + ln.length) * 1.2) / 3) });
       } else if (style === 'bounce') {
         kinetic(ln, L / 2, y, fnt, (i, n) => {
@@ -851,7 +910,7 @@ SEG.title = {
           const w = Math.exp(-j / 4) * Math.cos(j * 0.9);
           const cols = [TH.accent, TH.accent2, '#2BB673', '#3D7DFF'];
           return { sx: 1 + 0.28 * w, sy: 1 - 0.28 * w, dy: -w * 18 + size * 0.14 * w, color: j < 6 ? cols[(base + i) % cols.length] : TH.ink };
-        }, { align: 'center', spacing: -size * 0.01 });
+        }, { align: 'center', spacing: -size * TITLE_TRACK * 0.5 });
       } else {                                    // slam: masked rise with overshoot
         CX.save(); CX.beginPath(); CX.rect(0, y - size * 1.05, L, size * 1.3); CX.clip();
         kinetic(ln, L / 2, y, fnt, (i) => {
@@ -859,7 +918,7 @@ SEG.title = {
           const q = clamp((f - t0) / 9);
           if (q <= 0) return { alpha: 0 };
           return { dy: (1 - E.outBack(q, 1.9)) * size * 1.1 };
-        }, { align: 'center', spacing: -size * 0.02 });
+        }, { align: 'center', spacing: -size * TITLE_TRACK });
         CX.restore();
       }
       idx += ln.length;
@@ -878,7 +937,7 @@ SEG.title = {
       CX.restore();
     }
     // stat chips to the right of the counter, at most two rows (smaller chips if need be)
-    const cw = measure(fmt(D.model.pieces), font(csize, 700)) + M + 40;
+    const cw = tnumWidth(fmt(D.model.pieces), font(csize, 700), track(csize)) + M + 40;
     const x0c = Math.max(cw, 360);
     // one compact row: keep the chips that fit at a readable size
     const widths = D.chips.map((c, k) => chip(UP(c.value), c.label, 0, -999, 0, k));   // measure
@@ -984,8 +1043,9 @@ function rateAt(f) {                  // parts landing per frame around f
 function lowerThird(num, title, p, k) {
   const t = TH.name;
   const x = M, y = TOPY() + 8;
-  const tsize = Math.min(56, fitSize(UP(title), 56, 620, 700));
-  const tw_ = measure(UP(title), font(tsize, 700), -1);
+  // the title stays clear of the counters at the top right
+  const tsize = Math.min(54, fitSize(UP(title), 54, t === 'playful' || t === 'brand' ? 440 : 520, 700, null, -0.022));
+  const tw_ = measure(UP(title), font(tsize, 700), track(tsize));
   CX.save();
   const slide = (1 - p) * -60;
   CX.translate(slide, 0); CX.globalAlpha = clamp(p * 1.5);
@@ -993,16 +1053,16 @@ function lowerThird(num, title, p, k) {
     label(`section ${String(num).padStart(2, '0')}`, x, y - 20, { color: TH.hud });
     CX.fillStyle = rgba(TH.bg, 0.55); CX.fillRect(x - 12, y - 4, tw_ + 36, tsize + 18);
     brackets(x - 12, y - 4, x + tw_ + 24, y + tsize + 14, 12, TH.hud, 2);
-    text(UP(title), x + 6, y + tsize * 0.86, { size: tsize, color: TH.ink, spacing: -1 });
+    text(UP(title), x + 6, y + tsize * 0.86, { size: tsize, color: TH.ink });
   } else if (t === 'tape') {
-    text(`CHAPTER ${String(num).padStart(2, '0')}`, x, y + 6, { font: font(40, 400, 'VT323'), color: TH.accent2, shadow: rgba('#000', 0.8), sx: 3, sy: 3, spacing: 2 });
-    text(UP(title), x, y + 12 + tsize * 0.95, { size: tsize, color: TH.ink, shadow: rgba(TH.accent, 0.8), sx: 4, sy: 0, spacing: -1 });
+    text(`CHAPTER ${String(num).padStart(2, '0')}`, x, y + 6, { font: font(40, 400, VCR), color: TH.accent2, shadow: rgba('#000', 0.8), sx: 3, sy: 3, spacing: 2 });
+    text(UP(title), x, y + 12 + tsize * 0.95, { size: tsize, color: TH.ink, shadow: rgba(TH.accent, 0.8), sx: 4, sy: 0 });
   } else if (t === 'grindhouse') {            // a reel label, the title typed on, a red rule
     CX.translate(-slide, 0);
     label(`reel ${String(num).padStart(2, '0')}`, x, y + 4, { color: TH.accent2, shadow: rgba('#000', 0.9), blur: 6 });
     const T = UP(title);
     CX.save(); CX.shadowColor = rgba('#000', 0.85); CX.shadowBlur = 12;
-    typed(T, x, y + 14 + tsize * 0.95, { font: font(tsize, 700), color: TH.ink, n: Math.floor(clamp(k / 12) * T.length + 1e-6), seed: num * 5, jit: 3 });
+    typed(T, x, y + 14 + tsize * 0.95, { font: font(tsize, 700), color: TH.ink, n: Math.floor(clamp(k / 12) * T.length + 1e-6), seed: num * 5, jit: 3, spacing: track(tsize) });
     CX.restore();
     CX.fillStyle = TH.accent; CX.fillRect(x, y + 30 + tsize, tw_ * E.outExpo(clamp((k - 4) / 14)), 5);
   } else if (t === 'playful') {
@@ -1013,7 +1073,7 @@ function lowerThird(num, title, p, k) {
     CX.fillStyle = TH.bg2; rrect(x, y, bw, bh, bh / 2); CX.fill();
     CX.fillStyle = TH.accent; circle(x + bh / 2, y + bh / 2, bh / 2 - 8); CX.fill();
     text(String(num), x + bh / 2, y + bh / 2 + 13, { size: 38, color: '#fff', align: 'center' });
-    text(UP(title), x + bh + 10, y + bh / 2 + tsize * 0.36, { size: tsize, color: TH.ink, spacing: -1 });
+    text(UP(title), x + bh + 10, y + bh / 2 + tsize * 0.36, { size: tsize, color: TH.ink });
   } else {
     const bh = tsize + 30;
     CX.fillStyle = TH.accent; rrect(x, y, bh, bh, 14); CX.fill();
@@ -1021,7 +1081,7 @@ function lowerThird(num, title, p, k) {
     const w2 = tw_ + 48;
     CX.fillStyle = TH.ink; rrect(x + bh + 8, y, w2 * clamp(p * 1.3), bh, 14); CX.fill();
     CX.save(); CX.beginPath(); CX.rect(x + bh + 8, y, w2 * clamp(p * 1.3), bh); CX.clip();
-    text(UP(title), x + bh + 32, y + bh / 2 + tsize * 0.36, { size: tsize, color: TH.bg, spacing: -1 });
+    text(UP(title), x + bh + 32, y + bh / 2 + tsize * 0.36, { size: tsize, color: TH.bg });
     CX.restore();
   }
   CX.restore();
@@ -1032,7 +1092,7 @@ function hudCounters(f, s, step, nSteps, pieces, done) {
   const x = L - M; let y = 118;
   if (t === 'tape') {
     y = TOPY() - 60;
-    const o = { font: font(40, 400, 'VT323'), color: TH.ink, shadow: rgba('#000', 0.8), sx: 3, sy: 3, align: 'right', spacing: 2 };
+    const o = { font: font(40, 400, VCR), color: TH.ink, shadow: rgba('#000', 0.8), sx: 3, sy: 3, align: 'right', spacing: 2 };
     text(`STEP ${String(step).padStart(3, '0')}/${nSteps}`, x, y + 36, o);
     return;
   }
@@ -1040,10 +1100,10 @@ function hudCounters(f, s, step, nSteps, pieces, done) {
   label('step', x, y - 2, { align: 'right', color: lc });
   const str = `${String(step).padStart(String(nSteps).length, '0')}`;
   const fnt = font(64, 700);
-  const w2 = measure(` / ${nSteps}`, font(34, 600));
-  text(str, x - w2, y + 60, { font: fnt, color: t === 'scan' ? TH.ink : TH.ink, align: 'right',
+  const w2 = tnumWidth(` / ${nSteps}`, font(34, 600));
+  tnum(str, x - w2, y + 60, { font: fnt, spacing: track(64), color: TH.ink, align: 'right',
     shadow: t === 'scan' ? null : t === 'grindhouse' ? rgba('#000000', 0.85) : rgba('#ffffff', 0.6), blur: 12 });
-  text(` / ${nSteps}`, x, y + 60, { font: font(34, 600), color: lc, align: 'right', alpha: 0.8 });
+  tnum(` / ${nSteps}`, x, y + 60, { font: font(34, 600), color: lc, align: 'right', alpha: 0.8 });
 }
 
 // how high the build has grown (mm above the table)
@@ -1054,17 +1114,17 @@ function heightCounter(f, s, mm, total) {
   const v = unit === 'cm' ? (mm / 10).toFixed(1) : String(Math.round(mm));
   const tot = unit === 'cm' ? (total / 10).toFixed(1) : String(Math.round(total));
   if (t === 'tape') {
-    const o = { font: font(40, 400, 'VT323'), color: TH.ink, shadow: rgba('#000', 0.8), sx: 3, sy: 3, align: 'right', spacing: 2 };
+    const o = { font: font(40, 400, VCR), color: TH.ink, shadow: rgba('#000', 0.8), sx: 3, sy: 3, align: 'right', spacing: 2 };
     text(`HEIGHT ${v}/${tot} ${UP(unit)}`, x, TOPY() - 24, o);
     return;
   }
   const y = 118;
   const lc = t === 'scan' ? TH.hud : TH.ink;
   label('height', x, y - 2, { align: 'right', color: lc });
-  const w2 = measure(` / ${tot} ${unit}`, font(34, 600));
-  text(v, x - w2, y + 60, { font: font(64, 700), color: TH.ink, align: 'right',
+  const w2 = tnumWidth(` / ${tot} ${unit}`, font(34, 600));
+  tnum(v, x - w2, y + 60, { font: font(64, 700), spacing: track(64), color: TH.ink, align: 'right',
     shadow: t === 'scan' ? null : t === 'grindhouse' ? rgba('#000000', 0.85) : rgba('#ffffff', 0.6), blur: 12 });
-  text(` / ${tot} ${unit}`, x, y + 60, { font: font(34, 600), color: lc, align: 'right', alpha: 0.8 });
+  tnum(` / ${tot} ${unit}`, x, y + 60, { font: font(34, 600), color: lc, align: 'right', alpha: 0.8 });
 }
 
 function progressBar(f, s, p, done) {
@@ -1080,7 +1140,7 @@ function progressBar(f, s, p, done) {
     const xe = x1 - 190;
     CX.fillStyle = rgba('#000', 0.5); CX.fillRect(x0, y - 8, xe - x0, 16);
     CX.fillStyle = TH.accent; CX.fillRect(x0, y - 8, (xe - x0) * p, 16);
-    text(`${fmt(pieces)} / ${fmt(D.model.pieces)} PCS`, x0, y - 22, { font: font(40, 400, 'VT323'), color: TH.ink, shadow: rgba('#000', 0.8), sx: 3, sy: 3, spacing: 2 });
+    text(`${fmt(pieces)} / ${fmt(D.model.pieces)} PCS`, x0, y - 22, { font: font(40, 400, VCR), color: TH.ink, shadow: rgba('#000', 0.8), sx: 3, sy: 3, spacing: 2 });
     CX.restore();
     return;
   }
@@ -1108,9 +1168,9 @@ function progressBar(f, s, p, done) {
   });
   const lc = t === 'scan' ? TH.hud : TH.ink;
   const txt = `${fmt(pieces)} / ${fmt(D.model.pieces)}`;
-  text(txt, x1, y - 24, { size: 34, color: t === 'scan' ? TH.ink : TH.ink, align: 'right',
+  const tw2 = tnum(txt, x1, y - 24, { size: 34, color: TH.ink, align: 'right',
     shadow: t === 'scan' ? null : t === 'grindhouse' ? rgba('#000000', 0.85) : rgba('#ffffff', 0.7), blur: 10 });
-  label('pieces', x1 - measure(txt, font(34, 700)) - 14, y - 26, { align: 'right', color: lc });
+  label('pieces', x1 - tw2 - 14, y - 26, { align: 'right', color: lc });
   if (done) {
     const q = tw(f, D.build.land_last, D.build.land_last + 10);
     CX.save(); CX.translate(x0 + 30, y - 38);
@@ -1166,7 +1226,7 @@ SEG.scan = {
       CX.shadowBlur = 0;
       CX.fillStyle = TH.xray;
       for (let x = x0; x <= x1; x += 24) CX.fillRect(x, ly - 7, 1.5, 14);
-      label(`scan ${String(Math.round(sp * 100)).padStart(3, ' ')}%`, x1 + 10, ly + 6, { color: TH.xray, size: TH.mono === 'VT323' ? 30 : 18 });
+      label(`scan ${String(Math.round(sp * 100)).padStart(3, ' ')}%`, x1 + 10, ly + 6, { color: TH.xray, size: 17 });
       CX.restore();
     }
     checksPanel(f, s, lay);
@@ -1192,8 +1252,8 @@ function checksPanel(f, s, lay) {
   CX.translate((1 - pa) * 40, 0);
   panel(px, py, pw, ph, { alpha: pa });
   CX.globalAlpha = pa;
-  label('checked by computer', px + 26, py + 42, { color: t === 'scan' ? TH.hud : t === 'tape' || t === 'grindhouse' ? TH.accent2 : TH.accent, size: TH.mono === 'VT323' ? 32 : 20 });
-  text(UP(D.model.name), px + 26, py + 76, { size: 26, color: TH.panel_ink, alpha: 0.75 });
+  label('checked by computer', px + 26, py + 42, { color: t === 'scan' ? TH.hud : t === 'tape' || t === 'grindhouse' ? TH.accent2 : TH.accent });
+  text(UP(D.model.name), px + 26, py + 76, { size: 26, weight: 600, color: TH.panel_ink, alpha: 0.75 });
   CX.restore();
   const colW = (pw - 32) / cols;
   rows.forEach((r, i) => {
@@ -1207,18 +1267,18 @@ function checksPanel(f, s, lay) {
     statusIcon(x + 22, y + rh / 2 - 8, 20, r.status, q, r.na);
     const tx = x + 58;
     text(r.title, tx, y + rh / 2 - 14, { size: 27, color: TH.panel_ink, weight: 600 });
-    // the detail line, cut to the room left of the headline number
-    const sfont = monoFont(TH.mono === 'VT323' ? 26 : 17);
-    const room = colW - 58 - measure(r.big, font(38, 700)) - 44;
+    // the detail line (body text), cut to the room left of the headline number
+    const sfont = font(18, 500);
+    const room = colW - 58 - tnumWidth(r.big, font(38, 700), track(38)) - 44;
     let small = r.small;
-    if (measure(small, sfont, 0.4) > room) {
+    if (measure(small, sfont) > room) {
       const parts = small.split(' \u00b7 ');
-      while (parts.length > 1 && measure(parts.join(' \u00b7 '), sfont, 0.4) > room) parts.pop();
+      while (parts.length > 1 && measure(parts.join(' \u00b7 '), sfont) > room) parts.pop();
       small = parts.join(' \u00b7 ');
-      while (small.length > 4 && measure(small + '\u2026', sfont, 0.4) > room) small = small.slice(0, -1);
-      if (small !== parts.join(' \u00b7 ') || measure(small, sfont, 0.4) > room) small += '\u2026';
+      while (small.length > 4 && measure(small + '\u2026', sfont) > room) small = small.slice(0, -1);
+      if (small !== parts.join(' \u00b7 ') || measure(small, sfont) > room) small += '\u2026';
     }
-    text(small, tx, y + rh / 2 + 15, { font: sfont, color: t === 'scan' ? rgba(TH.ink, 0.62) : TH.muted, spacing: 0.4 });
+    text(small, tx, y + rh / 2 + 15, { font: sfont, color: t === 'scan' ? rgba(TH.ink, 0.62) : TH.muted });
     // the headline number counts up
     let big = r.big;
     const num = parseFloat(String(big).replace(/[^0-9.]/g, ''));
@@ -1227,7 +1287,7 @@ function checksPanel(f, s, lay) {
       big = fmt(v) + (big.endsWith('°') ? '°' : '');
     }
     const col = r.status === 'warn' ? TH.warn : r.status === 'fail' ? TH.accent : (t === 'scan' || t === 'tape' ? TH.ink : TH.ink);
-    text(big, x + colW - 26, y + rh / 2 + 2, { size: 38, color: r.na ? TH.muted : col, align: 'right' });
+    tnum(big, x + colW - 26, y + rh / 2 + 2, { size: 38, color: r.na ? TH.muted : col, align: 'right' });
     CX.restore();
   });
   // summary stamp
@@ -1237,10 +1297,10 @@ function checksPanel(f, s, lay) {
     const allPass = D.checks.rows.every(r => r.status === 'pass');
     const str = UP(D.checks.summary);
     const col = D.checks.rows.some(r => r.status === 'fail') ? TH.accent : allPass ? TH.ok : TH.warn;
-    const fnt = font(34, 700);
-    const w = measure(str, fnt) + 56;
+    const fnt = font(32, 700);
+    const w = measure(str, fnt, track(32)) + 56;
     // at the header's right if there's room, else under the panel
-    const head = Math.max(measure(UP(D.model.name), font(26, 700)), 260) + 40;
+    const head = Math.max(measure(UP(D.model.name), font(26, 600), track(26)), 260) + 40;
     const below = pw - head < w + 20;
     const sx = below ? px + (pw - w) / 2 : px + pw - w - 20, sy = below ? py + ph + 18 : py + 22;
     if (t === 'grindhouse') {
@@ -1260,7 +1320,7 @@ function checksPanel(f, s, lay) {
     } else {
       CX.strokeStyle = col; CX.lineWidth = 5; rrect(-w / 2, -30, w, 60, 12); CX.stroke();
     }
-    text(str, 0, 12, { font: fnt, color: col, align: 'center' });
+    text(str, 0, 11, { font: fnt, color: col, align: 'center', spacing: track(32) });
     CX.restore();
   }
 }
@@ -1271,9 +1331,13 @@ function calloutLabel(title, sub, x, y, side, p, k) {
   const t = TH.name;
   if (t === 'grindhouse') { evidenceTag(title, sub, x, y, side, p, k); return; }
   const al = side === 'left' ? 'left' : 'right';
-  const ts = 34, ss = TH.mono === 'VT323' ? 30 : 20;
-  const tw_ = measure(UP(title), font(ts, 700), -0.5);
-  const sw = measure(TH.mono === 'Fredoka' ? sub : UP(sub), monoFont(ss), ss * 0.1);
+  // a row of labels above/below the model is spaced 320 px apart: keep each under that
+  const maxW = (side === 'center' ? 296 : 440) - 40;
+  const ts = Math.min(31, fitSize(UP(title), 31, maxW, 700, null, -0.022));
+  const [subT, ss] = fitMono(UP(sub || ''), 17, maxW);
+  sub = subT;
+  const tw_ = measure(UP(title), font(ts, 700), track(ts));
+  const sw = measure(sub, monoFont(ss), monoSpace(ss));
   const w = Math.max(tw_, sw) + 40, h = sub ? 86 : 58;
   const bx = side === 'left' ? x : side === 'center' ? x - w / 2 : x - w;
   CX.save();
@@ -1298,8 +1362,8 @@ function calloutLabel(title, sub, x, y, side, p, k) {
   const sc = t === 'brand' ? TH.bg2 : t === 'scan' ? TH.hud : t === 'tape' ? (k % 2 ? TH.accent2 : TH.accent) : fg;
   const tx = side === 'left' ? bx + 20 : side === 'center' ? bx + w / 2 : bx + w - 20;
   const al2 = side === 'center' ? 'center' : al;
-  text(UP(title), tx, y + 44, { size: ts, color: fg, align: al2, spacing: -0.5 });
-  if (sub) text(TH.mono === 'Fredoka' ? sub : UP(sub), tx, y + 72, { font: monoFont(ss), color: sc, align: al2, spacing: ss * 0.1, alpha: 0.95 });
+  text(UP(title), tx, y + 43, { size: ts, color: fg, align: al2 });
+  if (sub) text(sub, tx, y + 71, { font: monoFont(ss), color: sc, align: al2, spacing: monoSpace(ss), alpha: 0.95 });
   CX.restore();
 }
 
@@ -1380,15 +1444,18 @@ function gauge(f, s) {
   const w = 480, x0 = L / 2 - w / 2, y = L - M - (TH.name === 'tape' ? 84 : 40);
   const col = t === 'scan' ? TH.hud : t === 'tape' ? TH.accent : TH.accent;
   CX.save(); CX.globalAlpha = p; CX.translate(0, (1 - p) * 40);
-  if (t === 'brand' || t === 'playful') { CX.fillStyle = rgba(TH.bg, 0.86); rrect(x0 - 150, y - 66, w + 300, 118, 30); CX.fill(); }
-  else { CX.fillStyle = rgba('#000', 0.45); CX.fillRect(x0 - 150, y - 66, w + 300, 118); }
+  // the name over the two ends' labels, over the bar; the reading under the knob
+  const bx0 = x0 - 40, bw = w + 80, by0 = y - 78, bh = 132;
+  if (t === 'brand' || t === 'playful') { CX.fillStyle = rgba(TH.bg, 0.86); rrect(bx0, by0, bw, bh, 26); CX.fill(); }
+  else { CX.fillStyle = rgba('#000', 0.45); CX.fillRect(bx0, by0, bw, bh); }
   const lab = MM.labels;
-  const ink = t === 'brand' || t === 'playful' ? TH.ink : TH.ink;
-  label(MM.name, x0 - 122, y - 34, { color: t === 'scan' ? TH.hud : t === 'tape' || t === 'grindhouse' ? TH.accent2 : TH.accent,
-    size: TH.mono === 'VT323' ? 26 : 16 });
-  const ls = s_ => (t === 'grindhouse' ? Math.min(24, fitSize(s_, 24, 124, 700)) : 24);   // mono runs wide
-  text(UP(lab[0] || ''), x0 - 22, y + 8, { size: ls(UP(lab[0] || '')), color: ink, align: 'right', alpha: lerp(1, 0.45, u) });
-  text(UP(lab[1] || ''), x0 + w + 22, y + 8, { size: ls(UP(lab[1] || '')), color: ink, align: 'left', alpha: lerp(0.45, 1, u) });
+  const ink = TH.ink;
+  label(MM.name, x0, y - 50, { color: t === 'scan' ? TH.hud : t === 'tape' || t === 'grindhouse' ? TH.accent2 : TH.accent,
+    size: 16 });
+  const ends = [UP(lab[0] || ''), UP(lab[1] || '')];
+  const es = Math.min(20, ...ends.map(e => fitSize(e, 20, w / 2 - 16, 600, null, -0.015)));
+  text(ends[0], x0, y - 22, { size: es, weight: 600, color: ink, align: 'left', alpha: lerp(1, 0.45, u) });
+  text(ends[1], x0 + w, y - 22, { size: es, weight: 600, color: ink, align: 'right', alpha: lerp(0.45, 1, u) });
   CX.fillStyle = rgba(ink, 0.22); rrect(x0, y - 4, w, 8, 4); CX.fill();
   CX.fillStyle = col; rrect(x0, y - 4, Math.max(8, w * u), 8, 4); CX.fill();
   CX.fillStyle = col; circle(x0 + w * u, y, 14); CX.fill();
@@ -1398,7 +1465,7 @@ function gauge(f, s) {
     // the readout rides the knob, clear of the name
     const unit = MM.angle.unit || '°';
     const str = unit.trim() === 'mm' ? v.toFixed(1) : String(Math.round(v));
-    text(`${str}${unit}`, x0 + w * u, y + 40, { size: 24, color: ink, align: 'center' });
+    tnum(`${str}${unit}`, x0 + w * u, y + 42, { size: 24, color: ink, align: 'center' });
   }
   CX.restore();
 }
@@ -1434,6 +1501,7 @@ SEG.lights = {
     }
     // reticles lock on to each lamp (and let go when they're switched off)
     const offFade = (Lt.power_off !== null && Lt.power_off !== undefined) ? 1 - tw(f, Lt.power_off, Lt.power_off + 6) : 1;
+    const placed = [];
     Lt.leds.forEach((led, i) => {
       const t0 = on + 6 + i * 4;
       const p = ramp(f, t0, t0 + 12) * offFade;
@@ -1444,7 +1512,14 @@ SEG.lights = {
       CX.save(); CX.translate(x, y); CX.rotate((1 - E.outExpo(p)) * 1.2);
       brackets(-r, -r, r, r, 12, rgba(col, clamp(p * 2)), 2.5);
       CX.restore();
-      label(led.name || `lamp ${i + 1}`, x + r + 10, y + 5, { color: col, alpha: clamp(p * 2), size: TH.mono === 'VT323' ? 26 : 16 });
+      // its name beside it, nudged down clear of the names already placed
+      const nm = led.name || `lamp ${i + 1}`;
+      const x0 = x + r + 10, x1 = x0 + labelWidth(nm, 14);
+      let ly = y + 5;
+      const hits = () => placed.some(q => Math.abs(q.y - ly) < 18 && x0 < q.x1 + 12 && q.x0 < x1 + 12);
+      for (let tries = 0; tries < 6 && hits(); tries++) ly += 20;
+      placed.push({ x0, x1, y: ly });
+      label(nm, x0, ly, { color: col, alpha: clamp(p * 2), size: 14 });
     });
     const offf = Lt.power_off;
     const isOff = offf !== null && offf !== undefined && f >= offf;
@@ -1586,23 +1661,23 @@ function colourwayLabel(it, idx, n, p, k) {
   const x = M, y = L - M - 150;
   CX.save();
   CX.globalAlpha = clamp(p * 2);
-  label(`colourway ${idx + 1} / ${n}`, x, y, { color: t === 'scan' ? TH.hud : t === 'tape' || t === 'grindhouse' ? TH.accent2 : TH.accent, size: TH.mono === 'VT323' ? 32 : 20,
+  label(`colourway ${idx + 1} / ${n}`, x, y, { color: t === 'scan' ? TH.hud : t === 'tape' || t === 'grindhouse' ? TH.accent2 : TH.accent,
     shadow: t === 'grindhouse' ? rgba('#000', 0.9) : undefined, blur: 8 });
-  const size = fitSize(UP(it.title), 84, L - 2 * M, 700);
+  const size = fitSize(UP(it.title), 84, L - 2 * M, 700, null, -0.022);
   if (t === 'playful') {
     kinetic(UP(it.title), x, y + 84, font(size, 700), (i) => {
       const q = clamp((k - i * 1.5) / 12);
       const w = Math.exp(-q * 5) * Math.cos(q * 12);
       return { alpha: q > 0 ? 1 : 0, sx: 1 + 0.25 * w, sy: 1 - 0.25 * w, dy: -w * 20 };
-    }, { spacing: -1 });
+    }, { spacing: track(size) });
   } else if (t === 'grindhouse') {
     const T = UP(it.title);
     CX.save(); CX.shadowColor = rgba('#000', 0.8); CX.shadowBlur = 14;
-    typed(T, x, y + 84, { font: font(size, 700), color: TH.ink, n: Math.floor(clamp(k / 14) * T.length + 1e-6), seed: idx * 3 + 1, jit: 3 });
+    typed(T, x, y + 84, { font: font(size, 700), color: TH.ink, n: Math.floor(clamp(k / 14) * T.length + 1e-6), seed: idx * 3 + 1, jit: 3, spacing: track(size) });
     CX.restore();
   } else {
     CX.save(); CX.beginPath(); CX.rect(0, y + 4, L, 100); CX.clip();
-    text(UP(it.title), x, y + 84 + (1 - E.outExpo(p)) * 90, { size, color: t === 'brand' || t === 'grindhouse' ? TH.ink : '#FFFFFF', spacing: -1,
+    text(UP(it.title), x, y + 84 + (1 - E.outExpo(p)) * 90, { size, color: t === 'brand' || t === 'grindhouse' ? TH.ink : '#FFFFFF',
       shadow: t === 'brand' ? rgba('#ffffff', 0.8) : rgba('#000', 0.6), blur: 14 });
     CX.restore();
   }
@@ -1618,10 +1693,10 @@ function colourwayLabel(it, idx, n, p, k) {
     rrect(-r, -r, 2 * r, 2 * r, 6); CX.stroke();
     CX.restore();
     const nm = sw.name;
-    const fnt = monoFont(TH.mono === 'VT323' ? 28 : 19);
-    text(TH.mono === 'Fredoka' ? nm : UP(nm), sx + 2 * r + 10, y + 132, { font: fnt, color: t === 'brand' || t === 'playful' || t === 'grindhouse' ? TH.ink : '#FFFFFF', alpha: clamp(q * 2),
-      shadow: t === 'brand' || t === 'playful' ? rgba('#fff', 0.8) : rgba('#000', 0.7), blur: 8, spacing: 1 });
-    sx += 2 * r + 24 + measure(TH.mono === 'Fredoka' ? nm : UP(nm), fnt, 1);
+    const fnt = monoFont(17);
+    text(UP(nm), sx + 2 * r + 10, y + 132, { font: fnt, color: t === 'brand' || t === 'playful' || t === 'grindhouse' ? TH.ink : '#FFFFFF', alpha: clamp(q * 2),
+      shadow: t === 'brand' || t === 'playful' ? rgba('#fff', 0.8) : rgba('#000', 0.7), blur: 8, spacing: monoSpace(17) });
+    sx += 2 * r + 24 + measure(UP(nm), fnt, monoSpace(17));
   });
   CX.restore();
 }
@@ -1635,7 +1710,7 @@ SEG.booklet = {
     const p = tw(f, m.head, m.head + 12, E.outExpo);
     CX.save(); CX.globalAlpha = p; CX.translate(0, (1 - p) * 30);
     label('build it yourself', M, 104, { color: TH.brand.black });
-    text(`${fmt(D.model.steps)} STEPS`, M - 3, 176, { size: 76, color: TH.brand.black, spacing: -1 });
+    text(`${fmt(D.model.steps)} STEPS`, M - 3, 176, { size: 76, color: TH.brand.black });
     if (D.booklet) text(`${D.booklet.pages} PAGES`, M, 232, { size: 40, color: TH.brand.black, alpha: 0.7 });
     CX.restore();
     const files = (D.booklet && D.booklet.files) || [];

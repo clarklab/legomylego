@@ -62,9 +62,8 @@ facts = ["31 cm tall"]
 
 [video.theme_overrides]
 grain = 0.06               # a touch less grain keeps the showreel under 40 MB
-# the site's type and colours (site/assets/css/site.css, dark scheme) over the grindhouse film look
-display = "Inter"
-mono = "Menlo, monospace"
+# the site's colours (site/assets/css/site.css, dark scheme) over the grindhouse film look (the
+# site's type, Inter and monospace caps, is every theme's now)
 bg = "#191919"
 bg2 = "#202020"
 ink = "#faf7ec"

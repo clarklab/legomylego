@@ -149,13 +149,35 @@ function keyLogo() {
 }
 
 // ------------------------------------------------------------------------------ text
-const MONO_UPPER = () => TH.mono !== 'Fredoka';
+// The site's typography: display type (Inter) set tight - headings (mostly capitals, which want
+// a little more room than the site's mixed case at -0.045 em) at -0.022 em, mid sizes at -0.01 em -
+// figures in fixed cells (tnum), small labels in monospace (Menlo) caps, tracked out.
+// Sizes are tuned for those two; another face (a theme override) is scaled to the same cap
+// height (capScale), so nothing is special-cased by name.
 function font(size, weight = 700, fam = null, stretch = null) {
   const f = fam || TH.display;
   const ff = f.includes(',') ? f : `"${f}"`;   // a font stack ("Menlo, monospace") goes in as is
   return `${stretch ? stretch + ' ' : ''}${weight} ${size}px ${ff}`;
 }
-function monoFont(size) { return font(size, TH.mono === 'Fredoka' ? 600 : 400, TH.mono); }
+const track = size => (size >= 30 ? -0.022 : size >= 20 ? -0.01 : 0) * size;   // display, px
+const CAPS = {};
+function capScale(fam, ref = 'Menlo, monospace') {   // size factor: fam's caps as tall as ref's
+  const key = fam + '|' + ref;
+  if (!(key in CAPS)) {
+    const cap = f => {
+      CX.save(); CX.font = font(100, 400, f);
+      const h = CX.measureText('H').actualBoundingBoxAscent;
+      CX.restore();
+      return h;
+    };
+    CAPS[key] = fam === ref ? 1 : cap(ref) / Math.max(1, cap(fam));
+  }
+  return CAPS[key];
+}
+function monoFont(size, weight = 400) {
+  return font(Math.round(size * capScale(TH.mono) * 10) / 10, weight, TH.mono);
+}
+const monoSpace = size => 0.12 * size;                 // mono caps are tracked out
 
 function measure(str, fnt, spacing = 0, c = CX) {
   c.save(); c.font = fnt; c.letterSpacing = `${spacing}px`;
@@ -172,7 +194,9 @@ function text(str, x, y, o = {}) {
   const c = o.ctx || CX;
   c.save();
   c.font = o.font || font(o.size || 40, o.weight || 700, o.fam);
-  c.letterSpacing = `${o.spacing || 0}px`;
+  // display text is set tight unless told otherwise
+  const sp = o.spacing !== undefined ? o.spacing : o.font ? 0 : track(o.size || 40);
+  c.letterSpacing = `${sp}px`;
   c.textAlign = o.align || 'left';
   c.textBaseline = o.base || 'alphabetic';
   c.globalAlpha *= o.alpha === undefined ? 1 : o.alpha;     // fades set on the context carry
@@ -182,6 +206,31 @@ function text(str, x, y, o = {}) {
   c.fillText(str, x, y);
   c.restore();
 }
+// figures in fixed cells (as wide as the widest digit), other characters as they come:
+// counters don't jitter while they count. o as text(); returns the width
+function tnumLayout(str, fnt, spacing = 0) {
+  let cell = 0;
+  for (const d of '0123456789') cell = Math.max(cell, measure(d, fnt));
+  const out = [];
+  let x = 0;
+  for (const ch of Array.from(String(str))) {
+    const w = /[0-9]/.test(ch) ? cell : measure(ch, fnt);
+    out.push({ ch, x, w });
+    x += w + spacing;
+  }
+  return { list: out, width: Math.max(0, x - spacing) };
+}
+function tnum(str, x, y, o = {}) {
+  const fnt = o.font || font(o.size || 40, o.weight || 700, o.fam);
+  const sp = o.spacing !== undefined ? o.spacing : o.font ? 0 : track(o.size || 40);
+  const g = tnumLayout(str, fnt, sp);
+  const x0 = o.align === 'center' ? x - g.width / 2 : o.align === 'right' ? x - g.width : x;
+  for (const gl of g.list) {
+    if (gl.ch !== ' ') text(gl.ch, x0 + gl.x + gl.w / 2, y, Object.assign({}, o, { font: fnt, align: 'center', spacing: 0 }));
+  }
+  return g.width;
+}
+const tnumWidth = (str, fnt, spacing = 0) => tnumLayout(str, fnt, spacing).width;
 // glyph advances (prefix widths, so kerning and spacing are kept)
 function glyphs(str, fnt, spacing = 0) {
   const out = [];

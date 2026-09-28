@@ -207,6 +207,11 @@ ROLE_SCORE = {
     "string_stab": lambda r: 3 * r["bands"]["high"] - 2 * r["bands"]["low"] - r["attack"],
     "metal_hit": lambda r: 2 * r["bands"]["high"] + r["bands"]["mid"] - r["attack"],
     "boom": lambda r: 4 * r["bands"]["low"] - r["attack"],
+    # a tap lamp: a sharp bright click, a quick pop, a low soft bloop, crickets without gaps
+    "click": lambda r: 2 * r["bands"]["high"] - 4 * r["attack"] - 2 * r["lead"],
+    "snap_on": lambda r: r["bands"]["high"] + r["bands"]["mid"] - 3 * r["attack"],
+    "snap_off": lambda r: r["bands"]["mid"] + r["bands"]["low"] - 3 * r["attack"],
+    "crickets": lambda r: 2 * (r["bands"]["high"] + r["bands"]["air"]) - 3 * r["silent"],
 }
 
 

@@ -281,7 +281,7 @@ function snow(f, a) {
   CX.fillRect(ox, oy, CV.width, CV.height);
   CX.restore();
   if (a > 0.6) {
-    text('TRACKING', L / 2, L / 2 + 16, { font: font(52, 400, 'VT323'), color: '#FFFFFF', align: 'center', spacing: 4, alpha: (a - 0.6) / 0.4, shadow: '#000', sx: 3, sy: 3 });
+    text('TRACKING', L / 2, L / 2 + 16, { font: font(52, 400, VCR), color: '#FFFFFF', align: 'center', spacing: 4, alpha: (a - 0.6) / 0.4, shadow: '#000', sx: 3, sy: 3 });
   }
 }
 

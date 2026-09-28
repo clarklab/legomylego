@@ -265,7 +265,7 @@ def test_reel_plan_and_cues(engine, sample, tmp_path):
                                        {"label": "Nothing", "tag": "missing_*"}]
     rp = R.plan_reel(engine, proj, model, tl, theme, tmp_path, tmp_path, log=lambda m: None)
     json.dumps(rp)                                   # all JSON-able
-    assert rp["model"]["pieces"] == 6 and rp["model"]["url"].endswith("/m/_sample")
+    assert rp["model"]["pieces"] == 6 and rp["model"]["url"] == "bricks.superfun.games"
     assert sum(c["qty"] for c in rp["palette"]) == 6
     qty = [c["qty"] for c in rp["palette"]]
     assert qty == sorted(qty, reverse=True)
@@ -312,9 +312,14 @@ def test_callout_instances(sample):
 def test_themes():
     need = {"beat", "music", "bg", "ink", "accent", "accent2", "display", "mono", "transition",
             "title", "overlay", "xray", "grade"}
+    from brickkit.video.compose import WEB
+    assert (WEB / "fonts" / "InterVariable.woff2").exists()
     for name in themes.THEMES:
         th = themes.theme_for({"theme": name})
         assert need <= set(th) and th["name"] == name
+        # every theme sets the site's type: Inter, monospace caps for the labels
+        assert (th["display"], th["mono"], th["brand_mono"]) == ("Inter", "Menlo, monospace",
+                                                                 "Menlo, monospace")
         assert 60 * T.FPS / th["beat"] > 90          # upbeat tempos
     assert themes.theme_for({"theme": "tape", "theme_overrides": {"accent": "#000000"}})["accent"] == "#000000"
     with pytest.raises(SystemExit):
@@ -328,8 +333,7 @@ def test_grindhouse_theme():
         assert set(other["grade"]) <= set(th["grade"])
     assert (th["transition"], th["title"], th["callout"], th["overlay"], th["music"]) == (
         "burn", "stamp", "tag", "film", "grindhouse")
-    bundled = {"Fredoka", "Space Mono", "Share Tech Mono", "VT323"}      # web/fonts, core.js
-    assert th["display"] in bundled and th["mono"] in bundled
+    assert th["display"] == themes.SITE_DISPLAY and th["mono"] == themes.SITE_MONO
     from brickkit.video import audio as A
     assert th["music"] in A.STYLES and th["music"] in A.PROG
     assert 90 < 60 * T.FPS / th["beat"] < 110                 # a slower, heavier pulse
@@ -521,6 +525,120 @@ def test_cold_open_reel_and_cues(engine, tmp_path):
     assert segment_digest(tl2, segs[0], q) == d
     tl3 = dict(tl, cold_open=dict(co, sun=dict(co["sun"], elevation=3.0)))
     assert segment_digest(tl3, segs[0], q) != d
+
+
+def test_tap_program():
+    """A tap lamp: presses clicking at the bottom of their travel on the taps' beats, the
+    lights toggling there (on with a flash that settles, off within a few frames), a jolt."""
+    taps, u, led, kick = T.tap_program(200, 30, 15)
+    assert taps == [[30, "on"], [90, "off"], [120, "on"]]
+    assert u[0] == 0 and u[20] == 0 and all(u[c] == 1.0 for c, _ in taps)
+    assert u[40] < 0.2 and u.max() <= 1 and u.min() >= 0
+    assert (led[:30] == 0).all() and led[30] > 1.5 and led[31] > 1.2
+    assert led[60] == pytest.approx(1.0, abs=0.01) and (led[95:120] == 0).all()
+    assert led[199] == pytest.approx(1.0, abs=0.01)
+    assert kick[29] > 0 and kick[30] == 1.0 and kick[25] == 0 and kick[60] < 0.01
+    taps, *_ = T.tap_program(100, 30, 15, taps=[0.5, 1.5, 9.0])    # seconds; past the end: out
+    assert taps == [[15, "on"], [45, "off"]]
+
+
+def _tap_timeline(engine, **cold):
+    model = _rigged(engine)
+    model.meta["video"] = {"cold_open": dict({"scene": "night_desk", "motion": "tap",
+                                              "seconds": 5}, **cold)}
+    theme = themes.theme_for({"theme": "scan"})
+    segs = T.plan_segments(model, booklet=False, beat=theme["beat"])
+    return model, theme, segs, T.build_timeline(engine, model, segs, beat=theme["beat"],
+                                                backdrop=theme["backdrop"])
+
+
+def test_cold_open_tap(engine):
+    """motion "tap" in the night_desk set: the lamp stays put (no spin) and is pressed on the
+    taps, its lights on/off/on, the room shot cut to the close one in the dark between the
+    second and third taps, the camera punching in on each click; the plan says what the set and
+    the compositor need (the taps, the lights' level, the LEDs, which way the model faces)."""
+    model, theme, segs, tl = _tap_timeline(engine)
+    co = tl["cold_open"]
+    m = co["cut"] - co["start"]
+    assert co["cut"] == segs[0]["end"] - T.COLD_BLACK_BEATS * theme["beat"]
+    assert co["scene"] == "night_desk" and co["motion"] == "tap"
+    assert [st for _, st in co["taps"]] == ["on", "off", "on"]
+    assert all(co["start"] <= f < co["cut"] for f, _ in co["taps"])
+    assert len(co["led"]) == len(co["u"]) == len(co["frames"]) == m
+    assert co["leds"] and co["leds"][0]["color"] == "#FF0000" and co["hidden"] == []
+    assert co["front"] == model.meta.get("azimuth_offset", 0.0)
+    assert all(np.allclose(np.array(M).reshape(4, 4), np.eye(4)) for M in co["spin"])
+    assert max(co["rev"]) == 0 and co["catch"] == co["start"]
+    (c1, _), (c2, _), (c3, _) = [(f - co["start"], st) for f, st in co["taps"]]
+    assert [n for _, n in co["shots"]] == ["room", "close"] and c2 < co["shots"][1][0] < c3
+    assert max(co["u"]) == 1.0 and co["u"][c1] == 1.0 and co["u"][0] == 0.0
+    lens = co["camera"]["lens"]
+    assert lens[c1] > lens[c1 - 3] * 1.03 and lens[c1 + 20] == pytest.approx(lens[c1 - 3], rel=0.02)
+    # the model in frame the whole time (its feet and head)
+    px, pz = co["pivot"]
+    H = co["height"]
+    for k in range(0, m, 5):
+        c = co["camera"]
+        pts = T.project(np.array([[px, co["ground_y"], pz], [px, co["ground_y"] - H * 0.8, pz]]),
+                        c["pos"][k], c["target"][k], c["lens"][k], 1080.0)
+        assert (pts[:, 0] > 0).all() and (pts[:, 0] < 1080).all() and (pts[:, 2] > 0).all()
+        assert 1080 * co["letterbox"] < pts[1, 1] < 1080 * (1 - co["letterbox"])
+    json.dumps(co)
+    # the taps from the config, in seconds; a performance cold open carries none of this
+    _, _, _, tl2 = _tap_timeline(engine, taps=[0.5, 2.0, 2.5])
+    assert [f - tl2["cold_open"]["start"] for f, _ in tl2["cold_open"]["taps"]] == [15, 60, 75]
+    _, _, _, tl3 = _cold_timeline(engine)
+    assert not {"taps", "led", "leds", "motion", "front"} & set(tl3["cold_open"])
+    with pytest.raises(SystemExit):
+        T.cold_open_config(model, {"cold_open": {"motion": "wiggle"}})
+
+
+def test_cold_open_tap_reel_and_cues(engine, tmp_path):
+    """The compositor gets the taps, the lights' level and where the lamp's head is (and no
+    sun indoors); the sound: a click on every tap, a pop as it comes on and a softer one as it
+    goes off, the night under it and a hum while it's lit, all stopped at the cut. Recorded
+    sounds take the clicks, the pops and the night when the model has them."""
+    from types import SimpleNamespace
+    from brickkit.video import audio as A
+    model, theme, segs, tl = _tap_timeline(engine)
+    rp = R.plan_reel(engine, Project("_sample"), model, tl, theme, tmp_path, tmp_path,
+                     log=lambda m: None)
+    co, g = tl["cold_open"], rp["cold_open"]
+    assert g["taps"] == co["taps"] and g["led"] == co["led"] and g["scene"] == "night_desk"
+    assert all(s is None for s in g["sun"]) and len(g["lamp"]) == len(g["sun"])
+    assert all(0 < x < 1080 and 0 < y < 1080 for x, y in g["lamp"])
+    cut = co["cut"]
+    ev = [e for e in rp["cues"]["events"] if e["frame"] < segs[0]["end"]]
+    kinds = [(e["frame"], e["type"]) for e in ev]
+    on = [f for f, st in co["taps"] if st == "on"]
+    off = [f for f, st in co["taps"] if st == "off"]
+    assert all((f, "snap") in kinds for f, _ in co["taps"])
+    assert all((f, "power") in kinds for f in on) and all((f, "power_off") in kinds for f in off)
+    hum = [e for e in ev if e["type"] == "hum"]
+    assert len(hum) == 1 and hum[0]["dur"] == cut - co["start"]
+    assert max(hum[0]["curve"]) == 1.0 and hum[0]["curve"][0] == 0.0
+    assert any(e["type"] == "wind" for e in ev)
+    assert not {"chainsaw_bed", "chainsaw", "sample"} & {e["type"] for e in ev}
+    assert not [e for e in ev if cut <= e["frame"] < segs[0]["end"] and e["type"] != "whoosh"]
+    # recorded
+    d = tmp_path / "audio"
+    for k, n in enumerate(["c1.wav", "c2.wav", "on.wav", "off.wav", "night.wav"]):
+        A.write_wav(d / n, np.full((4800, 2), 0.1 * (k + 1)), 48000)
+    assets = R.audio_assets(SimpleNamespace(dir=tmp_path), {"audio": {
+        "clicks": ["c1.wav", "c2.wav"], "snaps_on": "on.wav", "snaps_off": ["off.wav"],
+        "room": "night.wav"}})
+    assert assets["roles"]["snaps_on"] == ["on.wav"] and assets["roles"]["room"] == ["night.wav"]
+    cues = R.cue_sheet(rp, tl, theme, assets)
+    smp = [e for e in cues["events"] if e["type"] == "sample" and e["frame"] < cut]
+    at = {(e["frame"], e["file"]) for e in smp}
+    assert {(f, ["c1.wav", "c2.wav"][i % 2]) for i, (f, _) in enumerate(co["taps"])} <= at
+    assert {(f, "on.wav") for f in on} <= at and {(f, "off.wav") for f in off} <= at
+    night = [e for e in smp if e["file"] == "night.wav"]
+    assert len(night) == 1 and night[0]["loop"] and night[0]["until"] == cut
+    assert all(e["until"] == cut for e in smp)
+    assert not {"snap", "power", "power_off", "wind"} & {e["type"] for e in cues["events"]
+                                                         if e["frame"] < cut}
+    assert cues["events"] != rp["cues"]["events"]
 
 
 # ---------------------------------------------------------------------------- recorded sounds
