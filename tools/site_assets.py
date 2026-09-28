@@ -443,8 +443,8 @@ def model_page(template: str, m: dict, data: dict, og_v: str, notice: str) -> st
 
 
 STAMP_RE = re.compile(
-    r'((?:href|src|srcset|content)=")'
-    rf'((?:{re.escape(ORIGIN)})?/(?!vendor/)[^"?#\s]+\.(?:png|webp|ico|svg|webmanifest|jpg))'
+    r'((?:href|src|srcset|content|poster)=")'
+    rf'((?:{re.escape(ORIGIN)})?/(?!vendor/)[^"?#\s]+\.(?:png|webp|ico|svg|webmanifest|jpg|mp4))'
     r'(?:\?v=[0-9a-f]+)?(")'
 )
 BRAND_MARK_RE = re.compile(r'<!-- brand-mark:start -->.*?<!-- brand-mark:end -->', re.S)
@@ -530,6 +530,13 @@ def main() -> int:
     extra = [(f"{ORIGIN}/videos/", max(home_day, day(SITE / "videos" / "index.html")))] \
         if (SITE / "videos" / "index.html").exists() else []
     write_if_changed(SITE / "sitemap.xml", sitemap([(f"{ORIGIN}/", home_day)] + extra + entries))
+
+    # the all-models showreel (brickkit sizzle -> showreel/), featured on the videos page
+    for fn in ("sizzle.mp4", "sizzle_poster.jpg"):
+        src, dst = ROOT / "showreel" / fn, SITE / "showreel" / fn
+        if src.exists() and (not dst.exists() or sha(src) != sha(dst)):
+            dst.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copy2(src, dst)
 
     for name in ("index.html", "model.html", "404.html", "videos/index.html"):
         p = SITE / name
