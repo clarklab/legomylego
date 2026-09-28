@@ -131,3 +131,22 @@ def test_ball_snaps_into_socket(engine):
     s.place("53585", "Black", (20, -14, 0), rot(z=30))
     r = check(engine, m)
     assert r.status == "pass", r.items
+
+
+def test_window_glass_clicks_into_its_frame(engine):
+    """Glass in window frames: 60601 meets 60592 through a generic LDCad snap, 60602 meets
+    60593 through the finger brickkit's shadow overlay gives it; both click in, so their
+    frames don't block them."""
+    m = Model("W", "w", {}, engine.catalog)
+    s = m.main
+    s.place("3010", "Tan")
+    s.step()
+    s.place("60593", "White", (-20, -72, 0))
+    s.place("60592", "White", (20, -48, 0))
+    s.step()
+    s.place("60602", "Trans-Clear", (-20, -72, 0))
+    s.place("60601", "Trans-Clear", (20, -48, 0))
+    r = run_checks(engine.context(m), ["connections", "buildability"])
+    assert [x.status for x in r] == ["pass", "pass"], [x.items for x in r]
+    kinds = r[0].stats["by_kind"]
+    assert kinds.get("gen") == 1 and kinds.get("hinge") == 1

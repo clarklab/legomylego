@@ -192,6 +192,7 @@ def model_json(engine, proj, model, placed, *, files: dict, variants: list[tuple
         "description": cfg.get("description", ""), "notice": cfg.get("notice", ""),
         "parts": len(placed), "pieces": sum(r["qty"] for r in bom), "dims_mm": dims,
         "price": _price(engine, placed, model.extras, proj.out / "price.json"),
+        "hardware": _hardware_rows(engine, placed, model),
         "features": {"mechanism": model.pose is not None, "lights": bool(model.lights)},
         "front_azimuth": float(model.meta.get("azimuth_offset", 0.0)),
         "colors": _colors(engine, codes), "variants": var_out,
@@ -219,6 +220,14 @@ def _price(engine, placed, extras, saved: Path | None = None) -> dict:
         return json.loads(saved.read_text())
     from .bom.price import estimate, summary
     return summary(estimate(build_bom(placed, engine.catalog, extras), engine.catalog))
+
+
+def _hardware_rows(engine, placed, model) -> list[dict]:
+    """Bought non-LEGO items (a clock insert): not on the LEGO parts list."""
+    from .bom.bom import build_hardware
+    return [{"qty": h.qty, "name": h.name, "description": h.description,
+             "price_each_usd": [h.low, h.high], "where": h.where, "part": h.id}
+            for h in build_hardware(placed, engine.catalog, getattr(model, "hardware_items", ()))]
 
 
 def _bom_rows(engine, placed, extras=()) -> list[dict]:

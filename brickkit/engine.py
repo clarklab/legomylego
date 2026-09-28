@@ -14,7 +14,7 @@ class Engine:
     @cached_property
     def lib(self):
         from .ldraw.library import LDrawLibrary
-        return LDrawLibrary(self.cache / "ldraw")
+        return LDrawLibrary(self.cache / "ldraw", extra_roots=[paths.DATA_DIR / "ldraw"])
 
     @cached_property
     def geom(self):
@@ -39,6 +39,13 @@ class Engine:
         checked separately by the mechanism check."""
         from .geometry.collide import CollisionEngine
         return CollisionEngine(self.geom, skip_pair=self.gears_touch)
+
+    @cached_property
+    def press_collide(self):
+        """Unshrunk collision meshes for finding what press-fit parts touch (small features,
+        such as a clock hand's hub on its spindle, vanish from the shrunk meshes)."""
+        from .geometry.collide import CollisionEngine
+        return CollisionEngine(self.geom, shrink=0.0)
 
     def is_gear(self, part: str) -> bool:
         cache = self.__dict__.setdefault("_gear_cache", {})

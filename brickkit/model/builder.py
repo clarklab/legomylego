@@ -117,6 +117,9 @@ class Model:
         self.lights: list[dict] = []
         self.cables: list[dict] = []
         self.extras: list[tuple[str, Color, int, str]] = []   # bought, not placed in 3D
+        self.hardware_items: list[dict] = []             # non-LEGO items, not placed in 3D
+        self.press_fits: dict[str, dict] = {}            # tag -> {note, reach}
+        self.lift_offs: set[str] = set()                 # groups that come away in the pose
         self.extra_checks: list[Callable] = []           # fn(ctx) -> list of issue dicts
         self.glow_tags: dict[str, float] = {}
         self.variant: str | None = None
@@ -138,13 +141,17 @@ class Model:
         return self.catalog.color(self.palette.get(key, key))
 
     # mechanisms and electrics -------------------------------------------------
-    def moving_group(self, name: str, tag: str, exclude=()) -> None:
+    def moving_group(self, name: str, tag: str, exclude=(), lifts_off: bool = False) -> None:
         """Parts tagged `tag` move together under pose[name]. tag "*" makes a catch-all group:
         every part not in another group and not under any of the `exclude` tags (e.g. a whole
-        body that slides on a fixed stand)."""
+        body that slides on a fixed stand). `lifts_off`: the pose lifts the group away from the
+        rest (a lid, a tower top): the mechanism check lets it come apart from the model, as
+        long as it stays one piece itself and hits nothing on the way."""
         self.groups[name] = tag
         if tag == "*":
             self.group_exclude[name] = set(exclude)
+        if lifts_off:
+            self.lift_offs.add(name)
 
     def group_of(self, p: PlacedPart) -> str | None:
         for t in reversed(p.tags):
@@ -167,6 +174,25 @@ class Model:
         being clicked on (a slider in its guide). Within their own sub-assembly the buildability
         check doesn't count them as loose; the whole model must still join them up."""
         self.captive_tags[tag] = note
+
+    def press_fit(self, tag: str, note: str = "", reach: float = 2.0) -> None:
+        """Parts under `tag` are held by friction by the parts they touch (within `reach` LDU),
+        not by studs: a bought clock insert pressed into its opening, a hand on its spindle.
+        The connections, buildability and mechanism checks count those touches as
+        connections ("press"). Tag the placements themselves (the tag on the part, or on the
+        sub-assembly holding it) and give an `insert=` direction for the buildability check."""
+        self.press_fits[tag] = {"note": note, "reach": float(reach)}
+
+    def is_press_fit(self, p: PlacedPart) -> bool:
+        return bool(self.press_fits) and any(t in self.press_fits for t in p.tags)
+
+    def hardware(self, name: str, qty: int, description: str = "", price=(0.0, 0.0),
+                 where: str = "") -> None:
+        """A bought non-LEGO item that is not placed in 3D (glue, batteries, a stand): it goes
+        on the hardware list with rough prices (USD each). Placed stand-in parts
+        (data/hardware.json) are listed on their own."""
+        self.hardware_items.append({"name": name, "qty": int(qty), "description": description,
+                                    "price": tuple(map(float, price)), "where": where})
 
     def contact_ok(self, a: PlacedPart, b: PlacedPart) -> bool:
         ta, tb = set(a.tags), set(b.tags)

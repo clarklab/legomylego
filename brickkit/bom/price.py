@@ -12,7 +12,7 @@ import json
 from dataclasses import dataclass
 
 from .. import paths
-from .bom import BomLine
+from .bom import BomLine, HardwareLine
 
 
 @dataclass
@@ -88,8 +88,15 @@ def summary(priced: list[PriceLine], day: str | None = None) -> dict:
             "live_lines": n_live, "lines": len(priced)}
 
 
-def write_estimate_md(name: str, priced: list[PriceLine], path, day: str | None = None
-                      ) -> tuple[float, float]:
+def hardware_summary(hardware: list[HardwareLine]) -> dict:
+    """Totals for the non-LEGO items (rough USD ranges from data/hardware.json or the model)."""
+    return {"low": round(sum(h.low * h.qty for h in hardware), 2),
+            "high": round(sum(h.high * h.qty for h in hardware), 2),
+            "items": sum(h.qty for h in hardware), "lines": len(hardware), "currency": "USD"}
+
+
+def write_estimate_md(name: str, priced: list[PriceLine], path, day: str | None = None,
+                      hardware: list[HardwareLine] = ()) -> tuple[float, float]:
     s = summary(priced, day)
     low, high = s["low"], s["high"]
     rows = sorted(priced, key=lambda p: -(p.low + p.high) * p.line.qty)
@@ -123,5 +130,16 @@ def write_estimate_md(name: str, priced: list[PriceLine], path, day: str | None 
                   f"{p.low:.2f}-{p.high:.2f} | {p.low * l.qty:.2f}-{p.high * l.qty:.2f} | "
                   f"{p.basis} |")
     md.append("")
+    if hardware:
+        h = hardware_summary(hardware)
+        md += ["## Not LEGO: buy separately", "",
+               f"**Roughly ${h['low']:,.0f} - ${h['high']:,.0f}** for {h['items']} item(s), not "
+               "included above (not on BrickLink; see `hardware.csv`). With them the model comes "
+               f"to roughly ${low + h['low']:,.0f} - ${high + h['high']:,.0f}.", "",
+               "| Qty | Item | Each (USD) | Line (USD) | Where to buy |", "|---:|---|---:|---:|---|"]
+        for l in hardware:
+            md.append(f"| {l.qty} | {l.name}: {l.description} | {l.low:.2f}-{l.high:.2f} | "
+                      f"{l.low * l.qty:.2f}-{l.high * l.qty:.2f} | {l.where} |")
+        md.append("")
     path.write_text("\n".join(md))
     return low, high

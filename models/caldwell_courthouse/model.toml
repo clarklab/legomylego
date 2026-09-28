@@ -1,0 +1,77 @@
+[model]
+name = "The Caldwell County Courthouse"
+design = "design.py"
+description = "The 1894 Second Empire courthouse in Lockhart, Texas, as a 46 cm LEGO display model on a 30 cm lawn: buff stone walls with red trim, four corner pavilions under slate mansards with iron cresting, a columned portico and a central clock tower whose four clocks really keep time (quartz clock inserts behind the red dials). The dome lifts off to set them."
+palette_title = "Dark red trim"
+
+[palette]
+wall = "Tan"                 # the buff limestone walls
+trim = "Dark Red"            # the red trim: bands, window arches, cornices, ribs, finials
+star = "Red"                 # the Texas stars on the dome
+roof = "Black"               # dark slate: mansards, pavilion roofs, the dome, the flat roof
+crest = "Black"              # iron cresting, spikes and the weather vane
+window = "White"             # window frames
+glass = "Trans-Clear"        # window glass (the dark rooms show through)
+glass_dark = "Black"         # the round windows' dark glass
+dial = "White"               # the clock faces round the quartz dials
+core = "Light Bluish Gray"   # hidden structure inside the building and the tower
+base = "Dark Bluish Gray"    # the base's bottom layer
+lawn = "Green"
+walk = "Light Bluish Gray"   # sidewalks, paths and the portico's stone
+trunk = "Reddish Brown"
+leaves = "Green"
+leaves2 = "Bright Green"
+pole = "White"               # flagpoles
+balustrade = "White"         # the portico's balustrade
+clock = "Black"              # the quartz clock inserts' bezels and hands (not LEGO)
+
+[variants.brownstone]
+title = "Reddish brown trim"
+trim = "Reddish Brown"
+
+[booklet]
+subtitle = "The 1894 courthouse in Lockhart, Texas, 46 cm tall on a 30 cm lawn. Its four clocks keep real time: quartz clock inserts sit behind the red dials, and the dome lifts off to set them."
+intro = "The Caldwell County Courthouse (Alfred Giles, 1893-94) in buff stone with red trim, slate mansards and iron cresting. It is built like a LEGO modular building: the lawn and walks, four hidden columns that carry the tower, the walls as separate segments (corner pavilions, wings and centre pavilions), the roof deck with its red cornice, slate mansards with dormers, gabled attics and the four pavilion towers with their round windows and cresting. Then the tower: the belfry, the clock stage with its four SNOT clock faces, and the lift-off top with the red cornice and the bell-shaped slate dome with red ribs, Texas star medallions, a red finial and the arrow weather vane. The clocks are real: a quartz clock insert (not LEGO) drops into a slot behind each face, so its dial shows through the white ring and its hands keep time."
+you_will_need = [
+  "Before you buy the inserts, check their size. The body behind the bezel must be 35 mm (1-3/8 in) across or less, the bezel between 34 and 40 mm (most are 36-38 mm), and the insert no deeper than 22 mm from the front of the bezel to the back of the body (lay it face down and measure how high the back stands; the setting knob may stick out a few mm more). The dial shows through a 32 mm window, so a dial up to about 31 mm shows whole.",
+  "A button cell for each insert (usually included: SR626SW / 377 or LR44, printed on the insert).",
+]
+notes = [
+  "The clock faces are built lying flat and pressed onto the side studs of the clock stage. Put them on before the clock inserts.",
+  "Set each insert's time and start it before you slide it in. Slide it down its slot face first: the bezel goes behind the face plates, the body rests on the two grey rails and centres itself. Push it forward until the bezel touches the plates. If it slides back when you handle the model, a small square of foam tape behind it holds it.",
+  "The lift-off top holds on four studs, one on each corner column. Lift it straight up: from above you reach the backs of all four inserts, their setting knobs and their batteries. Lift an insert straight out of its slot to change its battery.",
+  "The glass in the ground floor transoms and dormers clicks into its frame from the back.",
+]
+works = [
+  { title = "Clocks that keep time", text = "Four quartz clock inserts sit back to back inside the clock stage, one behind each face. Their dials show through a white ring framed in red, and their hands turn. The inserts are not LEGO; the stand-ins in the pictures are drawn at the largest size that fits.", image = "renders/tower_close.png" },
+  { title = "A lift-off dome", text = "The cornice, the dome and the weather vane lift off in one piece. Underneath, the backs of the four inserts face the open middle of the tower, so you can set the clocks and change their batteries.", image = "hero_open/hero.png" },
+]
+
+[checks]
+enabled = ["real_elements", "connections", "collisions", "buildability", "stability",
+           "mechanism", "electrics", "technique"]
+
+# Build video (brickkit video): see docs/brickkit-guide.md, "Video"
+[video]
+theme = "brand"
+default_title = "Dark red trim"
+facts = ["Real quartz clocks", "Lift-off dome"]
+sections = [[1, "Base"], ["Four columns", "Tower columns"], ["The walls", "Walls"],
+            ["Lower the roof", "Roof"], ["A pavilion tower", "Pavilion towers"],
+            ["The belfry", "Tower"], ["Set the dome", "Dome"]]
+
+[[video.callouts]]
+label = "Lift-off dome"
+tag = "tower_top"
+sub = "lifts off to set the clocks"
+
+[[video.callouts]]
+label = "Clock hands"
+tag = "minute_*"
+sub = "quartz clocks keep time"
+
+[[video.callouts]]
+label = "Quartz clock inserts"
+part = "bk-clock-insert-35mm"
+xray = true
+sub = "not LEGO: 35 mm mini inserts"

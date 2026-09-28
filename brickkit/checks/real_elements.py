@@ -11,10 +11,18 @@ def check_real_elements(ctx, cfg) -> CheckResult:
         seen.setdefault((p.part, p.color.ldraw), p)
     items = []
     n_warn = 0
+    hardware = set()
     for (part, _), p in sorted(seen.items()):
         base = {"part": part_id(part), "name": ctx.catalog.part_name(part), "colour": p.color.name}
         if ctx.engine.lib.resolve(part) is None:
             items.append({**base, "severity": "fail", "problem": "not in the LDraw part library"})
+            continue
+        if ctx.catalog.is_hardware(part):
+            hardware.add(part)             # a bought non-LEGO item: on the hardware list
+            continue
+        if ctx.engine.lib.is_custom(part):
+            items.append({**base, "severity": "fail",
+                          "problem": "brickkit stand-in part that is not listed as hardware"})
             continue
         if not ctx.catalog.in_bom(part):
             continue
@@ -31,6 +39,9 @@ def check_real_elements(ctx, cfg) -> CheckResult:
                           "element_ids": e.element_ids})
     n_fail = sum(1 for i in items if i["severity"] == "fail")
     status = "fail" if n_fail else ("warn" if n_warn else "pass")
+    lego = sum(1 for (part, _) in seen if part not in hardware)
+    hw = (f"; {len(hardware)} non-LEGO hardware stand-in(s), not checked" if hardware else "")
     return CheckResult("real_elements", status,
-                       f"{len(seen)} part/colour combinations: {n_fail} not real, {n_warn} rare",
-                       items, {"combinations": len(seen), "not_real": n_fail, "rare": n_warn})
+                       f"{lego} part/colour combinations: {n_fail} not real, {n_warn} rare{hw}",
+                       items, {"combinations": lego, "not_real": n_fail, "rare": n_warn,
+                               "hardware": len(hardware)})

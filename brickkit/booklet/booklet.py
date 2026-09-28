@@ -16,6 +16,7 @@ from __future__ import annotations
 import datetime as dt
 import json
 import shutil
+import subprocess
 from collections import Counter
 from pathlib import Path
 
@@ -23,7 +24,7 @@ import numpy as np
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 
 from .. import paths
-from ..bom.bom import build_bom
+from ..bom.bom import build_bom, build_hardware
 from ..ldraw.library import part_id
 from ..ldraw.matrix import apply
 
@@ -102,6 +103,9 @@ def build_context(engine, proj, model, img_dir: Path) -> dict:
                   "name": l.name, "colour": l.color.name, "hex": _hex(engine, l.color.ldraw),
                   "element": l.element_id, "bl_part": l.bl_part, "bl_colour": l.color.bl_id,
                   "rare": l.rare} for l in sorted(bom, key=lambda l: (l.color.name, l.name))]
+    hardware = [{"qty": h.qty, "name": h.name, "description": h.description, "where": h.where,
+                 "price": (f"${h.low:,.0f}-${h.high:,.0f}" if h.high else "")}
+                for h in build_hardware(placed, engine.catalog, model.hardware_items)]
     report = {}
     for rp in (proj.out / "report.json", img_dir.parent / "report.json"):
         if rp.exists():             # a colourway's own report re-runs the colour checks only
@@ -117,6 +121,7 @@ def build_context(engine, proj, model, img_dir: Path) -> dict:
         "name": model.name, "slug": proj.slug,
         "subtitle": cfg.get("subtitle", ""), "intro": cfg.get("intro", ""),
         "you_will_need": cfg.get("you_will_need", []), "notes": cfg.get("notes", []),
+        "hardware": hardware,
         "works": cfg.get("works", []),
         "pieces": sum(l.qty for l in bom), "lines": len(bom), "steps": steps,
         "n_steps": len(steps), "sections": sections, "colours": colour_rows,
@@ -184,4 +189,26 @@ def make_booklet(engine, proj, model, *, rerender: bool = True, cover: Path | No
             shutil.copy2(src, dst)
             ctx["works"][k] = {**w, "image": dst.name}
     html = render_html(ctx, img_dir / "booklet.html")
-    return html_to_pdf(html, out_dir / "booklet.pdf")
+    return shrink_pdf(html_to_pdf(html, out_dir / "booklet.pdf"))
+
+
+SHRINK_OVER = 40e6       # bytes: bigger booklets (hundreds of steps) are recompressed
+
+
+def shrink_pdf(pdf: Path, over: float = SHRINK_OVER) -> Path:
+    """Recompress a big booklet with Ghostscript (pictures at 200 dpi, which is what they print
+    at on the page), when gs is installed; keeps the original if that isn't smaller. A 489-step
+    booklet goes from 57 MB to 31 MB with no visible change."""
+    gs = shutil.which("gs")
+    if not gs or pdf.stat().st_size <= over:
+        return pdf
+    tmp = pdf.with_suffix(".small.pdf")
+    r = subprocess.run([gs, "-sDEVICE=pdfwrite", "-dCompatibilityLevel=1.6",
+                        "-dPDFSETTINGS=/ebook", "-dColorImageResolution=200",
+                        "-dColorImageDownsampleThreshold=1.2", "-dNOPAUSE", "-dBATCH", "-dQUIET",
+                        f"-sOutputFile={tmp}", str(pdf)], capture_output=True, text=True)
+    if r.returncode == 0 and tmp.exists() and tmp.stat().st_size < pdf.stat().st_size:
+        tmp.replace(pdf)
+    else:
+        tmp.unlink(missing_ok=True)
+    return pdf

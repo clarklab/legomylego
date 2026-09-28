@@ -1,9 +1,10 @@
 """Can every step be built? Each new part (or sub-assembly) must slide into place along one
 of its connection axes (or its insertion hint) without hitting what is already built, and
 each submodel must be one piece at the end of every step. Clips and hinges snap on (their
-fingers flex), Technic pins click in (the split, flared tip compresses in the hole) and balls
-pop into their sockets (the socket's jaws flex), so the parts a unit clips, hinges, pins or
-snaps a ball onto never block its path."""
+fingers flex), Technic pins click in (the split, flared tip compresses in the hole), balls
+pop into their sockets (the socket's jaws flex) and generic LDCad snaps (SNAP_GEN, such as
+window glass in its frame) click in, so the parts a unit clips, hinges, pins or snaps onto
+never block its path."""
 from __future__ import annotations
 
 from collections import defaultdict
@@ -14,9 +15,9 @@ import numpy as np
 from ..ldraw.matrix import translate
 from ..model.builder import Placement
 from ..snaps.match import find_connections
-from .base import CheckResult, components, register
+from .base import CheckResult, components, press_pairs, register
 
-SNAP_KINDS = ("clip", "hinge", "pin", "ball")   # connections that flex as they go on (see docstring)
+SNAP_KINDS = ("clip", "hinge", "pin", "ball", "gen")   # flex as they go on (see docstring)
 
 
 @dataclass
@@ -93,6 +94,15 @@ def check_buildability(ctx, cfg) -> CheckResult:
                 if c.kind in SNAP_KINDS:
                     snaps[ua].add(c.b)
                     snaps[ub].add(c.a)
+        # press-fit units (model.press_fit on the placement's tag): held by what they touch
+        fits = ctx.model.press_fits
+        press = {i: fits[units[owner[i]].tag]["reach"] for i in range(len(flat))
+                 if units[owner[i]].tag in fits}
+        for i, j in press_pairs(ctx.engine.press_collide, flat, press):
+            ua, ub = owner[i], owner[j]
+            if ua != ub:
+                links[ua].append((ub, None, 0.0))
+                links[ub].append((ua, None, 0.0))
         parts_of = defaultdict(list)
         for i, ui in enumerate(owner):
             parts_of[ui].append(i)
@@ -170,13 +180,19 @@ def check_buildability(ctx, cfg) -> CheckResult:
 def _insertable(ctx, unit, ui, links, built, flat, built_parts, boxes_all, stride, min_travel):
     if not built_parts:
         return True
-    dirs, depth = [], 0.0
+    dirs, depth, pressed = [], 0.0, False
     for other, axis, ov in links[ui]:
         if other in built:
+            if axis is None:                 # press fit: slides in along its hint
+                pressed = True
+                continue
             dirs += [axis, -axis]
             depth = max(depth, ov)
     if unit.insert is not None:
         dirs.insert(0, np.asarray(unit.insert, float))
+    elif pressed and not dirs:              # no hint: any of the part's own axes will do
+        R = unit.parts[0][1][:3, :3]
+        dirs = [R[:, k] * s for k in range(3) for s in (1, -1)]
     if not dirs:
         return True   # not attached yet; the loose-piece check decides
     items = [flat[i] for i in built_parts]

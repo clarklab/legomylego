@@ -29,7 +29,7 @@
       <div class="box" style="margin-top:5mm"><h3>The finished model</h3><p>About {{ dims[0] }} × {{ dims[2] }} cm and {{ dims[1] }} cm tall{% if weight_text %}, about {{ weight_text }} (estimated){% endif %}.</p>{% if intro %}<p>{{ intro }}</p>{% endif %}</div>
     </div>
     <div>
-      <div class="box"><h3>You will need</h3><ul><li>The {{ pieces }} pieces in {{ colours|length }} colours listed at the back, with their LEGO element IDs and BrickLink numbers.</li>{% for n in you_will_need %}<li>{{ n }}</li>{% endfor %}<li>A brick separator for pieces that sit too deep for a finger.</li></ul></div>
+      <div class="box"><h3>You will need</h3><ul><li>The {{ pieces }} pieces in {{ colours|length }} colours listed at the back, with their LEGO element IDs and BrickLink numbers.</li>{% for h in hardware %}<li><b>{{ h.qty }}x {{ h.name }}</b> (not LEGO{% if h.price %}, about {{ h.price }} each{% endif %}). {{ h.description }} {{ h.where }}</li>{% endfor %}{% for n in you_will_need %}<li>{{ n }}</li>{% endfor %}<li>A brick separator for pieces that sit too deep for a finger.</li></ul></div>
       <div class="box" style="margin-top:5mm"><h3>Tips</h3><ul><li>Sort the pieces by colour before you start.</li><li>Build the sections in order: each sub-assembly is finished before it is used.</li><li>New pieces in a step have a yellow outline; earlier pieces are drawn paler.</li>{% for n in notes %}<li>{{ n }}</li>{% endfor %}</ul></div>
       <div class="box" style="margin-top:5mm"><h3>The {{ colours|length }} colours</h3><div class="colours">{% for c in colours %}<div><span class="swatch" style="background:{{ c.hex }}"></span>{{ c.name }}: {{ c.qty }}</div>{% endfor %}</div></div>
     </div>

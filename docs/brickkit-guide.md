@@ -131,6 +131,34 @@ Use `model.extra` for bought items whose geometry is only partly placed (a light
 and plug); `data/part_map.json` sets `"bom": false` on the placed head so nothing counts twice,
 and `"bricklink_type": "S"` for items BrickLink sells as sets.
 
+### Non-LEGO hardware
+Bought items that are not LEGO elements (a quartz clock insert) go in the model as **stand-in
+parts**: simple LDraw-style meshes under `brickkit/data/ldraw/parts/` (made by
+`tools/hardware_parts.py`, BFC-certified), which the library finds like any other part. They
+show in renders, the booklet and the viewer, and the collision check sees them, so the model
+really has room for the item. `brickkit/data/hardware.json` lists each stand-in's shopping
+details: name, description (the sizes that fit), rough `price` [low, high] in USD each and
+`where` to buy; a `part_of` entry (a clock's hands) is counted with its item.
+```python
+sub.place("bk-clock-insert-35mm", "Black", pos, R, tag="clock_n", insert=(0, -1, 0))
+model.press_fit("clock_n", "rests in its cradle behind the ring")   # held without studs
+model.hardware("Spare button cell SR626SW", 4, "for the clocks", (1, 3), "any shop")  # not placed
+model.moving_group("top", "tower_top", lifts_off=True)            # the pose lifts it away
+```
+- Stand-ins are not on the LEGO lists (`parts.csv`, the BrickLink and Pick a Brick files, the
+  piece count) and `real_elements` skips them. They go on `out/hardware.csv`, in a "Not LEGO"
+  section of `price_estimate.md`, under `hardware` in `price.json`, in the booklet's "You will
+  need" box and in the viewer's `model.json`. The MPD embeds their files, so Studio and LDCad
+  show them.
+- `model.press_fit(tag, note, reach=2.0)`: parts under the tag are held by friction by the
+  parts they touch (within `reach` LDU, found with unshrunk meshes by nudging the part along
+  its own axes). The connections, buildability and mechanism checks count each touch as a
+  `press` connection. Give the placement an `insert=` direction (how it goes in); the parts
+  it slides along must not overlap it.
+- `lifts_off=True` on a moving group: the mechanism check lets the group come away from the
+  model in the pose (a lift-off lid or tower top), as long as it stays in one piece and
+  collides with nothing on its way.
+
 ## The checks
 | Check | Fails when |
 |---|---|
@@ -159,6 +187,13 @@ axle hole) gets the `techBallJnt` group its twin 32474 has, and 67696 (Brick 2 x
 ball socket, the football figures' shoulder joint) gets its socket, where 92013's is. The
 67696 socket's jaws leave a slot in the brick's own x-y plane: the ball's axle can swing
 freely in that plane, only about 25 degrees across it.
+
+**Window glass.** Glass that clicks into its frame is matched through LDCad snaps too:
+60601 meets 60592 with a generic snap (SNAP_GEN), and the overlay
+`brickkit/data/shadow/parts/60602.dat` gives 60602 (glass for 60593, Window 1 x 2 x 3 Flat
+Front) the finger its frame's glazing slot expects. Generic snaps count as clicking in for
+the buildability check, like clips and hinges; give the glass `insert=` pointing to the
+side it goes in from.
 
 ## Workflow loop
 1. `brickkit find` to pick parts that exist in your colours (prefer ≥3 sets since 2016).

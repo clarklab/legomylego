@@ -19,7 +19,7 @@ def _build(engine, slug, variant=None):
     proj = Project(slug, paths.MODELS_DIR)
     model = proj.build(engine.catalog, variant)
     placed = model.flatten()
-    out = write_mpd(model, _out(proj, variant) / f"{slug}.mpd")
+    out = write_mpd(model, _out(proj, variant) / f"{slug}.mpd", engine.lib)
     print(f"{model.name}: {len(placed)} parts, {len(model.instruction_order())} steps -> {out}")
     return proj, model
 
@@ -39,15 +39,22 @@ def _verify(engine, proj, model, names=None) -> int:
 
 
 def _bom(engine, proj, model) -> None:
-    from .bom.bom import build_bom, write_bricklink_xml, write_parts_csv, write_pick_a_brick_csv
-    lines = build_bom(model.flatten(), engine.catalog, model.extras)
+    from .bom.bom import (build_bom, build_hardware, write_bricklink_xml, write_hardware_csv,
+                          write_parts_csv, write_pick_a_brick_csv)
+    placed = model.flatten()
+    lines = build_bom(placed, engine.catalog, model.extras)
+    hardware = build_hardware(placed, engine.catalog, model.hardware_items)
     out = _out(proj, model.variant)
     write_parts_csv(lines, out / "parts.csv")
+    if hardware:
+        write_hardware_csv(hardware, out / "hardware.csv")
+    else:
+        (out / "hardware.csv").unlink(missing_ok=True)
     write_bricklink_xml(lines, out / "bricklink_wanted.xml")
     write_pick_a_brick_csv(lines, out / "pick_a_brick.csv")
     import json
     from .bom.live_price import live_prices
-    from .bom.price import estimate, summary, write_estimate_md
+    from .bom.price import estimate, hardware_summary, summary, write_estimate_md
     live = None
     try:
         live = live_prices(lines)
@@ -55,11 +62,18 @@ def _bom(engine, proj, model) -> None:
         print(f"live prices unavailable ({e}); using price bands")
     day = live["day"] if live else None
     priced = estimate(lines, engine.catalog, live)
-    low, high = write_estimate_md(model.name, priced, out / "price_estimate.md", day)
-    (out / "price.json").write_text(json.dumps(summary(priced, day), indent=1))
+    low, high = write_estimate_md(model.name, priced, out / "price_estimate.md", day, hardware)
+    s = summary(priced, day)
+    if hardware:
+        s["hardware"] = hardware_summary(hardware)
+    (out / "price.json").write_text(json.dumps(s, indent=1))
     print(f"parts list: {sum(l.qty for l in lines)} pieces in {len(lines)} lines "
           f"-> {out / 'parts.csv'}; price ${low:,.0f}-${high:,.0f}"
           f"{f' (BrickLink, {day})' if day else ' (rough estimate)'}")
+    if hardware:
+        h = s["hardware"]
+        print(f"hardware (not LEGO): {h['items']} item(s) in {h['lines']} line(s) -> "
+              f"{out / 'hardware.csv'}; about ${h['low']:,.0f}-${h['high']:,.0f}")
 
 
 def _new(slug: str, name: str | None) -> int:

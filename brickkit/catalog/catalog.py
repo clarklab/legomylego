@@ -29,18 +29,19 @@ class ElementInfo:
 
 class Catalog:
     def __init__(self, ldraw: LDrawLibrary, rb: RBIndex, part_map: dict, bl_colors: dict,
-                 aliases: dict, masses: dict):
+                 aliases: dict, masses: dict, hardware: dict | None = None):
         self.ldraw = ldraw
         self.rb = rb
         self.part_map = part_map
         self.masses = masses
+        self.hardware = {k: v for k, v in (hardware or {}).items() if not k.startswith("_")}
         self.colors = ColorTable(ldraw.colors, rb.colors, bl_colors, aliases)
 
     @classmethod
     def load(cls, ldraw: LDrawLibrary, rb_dir, cache_path) -> "Catalog":
         return cls(ldraw, load_index(rb_dir, cache_path), _data("part_map.json"),
                    _data("bricklink_colors.json"), _data("color_aliases.json"),
-                   _data("masses.json"))
+                   _data("masses.json"), _data("hardware.json"))
 
     def color(self, key) -> Color:
         return self.colors.get(key)
@@ -98,7 +99,27 @@ class Catalog:
         return self._pm(part).get("bricklink_type", "P")
 
     def in_bom(self, part: str) -> bool:
-        return self._pm(part).get("bom", True)
+        """On the LEGO parts lists (non-LEGO hardware has its own list)."""
+        return self._pm(part).get("bom", True) and not self.is_hardware(part)
+
+    def is_hardware(self, part: str) -> bool:
+        """A stand-in for a bought non-LEGO item (data/hardware.json), not a LEGO element."""
+        return part_id(part) in self.hardware
+
+    def hardware_info(self, part: str) -> dict:
+        """The hardware item a stand-in part is counted as: {id, name, description, price,
+        where}; a 'part_of' stand-in (a clock's hands) points at its item."""
+        pid = part_id(part)
+        info = self.hardware.get(pid, {})
+        if "part_of" in info:
+            return self.hardware_info(info["part_of"])
+        return {"id": pid, "name": info.get("name", self.part_name(part)),
+                "description": info.get("description", ""),
+                "price": tuple(info.get("price", (0.0, 0.0))), "where": info.get("where", "")}
+
+    def hardware_counts(self, part: str) -> bool:
+        """True if each placed copy of this stand-in is one item bought (not 'part_of')."""
+        return self.is_hardware(part) and "part_of" not in self.hardware[part_id(part)]
 
     def mass_override(self, part: str) -> float | None:
         return self.masses.get(part_id(part))

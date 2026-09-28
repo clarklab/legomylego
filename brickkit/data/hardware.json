@@ -1,0 +1,18 @@
+{
+  "_about": "Non-LEGO hardware: stand-in parts under data/ldraw/parts (see tools/hardware_parts.py). Each placed stand-in is a line on the hardware list, not the LEGO parts lists; 'part_of' ones are counted with that item. price = [low, high] USD each, rough.",
+  "bk-clock-insert-35mm": {
+    "name": "Mini quartz clock insert, 1-3/8\" (35 mm) fit-up",
+    "description": "Press-in quartz clock movement with its own dial, hands and button cell, made for a 35 mm (1-3/8\") hole: 35 mm body, a bezel of about 36-38 mm, 15-20 mm deep including the setting knob. White dial, black numerals.",
+    "price": [
+      5,
+      15
+    ],
+    "where": "Clock-making and woodworking suppliers (Klockit, Rockler, Woodcraft), craft stores, Amazon or eBay: search for \"1-3/8 inch mini clock insert\" or \"35 mm clock insert\"."
+  },
+  "bk-clock-hand-hour": {
+    "part_of": "bk-clock-insert-35mm"
+  },
+  "bk-clock-hand-minute": {
+    "part_of": "bk-clock-insert-35mm"
+  }
+}

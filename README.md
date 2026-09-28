@@ -18,6 +18,7 @@ at **[bricks.superfun.games](https://bricks.superfun.games)**.
 | [VHS Cassette](models/vhs_tape/NOTES.md) | 384 | 184 x 102 x 26 mm (real tape: 187 x 103 x 25) | full-length dust flap swings up on Technic pins; both reels turn on red spindles behind two clear windows; black or white (head cleaner) shell | $16-$56 |
 | [Ferret](models/ferret/NOTES.md) | 895 | 51 cm nose to tail | head turns on a turntable; sable, albino and cinnamon coats | $37-$117 |
 | [Chainsaw Face](models/chainsaw_face/NOTES.md) | 838 | 33.4 cm (13.1 in) tall on his stand, 31.4 cm soles to hair; 12.8 cm chainsaw | posable figure: ball joints at the neck, shoulders, wrists, hips and ankles, ratchet elbows and knees, a waist turntable; swings the chainsaw from overhead down across his hips in both fists; spattered or clean apron | $31-$113 |
+| [The Caldwell County Courthouse](models/caldwell_courthouse/NOTES.md) | 2,933 | 30.4 x 30.4 cm base, 45.9 cm tall | four clocks that keep real time (quartz clock inserts, not LEGO, behind SNOT dials); the dome lifts off to set them; dark red or reddish brown trim | $112-$389 (+ $20-$60 clock inserts) |
 
 *Rough range from typical per-part prices (`out/price_estimate.md`), not live market data.
 Upload `out/bricklink_wanted.xml` to a BrickLink Wanted List for a real quote.

@@ -6,7 +6,7 @@ import re
 import numpy as np
 
 from ..snaps.match import find_connections
-from .base import CheckResult, components, describe, register
+from .base import CheckResult, components, describe, press_links, register
 
 TEETH_RE = re.compile(r"(\d+)\s*Tooth", re.I)
 PITCH = 1.25   # LEGO gears are module 1 mm: pitch radius = teeth * 0.5 mm = teeth * 1.25 LDU
@@ -83,9 +83,20 @@ def check_mechanism(ctx, cfg) -> CheckResult:
                 continue
             items.append({"pose": round(float(t), 3), "a": describe(placed[i]),
                           "b": describe(placed[j]), "problem": "parts collide while moving"})
-        conns = find_connections(ctx.world_connectors(placed))
-        pieces = len(components(len(placed), [(c.a, c.b) for c in conns]))
-        if pieces > base_pieces:
+        conns = (find_connections(ctx.world_connectors(placed))
+                 + press_links(m, ctx.engine.press_collide, placed))
+        comps = components(len(placed), [(c.a, c.b) for c in conns])
+        pieces = len(comps)
+        # a lift-off group (a lid, a tower top) may come away whole: one piece of its own
+        lifted = 0
+        for g in m.lift_offs:
+            mine = {i for i, p in enumerate(placed) if m.group_of(p) == g}
+            own = [c for c in comps if set(c) <= mine]
+            if own and len(own) > 1:
+                items.append({"pose": round(float(t), 3),
+                              "problem": f"lift-off group {g} falls into {len(own)} pieces"})
+            lifted += min(len(own), 1)
+        if pieces - lifted > base_pieces:
             items.append({"pose": round(float(t), 3),
                           "problem": f"model falls apart into {pieces} pieces at this pose"})
     return CheckResult("mechanism", "fail" if items else "pass",
