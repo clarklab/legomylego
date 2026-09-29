@@ -389,7 +389,8 @@ editing graphics never re-renders 3D and moving a segment in the edit keeps its 
 
 `brickkit sizzle [SLUG ...] [--config FILE] [--out DIR] [--stills 60,240] [--preview]
 [--no-audio]` cuts one quick brand reel from several models' showreels: by default
-`showreel/sizzle.toml` -> `showreel/sizzle.mp4` (1080×1080, 30 fps, about 37 s, ~12 MB),
+`showreel/sizzle.toml` -> `showreel/sizzle.mp4` (1080×1080, 30 fps, about 43 s for five
+models, ~15 MB),
 `sizzle_poster.jpg` (the finale's grid) and `sizzle_contact.jpg`. It renders nothing in 3D:
 the footage is each model's last `brickkit video` run, read-only (its cached plates in
 `out/video_frames/full/<segment>/`, `out/turntable.mp4`, the hero cut-out), and the frames it
@@ -401,15 +402,20 @@ track itself (`video/beats.py`: the tempo from the onsets' autocorrelation, the 
 dynamic programming, moved onto the kick if they locked to an off-beat hat, bars from the
 claps on 2 and 4; cached in `work/beats.json`); without it a fixed grid at `bpm` drives the
 house synth. Sections are counted in bars: the open (the logo, the tagline slammed on beats,
-then one beat per model: its cut-out on a coloured card, in the bar before the drop), each
-model (its name slammed on yellow bars over quick cuts of its own footage, a caption, stat
-chips), the finale (the turntables in a 2×2 grid popping in on the beats, then "4 models ·
-N pieces · every brick checked") and the outro (logo, URL, small print and the models'
-notices). Wipes are the brand's: a brick wall at the drop, then studs in yellow and brick red.
+then each model's cut-out on a coloured card in the bar before the drop: a beat each for four,
+the bar shared out on eighths for more - five go ½, ½, 1, 1, 1 beats, the last one half
+under the wipe into the drop),
+each model (its name slammed on yellow bars over quick cuts of its own footage, a caption,
+stat chips; a long name goes on three lines), the finale (the turntables popping into a grid
+across its first bar - 2×2 for four, three across for five to nine with the last row centred,
+the name tags sized to the cells - then "5 models · N pieces · every brick checked") and the
+outro (logo, URL, small print and the models' notices). Wipes are the brand's: a brick wall at
+the drop, then studs in yellow and brick red. Any number of models works; lay the sections on
+the music's own phrases (its drop, fills and breaks) by their `bars`.
 ```toml
 title = "Bricks"
 url = "bricks.superfun.games"
-music = "audio/track_1.mp3"   # next to the config; omit for the synthesised music
+music = "audio/track_long_1.mp3"   # next to the config; omit for the synthesised music
 bpm = 128                     # a hint for the beat tracker (or the synth's tempo)
 whoosh = "audio/whoosh_1.mp3" # on every wipe (else the synthesised whoosh)
 line = "{n} models · {pieces} pieces|every brick checked"   # the finale; | breaks the line
@@ -427,6 +433,10 @@ open_words = [["Real", 4], ["LEGO.", 6], ["Checked by", 8], ["computer.", 10]]  
 slug = "baby_metroid"
 bars = 3
 chips = ["pieces", "headline"]   # or steps, colours; in on the section's beats 4 and 6 (from 0)
+# name = "..."                # shown instead of the model's name (tags, slam, teaser)
+# break = true                # a filter break: the track's kick and bass drop out under this
+                              # section (a 24 dB/oct high-pass at 320 Hz, 2.5 dB up, swept to
+                              # 1.2 kHz over its last beat); the drop comes back on the next
 [[model.shot]]                # shots follow each other, `beats` long (the last runs to the end)
 source = "build"              # a plate segment of the model's video, or "turntable"
 from = 0.2                    # a stretch of it (0..1), sped to fit...
@@ -441,16 +451,38 @@ caption = "Tap: lights on"
 sfx = "../models/baby_metroid/audio/snap_on_1.mp3"   # a sound on that beat...
 sfx_align = "peak"            # ...its loudest moment on it (else its start)
 sfx_level = -1.0              # peak dBFS against the music (default -9); it stops at the cut
+[[model.shot]]
+source = "still"              # a picture from the model's out/ (one frame, pushed in)
+file = "renders/tower_close.png"
+push = 0.14                   # how far it creeps in over the shot (default 0.04)
+beats = 3
+[[model.shot]]
+source = "mechanism"
+at = 60
+lead = 1
+zoom = 1.8                    # crop in (plates are 1080: up to about 1.8 stays crisp enough)...
+focus = [0.5, 0.47]           # ...about this point of the frame (0..1), kept off the edges
+beats = 3
 ```
 The sound is `video/audio.py`'s: the track as a bed (`cues["track"]`: balanced to the same
 level as the synthesised music, faded out at the reel's end, which is the bar where the music
 ends), the models' own sounds ducking it, clicks on the cuts, pops on the chips, snaps on the
 slams, mastered to -16 LUFS / -2 dBTP (the AAC encode adds a few tenths; the file stays
-under -1.5 dBTP). The track, whoosh and clunk are ElevenLabs'
-(`showreel/audio/sfx.toml`: a `[[music]]` entry goes through the music API - prompt, seconds,
-instrumental - and `[[sfx]]` through sound generation, as for a model: `python
-tools/elevenlabs_sfx.py showreel/audio`). To choose a shot's `at`, look through the plates
-(for example the frame a lamp snaps on or a door lands) and preview with `--stills`.
+under -1.5 dBTP). The encoded track is then decoded and compared with the WAV: ffmpeg's own
+AAC encoder sometimes puts a click (a burst 10 dB or more over a quiet, wide passage) into
+this reel's mix, so on a burst or a true peak over -1.5 dBTP the sound is encoded again, the
+video copied, with AudioToolbox's AAC (`aac_at`, macOS) where ffmpeg has it, else other
+settings (`check_sound`). The models' own showreels had no bursts when checked. The track, whoosh, clunk and clock bell are ElevenLabs'
+(`showreel/audio/sfx.toml`: a `[[music]]` entry goes through the music API - a prompt and
+seconds, or a composition plan: `styles`, `avoid`, `bpm` and `[[music.section]]` name, bars,
+styles, avoid, each section held to its length - and `[[sfx]]` through sound generation, as
+for a model: `python tools/elevenlabs_sfx.py showreel/audio`). Check a new track's structure
+before laying sections on it (its bars' energy by band, from the detected beats): the plan's
+sections are a request, not a promise (`track_long_1` came back with its drop and two 8-bar
+phrases but no breakdown, hence the filter break under the ferret). To choose a shot's
+`at`, look through the plates (for example the frame a lamp snaps on or a door lands; a
+mechanism's timing comes from its program, so it survives the model being rebuilt) and
+preview with `--stills`.
 
 ## Shape helpers
 `brickkit.shapes.rings`: `ring_cells(r_out, r_in)`, `pack_cells(cells, lengths, offset, mode)`

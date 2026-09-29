@@ -5,7 +5,9 @@
 
 title = "Bricks"
 url = "bricks.superfun.games"
-music = "audio/track_1.mp3"     # ElevenLabs music (audio/sfx.toml); its beats are detected
+music = "audio/track_long_1.mp3"   # ElevenLabs music (audio/sfx.toml): 4 bars of intro, the
+                                  # drop at bar 4, fills at the ends of bars 11 and 19, the
+                                  # final hit on bar 22; its beats are detected
 bpm = 128                       # what it was asked for (a hint for the beat tracker)
 whoosh = "audio/whoosh_1.mp3"   # on every wipe
 line = "{n} models · {pieces} pieces|every brick checked"
@@ -91,6 +93,7 @@ caption = "White shell colourway"
 [[model]]
 slug = "ferret"
 bars = 2
+break = true                    # the kick and bass drop out: the drop comes back on the next
 chips = ["pieces", "headline"]
 [[model.shot]]
 source = "build"
@@ -109,6 +112,45 @@ source = "turntable"
 from = 0.35
 speed = 2.0
 beats = 3
+
+[[model]]
+slug = "caldwell_courthouse"
+name = "Caldwell County Courthouse"   # "The ..." makes the tags too long
+bars = 3                        # the second phrase opens on it, after the ferret's break
+chips = ["pieces", "headline"]
+[[model.shot]]
+source = "build"
+from = 0.15
+to = 1.0
+beats = 3
+[[model.shot]]
+source = "still"                # the clock close-up, a bell on the cut
+file = "renders/tower_close.png"
+push = 0.14
+beats = 3
+caption = "Real quartz clocks"
+sfx = "audio/clock_bell_2.mp3"
+sfx_align = "peak"
+sfx_level = -12.0               # it rings on: its peak well down, or it swamps the section
+[[model.shot]]
+source = "mechanism"            # into the tower: the dome lifting, fastest on the beat
+at = 60                         # set by the mechanism's program, not the roof: the top lifts
+lead = 1                        # over pose t 0.35..1 = frames ~49-79 of the 6 s segment
+zoom = 1.8                      # the tower is on the model's axis: the middle, near the top
+focus = [0.5, 0.47]
+beats = 3
+caption = "Lift-off dome"
+sfx = "audio/whoosh_2.mp3"
+sfx_align = "peak"
+sfx_level = -8.0
+[[model.shot]]
+source = "colourways@brownstone"   # its colourway: reddish brown trim
+from = 0.0
+to = 1.0
+zoom = 1.6
+focus = [0.49, 0.36]
+beats = 3
+caption = "Brownstone colourway"
 
 [[model]]
 slug = "chainsaw_face"

@@ -6,7 +6,8 @@
  *   sz_model   one model: its footage (build time-lapse, signature moment, turntable, ...)
  *              punched on the beats, its name slammed onto yellow labels, an index tag, stat
  *              chips, a caption typed on
- *   sz_finale  the models' turntables in a 2 x 2 grid popping in on the beats; the line
+ *   sz_finale  the models' turntables popping into a grid (2 x 2 for four, 3 + 2 for five) on
+ *              the beats; the line
  *   sz_outro   the logo, the URL typed onto a yellow pill, the small print
  * The site's look throughout: Inter set tight, Menlo caps for small labels, brand yellow, ink,
  * cream and brick red.
@@ -26,26 +27,44 @@ function punch(f, beats, amt = 0.028, len = 6) {
   for (const b of beats || []) { const t = f - b; if (t >= 0 && t < len) p = Math.max(p, Math.pow(1 - t / len, 2)); }
   return 1 + amt * p;
 }
-function coverImg(bm, sc = 1, dx = 0, dy = 0) {
+// the frame filling the canvas, scaled about its middle, or about `focus` ([x, y], 0..1 of
+// the frame, kept in the middle as far as the edges allow)
+function coverImg(bm, sc = 1, dx = 0, dy = 0, focus = null) {
   if (!bm) { CX.fillStyle = '#2A2824'; CX.fillRect(0, 0, L, L); return; }
   CX.save();
-  CX.translate(L / 2 + dx, L / 2 + dy); CX.scale(sc, sc); CX.translate(-L / 2, -L / 2);
+  if (focus && sc > 1) {
+    const h = 0.5 / sc;
+    CX.translate(L / 2 + dx, L / 2 + dy); CX.scale(sc, sc);
+    CX.translate(-clamp(focus[0], h, 1 - h) * L, -clamp(focus[1], h, 1 - h) * L);
+  } else {
+    CX.translate(L / 2 + dx, L / 2 + dy); CX.scale(sc, sc); CX.translate(-L / 2, -L / 2);
+  }
   CX.drawImage(bm, 0, 0, L, L);
   CX.restore();
 }
-// words that fit a width, at most `size`, broken into lines at spaces (balanced)
+// words that fit a width, at most `size`, broken into lines at spaces (balanced): two lines,
+// or three when a long name would come out much smaller on two
 function szLines(str, size, maxW, weight = 800) {
   const up = UP(str);
-  const w1 = measure(up, font(size, weight), -size * 0.028);
-  if (w1 <= maxW || !up.includes(' ')) return { lines: [up], size: Math.min(size, fitSize(up, size, maxW, weight, null, -0.028)) };
+  const wid = t => measure(t, font(size, weight), -size * 0.028);
+  if (wid(up) <= maxW || !up.includes(' ')) return { lines: [up], size: Math.min(size, fitSize(up, size, maxW, weight, null, -0.028)) };
   const words = up.split(' ');
   let best = null;
   for (let i = 1; i < words.length; i++) {
     const a = words.slice(0, i).join(' '), b = words.slice(i).join(' ');
-    const w = Math.max(measure(a, font(size, weight), -size * 0.028), measure(b, font(size, weight), -size * 0.028));
+    const w = Math.max(wid(a), wid(b));
     if (!best || w < best[0]) best = [w, [a, b]];
   }
-  return { lines: best[1], size: Math.min(size, Math.floor(size * maxW / best[0])) };
+  const two = { lines: best[1], size: Math.min(size, Math.floor(size * maxW / best[0])) };
+  if (two.size >= 0.8 * size || words.length < 3) return two;
+  let b3 = null;
+  for (let i = 1; i < words.length - 1; i++) for (let j = i + 1; j < words.length; j++) {
+    const ls = [words.slice(0, i), words.slice(i, j), words.slice(j)].map(x => x.join(' '));
+    const w = Math.max(...ls.map(wid));
+    if (!b3 || w < b3[0]) b3 = [w, ls];
+  }
+  const three = { lines: b3[1], size: Math.min(size, Math.floor(size * maxW / b3[0])) };
+  return three.size > two.size * 1.1 ? three : two;
 }
 // a word slams in: big to size with a little overshoot and motion smear
 function slamWord(w, x, y, size, col, k, align = 'left', weight = 800) {
@@ -97,7 +116,7 @@ SEG.sz_open = {
     const c = SZ();
     const cards = s.cards;
     const teaser = s.teaser.find(t => f >= t.start && f < t.end);
-    if (teaser) {                                   // one beat per model: its cut-out on a card
+    if (teaser) {                                   // a card per model: its cut-out
       const k = s.teaser.indexOf(teaser);
       const bg = [c.Y, c.K, c.R, c.P][k % 4], ink = [c.K, c.Y, c.P, c.K][k % 4];
       CX.fillStyle = bg; CX.fillRect(0, 0, L, L);
@@ -172,7 +191,8 @@ SEG.sz_model = {
     const sh = szShot(s, f);
     const k = s.shots.indexOf(sh);
     const prog = ramp(f, sh.start, sh.end);
-    coverImg(bm, (1 + 0.04 * prog) * punch(f, s.beats));
+    coverImg(bm, (sh.zoom || 1) * (1 + (sh.push === undefined ? 0.04 : sh.push) * prog) * punch(f, s.beats),
+      0, 0, sh.focus || null);
     // legibility: a soft darkening at the bottom and the top-left
     const g = CX.createLinearGradient(0, L * 0.55, 0, L);
     g.addColorStop(0, 'rgba(0,0,0,0)'); g.addColorStop(1, 'rgba(0,0,0,0.5)');
@@ -194,7 +214,9 @@ SEG.sz_model = {
       const n = fit.lines.length;
       const yb = L - M - 30 - (n - 1) * lh;
       fit.lines.forEach((ln, i) => {
-        const t0 = s.beats[Math.min(i, s.beats.length - 1)] + i * 2;
+        // a line a beat; three lines come on the eighths, so the last one has time to read
+        const t0 = n > 2 ? s.beats[0] + i * (Math.round(D.beat / 2) + 1)
+                         : s.beats[Math.min(i, s.beats.length - 1)] + i * 2;
         const q = clamp((f - t0) / 7);
         if (q <= 0) return;
         const fnt = font(size, 800), sp = -size * 0.028;
@@ -228,6 +250,22 @@ SEG.sz_model = {
 };
 
 // ------------------------------------------------------------------------------ finale
+// the grid: 2 x 2 up to four, three across up to nine, then four; the last row centred. The
+// block is as wide as the frame; it starts centred (scaled to fit) and moves into the top
+// `top` of the frame when the line comes in.
+function szGrid(n, top = 0.72, gap = 14) {
+  const cols = n <= 4 ? 2 : n <= 9 ? 3 : 4, rows = Math.ceil(n / cols);
+  const cs = (L - (cols + 1) * gap) / cols;
+  const H = rows * cs + (rows + 1) * gap;
+  const cells = [];
+  for (let i = 0; i < n; i++) {
+    const r = Math.floor(i / cols), inRow = Math.min(cols, n - r * cols);
+    const x = gap + (i % cols) * (cs + gap) + (cols - inRow) * (cs + gap) / 2;
+    cells.push({ x, y: gap + r * (cs + gap) });
+  }
+  const s0 = Math.min(1, L / H), s1 = Math.min(s0, top * L / H);
+  return { cols, rows, cs, cells, s0, s1, y0: (L - H * s0) / 2, y1: (top * L - H * s1) / 2 };
+}
 SEG.sz_finale = {
   async prepare(f, s) {
     const out = [];
@@ -240,25 +278,28 @@ SEG.sz_finale = {
   draw(f, s, bms) {
     const c = SZ();
     CX.fillStyle = c.P; CX.fillRect(0, 0, L, L);
-    const gap = 14, cs = (L - 3 * gap) / 2;
+    const G = szGrid(s.cells.length), cs = G.cs;
+    const u = cs / 519;                          // the tags and corners scale with the cell
     const pz = punch(f, s.beats, 0.012);
     const la = s.line_at;
     const room = E.inOutCubic(ramp(f, la[0] - 8, la[0] + 6));    // the grid moves up for the line
-    const gs = lerp(1, 0.72, room);
-    CX.save(); CX.translate(L / 2, 0); CX.scale(gs * pz, gs * pz); CX.translate(-L / 2, 0);
+    const gs = lerp(G.s0, G.s1, room);
+    CX.save(); CX.translate(L / 2, lerp(G.y0, G.y1, room)); CX.scale(gs * pz, gs * pz); CX.translate(-L / 2, 0);
     s.cells.forEach((cell, i) => {
-      const x = gap + (i % 2) * (cs + gap), y = gap + Math.floor(i / 2) * (cs + gap);
+      const { x, y } = G.cells[i];
       const q = E.spring(clamp((f - cell.at) / 12), 1.6, 6);
       if (f < cell.at) {
-        CX.fillStyle = mix(c.P, c.K, 0.06); rrect(x, y, cs, cs, 18); CX.fill();
+        CX.fillStyle = mix(c.P, c.K, 0.06); rrect(x, y, cs, cs, 18 * u); CX.fill();
         return;
       }
       CX.save();
       CX.translate(x + cs / 2, y + cs / 2); CX.scale(0.7 + 0.3 * q, 0.7 + 0.3 * q); CX.translate(-cs / 2, -cs / 2);
-      CX.beginPath(); CX.roundRect(0, 0, cs, cs, 18); CX.clip();
+      CX.beginPath(); CX.roundRect(0, 0, cs, cs, 18 * u); CX.clip();
       if (bms[i]) CX.drawImage(bms[i], 0, 0, cs, cs);
       CX.restore();
-      tag(UP(cell.name), x + 22, y + cs - 38, { alpha: clamp((f - cell.at - 4) / 6), size: 23 });
+      const nm = UP(cell.name), fitW = cs - 44 * u - 28;          // the name fits its cell
+      const ts = Math.min(23 * u, 23 * u * fitW / Math.max(1, labelWidth(nm, 23 * u)));
+      tag(nm, x + 22 * u, y + cs - 38 * u, { alpha: clamp((f - cell.at - 4) / 6), size: ts });
     });
     CX.restore();
     // the line, on an ink band under the grid

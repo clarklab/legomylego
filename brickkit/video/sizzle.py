@@ -9,13 +9,15 @@ ElevenLabs made from showreel/audio/sfx.toml) the beats are found in the track i
 (video/beats.py: tempo, beat times, which beat starts the bar); without it a fixed grid at
 `bpm` drives the house synth instead. The timeline is counted in bars of that grid:
 
-    open     the logo, the tagline slammed word by word on the beats, then one beat per model
-             (its cut-out on a coloured card): a teaser before the drop
+    open     the logo, the tagline slammed word by word on the beats, then the open's last
+             bar shared out between the models on the grid (one beat each for four; five go
+             1/2, 1/2, 1, 1, 1): each one's cut-out on a coloured card, a teaser before the drop
     model    per model: its name slams over a few quick cuts of its own footage - the build
              time-lapse sped up, its signature moment (the key frame of it on a beat), its
              turntable, ... - with a stat chip or two and a caption
-    finale   the models' turntables in a 2 x 2 grid popping in on the beats, the line
-             ("4 models · 5,020 pieces · every brick checked")
+    finale   the models' turntables popping into a grid across the first bar (2 x 2 up to
+             four; three across past that, the last row centred), the line
+             ("5 models · 7,953 pieces · every brick checked")
     outro    the logo, the URL typed onto a yellow pill, the small print
 
 Footage is each model's own, read-only: the video's cached plates (out/video_frames/full/
@@ -23,16 +25,21 @@ Footage is each model's own, read-only: the video's cached plates (out/video_fra
 copied (as JPEG) into DIR/work/footage first, so a showreel re-rendering alongside doesn't
 matter. The compositor is the showreels' (web/, a sizzle.html page with web/sizzle.js); the
 sound is audio.py's: the music bed, the models' own recorded sounds and the house SFX on the
-cuts, mastered to -16 LUFS / -2 dBTP (so the AAC encode stays under -1.5).
+cuts, mastered to -16 LUFS / -2 dBTP (so the AAC encode stays under -1.5); the encoded
+track is decoded and checked against the WAV for the AAC encoder's occasional clicks
+(check_sound), and encoded again if it has one.
 
 Config (showreel/sizzle.toml), shots in beats of the grid:
 
     title, url, tagline, line, music, bpm, [theme] overrides
     [timeline]   open, finale, outro (bars); open_words = [[word, beat], ...]
-    [[model]]    slug, bars, caption, chips (pieces | headline | steps | colours)
-                 [[model.shot]] source (build | turntable | <any plate segment>), beats,
-                 from/to (0..1 of the source) or at (a frame) + lead (beats before it lands),
-                 speed, caption, sfx (a sound file) + sfx_align ("start" | "peak")
+    [[model]]    slug, bars, caption, chips (pieces | headline | steps | colours), name (to
+                 show instead of the model's), break (the music's kick and bass drop out
+                 under the section: a filter break, back on the next section's first beat)
+                 [[model.shot]] source (build | turntable | <any plate segment> | still +
+                 file, a picture in the model's out/), beats, from/to (0..1 of the source) or
+                 at (a frame) + lead (beats before it lands), speed, zoom + focus (crop in),
+                 push, caption, sfx (a sound file) + sfx_align ("start" | "peak")
 """
 from __future__ import annotations
 
@@ -90,7 +97,7 @@ def model_info(slug: str, models_dir: Path | None = None) -> dict:
     m = r["model"]
     return {"slug": slug, "name": m["name"], "pieces": int(m["pieces"]), "steps": int(m["steps"]),
             "colours": int(m.get("colours", 0)), "headline": list(m["headline"]),
-            "notice": m.get("notice", ""), "plates": plates, "work": str(work),
+            "notice": m.get("notice", ""), "plates": plates, "work": str(work), "out": str(out_dir),
             "turntable": str(out_dir / "turntable.mp4") if (out_dir / "turntable.mp4").exists() else None,
             "hero": str(out_dir / "video_frames" / "hero_cut" / "hero.png")
             if (out_dir / "video_frames" / "hero_cut" / "hero.png").exists() else None}
@@ -169,6 +176,8 @@ def _source_frames(info: dict, src: str) -> tuple[int, int]:
     """(frames, number of the first) of a footage source."""
     if src == "turntable":
         return int(12 * FPS), 0                     # the loop, at 30 fps after extraction
+    if src.startswith("still-"):
+        return 1, 0                                 # a picture: one frame, pushed in
     if src not in info["plates"]:
         raise SystemExit(f"{info['slug']}: no {src!r} footage (has {', '.join(info['plates'])})")
     return info["plates"][src]["n"], info["plates"][src]["first"]
@@ -179,8 +188,13 @@ def plan_shot(info: dict, shot: dict, start: int, end: int, beat_len: float,
     """Which footage frame shows at each output frame of a shot: {src, start, end, from,
     speed, key?}. `at` + `lead`: frame `at` of the source lands `lead` beats in (on output
     frame `key` when given: the grid's beat, else `lead` average beats after `start`), at
-    `speed` (default 1); else from/to (fractions of the source) spread over the shot."""
+    `speed` (default 1); else from/to (fractions of the source) spread over the shot. A
+    `file` (source "still": a picture in the model's out/, e.g. renders/tower_close.png) is
+    one frame. `zoom` and `focus` ([x, y], 0..1 of the frame: the point kept in the middle)
+    crop into the footage; `push` is how far it creeps in over the shot (default 0.04)."""
     src = shot["source"]
+    if src == "still":
+        src = "still-" + Path(str(shot["file"])).stem
     n, first = _source_frames(info, src)
     length = max(1, end - start)
     if "at" in shot:                                # `at` counts from the segment's start
@@ -198,6 +212,13 @@ def plan_shot(info: dict, shot: dict, start: int, end: int, beat_len: float,
             speed = (b - a) / length
         out = {"from": a, "speed": speed}
     out.update(src=src, start=start, end=end, n=n, first=first)
+    if src.startswith("still-"):
+        out["file"] = str(shot["file"])
+    for k in ("zoom", "push"):
+        if k in shot:
+            out[k] = float(shot[k])
+    if "focus" in shot:
+        out["focus"] = [float(v) for v in shot["focus"]]
     return out
 
 
@@ -205,6 +226,28 @@ def frame_of(shot: dict, f: int) -> int:
     """The source frame a planned shot shows at output frame f (clamped to the footage)."""
     k = shot["from"] + (f - shot["start"]) * shot["speed"]
     return int(np.clip(math.floor(k + 0.5), 0, shot["n"] - 1))     # as the page's Math.round
+
+
+def spread(n: int, beats: int = 4, long_first: bool = True) -> list[tuple[float, float]]:
+    """n hits over `beats` beats on the grid: (start, length) in beats. One a beat when there
+    are as many beats (4 in 4), else eighths shared out (sixteenths past 2 a beat), the longer
+    ones first (5 in 4: 1, 1, 1, 1/2, 1/2 - an accelerating fill) or last (1/2, 1/2, 1, 1, 1:
+    the last one holds a whole beat, as under a wipe)."""
+    if n <= 0:
+        return []
+    unit = 1.0 if n <= beats else 0.5 if n <= 2 * beats else 0.25
+    units = int(round(beats / unit))
+    base, extra = divmod(units, n)
+    if base == 0:                                   # more hits than sixteenths: just split it
+        return [(beats * k / n, beats / n) for k in range(n)]
+    lens = [base + (1 if k < extra else 0) for k in range(n)]
+    if not long_first:
+        lens.reverse()
+    out, t = [], 0
+    for ln in lens:
+        out.append((t * unit, ln * unit))
+        t += ln
+    return out
 
 
 def chip_values(info: dict, which) -> list[dict]:
@@ -221,6 +264,7 @@ def plan(cfg: dict, infos: dict, g: dict) -> dict:
     """The reel: segments with their shots and graphics, transitions, and the cue sheet."""
     tl = cfg.get("timeline") or {}
     models = [m for m in cfg["model"] if m["slug"] in infos]
+    name = {m["slug"]: str(m.get("name") or infos[m["slug"]]["name"]) for m in models}
     bar = 0
     segs = []
     beat_len = (g["beats"][-1] - g["beats"][0]) / max(1, len(g["beats"]) - 1)
@@ -228,11 +272,11 @@ def plan(cfg: dict, infos: dict, g: dict) -> dict:
     ob = int(tl.get("open", 4))
     words = [[w, _beat(g, 0, float(b))] for w, b in tl.get("open_words", [])]
     teaser = []
-    tb = ob - 1                                    # the open's last bar: one beat a model
-    for k, m in enumerate(models[:4]):
-        a = _beat(g, tb, k * 4 / max(1, len(models[:4])))
-        e = _beat(g, tb, (k + 1) * 4 / max(1, len(models[:4])))
-        teaser.append({"slug": m["slug"], "name": infos[m["slug"]]["name"], "start": a, "end": e})
+    tb = ob - 1                                    # the open's last bar: a card a model,
+    # sharing the bar on the grid, the quick ones first (the last is half under the wipe)
+    for m, (t0, ln) in zip(models, spread(len(models), 4, long_first=False)):
+        teaser.append({"slug": m["slug"], "name": name[m["slug"]], "start": _beat(g, tb, t0),
+                       "end": _beat(g, tb, t0 + ln)})
     segs.append({"name": "sz_open", "kind": "gfx", "start": 0, "end": _bar(g, ob),
                  "logo": _beat(g, 0, 0), "words": words, "teaser": teaser,
                  "cards": [_bar(g, k) for k in range(ob)]})
@@ -261,7 +305,8 @@ def plan(cfg: dict, infos: dict, g: dict) -> dict:
         chips = chip_values(info, m.get("chips", ["pieces", "headline"]))
         chip_at = [_beat(g, bar, 4 + 2 * k) for k in range(len(chips))]
         segs.append({"name": "sz_model", "kind": "gfx", "start": a, "end": e, "slug": m["slug"],
-                     "title": info["name"], "index": idx + 1, "count": len(models),
+                     "title": name[m["slug"]], "index": idx + 1, "count": len(models),
+                     "break": bool(m.get("break", False)),
                      "shots": shots, "chips": [dict(c, at=f) for c, f in zip(chips, chip_at)],
                      "caption": m.get("caption", ""),
                      "beats": [_beat(g, bar, k) for k in range(4 * nb)]})
@@ -273,9 +318,10 @@ def plan(cfg: dict, infos: dict, g: dict) -> dict:
     pieces = sum(infos[m["slug"]]["pieces"] for m in models)
     line = str(cfg.get("line", "{n} models · {pieces} pieces|every brick checked"))
     line = line.format(n=n_models, pieces=f"{pieces:,}")
+    hits = [t for t, _ in spread(n_models, 4)]   # the cells pop in across the first bar
     segs.append({"name": "sz_finale", "kind": "gfx", "start": a, "end": e,
-                 "cells": [{"slug": m["slug"], "name": infos[m["slug"]]["name"],
-                            "at": _beat(g, bar, k), "from": 0.25 * k} for k, m in enumerate(models[:4])],
+                 "cells": [{"slug": m["slug"], "name": name[m["slug"]], "at": _beat(g, bar, t),
+                            "from": k / max(4, n_models)} for k, (m, t) in enumerate(zip(models, hits))],
                  "line": line.split("|"), "line_at": [_beat(g, bar + 1, 2 * k) for k in range(len(line.split("|")))],
                  "pieces": pieces, "count": n_models, "beats": [_beat(g, bar, k) for k in range(4 * fb)]})
     bar += fb
@@ -369,13 +415,19 @@ def cue_sheet(reel: dict, g: dict, cfg: dict) -> dict:
     total = reel["frames"]
     cues = {"fps": FPS, "frames": total, "beat_frames": reel["beat"], "style": "brand",
             "seed": 2024, "events": sorted(ev, key=lambda e: e["frame"])}
+    breaks = [s for s in reel["segments"] if s.get("break")]
     if g.get("track"):
         cues["sections"] = [{"name": "sizzle", "start": 0, "end": total, "mood": "cold"}]
         cues["track"] = {"path": g["track"], "fade_out": 0.4}
+        if breaks:                                 # the kick and bass out, a sweep into the drop
+            cues["track"]["breaks"] = [{"start": s["start"], "end": s["end"], "hz": 320.0,
+                                        "rise": reel["beat"], "to": 1200.0, "gain": 2.5}
+                                       for s in breaks]
     else:                                          # the house synth, section by section
         moods = {"sz_open": "rise", "sz_model": "groove", "sz_finale": "feature", "sz_outro": "end"}
         cues["sections"] = [{"name": s["name"], "start": s["start"], "end": s["end"],
-                             "mood": moods[s["name"]]} for s in reel["segments"]]
+                             "mood": "breakdown" if s.get("break") else moods[s["name"]]}
+                            for s in reel["segments"]]
     if samples:
         cues["samples"] = samples
     return cues
@@ -385,16 +437,18 @@ def cue_sheet(reel: dict, g: dict, cfg: dict) -> dict:
 def footage(reel: dict, infos: dict, work: Path, size: int, log=print) -> None:
     """Copy the frames the reel shows into work/footage/<slug>/<source>/<k>.jpg (and each
     model's turntable at 30 fps, its hero cut-out), rewriting the plan's shots to the URLs."""
-    from PIL import Image
+    from PIL import Image, ImageOps
     root = work / "footage"
     need: dict[tuple, set] = {}
-    first = {}
+    first, shots_file = {}, {}
     for s in reel["segments"]:
         if s["name"] == "sz_model":
             for sh in s["shots"]:
                 ks = {frame_of(sh, f) for f in range(sh["start"], sh["end"])}
                 need.setdefault((s["slug"], sh["src"]), set()).update(ks)
                 first[(s["slug"], sh["src"])] = sh.get("first", 0)
+                if sh.get("file"):
+                    shots_file[(s["slug"], sh["src"])] = sh["file"]
         if s["name"] in ("sz_finale",):
             for c in s["cells"]:
                 need.setdefault((c["slug"], "turntable"), set())
@@ -403,6 +457,14 @@ def footage(reel: dict, infos: dict, work: Path, size: int, log=print) -> None:
         info = infos[slug]
         d = root / slug / src
         d.mkdir(parents=True, exist_ok=True)
+        if src.startswith("still-"):                # a picture, as the one frame
+            pic = Path(info["out"]) / shots_file[(slug, src)]
+            dst = d / "00000.jpg"
+            if not dst.exists() or dst.stat().st_mtime < pic.stat().st_mtime:
+                with Image.open(pic) as im:
+                    ImageOps.fit(im.convert("RGB"), (size, size), Image.LANCZOS).save(dst, quality=92)
+                n_new += 1
+            continue
         if src == "turntable":
             stamp = d / ".source"
             tt = Path(info["turntable"])
@@ -430,6 +492,61 @@ def footage(reel: dict, infos: dict, work: Path, size: int, log=print) -> None:
             if not dst.exists() or dst.stat().st_mtime < Path(info["hero"]).stat().st_mtime:
                 shutil.copyfile(info["hero"], dst)
     log(f"footage: {n_new} frames copied into {root}")
+
+
+# ---------------------------------------------------------------------------- the sound, encoded
+def _decode(mp4: Path, sr: int = 48000) -> np.ndarray:
+    raw = subprocess.run(["ffmpeg", "-v", "error", "-i", str(mp4), "-vn", "-ac", "2", "-ar",
+                          str(sr), "-f", "f32le", "-"], capture_output=True, check=True).stdout
+    return np.frombuffer(raw, "<f4").reshape(-1, 2).astype(float)
+
+
+def encoded_faults(mp4: Path, wav: Path, sr: int = 48000) -> tuple[float, list[float]]:
+    """(true peak in dBTP, times of bursts) of a video's sound track as a player decodes it,
+    against the WAV it was made from: a burst is a 20 ms stretch where the decoded sound is
+    off by more than -26 dBFS and by more than twice the source's own peak (a click)."""
+    from .audio import load_sample, true_peak_db
+    b = _decode(mp4, sr)
+    a = load_sample(wav, sr)
+    n, w = min(len(a), len(b)), sr // 50
+    bursts = []
+    for i in range(0, n - w, w):
+        e, pk = np.abs(b[i:i + w] - a[i:i + w]).max(), np.abs(a[i:i + w]).max()
+        if e > 0.05 and e > 2 * pk:
+            bursts.append(round(i / sr, 2))
+    return true_peak_db(b, sr), bursts
+
+
+def _aac_options() -> list[list[str]]:
+    enc = subprocess.run(["ffmpeg", "-hide_banner", "-encoders"], capture_output=True,
+                         text=True).stdout
+    out = [["-c:a", "aac_at", "-b:a", "192k"]] if " aac_at " in enc else []   # macOS's own
+    return out + [["-c:a", "aac", "-b:a", "192k", "-aac_coder", "fast"],
+                  ["-c:a", "aac", "-b:a", "256k"]]
+
+
+def check_sound(mp4: Path, wav: Path, ceiling: float = -1.5, log=print) -> float:
+    """ffmpeg's own AAC encoder now and then puts a burst into a quiet, wide passage (+10 dB
+    or more: a click, the same input, the same burst; the reel's filter break and open have
+    had them). Decode the track and compare it with the WAV; on a burst or a true peak over
+    the ceiling, encode the sound again (the video copied): AudioToolbox's AAC where ffmpeg
+    has it, else other settings, until it's clean. Returns the true peak left in `mp4`."""
+    tp, bursts = encoded_faults(mp4, wav)
+    if tp <= ceiling and not bursts:
+        return tp
+    tmp = mp4.with_name(mp4.stem + ".sound.mp4")
+    for opts in _aac_options():
+        subprocess.run(["ffmpeg", "-v", "error", "-y", "-i", str(mp4), "-i", str(wav), "-map", "0:v",
+                        "-map", "1:a", "-c:v", "copy", *opts, "-shortest", "-movflags", "+faststart",
+                        str(tmp)], check=True)
+        t2, b2 = encoded_faults(tmp, wav)
+        log(f"sound: the AAC encode had {len(bursts)} burst(s), true peak {tp:.1f} dBTP; "
+            f"again with {' '.join(opts[1:])}: {len(b2)}, {t2:.1f} dBTP")
+        if t2 <= ceiling and not b2:
+            tmp.replace(mp4)
+            return t2
+    tmp.unlink(missing_ok=True)
+    return tp
 
 
 # ---------------------------------------------------------------------------- make it
@@ -493,6 +610,8 @@ def make_sizzle(config: Path = CONFIG, slugs: list[str] | None = None, out: Path
 
     compose(frames, size, reel, roots, sink, workers=workers, log=log, page="sizzle.html")
     enc.close()
+    if wav is not None:
+        log(f"sound in the video: true peak {check_sound(mp4, wav, log=log):.1f} dBTP")
     contact_sheet(thumbs, out / ("sizzle_contact_preview.jpg" if preview else "sizzle_contact.jpg"), FPS)
     if "a" in poster and not preview:
         Image.fromarray(poster["a"]).save(out / "sizzle_poster.jpg", quality=90)

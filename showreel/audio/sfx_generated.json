@@ -1,4 +1,30 @@
 {
+ "clock_bell_1.mp3": {
+  "bytes": 60857,
+  "generated": "2026-09-28",
+  "loop": false,
+  "model_id": "eleven_text_to_sound_v2",
+  "name": "clock_bell",
+  "output_format": "mp3_44100_192",
+  "prompt": "A bright, clean clock tower chime: a single strike of a bronze bell with a clear attack and a shimmering ring that fades out, cheerful rather than ominous, recorded close, no ticking, no music, no voices.",
+  "prompt_influence": 0.6,
+  "seconds": 2.5,
+  "sha1": "f8ce7a2baf9360d63dd951738938fadb82df4695",
+  "source": "ElevenLabs sound generation API (Creator plan)"
+ },
+ "clock_bell_2.mp3": {
+  "bytes": 60857,
+  "generated": "2026-09-28",
+  "loop": false,
+  "model_id": "eleven_text_to_sound_v2",
+  "name": "clock_bell",
+  "output_format": "mp3_44100_192",
+  "prompt": "A bright, clean clock tower chime: a single strike of a bronze bell with a clear attack and a shimmering ring that fades out, cheerful rather than ominous, recorded close, no ticking, no music, no voices.",
+  "prompt_influence": 0.6,
+  "seconds": 2.5,
+  "sha1": "dfab67a7b516973b52436ef530d206645872cc3c",
+  "source": "ElevenLabs sound generation API (Creator plan)"
+ },
  "track_1.mp3": {
   "bytes": 960813,
   "generated": "2026-09-28",
@@ -10,6 +36,101 @@
   "prompt_influence": 0.0,
   "seconds": 40.0,
   "sha1": "850f008bfa6487a3c0c84b9cf51db141dffe7a6f",
+  "source": "ElevenLabs music API (Creator plan)"
+ },
+ "track_long_1.mp3": {
+  "bytes": 1080045,
+  "generated": "2026-09-28",
+  "loop": false,
+  "model_id": "music_v1",
+  "name": "track_long",
+  "output_format": "mp3_48000_192",
+  "plan": {
+   "negative_global_styles": [
+    "vocals",
+    "tempo changes",
+    "slow ballad",
+    "lo-fi",
+    "acoustic guitar",
+    "dark or sad mood"
+   ],
+   "positive_global_styles": [
+    "upbeat modern electronic pop instrumental",
+    "exactly 128 BPM, 4/4, steady tempo",
+    "punchy four-on-the-floor kick",
+    "crisp claps on 2 and 4",
+    "bright plucky synth hook",
+    "driving sidechained bass",
+    "shiny percussion",
+    "confident, playful, fun",
+    "polished modern production for a fast product sizzle reel"
+   ],
+   "sections": [
+    {
+     "duration_ms": 7500,
+     "lines": [],
+     "negative_local_styles": [],
+     "positive_local_styles": [
+      "the hook filtered and building",
+      "lighter kick and claps from the first beat",
+      "in the last bar the drums drop out for a quick riser and snare fill into the drop"
+     ],
+     "section_name": "Intro"
+    },
+    {
+     "duration_ms": 16875,
+     "lines": [],
+     "negative_local_styles": [],
+     "positive_local_styles": [
+      "the full groove hits on the first beat",
+      "four-on-the-floor kick and sidechained bass",
+      "the plucky hook in full",
+      "a short drum fill at the end of every third bar"
+     ],
+     "section_name": "Drop"
+    },
+    {
+     "duration_ms": 3750,
+     "lines": [],
+     "negative_local_styles": [
+      "kick drum"
+     ],
+     "positive_local_styles": [
+      "kick and bass drop out",
+      "the hook and claps continue softly",
+      "a riser building into the chorus"
+     ],
+     "section_name": "Breakdown"
+    },
+    {
+     "duration_ms": 11250,
+     "lines": [],
+     "negative_local_styles": [],
+     "positive_local_styles": [
+      "bigger chorus: everything back in on the first beat",
+      "brighter hook with extra layers",
+      "the most energetic part",
+      "a fill at the end of the third bar"
+     ],
+     "section_name": "Chorus"
+    },
+    {
+     "duration_ms": 5625,
+     "lines": [],
+     "negative_local_styles": [],
+     "positive_local_styles": [
+      "the groove continues for two bars",
+      "a clean final hit on the first beat of the last bar",
+      "then the hit rings out to silence"
+     ],
+     "section_name": "Outro"
+    }
+   ]
+  },
+  "prompt": "",
+  "prompt_influence": 0.0,
+  "seconds": 45.0,
+  "sha1": "4a4fd552e3007958b0f032eb8a105ff6bffb130c",
   "source": "ElevenLabs music API (Creator plan)"
  },
  "vhs_clunk_1.mp3": {

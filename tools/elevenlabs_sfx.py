@@ -10,7 +10,11 @@ SLUG is a model (models/SLUG/audio/) or a folder holding an sfx.toml (showreel/a
     [[sfx]]                     name, prompt, seconds, variants (default 1), loop (default
                                 false), prompt_influence (overrides the default)
     [[music]]                   name, prompt, seconds, variants, instrumental (default true):
-                                music from POST /v1/music (model music_v1, mp3_48000_192)
+                                music from POST /v1/music (model music_v1, mp3_48000_192);
+                                or, instead of prompt/seconds, a composition plan: styles and
+                                avoid (lists, for the whole track), bpm, and [[music.section]]
+                                name, bars (at bpm) or ms, styles, avoid - the sections are
+                                held to their lengths, so a reel's cuts can be planned on them
 
 and writes models/SLUG/audio/NAME_K.mp3 for K = 1..variants, with sfx_generated.json beside
 them recording the prompt and settings that made each file. Files that exist are skipped, so a
@@ -66,13 +70,18 @@ def manifest(slug: str) -> tuple[Path, list[dict]]:
     base = dict(DEFAULTS, **(cfg.get("defaults") or {}))
     out = []
     for s in cfg.get("music", []):
+        plan = composition_plan(s) if s.get("section") else None
+        seconds = sum(x["duration_ms"] for x in plan["sections"]) / 1000 if plan else float(s["seconds"])
         for k in range(1, int(s.get("variants", 1)) + 1):
-            out.append({"file": f"{s['name']}_{k}.mp3", "name": s["name"], "k": k, "kind": "music",
-                        "prompt": " ".join(str(s["prompt"]).split()),
-                        "seconds": float(s["seconds"]), "loop": False,
-                        "instrumental": bool(s.get("instrumental", True)),
-                        "prompt_influence": 0.0, "model_id": s.get("model_id", "music_v1"),
-                        "output_format": "mp3_48000_192"})
+            it = {"file": f"{s['name']}_{k}.mp3", "name": s["name"], "k": k, "kind": "music",
+                  "prompt": " ".join(str(s.get("prompt", "")).split()),
+                  "seconds": seconds, "loop": False,
+                  "instrumental": bool(s.get("instrumental", True)),
+                  "prompt_influence": 0.0, "model_id": s.get("model_id", "music_v1"),
+                  "output_format": "mp3_48000_192"}
+            if plan:
+                it["plan"] = plan
+            out.append(it)
     for s in cfg.get("sfx", []):
         for k in range(1, int(s.get("variants", 1)) + 1):
             ext = "mp3" if str(base["output_format"]).startswith("mp3") else "bin"
@@ -85,6 +94,25 @@ def manifest(slug: str) -> tuple[Path, list[dict]]:
     if len(out) > MAX_FILES:
         raise SystemExit(f"sfx.toml asks for {len(out)} files; keep it to {MAX_FILES}")
     return d, out
+
+
+def composition_plan(s: dict) -> dict:
+    """A [[music]] entry's sections -> the music API's composition_plan (music_v1): global and
+    per-section styles, each section's length in ms (from bars at `bpm`), no lyrics."""
+    bar_ms = 4 * 60000.0 / float(s.get("bpm", 120))
+    words = lambda v: [" ".join(str(x).split()) for x in (v or [])]
+    avoid = words(s.get("avoid"))
+    if s.get("instrumental", True) and not any("vocal" in a.lower() for a in avoid):
+        avoid.append("vocals")
+    secs = []
+    for x in s["section"]:
+        ms = int(round(float(x["bars"]) * bar_ms)) if "bars" in x else int(x["ms"])
+        if not 3000 <= ms <= 120000:
+            raise SystemExit(f"{s['name']}: section {x['name']!r} is {ms} ms (3000..120000)")
+        secs.append({"section_name": str(x["name"]), "positive_local_styles": words(x.get("styles")),
+                     "negative_local_styles": words(x.get("avoid")), "duration_ms": ms, "lines": []})
+    return {"positive_global_styles": words(s.get("styles")), "negative_global_styles": avoid,
+            "sections": secs}
 
 
 def api_key() -> str:
@@ -102,7 +130,11 @@ def api_key() -> str:
 
 
 def generate(item: dict, key: str, tries: int = 3) -> bytes:
-    if item.get("kind") == "music":
+    if item.get("kind") == "music" and item.get("plan"):
+        body = {"composition_plan": item["plan"], "model_id": item["model_id"],
+                "respect_sections_durations": True}
+        url = f"{MUSIC_API}?output_format={item['output_format']}"
+    elif item.get("kind") == "music":
         body = {"prompt": item["prompt"], "music_length_ms": int(item["seconds"] * 1000),
                 "model_id": item["model_id"], "force_instrumental": item["instrumental"]}
         url = f"{MUSIC_API}?output_format={item['output_format']}"
@@ -152,8 +184,8 @@ def make(slug: str, dry: bool = False) -> None:
         data = generate(it, key)
         (d / it["file"]).write_bytes(data)
         record[it["file"]] = {k: it[k] for k in ("name", "prompt", "seconds", "loop",
-                                                "prompt_influence", "model_id", "output_format")
-                              if k in it}
+                                                "prompt_influence", "model_id", "output_format",
+                                                "plan") if k in it}
         api = "music API" if it.get("kind") == "music" else "sound generation API"
         record[it["file"]].update(generated=date.today().isoformat(), bytes=len(data),
                                   sha1=hashlib.sha1(data).hexdigest(),

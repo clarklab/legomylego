@@ -30,3 +30,51 @@ seconds = 0.8
 variants = 2
 prompt = """A fast, clean, modern swoosh for a video transition: a short airy whoosh that \
 rises and cuts off, no music, no voices."""
+
+# The five-model reel (45 s, 24 bars at 128 BPM): a composition plan, so the music's sections
+# land where the reel's do - the open (4 bars), three models on the drop (3 bars each, a fill
+# at every change), one in the breakdown (2), one on the chorus drop and the finale grid (3 + 3),
+# the outro to a final hit (3).
+[[music]]
+name = "track_long"
+variants = 1
+bpm = 128
+styles = ["upbeat modern electronic pop instrumental", "exactly 128 BPM, 4/4, steady tempo",
+          "punchy four-on-the-floor kick", "crisp claps on 2 and 4", "bright plucky synth hook",
+          "driving sidechained bass", "shiny percussion", "confident, playful, fun",
+          "polished modern production for a fast product sizzle reel"]
+avoid = ["vocals", "tempo changes", "slow ballad", "lo-fi", "acoustic guitar", "dark or sad mood"]
+[[music.section]]
+name = "Intro"
+bars = 4
+styles = ["the hook filtered and building", "lighter kick and claps from the first beat",
+          "in the last bar the drums drop out for a quick riser and snare fill into the drop"]
+[[music.section]]
+name = "Drop"
+bars = 9
+styles = ["the full groove hits on the first beat", "four-on-the-floor kick and sidechained bass",
+          "the plucky hook in full", "a short drum fill at the end of every third bar"]
+[[music.section]]
+name = "Breakdown"
+bars = 2
+styles = ["kick and bass drop out", "the hook and claps continue softly",
+          "a riser building into the chorus"]
+avoid = ["kick drum"]
+[[music.section]]
+name = "Chorus"
+bars = 6
+styles = ["bigger chorus: everything back in on the first beat", "brighter hook with extra layers",
+          "the most energetic part", "a fill at the end of the third bar"]
+[[music.section]]
+name = "Outro"
+bars = 3
+styles = ["the groove continues for two bars", "a clean final hit on the first beat of the last bar",
+          "then the hit rings out to silence"]
+
+[[sfx]]
+name = "clock_bell"
+seconds = 2.5
+variants = 2
+prompt = """A bright, clean clock tower chime: a single strike of a bronze bell with a clear \
+attack and a shimmering ring that fades out, cheerful rather than ominous, recorded close, no \
+ticking, no music, no voices."""

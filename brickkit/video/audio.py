@@ -27,8 +27,10 @@ Cue sheet (the video's edit plan produces it):
                     recorded sound, see SFX.fx_sample); `duck` [dB, release s] ducks the music
     samples         optional {name: {path, sha1}}: recorded sounds the "sample" events play
                     (WAV, or anything ffmpeg decodes)
-    track           optional {path, offset?, fade_out?}: a recorded music bed (balanced to the
-                    music level, ducked like the synth; a "cold" section then leaves it alone)
+    track           optional {path, offset?, fade_out?, breaks?}: a recorded music bed (balanced
+                    to the music level, ducked like the synth; a "cold" section then leaves it
+                    alone); breaks [{start, end, hz?, rise?, to?, gain?}] (frames): filter
+                    breaks, see filter_break
 
 Layout: utilities - loudness and mastering - instruments (Voices) - SFX - arrangement (STYLES,
 Arranger) - render_audio - demo:  python -m brickkit.video.audio playful out.wav [seconds]
@@ -2067,6 +2069,35 @@ class Arranger:
 
 
 # ================================================================================ render
+def filter_break(y: np.ndarray, sr: int, i0: int, i1: int, hz: float = 320.0, rise: int = 0,
+                 to: float = 1200.0, gain: float = 0.0, ramp: float = 0.015) -> np.ndarray:
+    """A DJ's filter break on a recorded bed: samples [i0, i1) through a 24 dB/oct high-pass at
+    `hz` (the kick and bass drop out, the rest plays on, `gain` dB up so the dip isn't a hole),
+    its cutoff sweeping up to `to` over the last `rise` samples (tension into the drop),
+    crossfaded in and out over `ramp` s."""
+    n = len(y)
+    i0, i1 = max(0, i0), min(n, i1)
+    if i1 - i0 < 2:
+        return y
+    pad = int(0.1 * sr)                              # let the filter settle before the break
+    a = max(0, i0 - pad)
+    f0 = np.full(i1 - a, float(hz))
+    if rise > 0:
+        k = min(rise, i1 - i0)
+        f0[-k:] = hz * (to / hz) ** np.linspace(0.0, 1.0, k)
+    seg = y[a:i1]
+    wet = tv_filter(tv_filter(seg, "hp", f0, sr), "hp", f0, sr) * db2amp(gain)
+    w = np.zeros(i1 - a)
+    w[i0 - a:] = 1.0
+    r = min(int(ramp * sr), (i1 - i0) // 2)
+    if r:
+        w[i0 - a:i0 - a + r] = _ramp(r)
+        w[-r:] = np.minimum(w[-r:], _ramp(r)[::-1])
+    out = y.copy()
+    out[a:i1] = seg * (1 - w)[:, None] + wet * w[:, None] if y.ndim == 2 else seg * (1 - w) + wet * w
+    return out
+
+
 def render_stems(cues: dict, sr: int = 48000) -> dict:
     """Unmastered stems: {'music' (ducked under big SFX, at MUSIC_REF LUFS), 'sfx', 'duck_db',
     'arranger'}, each (n, 2) with n = round(frames / fps * sr)."""
@@ -2076,6 +2107,10 @@ def render_stems(cues: dict, sr: int = 48000) -> dict:
     if tr:                                               # a recorded music bed (the sizzle reel)
         y = load_sample(tr["path"], sr)[int(round(float(tr.get("offset", 0.0)) * sr)):][:A.n]
         y = np.pad(y, ((0, A.n - len(y)), (0, 0)))
+        for b in tr.get("breaks") or []:
+            y = filter_break(y, sr, A.f2s(b["start"]), A.f2s(b["end"]), float(b.get("hz", 320.0)),
+                             A.f2s(b.get("rise", 0)), float(b.get("to", 1200.0)),
+                             float(b.get("gain", 0.0)))
         y = _fade(y.copy(), sr, 0.0, float(tr.get("fade_out", 0.05)))
         lv = measure_lufs(y, sr)
         music = music + (y * db2amp(MUSIC_REF - lv) if np.isfinite(lv) else y)

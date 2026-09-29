@@ -2,6 +2,8 @@
 plan's sections, cuts and sounds on the beats, the footage copy, the CLI."""
 import copy
 import json
+import shutil
+from pathlib import Path
 
 import numpy as np
 import pytest
@@ -138,6 +140,18 @@ def test_plan_shot_lands_the_key_frame_on_the_beat():
         Z.plan_shot(info, {"source": "booklet"}, 0, 30, 14.0)
 
 
+def test_plan_shot_still_zoom_and_push():
+    info = _info("m")
+    p = Z.plan_shot(info, {"source": "still", "file": "renders/tower_close.png", "push": 0.14},
+                    10, 52, 14.0)
+    assert (p["src"], p["n"], p["file"], p["push"]) == ("still-tower_close", 1,
+                                                        "renders/tower_close.png", 0.14)
+    assert {Z.frame_of(p, f) for f in range(10, 52)} == {0}
+    p = Z.plan_shot(info, {"source": "mechanism", "at": 60, "lead": 1, "zoom": 1.8,
+                           "focus": [0.5, 0.48]}, 0, 42, 14.0)
+    assert p["zoom"] == 1.8 and p["focus"] == [0.5, 0.48] and "push" not in p
+
+
 def test_chip_values():
     c = Z.chip_values(_info("m", pieces=2903), ["pieces", "headline", "steps", "nope"])
     assert c == [{"value": "2,903", "label": "pieces"}, {"value": "12", "label": "cm tall"},
@@ -242,12 +256,121 @@ def test_plan_with_a_track_ends_with_the_music(tmp_path):
     assert len(reel["segments"][0]["teaser"]) == 3
 
 
+@pytest.mark.parametrize("n", [1, 2, 3, 4, 5, 6, 7, 8, 9, 12, 20])
+def test_spread_shares_a_bar_on_the_grid(n):
+    sp = Z.spread(n, 4)
+    assert len(sp) == n and sp[0][0] == 0
+    assert sum(ln for _, ln in sp) == pytest.approx(4.0)
+    for (a, la), (b, _) in zip(sp, sp[1:]):
+        assert b == pytest.approx(a + la)                        # back to back
+    lens = [ln for _, ln in sp]
+    assert lens == sorted(lens, reverse=True)                     # longer first: it speeds up
+    if n <= 16:
+        assert all((t * 4).is_integer() for t, _ in sp)            # on sixteenths at least
+    if n <= 8:
+        assert all((t * 2).is_integer() for t, _ in sp)            # on eighths
+
+
+def test_spread_values():
+    assert Z.spread(4) == [(0, 1), (1, 1), (2, 1), (3, 1)]           # four: one a beat, as ever
+    assert Z.spread(5) == [(0, 1), (1, 1), (2, 1), (3, 0.5), (3.5, 0.5)]
+    assert Z.spread(5, long_first=False) == [(0, 0.5), (0.5, 0.5), (1, 1), (2, 1), (3, 1)]
+    assert Z.spread(4, long_first=False) == Z.spread(4)
+    assert Z.spread(0) == []
+
+
+def test_plan_five_models(tmp_path):
+    """Five models: the teaser shares the open's last bar (1/2, 1/2, 1, 1, 1 beats: the last
+    card is half under the wipe), the cells pop in across the finale's first bar (1, 1, 1,
+    1/2, 1/2), the line counts five; a display name and a filter break under one section."""
+    cfg = _cfg(tmp_path, n_models=5)
+    cfg["model"][4]["name"] = "Short Name"
+    cfg["model"][2]["break"] = True
+    infos = {f"m{k}": _info(f"m{k}", pieces=1000) for k in range(5)}
+    per = 60.0 / 128
+    g = Z.grid_from_beats([0.04 + i * per for i in range(120)], 0, 128.0, 56.0, "/music/t.mp3")
+    reel = Z.plan(cfg, infos, g)
+    segs = reel["segments"]
+    op, fin = segs[0], segs[-2]
+    bar3 = Z._bar(g, 3)
+    t = op["teaser"]
+    assert [x["slug"] for x in t] == [f"m{k}" for k in range(5)] and t[0]["start"] == bar3
+    assert [x["start"] for x in t] == [Z._beat(g, 3, b) for b in (0, 0.5, 1, 2, 3)]
+    for a, b in zip(t, t[1:]):
+        assert b["start"] == a["end"]
+    assert t[-1]["end"] == op["end"] == Z._bar(g, 4)
+    assert t[4]["name"] == "Short Name" and segs[5]["title"] == "Short Name"
+    cells = fin["cells"]
+    assert fin["start"] == Z._bar(g, 18)                            # 4 + 3 + 3 + 2 + 3 + 3 bars
+    assert [c["at"] for c in cells] == [Z._beat(g, 18, b) for b in (0, 1, 2, 3, 3.5)]
+    assert all(fin["start"] <= c["at"] < fin["line_at"][0] for c in cells)
+    assert [c["from"] for c in cells] == [0, 0.2, 0.4, 0.6, 0.8]    # the turntables out of step
+    assert cells[4]["name"] == "Short Name"
+    assert fin["line"][0] == "5 models · 5,000 pieces" and fin["count"] == 5
+    assert [s["index"] for s in segs[1:6]] == [1, 2, 3, 4, 5] and {s["count"] for s in segs[1:6]} == {5}
+    # the break: the track's kick and bass out under the third model, a sweep over its last beat
+    brk = reel["cues"]["track"]["breaks"]
+    assert brk == [{"start": segs[3]["start"], "end": segs[3]["end"], "hz": 320.0,
+                    "rise": reel["beat"], "to": 1200.0, "gain": 2.5}]
+    # without the track, the synth plays a breakdown there
+    syn = Z.plan(cfg, infos, Z.music_grid(dict(cfg, bars_total=40), tmp_path, log=lambda *_: None))
+    assert [s["mood"] for s in syn["cues"]["sections"]][1:6] == ["groove", "groove", "breakdown",
+                                                                 "groove", "groove"]
+
+
+def test_footage_copies_a_still(tmp_path):
+    from PIL import Image
+    out = tmp_path / "out"
+    (out / "renders").mkdir(parents=True)
+    Image.new("RGB", (40, 30), (200, 10, 10)).save(out / "renders" / "close.png")
+    info = dict(_info("m"), out=str(out))
+    sh = Z.plan_shot(info, {"source": "still", "file": "renders/close.png"}, 0, 20, 14.0)
+    reel = {"segments": [{"name": "sz_model", "slug": "m", "shots": [sh]}]}
+    Z.footage(reel, {"m": info}, tmp_path / "work", 16, log=lambda *_: None)
+    im = Image.open(tmp_path / "work" / "footage" / "m" / "still-close" / "00000.jpg")
+    assert im.size == (16, 16) and im.getpixel((8, 8))[0] > 150        # cropped square, not squashed
+
+
+@pytest.mark.skipif(not shutil.which("node"), reason="needs node")
+@pytest.mark.parametrize("n", [1, 3, 4, 5, 6, 7, 9, 10])
+def test_finale_grid_layout(n):
+    """sizzle.js szGrid: two across for up to four (2 x 2: the whole frame, then 72 % of it at
+    the top, as ever), three across for five to nine, the last row centred, never over the
+    line's band."""
+    import subprocess
+    from brickkit.video.compose import WEB
+    js = (WEB / "sizzle.js").read_text()
+    a = js.index("function szGrid(")
+    b = js.index("\n}\n", a) + 3
+    code = f"const L = 1080;\n{js[a:b]}\nconsole.log(JSON.stringify(szGrid({n})));"
+    G = json.loads(subprocess.run(["node", "-e", code], capture_output=True, text=True,
+                                  check=True).stdout)
+    L, gap = 1080, 14
+    assert G["cols"] == (2 if n <= 4 else 3 if n <= 9 else 4)
+    assert G["rows"] == -(-n // G["cols"]) and len(G["cells"]) == n
+    cs = G["cs"]
+    H = G["rows"] * cs + (G["rows"] + 1) * gap
+    if n in (3, 4):                                                  # two rows of two
+        assert (cs, G["s0"], G["y0"], G["s1"], G["y1"]) == (519, 1, 0, 0.72, 0)
+    for s, y in ((G["s0"], G["y0"]), (G["s1"], G["y1"])):
+        assert y >= -1e-9 and y + H * s <= L + 1e-9                  # on the frame
+    assert G["y1"] + H * G["s1"] <= 0.72 * L + 10 + 1e-9             # above the band
+    xs = [c["x"] for c in G["cells"]]
+    assert min(xs) >= gap - 1e-9 and max(xs) + cs <= L - gap + 1e-9
+    last = [c for c in G["cells"] if abs(c["y"] - G["cells"][-1]["y"]) < 1e-6]
+    mid = (min(c["x"] for c in last) + max(c["x"] for c in last) + cs) / 2
+    assert mid == pytest.approx(L / 2)                               # the last row centred
+    for i, c in enumerate(G["cells"]):
+        for d in G["cells"][i + 1:]:
+            assert abs(c["x"] - d["x"]) >= cs + gap - 1e-6 or abs(c["y"] - d["y"]) >= cs + gap - 1e-6
+
+
 def test_the_house_config_plans(tmp_path):
     """showreel/sizzle.toml: its models exist, its sounds are there, and it plans to a
-    30-40 s reel with every model section 3.5-6 s."""
+    35-48 s reel with every model section 3.5-6 s."""
     cfg = Z.load_config(Z.CONFIG)
     slugs = [m["slug"] for m in cfg["model"]]
-    assert slugs == ["baby_metroid", "vhs_tape", "ferret", "chainsaw_face"]
+    assert slugs == ["baby_metroid", "vhs_tape", "ferret", "caldwell_courthouse", "chainsaw_face"]
     for s in slugs:
         assert (Z.paths.MODELS_DIR / s / "model.toml").exists()
     assert (Z.CONFIG.parent / cfg["music"]).exists() and (Z.CONFIG.parent / cfg["whoosh"]).exists()
@@ -259,7 +382,9 @@ def test_the_house_config_plans(tmp_path):
     cfg.pop("music")
     g = Z.music_grid(cfg, tmp_path, log=lambda *_: None)
     reel = Z.plan(cfg, infos, g)
-    assert 30 <= reel["frames"] / 30 <= 40
+    assert 35 <= reel["frames"] / 30 <= 48
+    assert reel["segments"][0]["teaser"][-1]["end"] == reel["segments"][1]["start"]
+    assert len(reel["segments"][-2]["cells"]) == 5
     for s in reel["segments"]:
         if s["name"] == "sz_model":
             assert 3.5 <= (s["end"] - s["start"]) / 30 <= 6.0
@@ -319,6 +444,66 @@ def test_music_track_bed_is_balanced_and_faded(tmp_path):
     m = A.render_stems(copy.deepcopy(cues), SR)["music"]
     assert np.abs(m[int(2.9 * SR):3 * SR]).max() > 0.5 * top and np.abs(m[3 * SR + 10:]).max() == 0
     assert np.abs(A.render_stems(dict(cues, track=None), SR)["music"]).max() == 0   # "cold": none
+    cues["track"] = {"path": str(tmp_path / "bed.wav"), "breaks": [{"start": 30, "end": 90}]}
+    m = A.render_stems(copy.deepcopy(cues), SR)["music"]              # 220 Hz: under the cutoff
+    assert np.abs(m[int(1.5 * SR):int(2.5 * SR)]).max() < 0.2 * np.abs(m[:int(0.9 * SR)]).max()
+
+
+def test_filter_break_drops_the_kick_and_keeps_the_rest():
+    """filter_break: the lows out between the frames (-40 dB at 60 Hz), the mids through, the
+    rest untouched; the cutoff sweeps up over the last `rise` samples."""
+    from scipy import signal
+    t = np.arange(4 * SR) / SR
+    lo, hi = np.sin(2 * np.pi * 60 * t), 0.5 * np.sin(2 * np.pi * 2000 * t)
+    y = np.stack([lo + hi, lo + hi], 1)
+    out = A.filter_break(y, SR, SR, 3 * SR, hz=320.0, rise=SR // 2, to=1200.0)
+    assert np.array_equal(out[:SR - int(0.11 * SR)], y[:SR - int(0.11 * SR)])
+    assert np.array_equal(out[3 * SR:], y[3 * SR:])                  # back on the downbeat
+
+    def band(x, f):
+        return np.sqrt((signal.sosfiltfilt(signal.butter(4, (f * 0.8, f * 1.25), "band", fs=SR,
+                                                         output="sos"), x[:, 0]) ** 2).mean())
+    mid = out[int(1.2 * SR):int(2.3 * SR)]
+    assert 20 * np.log10(band(mid, 60) / band(y[:SR // 2], 60)) < -40
+    assert 20 * np.log10(band(mid, 2000) / band(y[:SR // 2], 2000)) > -1.0
+    end = out[int(2.8 * SR):3 * SR]                                   # the sweep thins the mids
+    assert band(end, 2000) < band(mid, 2000)
+
+
+@pytest.mark.skipif(not shutil.which("ffmpeg"), reason="needs ffmpeg")
+def test_check_sound_reencodes_a_glitchy_aac(tmp_path, monkeypatch):
+    """Bursts (the decoded sound far off the WAV in a quiet stretch) are found; an encode with
+    one, or over the ceiling, gets its sound encoded again (video copied) until it's clean."""
+    import subprocess
+    t = np.arange(2 * SR) / SR
+    y = 0.3 * np.sin(2 * np.pi * 440 * t) * (t < 1.0)
+    A.write_wav(tmp_path / "s.wav", np.stack([y, y], 1), SR)
+    mp4 = tmp_path / "v.mp4"
+    subprocess.run(["ffmpeg", "-v", "error", "-y", "-f", "lavfi", "-i", "color=c=black:s=64x64:d=2",
+                    "-i", str(tmp_path / "s.wav"), "-c:v", "libx264", "-c:a", "aac", "-shortest",
+                    str(mp4)], check=True)
+    tp, bursts = Z.encoded_faults(mp4, tmp_path / "s.wav")
+    assert tp == pytest.approx(20 * np.log10(0.3), abs=0.5) and bursts == []
+    y2 = y.copy()
+    y2[int(1.5 * SR):int(1.5 * SR) + 40] = 0.5                     # a click where it's silent
+    A.write_wav(tmp_path / "c.wav", np.stack([y2, y2], 1), SR)
+    assert Z.encoded_faults(mp4, tmp_path / "c.wav")[1] == []       # the encode lacks it: fine
+    subprocess.run(["ffmpeg", "-v", "error", "-y", "-i", str(mp4), "-i", str(tmp_path / "c.wav"),
+                    "-map", "0:v", "-map", "1:a", "-c:v", "copy", "-c:a", "aac",
+                    str(tmp_path / "c.mp4")], check=True)
+    found = Z.encoded_faults(tmp_path / "c.mp4", tmp_path / "s.wav")[1]    # (pre-echo too)
+    assert 1.5 in found and all(1.44 <= t <= 1.52 for t in found)
+    assert Z.check_sound(mp4, tmp_path / "s.wav", log=lambda *_: None) < -1.5   # clean: kept
+    real, seen = Z.encoded_faults, []
+
+    def fake(path, wav):
+        seen.append(Path(path).name)
+        return (-0.2, [3.0]) if len(seen) == 1 else real(path, wav)
+    monkeypatch.setattr(Z, "encoded_faults", fake)
+    before = mp4.stat().st_mtime_ns
+    assert Z.check_sound(mp4, tmp_path / "s.wav", log=lambda *_: None) < -1.5
+    assert seen == ["v.mp4", "v.sound.mp4"] and mp4.stat().st_mtime_ns != before
+    assert not (tmp_path / "v.sound.mp4").exists()
 
 
 # ---------------------------------------------------------------------------- the command
