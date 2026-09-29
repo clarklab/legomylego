@@ -317,6 +317,8 @@ function renderParts() {
   $('#parts-total').textContent = `${plural(bom.length, 'lot')} · ${plural(total, 'part')}${rare ? ` · ${rare} rare` : ''}`;
   const variant = state.data.variants?.[state.variant];
   $('#parts-intro').textContent = `Every part in the ${variant?.title || 'default'} colourway, with LEGO element IDs and BrickLink links.`;
+  const hwn = (state.data.hardware || []).reduce((n, h) => n + (h.qty || 0), 0);
+  if (hwn) $('#parts-intro').textContent += ` Plus ${plural(hwn, 'non-LEGO item')} (see the price estimate).`;
   $('#parts-body').innerHTML = rows.length ? rows.map((r) => {
     const el = r.element_id ? esc(r.element_id) : '<span class="pid">none</span>';
     const link = blLink(r);
@@ -353,6 +355,17 @@ function mdInline(s) {
   return esc(s).replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>').replace(/`([^`]+)`/g, '<code>$1</code>').replace(/\*(.+?)\*/g, '<em>$1</em>');
 }
 
+// Non-LEGO hardware (e.g. quartz clock inserts): what to buy besides the bricks.
+function hardwareNote(d) {
+  const hw = d.hardware || [];
+  if (!hw.length) return '';
+  const usd = (v) => `$${Math.round(v)}`;
+  return '<strong>Also needed, not LEGO:</strong> ' + hw.map((h) => {
+    const each = Array.isArray(h.price_each_usd) ? ` (about ${usd(h.price_each_usd[0])}–${usd(h.price_each_usd[1])} each)` : '';
+    return `${h.qty} × ${esc(h.name)}${each}. ${esc(h.where || '')}`;
+  }).join(' ');
+}
+
 async function renderPrice(d) {
   const f = d.files || {};
   let head = '', note = '', short = '';
@@ -379,10 +392,11 @@ async function renderPrice(d) {
   }
   if (!head) return;
   const full = f.price_estimate ? `<a href="${state.media.url(f.price_estimate)}" target="_blank" rel="noopener">Full breakdown</a>` : '';
+  const hw = hardwareNote(d);
   const def = d.variants?.[0]?.title;
   const card = $('#price-card');
   if (!card) return;
-  card.innerHTML = `<span class="pi">${icon('cart')}</span><div><p class="ph">${head}</p>${note ? `<p class="pn">${note}</p>` : ''}${(d.variants || []).length > 1 && def ? `<p class="pn">Estimated for the ${esc(def)} colourway.</p>` : ''}${full ? `<p class="pn">${full}</p>` : ''}</div>`;
+  card.innerHTML = `<span class="pi">${icon('cart')}</span><div><p class="ph">${head}</p>${note ? `<p class="pn">${note}</p>` : ''}${(d.variants || []).length > 1 && def ? `<p class="pn">Estimated for the ${esc(def)} colourway.</p>` : ''}${hw ? `<p class="pn">${hw}</p>` : ''}${full ? `<p class="pn">${full}</p>` : ''}</div>`;
   card.hidden = false;
   if (short) {
     const el = $('#price-summary');

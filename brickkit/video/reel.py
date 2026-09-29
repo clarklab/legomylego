@@ -267,7 +267,8 @@ def connection_points(engine, model, limit: int = MAX_POINTS) -> list:
         conns = engine.context(model).connections
     except Exception:          # noqa: BLE001 - graphics only: no dots rather than no video
         return []
-    pts = [((np.asarray(c.ca.origin) + np.asarray(c.cb.origin)) / 2, c.kind) for c in conns]
+    pts = [((np.asarray(c.ca.origin) + np.asarray(c.cb.origin)) / 2, c.kind) for c in conns
+           if c.ca is not None and c.cb is not None]      # press fits have no connector points
     if len(pts) > limit:
         rng = np.random.default_rng(7)
         pts = [pts[i] for i in sorted(rng.choice(len(pts), limit, replace=False))]

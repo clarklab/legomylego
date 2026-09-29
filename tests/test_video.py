@@ -859,3 +859,13 @@ def test_plates_survive_a_shifted_edit(engine, sample, tmp_path):
     (e / f"{segs_old[2]['start']:05d}.png").write_text("x")
     migrate_plates(tmp_path, old, new, q, None, lambda m: None)
     assert (e / ".hash").read_text() == "something else"
+
+
+def test_connection_points_skip_press_fits():
+    """Press-fit connections (model.press_fit) have no connector points; the scan's dots skip them."""
+    from types import SimpleNamespace as NS
+    from brickkit.video.reel import connection_points
+    stud = NS(ca=NS(origin=(0.0, 0.0, 0.0)), cb=NS(origin=(20.0, 0.0, 0.0)), kind="stud")
+    press = NS(ca=None, cb=None, kind="press")
+    engine = NS(context=lambda model: NS(connections=[stud, press]))
+    assert connection_points(engine, None) == [[10.0, 0.0, 0.0, "stud"]]

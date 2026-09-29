@@ -111,6 +111,167 @@
    },
    "og": "/assets/og/baby_metroid.png?v=e1a16ff654"
   },
+  "caldwell_courthouse": {
+   "files": {
+    "booklet.pdf": {
+     "v": "59658e374f",
+     "size": 31133157
+    },
+    "bricklink_wanted.xml": {
+     "v": "62120545ff",
+     "size": 12342
+    },
+    "caldwell_courthouse.mpd": {
+     "v": "168a3d0177",
+     "size": 180355
+    },
+    "model.glb": {
+     "v": "5e676a7d1f",
+     "size": 4510088
+    },
+    "model.json": {
+     "v": "9a5084c696",
+     "size": 447708
+    },
+    "parts.csv": {
+     "v": "0eecfe495e",
+     "size": 9455
+    },
+    "pick_a_brick.csv": {
+     "v": "d6b32edb7e",
+     "size": 1544
+    },
+    "price_estimate.md": {
+     "v": "3368e1efe8",
+     "size": 12233
+    },
+    "renders/hero_hero.png": {
+     "v": "120ae6dd8c",
+     "size": 1217379
+    },
+    "renders/hero_open_hero.png": {
+     "v": "7f2cbe55a8",
+     "size": 1188177
+    },
+    "renders/renders_back.png": {
+     "v": "f4b0faafb9",
+     "size": 1144739
+    },
+    "renders/renders_front.png": {
+     "v": "eaf9ecbb47",
+     "size": 1148235
+    },
+    "renders/renders_photo.png": {
+     "v": "d3254461cd",
+     "size": 1210021
+    },
+    "renders/renders_side.png": {
+     "v": "c4f887673f",
+     "size": 1140094
+    },
+    "renders/renders_three_quarter.png": {
+     "v": "0db04237b8",
+     "size": 1218500
+    },
+    "renders/renders_three_quarter_right.png": {
+     "v": "46b0b980ea",
+     "size": 1228312
+    },
+    "renders/renders_top.png": {
+     "v": "1973bfdd0e",
+     "size": 1095610
+    },
+    "renders/renders_tower_close.png": {
+     "v": "2a8bb77144",
+     "size": 1200964
+    },
+    "renders/renders_tower_open.png": {
+     "v": "30dc492f07",
+     "size": 1267185
+    },
+    "turntable.mp4": {
+     "v": "4a40ee39b5",
+     "size": 1649742
+    },
+    "video.mp4": {
+     "v": "f1ecc5586b",
+     "size": 26205603
+    },
+    "video_poster.jpg": {
+     "v": "c0864c4464",
+     "size": 150037
+    }
+   },
+   "images": {
+    "renders/hero_hero.png": {
+     "w": 1000,
+     "h": 1000,
+     "lg": "/assets/img/caldwell_courthouse/hero_hero.webp?v=759dfcdfdc",
+     "sm": "/assets/img/caldwell_courthouse/hero_hero-480.webp?v=a809d7b926"
+    },
+    "renders/hero_open_hero.png": {
+     "w": 1000,
+     "h": 1000,
+     "lg": "/assets/img/caldwell_courthouse/hero_open_hero.webp?v=1c654357ce",
+     "sm": "/assets/img/caldwell_courthouse/hero_open_hero-480.webp?v=d592c55325"
+    },
+    "renders/renders_back.png": {
+     "w": 1000,
+     "h": 1000,
+     "lg": "/assets/img/caldwell_courthouse/renders_back.webp?v=b865be67ec",
+     "sm": "/assets/img/caldwell_courthouse/renders_back-480.webp?v=a4436ce103"
+    },
+    "renders/renders_front.png": {
+     "w": 1000,
+     "h": 1000,
+     "lg": "/assets/img/caldwell_courthouse/renders_front.webp?v=a6303317a0",
+     "sm": "/assets/img/caldwell_courthouse/renders_front-480.webp?v=25969a434f"
+    },
+    "renders/renders_photo.png": {
+     "w": 1000,
+     "h": 1000,
+     "lg": "/assets/img/caldwell_courthouse/renders_photo.webp?v=57745fbb24",
+     "sm": "/assets/img/caldwell_courthouse/renders_photo-480.webp?v=3354527eff"
+    },
+    "renders/renders_side.png": {
+     "w": 1000,
+     "h": 1000,
+     "lg": "/assets/img/caldwell_courthouse/renders_side.webp?v=0a758afba8",
+     "sm": "/assets/img/caldwell_courthouse/renders_side-480.webp?v=85fc47b0ae"
+    },
+    "renders/renders_three_quarter.png": {
+     "w": 1000,
+     "h": 1000,
+     "lg": "/assets/img/caldwell_courthouse/renders_three_quarter.webp?v=9d7ffdcb06",
+     "sm": "/assets/img/caldwell_courthouse/renders_three_quarter-480.webp?v=685875442f"
+    },
+    "renders/renders_three_quarter_right.png": {
+     "w": 1000,
+     "h": 1000,
+     "lg": "/assets/img/caldwell_courthouse/renders_three_quarter_right.webp?v=aef9ba5578",
+     "sm": "/assets/img/caldwell_courthouse/renders_three_quarter_right-480.webp?v=e9064c3291"
+    },
+    "renders/renders_top.png": {
+     "w": 1000,
+     "h": 1000,
+     "lg": "/assets/img/caldwell_courthouse/renders_top.webp?v=b9ccbea0ff",
+     "sm": "/assets/img/caldwell_courthouse/renders_top-480.webp?v=b5356f4e76"
+    },
+    "renders/renders_tower_close.png": {
+     "w": 1000,
+     "h": 1000,
+     "lg": "/assets/img/caldwell_courthouse/renders_tower_close.webp?v=5e465903f3",
+     "sm": "/assets/img/caldwell_courthouse/renders_tower_close-480.webp?v=c2eaa28b89"
+    },
+    "renders/renders_tower_open.png": {
+     "w": 1000,
+     "h": 1000,
+     "lg": "/assets/img/caldwell_courthouse/renders_tower_open.webp?v=a422e9ce47",
+     "sm": "/assets/img/caldwell_courthouse/renders_tower_open-480.webp?v=a71e789138"
+    }
+   },
+   "og": "/assets/og/caldwell_courthouse.png?v=2fbb73d6fc"
+  },
   "chainsaw_face": {
    "files": {
     "booklet.pdf": {

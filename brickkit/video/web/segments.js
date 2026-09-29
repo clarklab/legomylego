@@ -1253,7 +1253,8 @@ function checksPanel(f, s, lay) {
   panel(px, py, pw, ph, { alpha: pa });
   CX.globalAlpha = pa;
   label('checked by computer', px + 26, py + 42, { color: t === 'scan' ? TH.hud : t === 'tape' || t === 'grindhouse' ? TH.accent2 : TH.accent });
-  text(UP(D.model.name), px + 26, py + 76, { size: 26, weight: 600, color: TH.panel_ink, alpha: 0.75 });
+  const nm = UP(D.model.name);                     // a long name shrinks to the panel
+  text(nm, px + 26, py + 76, { size: Math.min(26, fitSize(nm, 26, pw - 52, 600)), weight: 600, color: TH.panel_ink, alpha: 0.75 });
   CX.restore();
   const colW = (pw - 32) / cols;
   rows.forEach((r, i) => {
