@@ -1,12 +1,13 @@
-"""Roofs: the deck over the walls with the red cornice, slate mansards with dormers and iron
-cresting on the wings, gabled attics over the centre pavilions, and the corner pavilions'
-towers (a stage with a round red oculus on each outer face, a red cornice and a slate cap
-with red ribs).
+"""Roofs: the deck over the walls with the red cornice; a steep slate mansard along each
+facade with an arched dormer over each wing (and, on the sides, over each dome pavilion) and
+a gabled attic over each entrance; tall cream chimneys rising above it; the four corner
+pavilions' mansards (a pedimented dormer on each outer face, a flat top crowned with iron
+cresting); slate grey tiles on the flat roof.
 
-Heights (y): wall top -344; deck -344..-360 (two plate layers over the whole building, the
-outer ring tan then red); cornice: red inverted slopes -360..-384 on the outer ring, red
-plates -384..-392 over it and the overhang, red tiles on the overhang -392..-400. The flat
-roof inside is tiled slate grey at -360..-368."""
+Heights (y): wall top -496; deck -496..-512 (two plate layers over the whole building, the
+outer ring tan then red); cornice: red inverted slopes -512..-536 on the outer ring, red
+plates -536..-544 over it and the overhang, red tiles on the overhang -544..-552. The flat
+roof inside is tiled slate grey at -512..-520."""
 from __future__ import annotations
 
 import numpy as np
@@ -18,8 +19,8 @@ import base
 
 DIRS = [(0, -1), (1, 0), (0, 1), (-1, 0)]
 FACE_ROT = {(0, -1): 0, (1, 0): -90, (0, 1): 180, (-1, 0): 90}   # rot(y) turning -Z to d
-Y_DECK = -360
-Y_CORNICE = -392          # top of the cornice plates
+Y_DECK = -512
+Y_CORNICE = -544          # top of the cornice plates
 
 
 def cx(i):
@@ -78,16 +79,33 @@ def cornice_plan():
 
 
 # ------------------------------------------------------------------ zones on the roof
-def _zone(cells_front_right):
-    return set().union(*(turn_cells(cells_front_right, a) for a in (0, 90, 180, 270)))
+TOWER = {(i, k) for i in range(-5, 5) for k in range(-5, 5)}            # the belfry
+DOME0 = {(i, k) for i in range(3, 13) for k in range(-24, -14)}         # front-right dome
+DOME_DX = -320                                                          # to the front-left
+DOME_RING0 = {(i, k) for i, k in DOME0 if i in (3, 12) or k in (-24, -15)}
+DOMES = set()
+for _a in (0, 180):
+    DOMES |= base.turn(DOME0 | {(i - 16, k) for i, k in DOME0}, _a)
+ON_CORNICE = DOMES - base.BUILDING        # stage cells standing on the cornice's overhang
+CP0 = {(i, k) for i in range(16, 24) for k in range(-24, -16)}          # front-right pavilion
+CORNER_ROOFS = base.all_sides(CP0)
+ATTIC_I = (-2, -1, 0, 1)                    # over the entrance
+ROW = -23                                   # the set-back facade row (wings, entrance)
+CHIMNEYS0 = [((-16, -15), -20), ((14, 15), -20)]
+YC0 = Y_CORNICE                             # upper roofs start on the cornice's top
 
 
-PAVILION = _zone({(i, k) for i in range(6, 14) for k in range(-14, -6)})
-PAV_TOWER = _zone({(i, k) for i in range(7, 13) for k in range(-13, -7)})
-TOWER = {(i, k) for i in range(-5, 5) for k in range(-5, 5)}
-WING_MANSARD = set().union(*(turn_cells({(i, k) for i in list(range(2, 7)) + list(range(-7, -2))
-                                         for k in (-13, -12)}, a) for a in (0, 90, 180, 270)))
-ATTIC = _zone({(i, k) for i in range(-2, 2) for k in range(-14, -11)})
+def mansard_plan(domes: bool):
+    """(steep slope cells, low slope cells, dormer pairs) of one facade's mansard. Front and
+    back: over the wings only (the domes stand on the dome pavilions and the entrance keeps
+    its attic), an arched dormer on the outer two cells and a low 45-degree slope next to
+    the dome's stage (clear of its side window); the sides: steep slopes all along, with
+    dormers over the wings and the dome pavilions."""
+    if domes:
+        return [], [-14, 13], [(-16, -15), (14, 15)]
+    slopes = [i for i in range(-16, 16) if i not in ATTIC_I
+              and i not in (-15, -14, 13, 14, -9, -8, 7, 8)]
+    return slopes, [], [(-15, -14), (-9, -8), (7, 8), (13, 14)]
 
 
 def deck_batch() -> Batch:
@@ -111,10 +129,10 @@ def _deck_batch(v: int) -> Batch:
     # layer 1: a tan ring over the walls, big grey plates inside
     runs = [(1, 8), (1, 6), (1, 4), (1, 3), (1, 2), (1, 1)]
     for r in pack(ring, [s for s in runs if AV.ok(PLATE[s], "wall")]):
-        p, M = rect_M(PLATE, r, -352)
+        p, M = rect_M(PLATE, r, Y_DECK + 8)
         b.add(p, "wall", M, "deck1")
     for r in pack(inner, ok, shift=3 + 7 * v):
-        p, M = rect_M(PLATE, r, -352)
+        p, M = rect_M(PLATE, r, Y_DECK + 8)
         b.add(p, "core", M, "deck1")
     # layer 2: a red ring two studs wide (it bonds the ring to the inside), grey inside
     ring2 = ring | {c for c in inner if any((c[0] + a, c[1] + e) in ring
@@ -159,7 +177,7 @@ def _deck_batch(v: int) -> Batch:
     for r in weave(top, "x", AV.lengths(PLATE1, "trim"), 2):
         p, M = rect_M(PLATE, r, Y_CORNICE)
         b.add(p, "trim", M, "cornice2")
-    edge = (over | corners)
+    edge = (over | corners) - ON_CORNICE          # (the domes' stages stand on those plates)
     for r in weave(edge, "x", AV.lengths(TILE1, "trim"), 1):
         p, M = rect_M(TILE, r, Y_CORNICE - 8)
         b.add(p, "trim", M, "cornice3")
@@ -169,58 +187,16 @@ def _deck_batch(v: int) -> Batch:
 DECK_PHASES = [["deck1", "deck2"], ["cornice"], ["cornice2"], ["cornice3"]]
 
 
-# ------------------------------------------------------------------ wing mansards
-def _backfill(b: Batch, cells, cat="backfill"):
-    """A brick and a plate on the deck (-360) so a roof piece can start at the cornice's
-    top (-392)."""
+# ------------------------------------------------------------------ upper roofs
+def _backfill(b: Batch, cells, cat="backfill", colour="core"):
+    """A brick and a plate on the deck (Y_DECK) so a roof piece can start at the cornice's
+    top (Y_CORNICE)."""
+    ring = set(exposures())
     for i, k in cells:
-        b.add("3005", "core", transform((cx(i), -384, cx(k))), cat)
-        b.add("3024", "core", transform((cx(i), -392, cx(k))), cat)
-
-
-def wing_mansard(b: Batch, side: int):
-    """The slate mansard over a front wing (side +1: x 40..140, -1: x -140..-40): 75-degree
-    slopes from the cornice up to -464, a dormer over the wing's window, iron cresting."""
-    cells = list(range(2, 7)) if side > 0 else list(range(-7, -2))
-    end = 6 if side > 0 else -7                 # the cell against the pavilion tower
-    dormer = (3, 4) if side > 0 else (-5, -4)
-    _backfill(b, [(i, -12) for i in cells] + [(end, -13)])
-    for i in cells:
-        if i in dormer:
+        if (i, k) in ring or (i, k) not in OUTLINE:     # the cornice's plates are there
             continue
-        b.add("4460b", "roof", transform((cx(i), -464, cx(-12))), "slopes")
-    x = (cx(dormer[0]) + cx(dormer[1])) / 2
-    b.add("60592", "window", transform((x, -440, cx(-13))), "dormer")
-    b.add("60601", "glass", transform((x, -440, cx(-13))), "dormer", insert=(0, 0, 1))
-    b.add("3004", "wall", transform((x, -416, cx(-12))), "dormer")
-    b.add("3004", "wall", transform((x, -440, cx(-12))), "dormer")
-    b.add("3039", "roof", transform((x, -464, cx(-12))), "dormer_roof")
-    rail = [i for i in cells if i != end]
-    b.add("19121", "crest", transform(((cx(rail[0]) + cx(rail[-1])) / 2, -512, cx(-12))),
-          "crest")
-    return b
-
-
-# ------------------------------------------------------------------ centre attics
-def attic(b: Batch):
-    """The gabled attic over a centre pavilion (x -40..40, z -280..-220): a window under a
-    red arch, a red pediment, a slate roof behind it and a small finial."""
-    _backfill(b, [(i, k) for i in (-2, 1) for k in (-13, -12)])
-    for y in (-416, -440):
-        for i in (-2, 1):
-            b.add("3005", "wall", transform((cx(i), y, cx(-14))), "walls")
-            b.add("3004", "wall", transform((cx(i), y, -240), rot(y=90)), "walls")
-    b.add("60592", "window", transform((0, -440, cx(-14))), "window")
-    b.add("60601", "glass", transform((0, -440, cx(-14))), "window", insert=(0, 0, 1))
-    b.add("3659", "trim", transform((0, -464, cx(-14))), "arch")
-    for i in (-2, 1):
-        b.add("3004", "wall", transform((cx(i), -464, -240), rot(y=90)), "arch")
-    for k, colour in ((-14, "trim"), (-13, "roof"), (-12, "roof")):
-        b.add("3040b", colour, transform((-10, -488, cx(k)), rot(y=90)), "gable")
-        b.add("3040b", colour, transform((10, -488, cx(k)), rot(y=-90)), "gable")
-    b.add("15573", "trim", transform((0, -496, cx(-14))), "finial")
-    b.add("59900", "trim", transform((0, -520, cx(-14))), "finial")
-    return b
+        b.add("3005", colour, transform((cx(i), Y_DECK - 24, cx(k))), cat)
+        b.add("3024", colour, transform((cx(i), Y_CORNICE, cx(k))), cat)
 
 
 def turned(b: Batch, a: float) -> Batch:
@@ -233,42 +209,200 @@ def turned(b: Batch, a: float) -> Batch:
     return out
 
 
+def dormer(b: Batch, x: float, z_face: float, colour_face="trim", tall=False, arched=False):
+    """A dormer on a slope whose low cell is at z_face (the front, -Z), standing on the
+    cornice's top. `arched`: a round-topped window (1 x 2 x 2 2/3) with a dark lattice pane,
+    slate cheeks and a slate tile behind it, as tall as the steep mansard. Otherwise a
+    window (1 x 2 x 2, or 1 x 2 x 3 when `tall`) with tan cheeks behind it and a little
+    gable of two cheese slopes, red in front."""
+    zf, zb = z_face, z_face + 20
+    if arched:
+        M = transform((x, YC0 - 64, zf))
+        b.add("30044", "window", M, "dormer")
+        b.add("30046", "glass_dark", M @ translate(0, 24, 4), "dormer", insert=(0, 0, 1))
+        for n in range(2):                      # after the pane, which goes in from behind
+            b.add("3004", "roof", transform((x, YC0 - 24 * (n + 1), zb)), "dormer_back")
+        for n in range(2):
+            b.add("3023", "roof", transform((x, YC0 - 56 - 8 * n, zb)), "dormer_back")
+        b.add("3069b", "roof", transform((x, YC0 - 72, zb)), "dormer_roof")
+        return
+    h = 72 if tall else 48
+    win, glass = ("60593", "60602") if tall else ("60592", "60601")
+    b.add(win, "window", transform((x, YC0 - h, zf)), "dormer")
+    b.add(glass, "glass", transform((x, YC0 - h, zf)), "dormer", insert=(0, 0, 1))
+    for n in range(h // 24):
+        b.add("3004", "wall", transform((x, YC0 - 24 * (n + 1), zb)), "dormer")
+    for z, colour in ((zf, colour_face), (zb, "roof"))[:1 if tall else 2]:
+        b.add("54200", colour, transform((x - 10, YC0 - h, z), rot(y=90)), "dormer_roof")
+        b.add("54200", colour, transform((x + 10, YC0 - h, z), rot(y=-90)), "dormer_roof")
+
+
+def attic(b: Batch):
+    """The gabled attic over the entrance bay (x -40..40, its face on the wall row): a window
+    under a red arch, a red pediment, a slate roof behind it and a finial."""
+    zf = cx(ROW)
+    _backfill(b, [(i, k) for i in (-2, 1) for k in (ROW + 1, ROW + 2)])
+    for y in (YC0 - 24, YC0 - 48):
+        for i in (-2, 1):
+            b.add("3005", "wall", transform((cx(i), y, zf)), "walls")
+            b.add("3004", "wall", transform((cx(i), y, zf + 30), rot(y=90)), "walls")
+    b.add("60592", "window", transform((0, YC0 - 48, zf)), "window")
+    b.add("60601", "glass", transform((0, YC0 - 48, zf)), "window", insert=(0, 0, 1))
+    b.add("3659", "trim", transform((0, YC0 - 72, zf)), "arch")
+    for i in (-2, 1):
+        b.add("3004", "wall", transform((cx(i), YC0 - 72, zf + 30), rot(y=90)), "arch")
+    for dz, colour in ((0, "trim"), (20, "roof"), (40, "roof")):
+        b.add("3040b", colour, transform((-10, YC0 - 96, zf + dz), rot(y=90)), "gable")
+        b.add("3040b", colour, transform((10, YC0 - 96, zf + dz), rot(y=-90)), "gable")
+    b.add("15573", "trim", transform((0, YC0 - 104, zf)), "finial")
+    b.add("59900", "trim", transform((0, YC0 - 128, zf)), "finial")
+
+
+def main_mansard(b: Batch, domes: bool):
+    """One facade's mansard: steep (75-degree) slate slopes whose low cells stand on the
+    cornice (or on backfill behind the projecting bays) along the set-back row, arched
+    dormers, the attic over the entrance and two chimneys behind, rising above it. With
+    `domes` (front and back), the rings of the domes' stages are backfilled up to the
+    cornice's top for the stages to stand on."""
+    slopes, low, dormers = mansard_plan(domes)
+    cells = slopes + low + [i for pair in dormers for i in pair]
+    _backfill(b, [(i, k) for i in cells for k in (ROW, ROW + 1)])
+    for i in slopes:
+        b.add("4460b", "roof", transform((cx(i), YC0 - 72, cx(ROW + 1))), "slopes")
+    for i in low:
+        b.add("3040b", "roof", transform((cx(i), YC0 - 24, cx(ROW + 1))), "slopes")
+    for i0, i1 in dormers:
+        dormer(b, (cx(i0) + cx(i1)) / 2, cx(ROW), arched=True)
+    attic(b)
+    if domes:
+        _backfill(b, sorted(DOME_RING0 | {(i - 16, k) for i, k in DOME_RING0}),
+                  cat="dome_base")
+    for (i0, i1), k in CHIMNEYS0:                       # chimneys: tan, red caps
+        x = (cx(i0) + cx(i1)) / 2
+        for n in range(8):
+            b.add("98283", "wall", transform((x, Y_DECK - 24 - 24 * n, cx(k))), "chimney")
+        b.add("3023", "trim", transform((x, Y_DECK - 200, cx(k))), "chimney_cap")
+        b.add("3069b", "trim", transform((x, Y_DECK - 208, cx(k))), "chimney_cap")
+
+
+def roof_cells_front(domes: bool) -> set:
+    """Deck cells one facade's upper roofs stand on (for the flat roof's tiles)."""
+    slopes, low, dormers = mansard_plan(domes)
+    cells = {(i, k) for i in slopes + low + [i for p in dormers for i in p]
+             for k in (ROW, ROW + 1)}
+    cells |= {(i, k) for i in ATTIC_I for k in (ROW, ROW + 1, ROW + 2)}
+    cells |= {(i, k) for (pair, k) in CHIMNEYS0 for i in pair}
+    return cells
+
+
 def upper_roofs() -> Batch:
-    """Wing mansards and centre attics on all four sides."""
-    one = Batch()
-    wing_mansard(one, 1)
-    wing_mansard(one, -1)
-    attic(one)
+    """Mansards, dormers, attics and chimneys on all four sides (the domes' bases on the
+    front and back), and slate tiles on the flat roof."""
     out = Batch()
+    busy = TOWER | DOMES | CORNER_ROOFS
     for a in (0, 90, 180, 270):
+        domes = a in (0, 180)
+        one = Batch()
+        main_mansard(one, domes)
         out.items += turned(one, a).items
-    flat_roof(out)
+        busy |= base.turn(roof_cells_front(domes), a)
+    flat_roof(out, busy)
     return out
 
 
-def flat_roof(b: Batch):
-    """Slate grey tiles on the flat parts of the roof deck."""
-    ring = set(exposures())
-    free = OUTLINE - ring - WING_MANSARD - ATTIC - PAV_TOWER - TOWER
+def flat_roof(b: Batch, busy: set):
+    """Slate tiles on the flat parts of the roof deck."""
+    free = OUTLINE - set(exposures()) - busy
     sizes = [(2, 6), (2, 4), (2, 2), (1, 6), (1, 4), (1, 3), (1, 2), (1, 1)]
     for r in pack(free, [s for s in sizes if s in TILE and AV.ok(TILE[s], "roof")]):
         p, M = rect_M(TILE, r, Y_DECK - 8)
         b.add(p, "roof", M, "flat")
 
 
-UPPER_PHASES = [["backfill"], ["walls", "slopes", "dormer", "window"], ["arch", "dormer_roof"],
-                ["gable"], ["finial", "crest"], ["flat"]]
+UPPER_PHASES = [["backfill", "dome_base"], ["walls", "slopes", "dormer", "window", "chimney"],
+                ["arch", "dormer_back", "dormer_roof", "chimney_cap"], ["gable"], ["finial"],
+                ["flat"]]
 UPPER_CAPTIONS = {
-    "backfill": "Bricks and plates on the deck behind the cornice",
-    "slopes": "Steep slate mansards over the wings, each with a dormer window",
-    "walls": "Attics over the centre pavilions: walls round a window",
-    "arch": "Red arches over the attic windows", "dormer_roof": "Dormer roofs",
+    "backfill": "Bricks and plates on the deck behind the cornice (and where the domes' "
+                "stages will stand)",
+    "slopes": "The steep slate mansard along each facade, with arched dormers",
+    "walls": "Attics over the entrances: walls round a window",
+    "chimney": "Tall chimneys of rough-faced bricks",
+    "arch": "Red arches over the attic windows",
+    "dormer_back": "Slate cheeks behind the dormers' windows",
+    "dormer_roof": "Tiles on top",
+    "chimney_cap": "Red chimney caps",
     "gable": "Pediments: red slopes in front, slate slopes behind",
-    "finial": "Finials on the pediments", "crest": "Iron cresting along the mansards",
-    "flat": "Slate grey tiles on the flat roof"}
+    "finial": "Finials on the pediments", "flat": "Slate grey tiles on the flat roof"}
 
 
-# ------------------------------------------------------------------ corner pavilion towers
+# ------------------------------------------------------------------ corner pavilion roofs
+def corner_roof() -> Batch:
+    """The front-right corner pavilion's mansard (cells 16..23 x -24..-17), covering the
+    whole pavilion: one ring of steep (75-degree) slate slopes on the cornice with a tall
+    dormer on each outer face, rising to a flat 6 x 6 top crowned with iron cresting."""
+    b = Batch()
+    i0, i1, k0, k1 = 16, 23, -24, -17
+    xc, zc = (cx(i0) + cx(i1)) / 2, (cx(k0) + cx(k1)) / 2           # 400, -400
+    box = {(i, k) for i in range(i0, i1 + 1) for k in range(k0, k1 + 1)}
+    _backfill(b, sorted(box))
+    inner = {(i, k) for i in range(i0 + 2, i1 - 1) for k in range(k0 + 2, k1 - 1)}   # 4 x 4
+    for i, k in sorted(inner):
+        for n in range(3):
+            b.add("3005", "core", transform((cx(i), YC0 - 24 - 24 * n, cx(k))), "core")
+    for (ci, ck), a in (((i1 - 1, k0 + 1), 0), ((i0 + 1, k0 + 1), 90), ((i0 + 1, k1 - 1), 180),
+                        ((i1 - 1, k1 - 1), -90)):
+        b.add("3685", "roof", transform((cx(ci), YC0 - 72, cx(ck)), rot(y=a)), "slopes")
+    for i in range(i0 + 2, i1 - 1):
+        if i not in (19, 20):
+            b.add("4460b", "roof", transform((cx(i), YC0 - 72, cx(k0 + 1))), "slopes")
+        b.add("4460b", "roof", transform((cx(i), YC0 - 72, cx(k1 - 1)), rot(y=180)), "slopes")
+    for k in range(k0 + 2, k1 - 1):
+        b.add("4460b", "roof", transform((cx(i0 + 1), YC0 - 72, cx(k)), rot(y=90)), "slopes")
+        if k not in (-21, -20):
+            b.add("4460b", "roof", transform((cx(i1 - 1), YC0 - 72, cx(k)), rot(y=-90)),
+                  "slopes")
+    dormer(b, xc, cx(k0), tall=True)                                 # front face
+    side = Batch()
+    dormer(side, 0, cx(k0), tall=True)                               # right face
+    T = transform((0, 0, zc), rot(y=-90))
+    for part, colour, M, cat, tag, insert in side.items:
+        ins = None if insert is None else tuple(T[:3, :3] @ np.asarray(insert, float))
+        b.items.append((part, colour, T @ M, cat, tag, ins))
+    top = YC0 - 80                                                   # the flat top
+    b.add("3958", "roof", transform((xc, top, zc)), "top")
+    for dx in (-20, 20):
+        for dz in (-20, 20):
+            b.add("3068b", "roof", transform((xc + dx, top - 8, zc + dz)), "top2")
+    for (x, z) in ((xc - 50, zc - 50), (xc + 50, zc - 50), (xc - 50, zc + 50),
+                   (xc + 50, zc + 50)):
+        b.add("3062b", "crest", transform((x, top - 24, z)), "crest")
+        b.add("59900", "crest", transform((x, top - 48, z)), "crest")
+    for x, z, a in ((xc, zc - 50, 0), (xc, zc + 50, 0), (xc - 50, zc, 90), (xc + 50, zc, 90)):
+        b.add("4083", "crest", transform((x, top - 48, z), rot(y=a)), "crest")
+    return b
+
+
+def corner_roofs() -> Batch:
+    one = corner_roof()
+    out = Batch()
+    for a in (0, 90, 180, 270):
+        out.items += turned(one, a).items
+    return out
+
+
+CORNER_PHASES = [["backfill", "core"], ["slopes", "dormer"], ["dormer_roof"],
+                 ["top"], ["top2", "crest"]]
+CORNER_CAPTIONS = {
+    "backfill": "The corner pavilions' roofs: bricks and plates on the deck",
+
+    "slopes": "Mansards over the whole pavilion: steep slate slopes and a tall dormer on "
+              "each outer face", "dormer_roof": "Little red pediments over the dormers",
+    "top": "Flat tops", "crest": "Iron cresting: railings and corner posts"}
+
+
+
+
 def ring_cells(i0, i1, k0, k1):
     return [(i, k) for i in range(i0, i1 + 1) for k in range(k0, k1 + 1)
             if i in (i0, i1) or k in (k0, k1)]
@@ -309,76 +443,16 @@ FLAT_OCULUS = transform((0, 0, 0), rot(x=90))       # the oculus is built lying 
 
 
 def oculus(model):
-    """A round window: a cross of red plates, a red ring of four 2 x 2 macaroni tiles and
-    four black quarter tiles for the glass. Built lying flat, then pressed onto the side
-    studs of a pavilion tower's wall."""
-    s = model.submodel("oculus", "Oculus")
-    for r in ((-1, 0, -2, 1), (1, 1, -1, 0), (-2, -2, -1, 0)):
-        p, M = rect_M(PLATE, r, 0)
-        s.place(p, "trim").M = M
-    s.step("The red ring and the dark glass")
+    """A round window, 6 x 6: a round red plate, a red frame of four quarter-ring plates on
+    it and dark glass of macaroni and quarter tiles inside the frame. Built lying flat, then
+    pressed onto the side studs of a dome's stage."""
+    s = model.submodel("oculus", "Round window")
+    s.place("11213", "trim", (0, 0, 0))
+    s.step("The red frame and the dark glass")
+    up = translate(0, -8, 0)
     for q in range(4):
         R = transform((0, 0, 0), rot(y=90 * q))
-        s.place("27925", "trim").M = translate(0, -8, 0) @ R @ translate(10, 0, -10)
-        s.place("25269", "glass_dark").M = translate(0, -8, 0) @ R @ translate(10, 0, -10)
-    return s
-
-
-PT = (7, 12, -13, -8)                        # the pavilion tower's walls (cells)
-PT_COURSES = [(-384, "brick"), (-408, "brick"), (-416, "plate"), (-440, "brick"),
-              (-448, "plate"), (-456, "plate"), (-480, "brick")]
-OCULUS_Y = -440
-
-
-def pavilion_tower(model, ocu):
-    """A corner pavilion's tower over the front-right pavilion: a 6 x 6 tan stage with an
-    oculus on its two outer faces, a red cornice, and a two-stage slate cap with red corner
-    ribs, a red band and a finial."""
-    s = model.submodel("pavilion_tower", "Pavilion tower")
-    b = Batch()
-    i0, i1, k0, k1 = PT
-    snot = {(i, k0) for i in range(8, 12)} | {(i1, k) for k in range(-12, -8)}
-    for n, (top, kind) in enumerate(PT_COURSES):
-        skip = snot if top in (-440, -480) else ()
-        ring_course(b, PT, top, kind, "wall", f"t{n}", n, skip)
-        if skip:
-            b.add("30414", "wall", transform((200, top, cx(k0))), f"t{n}")
-            b.add("30414", "wall", transform((cx(i1), top, -200), rot(y=-90)), f"t{n}")
-    for r in ((6, 13, -14, -13), (6, 13, -8, -7), (6, 7, -12, -9), (12, 13, -12, -9)):
-        p, M = rect_M(PLATE, r, -488)
-        b.add(p, "trim", M, "cornice")
-    for (ci, ck), a in (((12, -13), 0), ((7, -13), 90), ((7, -8), 180), ((12, -8), -90)):
-        b.add("3685", "trim", transform((cx(ci), -560, cx(ck)), rot(y=a)), "cap1")
-    for i in range(8, 12):
-        b.add("4460b", "roof", transform((cx(i), -560, cx(-13))), "cap1")
-        b.add("4460b", "roof", transform((cx(i), -560, cx(-8)), rot(y=180)), "cap1")
-    for k in range(-12, -8):
-        b.add("4460b", "roof", transform((cx(7), -560, cx(k)), rot(y=90)), "cap1")
-        b.add("4460b", "roof", transform((cx(12), -560, cx(k)), rot(y=-90)), "cap1")
-    b.add("3958", "roof", transform((200, -568, -200)), "flat")
-    for r in ((8, 11, -12, -11), (8, 11, -10, -9)):
-        p, M = rect_M(TILE, r, -576)
-        b.add(p, "roof", M, "flat")
-    for x, z, a in ((200, -250, 0), (200, -150, 0), (150, -200, 90), (250, -200, 90)):
-        b.add("4083", "crest", transform((x, -616, z), rot(y=a)), "crest")
-    for x in (150, 250):
-        for z in (-250, -150):
-            b.add("3062b", "crest", transform((x, -592, z)), "crest")
-            b.add("59900", "crest", transform((x, -616, z)), "crest")
-    top = Batch()
-    top.items = [it for it in b.items if not it[3].startswith("t")]
-    b.items = [it for it in b.items if it[3].startswith("t")]
-    phases = [[f"t{n}"] for n in range(len(PT_COURSES))]
-    b.emit(s, phases, {"t0": "Pavilion tower: tan walls standing on the roof deck",
-                       "t3": "Bricks with side studs for the round windows"}, per_step=8)
-    s.step("Press a round window onto each outer face")
-    for M in (translate(200, OCULUS_Y, -268) @ FLAT_OCULUS,
-              translate(268, OCULUS_Y, -200) @ transform((0, 0, 0), rot(y=-90)) @ FLAT_OCULUS):
-        out = M[:3, :3] @ np.array([0.0, -1.0, 0.0])
-        s.use(ocu, tuple(M[:3, 3]), M[:3, :3], insert=tuple(out))
-    top.emit(s, [["cornice"], ["cap1"], ["flat"], ["crest"]], {
-        "cornice": "A red cornice",
-        "cap1": "The mansard: steep slate slopes with red corners",
-        "flat": "Its flat top", "crest": "Iron cresting: railings and corner posts"},
-        per_step=8)
+        s.place("68568", "trim").M = up @ R @ translate(10, 0, 10)
+        s.place("27925", "glass_dark").M = up @ R @ translate(10, 0, -10)
+        s.place("25269", "glass_dark").M = up @ R @ translate(10, 0, -10)
     return s

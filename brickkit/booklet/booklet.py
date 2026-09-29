@@ -193,15 +193,41 @@ def make_booklet(engine, proj, model, *, rerender: bool = True, cover: Path | No
 
 
 SHRINK_OVER = 40e6       # bytes: bigger booklets (hundreds of steps) are recompressed
+SHRINK_DPI = (200, 150)  # passes, tried in order until one gets under SHRINK_OVER
 
 
-def shrink_pdf(pdf: Path, over: float = SHRINK_OVER) -> Path:
-    """Recompress a big booklet with Ghostscript (pictures at 200 dpi, which is what they print
-    at on the page), when gs is installed; keeps the original if that isn't smaller. A 489-step
-    booklet goes from 57 MB to 31 MB with no visible change."""
+def _gs_recompress(gs: str, src: Path, dst: Path, dpi: int) -> bool:
+    r = subprocess.run([gs, "-sDEVICE=pdfwrite", "-dCompatibilityLevel=1.6",
+                        "-dPDFSETTINGS=/ebook", f"-dColorImageResolution={dpi}",
+                        "-dColorImageDownsampleThreshold=1.2", "-dNOPAUSE", "-dBATCH", "-dQUIET",
+                        f"-sOutputFile={dst}", str(src)], capture_output=True, text=True)
+    return r.returncode == 0 and dst.exists()
+
+
+def shrink_pdf(pdf: Path, over: float = SHRINK_OVER, dpis: tuple = SHRINK_DPI) -> Path:
+    """Recompress a big booklet with Ghostscript, when gs is installed. Pictures go to 200 dpi
+    (what they print at on the page: a 489-step booklet goes from 57 MB to 31 MB with no
+    visible change); if that still leaves the booklet over `over`, another pass from the
+    original at 150 dpi (the step pictures print about 13 cm wide, so still sharp: a
+    1,000-step booklet goes from 148 MB to about 44 MB). Keeps the smallest file, and the
+    original if no pass is smaller."""
     gs = shutil.which("gs")
     if not gs or pdf.stat().st_size <= over:
         return pdf
+    best, size = None, pdf.stat().st_size
+    for dpi in dpis:
+        tmp = pdf.with_suffix(f".{dpi}dpi.pdf")
+        if _gs_recompress(gs, pdf, tmp, dpi) and tmp.stat().st_size < size:
+            if best is not None:
+                best.unlink(missing_ok=True)
+            best, size = tmp, tmp.stat().st_size
+        else:
+            tmp.unlink(missing_ok=True)
+        if size <= over:
+            break
+    if best is not None:
+        best.replace(pdf)
+    return pdf
     tmp = pdf.with_suffix(".small.pdf")
     r = subprocess.run([gs, "-sDEVICE=pdfwrite", "-dCompatibilityLevel=1.6",
                         "-dPDFSETTINGS=/ebook", "-dColorImageResolution=200",

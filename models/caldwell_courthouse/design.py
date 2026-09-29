@@ -1,12 +1,18 @@
 """The Caldwell County Courthouse, Lockhart, Texas (1894, Alfred Giles), as a LEGO display
-model about 45 cm tall on a 38 x 38 stud base. Its four clocks are real: quartz clock
+model about 65 cm tall on a 56 x 56 stud base. Its four clocks are real: quartz clock
 inserts (not LEGO) sit behind the red dials, and the dome lifts off to set them.
 
-Units: LDU (stud 20, plate 8, brick 24), -Y up, the front (with the portico and the flags)
-faces -Z. The base's top is at y = 0. Modules: base.py (lawn, walks, trees, flagpoles),
-walls.py (the two-storey walls), roofs.py (roof deck, cornice, mansards, attics, pavilion
-towers), portico.py, tower.py (columns, belfry, lift-off dome) and clock.py (the clock stage
-and the clock inserts).
+The roofline follows the building: one central clock tower on a broad belfry; four bell
+domes, two on the front and two on the back, standing on the dome pavilions flush with the
+facade and flanking the tower; four corner pavilions at the outer corners under crested
+mansards; a low mansard with dormers, attics and chimneys between them.
+
+Units: LDU (stud 20, plate 8, brick 24), -Y up, the front (the balconied entrance and the
+flags) faces -Z. The base's top is at y = 0. Modules: base.py (lawn, walks, trees,
+flagpoles), walls.py (the three-storey walls), roofs.py (roof deck, cornice, mansards,
+dormers, attics, chimneys, the corner pavilions' roofs), portico.py (the side porches),
+tower.py (columns, belfry, bell domes, lift-off dome) and clock.py (the clock stage and the
+clock inserts).
 
 Moving groups: `tower_top` (the dome, lifted straight off) and the eight hands
 (`hour_s`/`minute_s`... one pair per side). pose(t): the hands turn from 10:10 to 12:10 and,
@@ -68,31 +74,37 @@ def build(model):
 
     col = tower.column(model)
     for n, (x, z) in enumerate(tower.COLUMNS):
-        main.step("Four columns in the middle carry the tower" if n == 0 else "")
+        main.step("Eight hidden columns carry the tower and the four domes" if n == 0 else "")
         main.use(col, (x, 0, z), insert=(0, -1, 0))
 
     pav = walls.corner_pavilion(model)
     wing = walls.wing(model)
-    cen = walls.centre_pavilion(model)
+    bay = walls.dome_bay(model)
+    front, side = walls.centre(model, True), walls.centre(model, False)
     for a in (0, 90, 180, 270):
         R = transform((0, 0, 0), rot(y=a))
-        main.step("The walls: a corner pavilion, two wings and a centre pavilion on each "
-                  "side" if a == 0 else "")
+        main.step("The walls: a corner pavilion, two wings, two dome pavilions and the "
+                  "entrance bay on each side" if a == 0 else "")
         use_M(main, pav, R, insert=(0, -1, 0))
-        use_M(main, wing, R, insert=(0, -1, 0))
-        use_M(main, wing, R @ transform((-160, 0, 0)), insert=(0, -1, 0))
-        use_M(main, cen, R, insert=(0, -1, 0))
+        for dx in (0, -560):
+            use_M(main, wing, R @ transform((dx, 0, 0)), insert=(0, -1, 0))
+        for dx in (0, -320):
+            use_M(main, bay, R @ transform((dx, 0, 0)), insert=(0, -1, 0))
+        use_M(main, front if a in (0, 180) else side, R, insert=(0, -1, 0))
 
     main.step("Lower the roof deck onto the walls")
     main.use(_roof(model), (0, 0, 0), insert=(0, -1, 0))
     roofs.upper_roofs().emit(main, roofs.UPPER_PHASES, roofs.UPPER_CAPTIONS, per_step=8)
-    pt = roofs.pavilion_tower(model, roofs.oculus(model))
-    for a in (0, 90, 180, 270):
-        main.step("A pavilion tower on each corner" if a == 0 else "")
-        use_M(main, pt, transform((0, 0, 0), rot(y=a)), insert=(0, -1, 0))
+    roofs.corner_roofs().emit(main, roofs.CORNER_PHASES, roofs.CORNER_CAPTIONS, per_step=8)
 
-    main.step("The belfry, over the four columns")
+    main.step("The belfry, over the four middle columns")
     main.use(tower.belfry(model), (0, 0, 0), insert=(0, -1, 0))
+    dome = tower.dome(model, roofs.oculus(model))
+    for n, (a, dx) in enumerate(((0, 0), (0, roofs.DOME_DX), (180, 0), (180, roofs.DOME_DX))):
+        main.step("Two bell domes on the front's dome pavilions, two on the back's"
+                  if n == 0 else "")
+        use_M(main, dome, transform((0, 0, 0), rot(y=a)) @ transform((dx, 0, 0)),
+              insert=(0, -1, 0))
     face = clock.clock_face(model)
     stage = clock.clock_stage(model, face)
     main.step("The clock stage")
@@ -105,9 +117,9 @@ def build(model):
     base.shrubs().emit(main, [["shrubs"]], {"shrubs": "Shrubs along the walls"},
                        per_step=12, reach=300)
     tree = base.tree(model)
-    for x, z in base.TREES:
-        main.step("Live oaks on the side lawns")
-        main.use(tree, (x, 0, z), insert=(0, -1, 0))
+    for n, (x, z) in enumerate(base.TREES):
+        main.step("Live oaks on the front and back lawns" if n == 0 else "")
+        use_M(main, tree, transform((x, 0, z), rot(y=0 if z < 0 else 180)), insert=(0, -1, 0))
     pole = base.flagpole(model)
     for n, (x, z, colour, tag) in enumerate(base.FLAGS):
         main.step("Three flagpoles in front: slide a flag down each" if n == 0 else "")

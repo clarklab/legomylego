@@ -1,10 +1,11 @@
-"""The base: a 38 x 38 stud lawn with a sidewalk round the edge and paths to the doors, two
-live oaks at the corners and three flagpoles in front. Two layers of plates (the top one
-green lawn and grey walks), tiles on the walks. Its top is at y = 0.
+"""The base: a 56 x 56 stud lawn with a sidewalk round the edge, paths to the front and back
+doors, porches on the two sides, four live oaks and three flagpoles in front. Two layers of
+plates (the top one green lawn and grey walks), tiles on the walks. Its top is at y = 0.
 
-The building's footprint (studs, from the centre): pavilions and the centre pavilions reach
-14, the wings 13; the portico stands in front of the front centre pavilion (x -3..3,
-z -16..-14) with its steps down to the path (z -17..-16)."""
+The building's footprint (studs from the centre): 46 x 46 with the corner pavilions and the
+dome pavilions projecting one stud more on every side (48 x 48 over them); the entrance bays
+between the dome pavilions are set back. The side porches stand in front of the entrance
+bays on the two sides (x 460..500, z -80..80), with a step down to the walk."""
 from __future__ import annotations
 
 import numpy as np
@@ -12,41 +13,42 @@ import numpy as np
 from brickkit.ldraw.matrix import rot, transform
 from kit import AV, PLATE, TILE, Batch, pack, rect_M
 
-N = 19                                         # cells -19..18: 38 x 38 studs
+N = 28                                         # cells -28..27: 56 x 56 studs
 CELLS = {(i, k) for i in range(-N, N) for k in range(-N, N)}
 RING = {(i, k) for i, k in CELLS if i in (-N, N - 1) or k in (-N, N - 1)}
-PORTICO = {(i, k) for i in range(-3, 3) for k in range(-16, -14)}   # its platform
-STEPS = {(i, k) for i in range(-3, 3) for k in (-17,)}
-FRONT_PATH = {(i, -18) for i in range(-3, 3)}
 
 
-def _side_paths():
-    """Paths 4 studs wide from the other three doors to the ring."""
+def turn(cells, a):
+    """Cells turned by rot(y=a) about the centre."""
+    R = rot(y=a)
     out = set()
-    for i in range(-2, 2):
-        for k in range(14, N - 1):
-            out |= {(i, k), (k, i), (-k - 1, i)}
+    for i, k in cells:
+        p = R @ np.array([20 * i + 10, 0.0, 20 * k + 10])
+        out.add((int(round((p[0] - 10) / 20)), int(round((p[2] - 10) / 20))))
     return out
 
 
-WALK = RING | FRONT_PATH | STEPS | PORTICO | _side_paths()
+def all_sides(cells, angles=(0, 90, 180, 270)):
+    return set().union(*(turn(cells, a) for a in angles))
 
 
-def _building() -> set:
-    cells = {(i, k) for i in range(-13, 13) for k in range(-13, 13)}
-    for sx in (1, -1):
-        for sz in (1, -1):
-            cells |= {(i if sx > 0 else -i - 1, k if sz > 0 else -k - 1)
-                      for i in range(6, 14) for k in range(6, 14)}
-    for i in range(-2, 2):
-        cells |= {(i, -14), (i, 13), (-14, i), (13, i)}
-    return cells
-
-
-BUILDING = _building()
-TREES = [(-330.0, -190.0), (330.0, 190.0)]
-FLAGS = [(90.0, -330.0, "Red", "flag_us"), (170.0, -330.0, "Blue", "flag_tx"),
-         (250.0, -330.0, "Dark Blue", "flag_county")]
+# the front (-Z) side's projecting bays: corner pavilions and dome pavilions
+PROJECT = {(i, -24) for i in list(range(-24, -16)) + list(range(-12, -4)) + list(range(4, 12))
+           + list(range(16, 24))}
+BUILDING = {(i, k) for i in range(-23, 23) for k in range(-23, 23)} | all_sides(PROJECT)
+# porches on the sides (+X and -X), built in the front frame and turned
+PORCH0 = {(i, k) for i in range(-4, 4) for k in (-25, -24)}
+STEP0 = {(i, -26) for i in range(-4, 4)}
+PORCH = turn(PORCH0, 90) | turn(PORCH0, 270)
+STEPS = turn(STEP0, 90) | turn(STEP0, 270)
+SIDE_WALKS = turn({(i, -27) for i in range(-4, 4)}, 90) | turn({(i, -27) for i in range(-4, 4)}, 270)
+DOORWAYS = turn({(i, -24) for i in range(-4, 4)}, 0) | turn({(i, -24) for i in range(-4, 4)}, 180)
+PATHS = {(i, k) for i in range(-2, 2) for k in range(-27, -24)}
+PATHS |= turn(PATHS, 180)
+WALK = RING | PORCH | STEPS | SIDE_WALKS | DOORWAYS | PATHS
+TREES = [(-250.0, -510.0), (-430.0, -510.0), (250.0, 510.0), (430.0, 510.0)]
+FLAGS = [(90.0, -510.0, "Red", "flag_us"), (170.0, -510.0, "Blue", "flag_tx"),
+         (250.0, -510.0, "Dark Blue", "flag_county")]
 
 
 def base_batch() -> Batch:
@@ -62,7 +64,7 @@ def base_batch() -> Batch:
             p, M = rect_M(PLATE, r, 0)
             b.add(p, colour, M, "top")
     tiles = [(2, 6), (2, 4), (1, 6), (1, 4), (2, 2), (1, 3), (1, 2), (1, 1)]
-    walk_tiles = WALK - PORTICO - STEPS - BUILDING
+    walk_tiles = WALK - PORCH - STEPS - BUILDING
     for r in pack(walk_tiles, [s for s in tiles if s in TILE and AV.ok(TILE[s], "walk")]):
         p, M = rect_M(TILE, r, -8)
         b.add(p, "walk", M, "walks")
@@ -74,9 +76,9 @@ def shrubs() -> Batch:
     b = Batch()
     near = lambda c, cells, r: any((c[0] + a, c[1] + e) in cells
                                    for a in range(-r, r + 1) for e in range(-r, r + 1))
-    ring = {(i + 2 * d[0], k + 2 * d[1]) for i, k in BUILDING
+    ring = {(i + 3 * d[0], k + 3 * d[1]) for i, k in BUILDING
             for d in ((1, 0), (-1, 0), (0, 1), (0, -1))}
-    ring = {c for c in ring if c in CELLS and not near(c, BUILDING, 1) and not near(c, WALK, 1)}
+    ring = {c for c in ring if c in CELLS and not near(c, BUILDING, 2) and not near(c, WALK, 1)}
     busy = {((int(x) - 10) // 20, (int(z) - 10) // 20) for x, z in TREES} | \
         {((int(x) - 10) // 20, (int(z) - 10) // 20) for x, z, *_ in FLAGS}
     for i, k in sorted(ring):
@@ -88,22 +90,22 @@ def shrubs() -> Batch:
 
 
 def tree(model):
-    """A live oak on a side lawn: a round trunk and leaves in three tiers, fanned along the
-    lawn (their long side runs along Z, so they clear the walls and the base's edge)."""
+    """A live oak on the front or back lawn: a round trunk and a wide, low crown that
+    spreads along the facade (the lawn is only three studs deep): on each tier a round
+    2 x 2 plate carries two leaves pointing left and right, on its outer side."""
     s = model.submodel("tree", "Live oak")
     for n in range(3):
         s.place("3062b", "trunk", (0, -24 * (n + 1), 0))
     y = -72
-    tiers = [("2417", "leaves", 0), ("2417", "leaves2", 180), ("2417", "leaves", 180),
-             ("2417", "leaves2", 0), ("2423", "leaves", 0), ("2423", "leaves", 180)]
-    for n, (part, colour, a) in enumerate(tiers):
-        s.step("The crown: leaves on round plates" if n == 0 else "")
-        if n:
-            s.place("6141", "trunk", (0, y - 8, 0))
-            s.place("6141", "trunk", (0, y - 16, 0))
-            y -= 16
-        y -= 8
-        s.place(part, colour, (0, y, 0), rot(y=a))
+    for n in range(3):
+        s.step("The crown: two leaves on a round plate, three times" if n == 0 else "")
+        s.place("4032a", "trunk", (0, y - 8, 0))
+        s.place("2423", "leaves", (-10, y - 16, -10), rot(y=90))
+        s.place("2423", "leaves2" if n % 2 else "leaves", (10, y - 16, -10), rot(y=-90))
+        y -= 16
+    s.step("The top")
+    s.place("4032a", "trunk", (0, y - 8, 0))
+    s.place("32607", "leaves2", (-10, y - 16, -10))
     return s
 
 

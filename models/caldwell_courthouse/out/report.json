@@ -5,10 +5,10 @@
     {
       "name": "real_elements",
       "status": "pass",
-      "summary": "133 part/colour combinations: 0 not real, 0 rare; 3 non-LEGO hardware stand-in(s), not checked",
+      "summary": "160 part/colour combinations: 0 not real, 0 rare; 3 non-LEGO hardware stand-in(s), not checked",
       "items": [],
       "stats": {
-        "combinations": 133,
+        "combinations": 160,
         "not_real": 0,
         "rare": 0,
         "hardware": 3
@@ -17,18 +17,18 @@
     {
       "name": "connections",
       "status": "pass",
-      "summary": "8892 connections (8682 stud, 60 press, 48 hinge, 40 gen, 38 pin, 21 axle, 2 clip, 1 bar); 1 separate piece(s)",
+      "summary": "20291 connections (20029 stud, 100 hinge, 60 press, 36 gen, 30 pin, 29 axle, 5 bar, 2 clip); 1 separate piece(s)",
       "items": [],
       "stats": {
-        "connections": 8892,
+        "connections": 20291,
         "by_kind": {
-          "stud": 8682,
-          "axle": 21,
-          "pin": 38,
-          "hinge": 48,
-          "bar": 1,
+          "stud": 20029,
+          "axle": 29,
+          "pin": 30,
+          "hinge": 100,
+          "bar": 5,
           "clip": 2,
-          "gen": 40,
+          "gen": 36,
           "press": 60
         },
         "pieces": 1
@@ -37,7 +37,7 @@
     {
       "name": "collisions",
       "status": "pass",
-      "summary": "0 overlapping pair(s) among 2945 parts",
+      "summary": "0 overlapping pair(s) among 6671 parts",
       "items": [],
       "stats": {
         "pairs": 0
@@ -46,28 +46,28 @@
     {
       "name": "buildability",
       "status": "pass",
-      "summary": "1697 insertions tried across 15 submodel(s); 0 problem(s)",
+      "summary": "3961 insertions tried across 17 submodel(s); 0 problem(s)",
       "items": [],
       "stats": {
-        "insertions": 1697
+        "insertions": 3961
       }
     },
     {
       "name": "stability",
       "status": "pass",
-      "summary": "about 3158 g; centre of mass inside the base (99% margin); tips at 45.9 deg",
+      "summary": "about 7134 g; centre of mass inside the base (100% margin); tips at 49.3 deg",
       "items": [],
       "stats": {
-        "mass_g": 3157.9105106581983,
+        "mass_g": 7133.649719136098,
         "com": [
-          0.14116397398307165,
-          -349.63984222626635,
-          -2.3513937838009342
+          0.2803877742480339,
+          -464.96204141805123,
+          -0.013584380776826862
         ],
         "approx_parts": 0,
-        "margin": 0.9938121216215765,
-        "tip_angle_deg": 45.92560517848581,
-        "com_height_ldu": 365.63984222626635
+        "margin": 0.9994993075459856,
+        "tip_angle_deg": 49.32782795036726,
+        "com_height_ldu": 480.96204141805123
       }
     },
     {
