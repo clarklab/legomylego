@@ -38,6 +38,7 @@ qty,part,name,colour,ldraw_colour,rebrickable_part,rebrickable_colour,bricklink_
 2,87079,Tile 2 x 4 with Groove,Black,0,87079,0,87079,11,4560182,0
 6,87087,Brick Special 1 x 1 with Stud on 1 Side,Black,0,87087,0,87087,11,4558954,0
 5,6141,Plate Round 1 x 1 with Solid Stud,Flat Silver,315,6141,179,6141,95,4633691,0
+3,74611,Plate Round 8 x 8,Light Bluish Gray,71,74611,71,74611,86,6353794,0
 2,32062,Technic Axle 2 Notched,Red,4,32062,4,32062,5,4142865,0
 8,27507,"Tile 4 x 4 Curved, Macaroni",Trans-Clear,47,27507,47,27507,12,6544432,0
 2,42509,Glass for Frame 1 x 6 x 6,Trans-Clear,47,42509,47,42509,12,6511024,0
@@ -51,5 +52,4 @@ qty,part,name,colour,ldraw_colour,rebrickable_part,rebrickable_colour,bricklink_
 2,4032a,Plate Round 2 x 2 with Axle Hole Type 1 (+ Opening),White,15,4032a,15,4032a,1,403201,0
 2,4162,Tile 1 x 8 with Groove,White,15,4162,15,4162,1,416201,0
 3,6141,Plate Round 1 x 1 with Solid Stud,White,15,6141,15,6141,1,614101,0
-3,74611,Plate Round 8 x 8,White,15,74611,15,74611,1,6331510,0
 3,87079,Tile 2 x 4 with Groove,White,15,87079,15,87079,1,4560178,0

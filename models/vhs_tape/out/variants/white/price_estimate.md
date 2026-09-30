@@ -39,7 +39,7 @@ For a real quote, upload `bricklink_wanted.xml` as a BrickLink Wanted List and u
 | 2 | 69729 Tile 2 x 6 | White | 0.06-0.20 | 0.12-0.40 | 2 x 6 |
 | 5 | 6141 Plate Round 1 x 1 with Solid Stud | Flat Silver | 0.02-0.08 | 0.10-0.40 | plate |
 | 2 | 32062 Technic Axle 2 Notched | Red | 0.03-0.20 | 0.06-0.40 | axle |
-| 3 | 74611 Plate Round 8 x 8 | White | 0.03-0.11 | 0.08-0.34 | plate, in 13 set(s) |
+| 3 | 74611 Plate Round 8 x 8 | Light Bluish Gray | 0.03-0.11 | 0.08-0.34 | plate, in 24 set(s) |
 | 2 | 6636 Tile 1 x 6 with Groove | Black | 0.05-0.15 | 0.10-0.30 | 1 x 6 |
 | 4 | 3020 Plate 2 x 4 | White | 0.02-0.08 | 0.08-0.32 | plate |
 | 4 | 6141 Plate Round 1 x 1 with Solid Stud | White | 0.02-0.08 | 0.08-0.32 | plate |

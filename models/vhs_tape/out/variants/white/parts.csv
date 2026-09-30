@@ -12,6 +12,7 @@ qty,part,name,colour,ldraw_colour,rebrickable_part,rebrickable_colour,bricklink_
 3,26603,Tile 2 x 3,Light Bluish Gray,71,26603,71,26603,86,6171894,0
 2,3070b,Tile 1 x 1 with Groove,Light Bluish Gray,71,3070b,71,3070b,86,4211415,0
 2,4162,Tile 1 x 8 with Groove,Light Bluish Gray,71,4162,71,4162,86,4211481,0
+3,74611,Plate Round 8 x 8,Light Bluish Gray,71,74611,71,74611,86,6353794,0
 3,87079,Tile 2 x 4 with Groove,Light Bluish Gray,71,87079,71,87079,86,4560183,0
 2,32062,Technic Axle 2 Notched,Red,4,32062,4,32062,5,4142865,0
 8,27507,"Tile 4 x 4 Curved, Macaroni",Trans-Clear,47,27507,47,27507,12,6544432,0
@@ -50,6 +51,5 @@ qty,part,name,colour,ldraw_colour,rebrickable_part,rebrickable_colour,bricklink_
 2,6541,Technic Brick 1 x 1 with Pin Hole,White,15,6541,15,6541,1,654101,0
 12,6636,Tile 1 x 6 with Groove,White,15,6636,15,6636,1,663601,0
 2,69729,Tile 2 x 6,White,15,69729,15,69729,1,6332042,0
-3,74611,Plate Round 8 x 8,White,15,74611,15,74611,1,6331510,0
 2,87079,Tile 2 x 4 with Groove,White,15,87079,15,87079,1,4560178,0
 6,87087,Brick Special 1 x 1 with Stud on 1 Side,White,15,87087,15,87087,1,4558952,0

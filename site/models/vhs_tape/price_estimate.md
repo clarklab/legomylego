@@ -39,7 +39,7 @@ For a real quote, upload `bricklink_wanted.xml` as a BrickLink Wanted List and u
 | 3 | 3062b Brick Round 1 x 1 Open Stud | White | 0.04-0.12 | 0.12-0.36 | brick |
 | 2 | 32062 Technic Axle 2 Notched | Red | 0.03-0.20 | 0.06-0.40 | axle |
 | 2 | 4032a Plate Round 2 x 2 with Axle Hole Type 1 (+ Opening) | White | 0.03-0.20 | 0.06-0.40 | axle |
-| 3 | 74611 Plate Round 8 x 8 | White | 0.03-0.11 | 0.08-0.34 | plate, in 13 set(s) |
+| 3 | 74611 Plate Round 8 x 8 | Light Bluish Gray | 0.03-0.11 | 0.08-0.34 | plate, in 24 set(s) |
 | 4 | 3020 Plate 2 x 4 | Black | 0.02-0.08 | 0.08-0.32 | plate |
 | 3 | 26603 Tile 2 x 3 | White | 0.03-0.10 | 0.09-0.30 | tile |
 | 3 | 87079 Tile 2 x 4 with Groove | White | 0.03-0.10 | 0.09-0.30 | tile |

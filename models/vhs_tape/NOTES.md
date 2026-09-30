@@ -105,8 +105,10 @@ guide rollers.
 ### Reels (`reel_l` supply, `reel_r` take-up)
 Each reel, from the bottom:
 
-1. A **White Plate Round 8 x 8 (74611)**: the lower flange, 64 mm.
-2. The pack: a **black 74611** on the full supply reel; a second **white** one on the
+1. A **Light Bluish Gray Plate Round 8 x 8 (74611)**: the lower flange, 64 mm. (It was White,
+   but White 74611 only ships slowly from Pick a Brick; grey is in its fast stock, and real
+   reels often have grey flanges.)
+2. The pack: a **black 74611** on the full supply reel; a second **grey** one on the
    nearly empty take-up reel, so the flange shows round a thin pack.
 3. The hub: a **White 2 x 2 round plate with axle hole (4032a)** in a ring of four white
    **2 x 2 macaroni tiles** (32 mm); the round plate's four studs are the ring of bumps.
@@ -122,7 +124,7 @@ flush with the bottom: turn it with a fingertip to wind the tape, as a VCR's spi
 the hub from below. Both reels are declared `captive` (they are trapped by the shell).
 
 Through the windows: the supply reel reads as white hub, black pack and clear ring over
-black; the take-up reel as white hub, thin black pack and clear ring over the white flange.
+black; the take-up reel as white hub, thin black pack and clear ring over the grey flange.
 `pose(t)` turns both reels the same way, as when playing: the supply reel 270 degrees and
 the take-up reel 360 degrees (the small pack spins faster for the same tape speed).
 

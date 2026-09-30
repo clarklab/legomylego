@@ -35,8 +35,8 @@
 0 Name: reel_full.ldr
 0 Author: brickkit
 
-0 // Lower flange: a white 8 x 8 round plate with a hole in the middle
-1 15 0 -8 0 1 0 0 0 1 0 0 0 1 74611.dat
+0 // Lower flange: a light grey 8 x 8 round plate with a hole in the middle
+1 71 0 -8 0 1 0 0 0 1 0 0 0 1 74611.dat
 0 STEP
 0 // A full pack of tape: a black 8 x 8 round plate
 1 0 0 -16 0 1 0 0 0 1 0 0 0 1 74611.dat
@@ -70,11 +70,11 @@
 0 Name: reel_empty.ldr
 0 Author: brickkit
 
-0 // Lower flange: a white 8 x 8 round plate with a hole in the middle
-1 15 0 -8 0 1 0 0 0 1 0 0 0 1 74611.dat
+0 // Lower flange: a light grey 8 x 8 round plate with a hole in the middle
+1 71 0 -8 0 1 0 0 0 1 0 0 0 1 74611.dat
 0 STEP
-0 // Nearly empty: a second white plate, so the flange shows round a thin pack
-1 15 0 -16 0 1 0 0 0 1 0 0 0 1 74611.dat
+0 // Nearly empty: a second grey plate, so the flange shows round a thin pack
+1 71 0 -16 0 1 0 0 0 1 0 0 0 1 74611.dat
 0 STEP
 0 // The hub: a round plate with an axle hole, and a flat white ring round it
 1 15 0 -24 0 1 0 0 0 1 0 0 0 1 4032a.dat
