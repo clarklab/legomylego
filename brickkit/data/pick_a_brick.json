@@ -1,0 +1,9 @@
+{
+  "_about": "What LEGO Pick a Brick actually sells, learned from list uploads (elementId,quantity). Element IDs are chosen newest-first from Rebrickable's elements, except: IDs inside an avoid range are skipped when the part/colour has another ID; `use_instead` swaps an ID Pick a Brick rejected for one it accepted; `unavailable` IDs are left out of pick_a_brick.csv (buy those on BrickLink). Verified by uploading the VHS Cassette list on 2026-09-30.",
+  "avoid_ranges": [[6548000, 6620000]],
+  "_avoid_ranges": "Every element tested from this block (11 White parts, 2026-09) was unavailable on Pick a Brick while an older ID for the same part/colour was available.",
+  "use_instead": {
+    "614376": "614326"
+  },
+  "unavailable": ["4121715"]
+}

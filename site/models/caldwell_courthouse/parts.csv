@@ -19,7 +19,7 @@ qty,part,name,colour,ldraw_colour,rebrickable_part,rebrickable_colour,bricklink_
 16,4083,Bar 1 x 4 x 2 with Studs,Black,0,4083,0,4083,11,408326,0
 184,4460b,Brick Sloped 75° 2 x 1 x 3 with Hollow Stud,Black,0,4460b,0,4460b,11,446026,0
 16,59900,Cone 1 x 1 [Top Groove],Black,0,59900,0,59900,11,4529236,0
-16,60602,Glass for Window 1 x 2 x 3 Flat Front,Black,0,60602,0,60602,11,6581489,0
+16,60602,Glass for Window 1 x 2 x 3 Flat Front,Black,0,60602,0,60602,11,6476097,0
 1,60897,Plate Special 1 x 1 with Clip Vertical [Thick Open O Clip],Black,0,60897,0,60897,11,6330189,0
 1,61252,Plate Special 1 x 1 with Clip Horizontal [Thick Open O Clip],Black,0,61252,0,61252,11,6308000,0
 2,63864,Tile 1 x 3,Black,0,63864,0,63864,11,4558170,0
@@ -77,7 +77,7 @@ qty,part,name,colour,ldraw_colour,rebrickable_part,rebrickable_colour,bricklink_
 1,3020,Plate 2 x 4,Green,2,3020,2,3020,6,302028,0
 2,3022,Plate 2 x 2,Green,2,3022,2,3022,6,302228,0
 4,3023b,Plate 1 x 2,Green,2,3023,2,3023,6,302328,0
-4,3027,Plate 6 x 16,Green,2,3027,2,3027,6,6584863,0
+4,3027,Plate 6 x 16,Green,2,3027,2,3027,6,6032912,0
 1,3031,Plate 4 x 4,Green,2,3031,2,3031,6,4243821,0
 2,3032,Plate 4 x 6,Green,2,3032,2,3032,6,4116671,0
 7,3034,Plate 2 x 8,Green,2,3034,2,3034,6,303428,0
@@ -151,11 +151,11 @@ qty,part,name,colour,ldraw_colour,rebrickable_part,rebrickable_colour,bricklink_
 4,6636,Tile 1 x 6 with Groove,Tan,19,6636,19,6636,2,4157277,0
 628,98283,Brick Special 1 x 2 with Masonry Brick Profile,Tan,19,98283,19,98283,2,6148262,0
 36,60601,Glass for Window 1 x 2 x 2 Flat,Trans-Clear,47,60601,47,60601,12,6673770,0
-72,60602,Glass for Window 1 x 2 x 3 Flat Front,Trans-Clear,47,60602,47,60602,12,6581359,0
-4,15332,Fence Spindled 1 x 4 x 2 [4 Top Studs],White,15,15332,15,15332,1,6615529,0
-12,30044,Window 1 x 2 x 2 2/3 with Rounded Top,White,15,30044,15,30044,1,6619297,0
-6,3062b,Brick Round 1 x 1 Open Stud,White,15,3062b,15,3062b,1,6619283,0
-36,60592,Window 1 x 2 x 2 Flat Front,White,15,60592,15,60592,1,6550187,0
+72,60602,Glass for Window 1 x 2 x 3 Flat Front,Trans-Clear,47,60602,47,60602,12,6252258,0
+4,15332,Fence Spindled 1 x 4 x 2 [4 Top Studs],White,15,15332,15,15332,1,6047813,0
+12,30044,Window 1 x 2 x 2 2/3 with Rounded Top,White,15,30044,15,30044,1,4247139,0
+6,3062b,Brick Round 1 x 1 Open Stud,White,15,3062b,15,3062b,1,306201,0
+36,60592,Window 1 x 2 x 2 Flat Front,White,15,60592,15,60592,1,6382045,0
 80,60593,Window 1 x 2 x 3 Flat Front,White,15,60593,15,60593,1,6468341,0
 3,63965,Bar 6L with Stop Ring,White,15,63965,15,63965,1,6170419,0
-16,79393,"Tile 3 x 3 Curved, Macaroni",White,15,79393,15,79393,1,6564909,0
+16,79393,"Tile 3 x 3 Curved, Macaroni",White,15,79393,15,79393,1,6373439,0

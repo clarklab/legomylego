@@ -1,8 +1,10 @@
 from __future__ import annotations
 
 import csv
+import json
 from collections import Counter
 from dataclasses import dataclass
+from functools import lru_cache
 from pathlib import Path
 from xml.sax.saxutils import escape
 
@@ -23,6 +25,27 @@ class BomLine:
     bl_type: str = "P"          # BrickLink item type: P part, S set (e.g. 8870 light unit)
 
 
+@lru_cache(maxsize=1)
+def pick_a_brick_data() -> dict:
+    """What Pick a Brick sells, learned from uploads (data/pick_a_brick.json)."""
+    f = Path(__file__).resolve().parents[1] / "data" / "pick_a_brick.json"
+    return json.loads(f.read_text()) if f.exists() else {}
+
+
+def choose_element(ids) -> str:
+    """The LEGO element ID for a part/colour: the newest, but not one from a block Pick a Brick
+    doesn't stock when an older ID exists, and swapped for the one Pick a Brick accepted when
+    an upload showed it rejects ours (data/pick_a_brick.json)."""
+    if not ids:
+        return ""
+    d = pick_a_brick_data()
+    ranges = d.get("avoid_ranges", [])
+    num = lambda e: int(e) if str(e).isdigit() else 0
+    ok = [e for e in ids if not any(lo <= num(e) <= hi for lo, hi in ranges)] or list(ids)
+    best = max(ok, key=num)
+    return d.get("use_instead", {}).get(best, best)
+
+
 def build_bom(placed, catalog, extras=()) -> list[BomLine]:
     """Parts list from placed parts plus a model's `extras` [(part, Color, qty, note)]."""
     counts = Counter((p.part, p.color.ldraw) for p in placed if catalog.in_bom(p.part))
@@ -34,7 +57,7 @@ def build_bom(placed, catalog, extras=()) -> list[BomLine]:
         e = catalog.element(part, c)
         lines.append(BomLine(part_id(part), catalog.rb_part(part), catalog.bl_part(part),
                              catalog.part_name(part), c, qty,
-                             e.element_ids[-1] if e and e.element_ids else "",
+                             choose_element(e.element_ids if e else []),
                              bool(e is None or e.rare), catalog.bl_type(part)))
     lines.sort(key=lambda l: (l.color.name, l.ldraw_part))
     return lines
@@ -105,6 +128,7 @@ def write_pick_a_brick_csv(lines: list[BomLine], path) -> None:
     with open(path, "w", newline="") as fh:
         w = csv.writer(fh)
         w.writerow(["elementId", "quantity"])
+        gone = set(pick_a_brick_data().get("unavailable", []))
         for l in lines:
-            if l.element_id:
+            if l.element_id and l.element_id not in gone:     # the rest: BrickLink
                 w.writerow([l.element_id, l.qty])

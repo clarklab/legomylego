@@ -16,7 +16,7 @@ qty,part,name,colour,ldraw_colour,rebrickable_part,rebrickable_colour,bricklink_
 4,3701,Technic Brick 1 x 4 [3 Pin Holes],Black,0,3701,0,3701,11,370126,0
 4,3705,Technic Axle 4,Black,0,3705,0,3705,11,370526,0
 42,3710,Plate 1 x 4,Black,0,3710,0,3710,11,371026,0
-2,3941,Brick Round 2 x 2 with Axle Hole,Black,0,3941,0,3941,11,614376,0
+2,3941,Brick Round 2 x 2 with Axle Hole,Black,0,3941,0,3941,11,614326,0
 1,3958,Plate 6 x 6,Black,0,3958,0,3958,11,395826,0
 1,4032a,Plate Round 2 x 2 with Axle Hole Type 1 (+ Opening),Black,0,4032a,0,4032a,11,403226,0
 1,50451,Technic Axle 16,Black,0,50451,0,50451,11,6317564,0
@@ -36,7 +36,7 @@ qty,part,name,colour,ldraw_colour,rebrickable_part,rebrickable_colour,bricklink_
 82,3024,Plate 1 x 1,Dark Red,320,3024,320,3024,59,4539114,0
 105,3666,Plate 1 x 6,Dark Red,320,3666,320,3666,59,4539062,0
 34,3710,Plate 1 x 4,Dark Red,320,3710,320,3710,59,4539061,0
-4,60474,Plate Round 4 x 4 with Pin Hole,Dark Red,320,60474,320,60474,59,6614381,0
+4,60474,Plate Round 4 x 4 with Pin Hole,Dark Red,320,60474,320,60474,59,4631233,0
 4,32123b,Technic Bush 1/2 Smooth with Axle Hole Semi-Reduced,Light Bluish Gray,71,32123b,71,32123b,86,6271165,0
 6,3673,Technic Pin without Friction Ridges Lengthwise,Light Bluish Gray,71,3673,71,3673,86,4211807,0
 4,4519,Technic Axle 3,Light Bluish Gray,71,4519,71,4519,86,4211815,0

@@ -60,3 +60,27 @@ def test_bricklink_oauth_header(monkeypatch):
     assert h.startswith("OAuth realm=") and 'oauth_consumer_key="ck"' in h and 'oauth_token="tk"' in h
     assert h == live_price._auth_header("GET", "https://api.bricklink.com/api/store/v1/items/PART/3001/price",
                                         {"color_id": "5", "guide_type": "stock"}, cred)
+
+
+def test_choose_element_follows_pick_a_brick():
+    """Newest ID, but not from the block Pick a Brick doesn't stock when an older ID exists, and
+    swapped for the ID an upload showed it accepts (data/pick_a_brick.json)."""
+    from brickkit.bom.bom import choose_element
+    assert choose_element(["243101", "6548255"]) == "243101"                  # White 1x4 tile
+    assert choose_element(["6156667", "6550161", "6552162"]) == "6156667"     # White 2x3 tile
+    assert choose_element(["394126", "614326", "614376"]) == "614326"         # Black 2x2 round brick
+    assert choose_element(["6386637", "6511024"]) == "6511024"                # accepted as is
+    assert choose_element(["6550138"]) == "6550138"                           # nothing else to use
+    assert choose_element([]) == ""
+
+
+def test_pick_a_brick_csv_leaves_out_unavailable(tmp_path):
+    import csv
+    from brickkit.bom.bom import BomLine, write_pick_a_brick_csv
+    from brickkit.catalog.colors import Color
+    black = Color(name="Black", ldraw=0, rgb="#1B2A34", alpha=255, rb_id=0, bl_id=11)
+    lines = [BomLine("2780", "2780", "2780", "Pin", black, 2, "4121715", False),
+             BomLine("3001", "3001", "3001", "Brick 2x4", black, 3, "300126", False)]
+    write_pick_a_brick_csv(lines, tmp_path / "p.csv")
+    rows = list(csv.reader(open(tmp_path / "p.csv")))
+    assert rows == [["elementId", "quantity"], ["300126", "3"]]

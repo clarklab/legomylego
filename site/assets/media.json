@@ -19,15 +19,15 @@
      "size": 1613884
     },
     "model.json": {
-     "v": "be85c808c8",
-     "size": 377645
+     "v": "6ec2ee77d5",
+     "size": 377659
     },
     "parts.csv": {
-     "v": "810adee2b3",
+     "v": "738acca2cd",
      "size": 4619
     },
     "pick_a_brick.csv": {
-     "v": "14034c5607",
+     "v": "14f132c695",
      "size": 703
     },
     "price_estimate.md": {
@@ -130,16 +130,16 @@
      "size": 5781884
     },
     "model.json": {
-     "v": "87c8a18141",
-     "size": 939362
+     "v": "24b47a4d33",
+     "size": 939360
     },
     "parts.csv": {
-     "v": "a80f5d641f",
-     "size": 11388
+     "v": "62e340bf90",
+     "size": 11387
     },
     "pick_a_brick.csv": {
-     "v": "4aae8416da",
-     "size": 1868
+     "v": "bc8e828b2b",
+     "size": 1867
     },
     "price_estimate.md": {
      "v": "528189636f",
@@ -291,16 +291,16 @@
      "size": 4040712
     },
     "model.json": {
-     "v": "5cd746290c",
-     "size": 213925
+     "v": "32ba363246",
+     "size": 213897
     },
     "parts.csv": {
-     "v": "1a4ef1d486",
-     "size": 13192
+     "v": "a3854aa92b",
+     "size": 13171
     },
     "pick_a_brick.csv": {
-     "v": "747c266bda",
-     "size": 2113
+     "v": "8facaf613d",
+     "size": 2081
     },
     "price_estimate.md": {
      "v": "21e6bca841",
@@ -410,16 +410,16 @@
      "size": 773008
     },
     "model.json": {
-     "v": "ccaca153aa",
-     "size": 167161
+     "v": "1b265ffae8",
+     "size": 167134
     },
     "parts.csv": {
-     "v": "9559bb7d7b",
-     "size": 4859
+     "v": "8ab523649c",
+     "size": 4848
     },
     "pick_a_brick.csv": {
-     "v": "eec178f5af",
-     "size": 834
+     "v": "e598e11147",
+     "size": 823
     },
     "price_estimate.md": {
      "v": "9ab90d6285",
@@ -507,16 +507,16 @@
      "size": 1118728
     },
     "model.json": {
-     "v": "0000185c5e",
-     "size": 81669
+     "v": "138c77cdfa",
+     "size": 81653
     },
     "parts.csv": {
-     "v": "881d514e69",
-     "size": 3829
+     "v": "06f946d77b",
+     "size": 3821
     },
     "pick_a_brick.csv": {
-     "v": "e14a811223",
-     "size": 601
+     "v": "299d205231",
+     "size": 582
     },
     "price_estimate.md": {
      "v": "685ba30479",
