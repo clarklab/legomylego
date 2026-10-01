@@ -3,11 +3,19 @@ from __future__ import annotations
 import json
 import re
 from dataclasses import dataclass
+from functools import cached_property
+from pathlib import Path
 
 from .. import paths
 from ..ldraw.library import LDrawLibrary, normalize, part_id
 from .colors import Color, ColorTable
 from .rebrickable import RBIndex, load_index
+from .xref import LDrawXref, load_xref
+
+
+def _fig_index(rb_dir, cache):
+    from .minifig import load_fig_index
+    return load_fig_index(rb_dir, cache)
 
 
 def _data(name: str) -> dict:
@@ -29,19 +37,46 @@ class ElementInfo:
 
 class Catalog:
     def __init__(self, ldraw: LDrawLibrary, rb: RBIndex, part_map: dict, bl_colors: dict,
-                 aliases: dict, masses: dict, hardware: dict | None = None):
+                 aliases: dict, masses: dict, hardware: dict | None = None,
+                 approximate: dict | None = None):
         self.ldraw = ldraw
         self.rb = rb
         self.part_map = part_map
         self.masses = masses
         self.hardware = {k: v for k, v in (hardware or {}).items() if not k.startswith("_")}
+        self.approximate = {k: v for k, v in (approximate or {}).items()
+                            if not k.startswith("_")}
         self.colors = ColorTable(ldraw.colors, rb.colors, bl_colors, aliases)
 
     @classmethod
     def load(cls, ldraw: LDrawLibrary, rb_dir, cache_path) -> "Catalog":
-        return cls(ldraw, load_index(rb_dir, cache_path), _data("part_map.json"),
-                   _data("bricklink_colors.json"), _data("color_aliases.json"),
-                   _data("masses.json"), _data("hardware.json"))
+        cat = cls(ldraw, load_index(rb_dir, cache_path), _data("part_map.json"),
+                  _data("bricklink_colors.json"), _data("color_aliases.json"),
+                  _data("masses.json"), _data("hardware.json"), _data("approximate.json"))
+        cache = Path(cache_path).parent
+        cat._xref_loader = lambda: load_xref(ldraw.root, cache / "ldraw_xref.pkl")
+        cat._fig_loader = lambda: _fig_index(rb_dir, cache / "rb_figs.pkl")
+        return cat
+
+    @cached_property
+    def xref(self) -> LDrawXref:
+        """Rebrickable / BrickLink numbers cited in LDraw headers (printed parts, minifigs)."""
+        loader = getattr(self, "_xref_loader", None)
+        return loader() if loader else LDrawXref({}, {}, {}, {})
+
+    @property
+    def shadow(self):
+        """The LDCad snap library (the Engine's), for placing minifig accessories."""
+        loader = getattr(self, "_shadow_loader", None)
+        if loader is None:
+            raise RuntimeError("catalog has no snap library (load it through an Engine)")
+        return loader()
+
+    @cached_property
+    def figs(self):
+        """Minifigure components: heads, torso and legs assemblies (catalog/minifig.py)."""
+        from .minifig import FigCatalog
+        return FigCatalog(self, self.xref, getattr(self, "_fig_loader", None))
 
     def color(self, key) -> Color:
         return self.colors.get(key)
@@ -69,6 +104,9 @@ class Catalog:
         m = re.match(r"^(\d+)[a-z]$", pid)
         if m and m.group(1) in self.rb.parts:
             return m.group(1)
+        got = self.xref.rb_for(pid)          # a printed part: the number its header cites
+        if got and got in self.rb.parts:
+            return got
         return pid
 
     def search(self, text: str, color=None, limit: int = 40) -> list[tuple]:
@@ -93,7 +131,14 @@ class Catalog:
         return rows[:limit]
 
     def bl_part(self, part: str) -> str:
-        return self._pm(part).get("bricklink", self.rb_part(part))
+        pm = self._pm(part)
+        if "bricklink" in pm:
+            return pm["bricklink"]
+        if self.approximate.get(part_id(part), {}).get("bricklink"):
+            return self.approximate[part_id(part)]["bricklink"]
+        if part_id(part) not in self.rb.parts and self.xref.bl_for(part_id(part)):
+            return self.xref.bl_for(part_id(part))     # a printed part: its header's number
+        return self.rb_part(part)
 
     def bl_type(self, part: str) -> str:
         return self._pm(part).get("bricklink_type", "P")
@@ -101,6 +146,12 @@ class Catalog:
     def in_bom(self, part: str) -> bool:
         """On the LEGO parts lists (non-LEGO hardware has its own list)."""
         return self._pm(part).get("bom", True) and not self.is_hardware(part)
+
+    def is_approximate(self, part: str) -> bool:
+        """A real LEGO part LDraw has no model of, drawn with brickkit's own approximate model
+        (data/approximate.json, data/ldraw/parts): on the parts lists under its real number,
+        checked like any part; only its 3D shape is approximate."""
+        return part_id(part) in self.approximate and self.ldraw.is_custom(part)
 
     def is_hardware(self, part: str) -> bool:
         """A stand-in for a bought non-LEGO item (data/hardware.json), not a LEGO element."""

@@ -131,7 +131,8 @@ def model_stats(engine, proj, model, placed, tl, out_dir: Path, booklet_steps: i
         "pieces": int(sum(line.qty for line in lines)), "parts": len(placed),
         "steps": int(steps), "colours": len({line.color.name for line in lines}),
         "designs": len({line.ldraw_part for line in lines}), "lines": len(lines),
-        "subassemblies": max(0, len(model.submodels) - 1),
+        "subassemblies": max(0, sum(1 for s in model.submodels.values()
+                                    if getattr(s, "kit", None) is None) - 1),
         "dims_mm": [round(w, 1), round(d, 1), round(h, 1)], "dims": dims,
         "headline": list(headline), "mass_g": mass,
         "notice": proj.config.get("model", {}).get("notice", ""),

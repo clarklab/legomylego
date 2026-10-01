@@ -8,5 +8,14 @@
     "bricklink": "8870",
     "bricklink_type": "S",
     "note": "Power Functions LED light unit 8870 (junction box + 2 LEDs + cable)"
+  },
+  "2429": {
+    "rebrickable": "73983",
+    "bricklink": "73983",
+    "note": "swivel hinge base half: with its top half (2430) it is the complete hinge 73983, sold as one piece"
+  },
+  "2430": {
+    "bom": false,
+    "note": "swivel hinge top half, counted with its base half 2429 as 73983"
   }
 }

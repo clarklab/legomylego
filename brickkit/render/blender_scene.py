@@ -226,6 +226,13 @@ class SceneBuilder:
 
     def camera(self, view, center, radius):
         sc = bpy.context.scene
+        if view.get("bounds"):            # frame these (LDU) bounds, not the whole model
+            lo, hi = view["bounds"]
+            corners = [TO_BLENDER @ Vector((x, y, z)) for x in (lo[0], hi[0])
+                       for y in (lo[1], hi[1]) for z in (lo[2], hi[2])]
+            mn = Vector([min(c[i] for c in corners) for i in range(3)])
+            mx = Vector([max(c[i] for c in corners) for i in range(3)])
+            center, radius = (mn + mx) / 2, max((mx - mn).length / 2, 0.01)
         cd = bpy.data.cameras.new("cam")
         cam = bpy.data.objects.new("cam", cd)
         sc.collection.objects.link(cam)

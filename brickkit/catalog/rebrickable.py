@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import csv
 import gzip
+import os
 import pickle
 from collections import defaultdict
 from dataclasses import dataclass
@@ -10,6 +11,10 @@ from pathlib import Path
 
 TABLES = ("parts", "colors", "elements", "inventory_parts", "inventories", "sets",
           "part_relationships", "part_categories")
+# optional: which sets each minifigure is in (`brickkit fetch` gets them). Minifigure parts are
+# listed in the figure's own inventory (fig-NNNNNN), not the set's, so without these their set
+# counts are counts of figures and their years unknown.
+OPTIONAL = ("inventory_minifigs", "minifigs")
 
 
 @dataclass
@@ -29,6 +34,17 @@ def _rows(d: Path, name: str):
         yield from csv.DictReader(fh)
 
 
+def fig_sets(d: Path, inv_set: dict) -> dict:
+    """fig_num -> {set_num} of the sets the minifigure comes in (empty without the table)."""
+    out: dict = defaultdict(set)
+    if (d / "inventory_minifigs.csv.gz").exists():
+        for r in _rows(d, "inventory_minifigs"):
+            s = inv_set.get(r["inventory_id"])
+            if s and not s.startswith("fig-"):
+                out[r["fig_num"]].add(s)
+    return out
+
+
 def build_index(d: Path) -> RBIndex:
     parts = {r["part_num"]: (r["name"], int(r["part_cat_id"])) for r in _rows(d, "parts")}
     cats = {int(r["id"]): r["name"] for r in _rows(d, "part_categories")}
@@ -38,13 +54,17 @@ def build_index(d: Path) -> RBIndex:
         elements[(r["part_num"], int(r["color_id"]))].append(r["element_id"])
     set_year = {r["set_num"]: int(r["year"]) for r in _rows(d, "sets")}
     inv_set = {r["id"]: r["set_num"] for r in _rows(d, "inventories")}
+    figs = fig_sets(d, inv_set)
     last_year: dict = defaultdict(int)
     sets_with: dict = defaultdict(set)
     for r in _rows(d, "inventory_parts"):
         s = inv_set.get(r["inventory_id"])
         key = (r["part_num"], int(r["color_id"]))
-        last_year[key] = max(last_year[key], set_year.get(s, 0))
-        sets_with[key].add(s)
+        # a minifigure's parts count for every set the figure comes in (a figure in no set,
+        # such as a promotional one, counts as itself, of unknown year)
+        for t in (figs.get(s) or (s,)) if s and s.startswith("fig-") else (s,):
+            last_year[key] = max(last_year[key], set_year.get(t, 0))
+            sets_with[key].add(t)
     related: dict = defaultdict(set)
     for r in _rows(d, "part_relationships"):
         if r["rel_type"] in ("A", "M"):
@@ -57,14 +77,29 @@ def build_index(d: Path) -> RBIndex:
                    {k: len(v) for k, v in sets_with.items()}, dict(related), dict(part_colors))
 
 
+def tables_mtime(d: Path) -> float:
+    d = Path(d)
+    times = [(d / f"{t}.csv.gz").stat().st_mtime for t in TABLES]
+    times += [(d / f"{t}.csv.gz").stat().st_mtime for t in OPTIONAL
+              if (d / f"{t}.csv.gz").exists()]
+    return max(times)
+
+
+def write_pickle(obj, path: Path) -> None:
+    """Pickle atomically (another process may be reading the cache at the same time)."""
+    path = Path(path)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    tmp = path.with_name(f"{path.name}.{os.getpid()}.tmp")
+    with open(tmp, "wb") as fh:
+        pickle.dump(obj, fh)
+    os.replace(tmp, path)
+
+
 def load_index(d: Path, cache: Path) -> RBIndex:
     d, cache = Path(d), Path(cache)
-    newest = max((d / f"{t}.csv.gz").stat().st_mtime for t in TABLES)
-    if cache.exists() and cache.stat().st_mtime > newest:
+    if cache.exists() and cache.stat().st_mtime > tables_mtime(d):
         with open(cache, "rb") as fh:
             return pickle.load(fh)
     idx = build_index(d)
-    cache.parent.mkdir(parents=True, exist_ok=True)
-    with open(cache, "wb") as fh:
-        pickle.dump(idx, fh)
+    write_pickle(idx, cache)
     return idx

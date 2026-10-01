@@ -104,6 +104,31 @@
       "high": 0.08
     },
     {
+      "match": " hair ",
+      "low": 0.35,
+      "high": 1.5
+    },
+    {
+      "match": "hair,",
+      "low": 0.35,
+      "high": 1.5
+    },
+    {
+      "match": " hat,",
+      "low": 0.3,
+      "high": 1.5
+    },
+    {
+      "match": " hat ",
+      "low": 0.3,
+      "high": 1.5
+    },
+    {
+      "match": "helmet",
+      "low": 0.3,
+      "high": 1.5
+    },
+    {
       "match": "",
       "low": 0.05,
       "high": 0.25
@@ -125,5 +150,20 @@
       "max_sets": 30,
       "factor": 1.4
     }
-  ]
+  ],
+  "minifig": {
+    "_about": "minifigure assemblies as sold (catalog/minifig.py), by component",
+    "head": {
+      "low": 0.5,
+      "high": 2.5
+    },
+    "torso": {
+      "low": 1.25,
+      "high": 5.0
+    },
+    "legs": {
+      "low": 0.75,
+      "high": 3.0
+    }
+  }
 }

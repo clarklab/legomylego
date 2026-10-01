@@ -74,8 +74,8 @@ def check_buildability(ctx, cfg) -> CheckResult:
     items: list[dict] = []
     tried = 0
     for sub in ctx.model.submodels.values():
-        if not sub.items:
-            continue
+        if not sub.items or getattr(sub, "kit", None) is not None:
+            continue                    # (a kit comes assembled: a minifig's torso, legs)
         units = _units(sub)
         flat, owner = [], []
         for ui, u in enumerate(units):
@@ -134,7 +134,10 @@ def check_buildability(ctx, cfg) -> CheckResult:
                             and _lowest(units[o]) > _lowest(u) + 0.5 for o in pending if o != ui):
                         continue                             # a lower loose part goes first
                     tried += 1
-                    blockers = [i for i in built_parts if i not in snaps[ui]]
+                    fit = {b for a, b in getattr(sub, "fits", ()) if a == u.tag} | {
+                        a for a, b in getattr(sub, "fits", ()) if b == u.tag}
+                    blockers = [i for i in built_parts if i not in snaps[ui]
+                                and not (fit and units[owner[i]].tag in fit)]
                     if _insertable(ctx, u, ui, links, set(built), flat, blockers, boxes_all,
                                    stride, min_travel):
                         pending.remove(ui)

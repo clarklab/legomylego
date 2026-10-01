@@ -20,6 +20,7 @@ class Placement:
     tag: str = ""
     note: str = ""
     insert: tuple | None = None   # optional insertion direction hint (submodel frame)
+    buy: object = None            # bought as this (a minifig Component), not as `part`
 
 
 @dataclass
@@ -43,10 +44,17 @@ class PlacedPart:
     owner: str
     local_step: int
     build_order: int   # index into Model.instruction_order() when the part joins the model
+    buy: object = None       # what it is bought as (a minifig Component), if not itself
+    buy_lead: bool = False   # the one part of a bought kit that counts it on the parts lists
+    kit: int | None = None   # which bought kit (one per use of a kit sub-assembly) it is in
 
     @property
     def tag_path(self) -> str:
         return "/".join(self.tags)
+
+
+def _ends(path: str, tail: str) -> bool:
+    return path == tail or path.endswith("/" + tail)
 
 
 class Submodel:
@@ -57,6 +65,8 @@ class Submodel:
         self.items: list[Placement | Use] = []
         self.captions: list[str] = [""]
         self.views: dict[int, str] = {}     # step -> "above" | "below" (booklet camera)
+        self.kit = None     # a Component: bought assembled (a minifig torso), not built
+        self.fits: list[tuple[str, str]] = []   # placement tags that fit snugly (hair, head)
 
     @property
     def current_step(self) -> int:
@@ -78,9 +88,11 @@ class Submodel:
         return self.current_step
 
     def place(self, part: str, color, pos=(0, 0, 0), rot=None, *, tag: str = "",
-              note: str = "", insert=None) -> Placement:
+              note: str = "", insert=None, buy=None) -> Placement:
+        """`buy`: what this part is bought as when that isn't the LDraw part itself (a minifig
+        head's print as sold; see Model.minifig)."""
         p = Placement(self.model.canonical(part), self.model.resolve_color(color), transform(pos, rot),
-                      self.current_step, tag, note, insert)
+                      self.current_step, tag, note, insert, buy)
         self.items.append(p)
         return p
 
@@ -111,6 +123,7 @@ class Model:
         self.groups: dict[str, str] = {}                 # group name -> tag
         self.group_exclude: dict[str, set] = {}          # catch-all group -> excluded tags
         self.contacts: list[tuple[str, str, str]] = []   # allowed touching tag pairs
+        self.fits: list[tuple[str, str]] = []            # tag paths that fit snugly (minifigs)
         self.captive_tags: dict[str, str] = {}           # tag -> why it's held without studs
         self.pose: Callable[[float], dict] | None = None  # t in [0,1] -> {group: 4x4 world}
         self.gear_pairs: list[tuple[str, str, str]] = []  # (tag path a, tag path b, kind)
@@ -122,6 +135,7 @@ class Model:
         self.lift_offs: set[str] = set()                 # groups that come away in the pose
         self.extra_checks: list[Callable] = []           # fn(ctx) -> list of issue dicts
         self.glow_tags: dict[str, float] = {}
+        self.minifigs: list = []                         # Minifig records (model/minifig.py)
         self.variant: str | None = None
         self.meta: dict = {}
 
@@ -131,6 +145,25 @@ class Model:
         s = Submodel(self, name, title)
         self.submodels[name] = s
         return s
+
+    def minifig(self, name: str, at=(0, 0, 0), rot=None, *, head, torso, legs, hair=None,
+                hat=None, accessory=None, pose=None, parent: "Submodel | None" = None,
+                title: str = "", tag: str | None = None, insert=None):
+        """Stand a minifigure at `at` (the plate top between the two studs its feet go on) in
+        `parent` (default the main model), built in its own section (legs, torso, head,
+        headwear, accessory). `head`, `torso`, `legs`: what is bought - a Rebrickable number
+        ("973c01h01pr9741"), or an LDraw file or BrickLink number that LDraw's headers
+        cross-reference, alone (its usual colour) or as (number, colour); the colour is the
+        element's (the torso's, the hips'). Arm, hand and leg colours come from the number.
+        `hair` / `hat`: (part, colour), on the head. `accessory`: (part, colour) or a dict /
+        Held (hand, grip, spin, flip), or a list of them, held in a hand's clip by its bar.
+        `pose`: a Pose or dict (head, arm_r, arm_l, hand_r, hand_l, leg_r, leg_l degrees).
+        Prints LDraw has no model of are drawn plain in their colours (`stand_in`), and the
+        parts lists name the real printed part. Returns the Minifig record."""
+        from .minifig import build_minifig
+        return build_minifig(self, name, at, rot, head=head, torso=torso, legs=legs, hair=hair,
+                             hat=hat, accessory=accessory, pose=pose, parent=parent,
+                             title=title, tag=tag, insert=insert)
 
     def canonical(self, part: str) -> str:
         return self.catalog.canonical(part) if self.catalog is not None else normalize(part)
@@ -195,6 +228,13 @@ class Model:
                                     "price": tuple(map(float, price)), "where": where})
 
     def contact_ok(self, a: PlacedPart, b: PlacedPart) -> bool:
+        if a.kit is not None and a.kit == b.kit:
+            return True          # pieces of one bought kit (a minifig torso) come assembled
+        if self.fits:            # a minifig's hair over its head
+            pa, pb = a.tag_path, b.tag_path
+            for x, y in self.fits:
+                if (_ends(pa, x) and _ends(pb, y)) or (_ends(pa, y) and _ends(pb, x)):
+                    return True
         ta, tb = set(a.tags), set(b.tags)
         return any((x in ta and y in tb) or (x in tb and y in ta) for x, y, _ in self.contacts)
 
@@ -236,7 +276,8 @@ class Model:
         def build(sub: Submodel):
             for s in range(sub.n_steps):
                 for it in sub.items:
-                    if it.step == s and isinstance(it, Use) and it.sub.name not in built:
+                    if (it.step == s and isinstance(it, Use) and it.sub.name not in built
+                            and it.sub.kit is None):        # kits come assembled
                         build(it.sub)
                 order.append((sub.name, s))
             built.add(sub.name)
@@ -247,18 +288,30 @@ class Model:
     def flatten(self, pose: dict | None = None) -> list[PlacedPart]:
         order = {k: i for i, k in enumerate(self.instruction_order())}
         out: list[PlacedPart] = []
+        kits = [0]
 
-        def walk(sub: Submodel, W, path, tags, top):
+        def walk(sub: Submodel, W, path, tags, top, kit):
             for it in sub.items:
                 t = tags + ((it.tag,) if it.tag else ())
                 bo = top if top is not None else order[(sub.name, it.step)]
                 if isinstance(it, Placement):
-                    out.append(PlacedPart(len(out), it.part, it.color, W @ it.M,
-                                          path + (sub.name,), t, sub.name, it.step, bo))
+                    p = PlacedPart(len(out), it.part, it.color, W @ it.M, path + (sub.name,), t,
+                                   sub.name, it.step, bo)
+                    if kit is not None:              # a piece of a bought kit
+                        p.buy, p.kit = kit[0], kit[1]
+                        p.buy_lead = not kit[2]
+                        kit[2] = True
+                    elif it.buy is not None:         # a part bought as something else
+                        p.buy, p.buy_lead = it.buy, True
+                    out.append(p)
                 else:
-                    walk(it.sub, W @ it.M, path + (sub.name,), t, bo)
+                    inner = kit
+                    if it.sub.kit is not None and kit is None:
+                        kits[0] += 1
+                        inner = [it.sub.kit, kits[0], False]
+                    walk(it.sub, W @ it.M, path + (sub.name,), t, bo, inner)
 
-        walk(self.main, np.eye(4), (), (), None)
+        walk(self.main, np.eye(4), (), (), None, None)
         if pose:
             for p in out:
                 g = self.group_of(p)

@@ -73,6 +73,12 @@ def build_context(engine, proj, model, img_dir: Path) -> dict:
         for it in sub.items:
             if hasattr(it, "sub"):
                 counts[it.sub.name] += 1
+    minifigs = len(getattr(model, "minifigs", ()))
+    # kits (a minifig's torso with its arms, its hips and legs) come assembled: their steps
+    # show them like parts, pictured whole, and so does the inventory
+    kits = {name: sub.kit for name, sub in model.submodels.items()
+            if getattr(sub, "kit", None) is not None}
+    kit_img = {(k.rb_part, k.color.ldraw): f"sub_{name}.png" for name, k in kits.items()}
     steps = []
     last_sub = None
     for s in plan["steps"]:
@@ -84,11 +90,13 @@ def build_context(engine, proj, model, img_dir: Path) -> dict:
             "section_start": new_section,
             "is_main": s["submodel"] == model.main.name,
             "repeat": counts.get(s["submodel"], 1),
-            "parts": [{"img": part_images.get(f"{p}_{c}"), "qty": q,
-                       "name": engine.catalog.part_name(p + ".dat"),
-                       "colour": engine.catalog.color(c).name} for p, c, q in s["new_parts"]],
+            "parts": [{"img": f"sub_{n}.png", "qty": q, "name": kits[n].name,
+                       "colour": kits[n].color.name} for n, q in s["new_subs"] if n in kits]
+                     + [{"img": part_images.get(f"{p}_{c}"), "qty": q,
+                         "name": engine.catalog.part_name(p + ".dat"),
+                         "colour": engine.catalog.color(c).name} for p, c, q in s["new_parts"]],
             "subs": [{"img": f"sub_{n}.png", "qty": q, "title": titles.get(n, n)}
-                     for n, q in s["new_subs"]],
+                     for n, q in s["new_subs"] if n not in kits],
         })
     sections, seen = [], set()
     for s in steps:
@@ -99,9 +107,11 @@ def build_context(engine, proj, model, img_dir: Path) -> dict:
                              "img": f"sub_{s['submodel']}.png", "repeat": counts.get(s["submodel"], 1),
                              "steps": len(nums), "ranges": _ranges(nums)})
     bom = build_bom(placed, engine.catalog, model.extras)
-    inventory = [{"img": part_images.get(f"{l.ldraw_part}_{l.color.ldraw}"), "qty": l.qty,
+    inventory = [{"img": (kit_img.get((l.rb_part, l.color.ldraw)) if l.kind else None)
+                  or part_images.get(f"{l.ldraw_part}_{l.color.ldraw}"), "qty": l.qty,
                   "name": l.name, "colour": l.color.name, "hex": _hex(engine, l.color.ldraw),
                   "element": l.element_id, "bl_part": l.bl_part, "bl_colour": l.color.bl_id,
+                  "rb_part": l.rb_part,
                   "rare": l.rare} for l in sorted(bom, key=lambda l: (l.color.name, l.name))]
     hardware = [{"qty": h.qty, "name": h.name, "description": h.description, "where": h.where,
                  "price": (f"${h.low:,.0f}-${h.high:,.0f}" if h.high else "")}
@@ -124,6 +134,7 @@ def build_context(engine, proj, model, img_dir: Path) -> dict:
         "hardware": hardware,
         "works": cfg.get("works", []),
         "pieces": sum(l.qty for l in bom), "lines": len(bom), "steps": steps,
+        "minifigs": minifigs,
         "n_steps": len(steps), "sections": sections, "colours": colour_rows,
         "inventory": inventory, "checks": checks, "overall": report.get("status", "unknown"),
         "dims": _dims_cm(engine, placed), "weight": round(weight) if weight else None,

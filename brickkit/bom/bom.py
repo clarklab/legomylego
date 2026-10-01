@@ -23,6 +23,9 @@ class BomLine:
     element_id: str
     rare: bool
     bl_type: str = "P"          # BrickLink item type: P part, S set (e.g. 8870 light unit)
+    kind: str = ""              # a minifig component: head | torso | legs (else "")
+    stand_in: bool = False      # drawn with plain pieces (LDraw has no model of the print)
+    approximate: bool = False   # a real part drawn with brickkit's approximate 3D model
 
 
 @lru_cache(maxsize=1)
@@ -47,20 +50,49 @@ def choose_element(ids) -> str:
 
 
 def build_bom(placed, catalog, extras=()) -> list[BomLine]:
-    """Parts list from placed parts plus a model's `extras` [(part, Color, qty, note)]."""
-    counts = Counter((p.part, p.color.ldraw) for p in placed if catalog.in_bom(p.part))
+    """Parts list from placed parts plus a model's `extras` [(part, Color, qty, note)].
+    Parts bought as something else (a minifig's head print, the pieces of its torso and legs
+    assemblies) are listed as what is bought, once per figure."""
+    counts = Counter((p.part, p.color.ldraw) for p in placed
+                     if getattr(p, "buy", None) is None and catalog.in_bom(p.part))
     for part, color, qty, _ in extras:
         counts[(part, color.ldraw)] += qty
-    lines = []
+    lines = component_lines(placed, catalog)
     for (part, code), qty in counts.items():
         c = catalog.color(code)
         e = catalog.element(part, c)
         lines.append(BomLine(part_id(part), catalog.rb_part(part), catalog.bl_part(part),
                              catalog.part_name(part), c, qty,
                              choose_element(e.element_ids if e else []),
-                             bool(e is None or e.rare), catalog.bl_type(part)))
+                             bool(e is None or e.rare), catalog.bl_type(part),
+                             approximate=catalog.is_approximate(part)))
     lines.sort(key=lambda l: (l.color.name, l.ldraw_part))
     return lines
+
+
+def component_lines(placed, catalog) -> list[BomLine]:
+    """Bought assemblies (minifig heads, torsos, legs; catalog/minifig.py), one per kit."""
+    counts, comps = Counter(), {}
+    for p in placed:
+        c = getattr(p, "buy", None)
+        if c is not None and p.buy_lead:
+            key = (c.rb_part, c.color.ldraw)
+            counts[key] += 1
+            comps[key] = c
+    lines = []
+    for key, qty in counts.items():
+        c = comps[key]
+        e = catalog.element(c.rb_part, c.color)
+        lines.append(BomLine(part_id(c.pieces[0].part), c.rb_part, c.bl_part, c.name, c.color,
+                             qty, choose_element(e.element_ids if e else []),
+                             bool(e is None or e.rare), "P", c.kind, c.stand_in))
+    return lines
+
+
+def minifig_count(model) -> int:
+    """Minifigures placed in the model (each use of a figure's section counts)."""
+    return sum(1 for p in model.flatten() if getattr(p, "buy", None) is not None
+               and p.buy_lead and p.buy.kind == "torso")
 
 
 @dataclass
@@ -106,15 +138,25 @@ def write_parts_csv(lines: list[BomLine], path) -> None:
         w = csv.writer(fh)
         w.writerow(["qty", "part", "name", "colour", "ldraw_colour", "rebrickable_part",
                     "rebrickable_colour", "bricklink_part", "bricklink_colour", "element_id",
-                    "rare"])
+                    "rare", "note"])
         for l in lines:
+            note = "; ".join(n for n in (
+                f"minifig {l.kind}" if l.kind else "",
+                "stand-in render (LDraw has no model of the print)" if l.stand_in else "",
+                "approximate 3D model (LDraw has none)" if l.approximate else "") if n)
             w.writerow([l.qty, l.ldraw_part, l.name, l.color.name, l.color.ldraw, l.rb_part,
-                        l.color.rb_id, l.bl_part, l.color.bl_id, l.element_id, int(l.rare)])
+                        l.color.rb_id, l.bl_part, l.color.bl_id, l.element_id, int(l.rare),
+                        note])
 
 
-def write_bricklink_xml(lines: list[BomLine], path) -> None:
+def write_bricklink_xml(lines: list[BomLine], path) -> list[BomLine]:
+    """Write a BrickLink wanted list; returns the lines left out because no BrickLink number
+    is known for them (a minifig print that LDraw's headers don't cross-reference)."""
     out = ["<INVENTORY>"]
+    missing = [l for l in lines if not l.bl_part]
     for l in lines:
+        if not l.bl_part:
+            continue
         colour = (f"<COLOR>{l.color.bl_id}</COLOR>"
                   if l.color.bl_id is not None and l.bl_type == "P" else "")
         out.append(f"<ITEM><ITEMTYPE>{l.bl_type}</ITEMTYPE><ITEMID>{escape(l.bl_part)}</ITEMID>"
@@ -122,6 +164,7 @@ def write_bricklink_xml(lines: list[BomLine], path) -> None:
                    f"<MINQTY>{l.qty}</MINQTY></ITEM>")
     out.append("</INVENTORY>")
     Path(path).write_text("\n".join(out) + "\n")
+    return missing
 
 
 def write_pick_a_brick_csv(lines: list[BomLine], path) -> None:

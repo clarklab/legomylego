@@ -57,5 +57,18 @@ class Connector:
             return [(t, t + L, "F", self.radius)]
         return []
 
+    def fingers(self) -> list[tuple[float, float, str]]:
+        """A finger snap's (t0, t1, gender) segments along `axis`: fingers ("M") and the gaps
+        between them ("F") alternate, starting with `gender`."""
+        if self.kind != "fgr":
+            return []
+        t = -self.total_length() / 2 if self.center else 0.0
+        g, out = self.gender, []
+        for w in self.seq:
+            out.append((t, t + w, g))
+            t += w
+            g = "F" if g == "M" else "M"
+        return out
+
     def transformed(self, W: np.ndarray) -> "Connector":
         return replace(self, M=W @ self.M)

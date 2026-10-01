@@ -6,7 +6,7 @@ import re
 import numpy as np
 
 from ..snaps.match import find_connections
-from .base import CheckResult, components, describe, press_links, register
+from .base import CheckResult, components, describe, kit_links, press_links, register
 
 TEETH_RE = re.compile(r"(\d+)\s*Tooth", re.I)
 PITCH = 1.25   # LEGO gears are module 1 mm: pitch radius = teeth * 0.5 mm = teeth * 1.25 LDU
@@ -84,7 +84,7 @@ def check_mechanism(ctx, cfg) -> CheckResult:
             items.append({"pose": round(float(t), 3), "a": describe(placed[i]),
                           "b": describe(placed[j]), "problem": "parts collide while moving"})
         conns = (find_connections(ctx.world_connectors(placed))
-                 + press_links(m, ctx.engine.press_collide, placed))
+                 + press_links(m, ctx.engine.press_collide, placed) + kit_links(placed))
         comps = components(len(placed), [(c.a, c.b) for c in conns])
         pieces = len(comps)
         # a lift-off group (a lid, a tower top) may come away whole: one piece of its own

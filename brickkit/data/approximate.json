@@ -1,0 +1,9 @@
+{
+  "_about": "Real LEGO parts the LDraw library has no model of, drawn with brickkit's own approximate 3D model (data/ldraw/parts/<number>.dat, made by tools/approximate_parts.py). They are LEGO elements: they keep their real number on the parts lists and the BrickLink wanted list, and real_elements checks them like any part; only their shape is approximate (the reports say so). 'bricklink': the BrickLink item number when it isn't the file name; 'shape': what the model gets right and what it leaves out.",
+  "10165c01": {
+    "name": "Minifig Helmet Underwater Deep Diver with Trans-Clear Glass",
+    "bricklink": "10165c01",
+    "shape": "A round brass diving helmet over the head with a large round front window (clear glass in a raised frame), a small port each side, a valve on top, an air connector at the back and a bolted collar over the shoulders, 1.8 cm across (BrickLink: 1.85 x 1.8 x 2.1 cm). The real helmet's details (its bolts, grilles and the exact shape of its collar) are not modelled.",
+    "source": "Collectible Minifigures Series 8 (2012), the Diver"
+  }
+}

@@ -11,7 +11,7 @@
     <h1>{{ name }}</h1>
     {% if variant_title %}<div class="kicker" style="margin-bottom:3mm">{{ variant_title }} colourway</div>{% endif %}
     <div class="sub">{{ subtitle }}</div>
-    <div class="count">{{ pieces }} <small>pieces · {{ n_steps }} steps · {{ sections|length }} sections</small></div>
+    <div class="count">{{ pieces }} <small>pieces{% if minifigs %} · {{ minifigs }} minifigure{{ "s" if minifigs != 1 }}{% endif %} · {{ n_steps }} steps · {{ sections|length }} sections</small></div>
     <div class="flag">Unofficial fan-made building instructions</div>
     <div class="warn"><b>Not physically build-tested.</b> Every part is a real LEGO element and the model was checked on a computer (connections, collisions, every step, balance{% if has_mechanism %}, mechanism{% endif %}), but nobody has built it with real bricks yet.</div>
     <div class="legal">Not produced, sponsored or endorsed by the LEGO Group. LEGO® is a trademark of the LEGO Group. {{ name }} and related names belong to their owners. Made with brickkit · {{ date }}</div>
@@ -102,7 +102,7 @@
   <h2>Parts inventory{% if not loop.first %} (continued){% endif %}</h2>
   <p style="margin-top:-3mm;font-size:8pt">{{ pieces }} pieces in {{ lines }} part/colour lines. Bold: the LEGO element ID (what LEGO Pick a Brick sells); below: the colour and the BrickLink part number.</p>
   <div class="inv">
-  {% for c in chunk %}<div class="cell"><img src="{{ c.img }}"><div class="q">{{ c.qty }}x</div><div class="e">{{ c.element or "—" }}</div><div><span class="swatch" style="background:{{ c.hex }}"></span>{{ c.colour }}</div><div>BrickLink {{ c.bl_part }}</div>{% if c.rare %}<div class="rare">rare / discontinued</div>{% endif %}</div>{% endfor %}
+  {% for c in chunk %}<div class="cell"><img src="{{ c.img }}"><div class="q">{{ c.qty }}x</div><div class="e">{{ c.element or "—" }}</div><div><span class="swatch" style="background:{{ c.hex }}"></span>{{ c.colour }}</div><div>{% if c.bl_part %}BrickLink {{ c.bl_part }}{% else %}Rebrickable {{ c.rb_part }}{% endif %}</div>{% if c.rare %}<div class="rare">rare / discontinued</div>{% endif %}</div>{% endfor %}
   </div>
   {{ foot() }}
 </section>

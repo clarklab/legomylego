@@ -1,6 +1,7 @@
 """Find which connectors of different parts engage each other."""
 from __future__ import annotations
 
+import itertools
 from collections import defaultdict
 from dataclasses import dataclass
 
@@ -25,10 +26,30 @@ class Connection:
 
 def _axis_key(axis: np.ndarray) -> tuple[tuple, np.ndarray]:
     a = axis / np.linalg.norm(axis)
-    k = int(np.argmax(np.abs(a)))
+    # sign: the first of the largest components is positive (ties, as at 45 degrees, are
+    # decided the same way whatever the float noise)
+    m = np.abs(a)
+    k = int(np.argmax(m >= m.max() - 1e-9))
     if a[k] < 0:
         a = -a
     return tuple(np.round(a, 3) + 0.0), a
+
+
+BOUNDARY_EPS = 1e-6     # (in bucket units) this close to a rounding boundary: both buckets
+
+
+def _cells(v: np.ndarray, step: float) -> list[tuple]:
+    """Grid cells (rounded v / step) a point belongs to; a value that sits on a rounding
+    boundary (as feet of angled connectors can, at exactly a quarter LDU) is put in both cells,
+    so float noise can't split a pair that lines up."""
+    opts = []
+    for q in np.asarray(v, float) / step:
+        f = q - np.floor(q)
+        if abs(f - 0.5) < BOUNDARY_EPS:
+            opts.append((int(np.floor(q)), int(np.floor(q)) + 1))
+        else:
+            opts.append((int(np.round(q)),))
+    return list(itertools.product(*opts))
 
 
 def _mapped(m: Connector, f: Connector) -> list[tuple[float, float, str, float]]:
@@ -64,6 +85,26 @@ def extent_overlap(a: Connector, b: Connector) -> float:
     return min(ia[-1][1], ib[-1][1]) - max(ia[0][0], ib[0][0])
 
 
+FINGER_CLASH = 1.5      # LDU: fingers of two hinge halves may overlap this much (play, rounding)
+
+
+def finger_overlap(a: Connector, b: Connector) -> float:
+    """Engaged length of two finger snaps on one line: their extents' overlap, or 0 when a
+    finger of one would sit on a finger of the other (the fingers must interleave)."""
+    fa = a.fingers()
+    d = float(np.dot(b.origin - a.origin, a.axis))
+    sgn = 1.0 if float(np.dot(a.axis, b.axis)) > 0 else -1.0
+    fb = [(min(d + sgn * t0, d + sgn * t1), max(d + sgn * t0, d + sgn * t1), g)
+          for t0, t1, g in b.fingers()]
+    if not fa or not fb:
+        return 0.0
+    for s0, s1, ga in fa:
+        for u0, u1, gb in fb:
+            if ga == gb == "M" and min(s1, u1) - max(s0, u0) > FINGER_CLASH:
+                return 0.0
+    return min(fa[-1][1], max(u[1] for u in fb)) - max(fa[0][0], min(u[0] for u in fb))
+
+
 def _classify(m: Connector, f: Connector) -> str:
     if f.kind == "clp":
         return "clip"
@@ -83,7 +124,7 @@ def match_pair(a: Connector, b: Connector, min_overlap: float = 0.9):
     if a.kind == "fgr" and b.kind == "fgr":
         if a.group != b.group or abs(a.radius - b.radius) > RADIUS_TOL:
             return None
-        ov = extent_overlap(a, b)
+        ov = finger_overlap(a, b)
         return ("hinge", ov) if ov >= 1.0 else None
     if "gen" in (a.kind, b.kind) or "fgr" in (a.kind, b.kind):
         return None
@@ -111,22 +152,28 @@ def find_connections(conns_by_part: list[list[Connector]], min_overlap: float = 
                      ) -> list[Connection]:
     buckets: dict[tuple, list] = defaultdict(list)
     gens: dict[str, list] = defaultdict(list)
+    n = 0
     for i, conns in enumerate(conns_by_part):
         for c in conns:
             if c.kind == "gen":
                 gens[c.group].append((i, c))
                 continue
-            key, a = _axis_key(c.axis)
+            _, a = _axis_key(c.axis)
             foot = c.origin - np.dot(c.origin, a) * a
-            buckets[(key, tuple(np.round(foot / 0.5).astype(int)))].append((i, c))
+            for akey in _cells(a, 0.001):
+                for fkey in _cells(foot, 0.5):
+                    buckets[(akey, fkey)].append((n, i, c))
+            n += 1
     out: list[Connection] = []
+    seen: set[tuple[int, int]] = set()
     for items in buckets.values():
         for x in range(len(items)):
-            i, ci = items[x]
+            nx, i, ci = items[x]
             for y in range(x + 1, len(items)):
-                j, cj = items[y]
-                if i == j:
+                ny, j, cj = items[y]
+                if i == j or (nx, ny) in seen:
                     continue
+                seen.add((nx, ny))
                 res = match_pair(ci, cj, min_overlap)
                 if res:
                     out.append(Connection(i, j, ci, cj, res[0], res[1]))

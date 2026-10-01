@@ -30,7 +30,9 @@ class Engine:
     @cached_property
     def catalog(self):
         from .catalog.catalog import Catalog
-        return Catalog.load(self.lib, self.cache / "rebrickable", self.cache / "rb_index.pkl")
+        cat = Catalog.load(self.lib, self.cache / "rebrickable", self.cache / "rb_index.pkl")
+        cat._shadow_loader = lambda: self.shadow
+        return cat
 
     @cached_property
     def collide(self):

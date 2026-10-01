@@ -12,7 +12,8 @@ LDRAW_URL = "https://library.ldraw.org/library/updates/complete.zip"
 SHADOW_URL = "https://github.com/RolandMelkert/LDCadShadowLibrary/archive/refs/heads/master.zip"
 REBRICKABLE_URL = "https://cdn.rebrickable.com/media/downloads/{}.csv.gz"
 REBRICKABLE_TABLES = ("elements", "parts", "colors", "inventory_parts", "inventories", "sets",
-                      "part_relationships", "part_categories")
+                      "part_relationships", "part_categories",
+                      "minifigs", "inventory_minifigs")      # which sets each minifigure is in
 
 
 def _download(url: str, dst: Path, log) -> Path:

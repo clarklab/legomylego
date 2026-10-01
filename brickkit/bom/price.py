@@ -52,16 +52,19 @@ def estimate(lines: list[BomLine], catalog, live: dict | None = None) -> list[Pr
                 out.append(pl)
                 continue
         o = bands["overrides"].get(l.ldraw_part)
-        if o:
+        if o and not l.kind:
             out.append(PriceLine(l, o["low"], o["high"], o.get("note", "fixed")))
             continue
         name = f" {l.name.lower()} "
-        rule = next(r for r in bands["rules"] if r["match"] in name)
+        if l.kind and l.kind in bands.get("minifig", {}):      # a minifig head, torso, legs
+            rule = {**bands["minifig"][l.kind], "match": f"minifig {l.kind}"}
+        else:
+            rule = next(r for r in bands["rules"] if r["match"] in name)
         f, basis = 1.0, rule["match"].strip() or "other"
         if "trans" in l.color.name.lower():
             f *= bands["colour_factor"]["trans"]
             basis += ", transparent"
-        e = catalog.element(l.ldraw_part + ".dat", l.color)
+        e = catalog.element(l.rb_part if l.kind else l.ldraw_part + ".dat", l.color)
         sets = e.set_count if e else 0
         for s in bands["scarcity"]:
             if sets <= s["max_sets"]:
@@ -96,13 +99,15 @@ def hardware_summary(hardware: list[HardwareLine]) -> dict:
 
 
 def write_estimate_md(name: str, priced: list[PriceLine], path, day: str | None = None,
-                      hardware: list[HardwareLine] = ()) -> tuple[float, float]:
+                      hardware: list[HardwareLine] = (), minifigs: int = 0) -> tuple[float, float]:
     s = summary(priced, day)
     low, high = s["low"], s["high"]
+    figs = (f", {minifigs} minifigure{'s' if minifigs != 1 else ''} among them"
+            if minifigs else "")
     rows = sorted(priced, key=lambda p: -(p.low + p.high) * p.line.qty)
     if s["source"] == "bricklink":
         intro = [f"**${low:,.0f} - ${high:,.0f}** for {sum(p.line.qty for p in priced):,} "
-                 f"pieces in {len(priced)} lines, new parts on BrickLink, before shipping. "
+                 f"pieces in {len(priced)} lines{figs}, new parts on BrickLink, before shipping. "
                  f"Priced {day}.", "",
                  f"From BrickLink's price guide on {day}, new condition, USD, weighted by "
                  "quantity: the low end is the average sold over the last six months, the high "
@@ -112,7 +117,8 @@ def write_estimate_md(name: str, priced: list[PriceLine], path, day: str | None 
                     if s["live_lines"] < s["lines"] else "."), ""]
     else:
         intro = [f"**Roughly ${low:,.0f} - ${high:,.0f}** for {sum(p.line.qty for p in priced):,} "
-                 f"pieces in {len(priced)} lines, new parts on BrickLink, before shipping.", "",
+                 f"pieces in {len(priced)} lines{figs}, new parts on BrickLink, before shipping.",
+                 "",
                  "This is a rough range from typical per-piece prices by part type (see "
                  "`brickkit/data/price_bands.json`), scaled up for transparent colours and for "
                  "part/colour combinations that appeared in few sets. It is not live market "
@@ -126,7 +132,7 @@ def write_estimate_md(name: str, priced: list[PriceLine], path, day: str | None 
           "|---:|---|---|---:|---:|---|"]
     for p in rows:
         l = p.line
-        md.append(f"| {l.qty} | {l.bl_part} {l.name} | {l.color.name} | "
+        md.append(f"| {l.qty} | {l.bl_part or l.rb_part + ' (Rebrickable)'} {l.name} | {l.color.name} | "
                   f"{p.low:.2f}-{p.high:.2f} | {p.low * l.qty:.2f}-{p.high * l.qty:.2f} | "
                   f"{p.basis} |")
     md.append("")

@@ -28,6 +28,17 @@ def view_spec(name: str, lens: float = 70.0, ortho: bool = False) -> dict:
     return {"name": name, "azimuth": az, "elevation": el, "lens": lens, "ortho": ortho}
 
 
+def close_spec(engine, model, tag: str, placed, azimuth: float = -20.0,
+               elevation: float = 12.0, lens: float = 90.0) -> dict:
+    """A close-up of the parts under `tag` (e.g. one minifigure): the camera frames their
+    bounding box (`bounds`, LDU) instead of the whole model, which is still in the scene."""
+    mine = [p for p in placed if tag in p.tags]
+    if not mine:
+        raise ValueError(f"close-up: no parts tagged {tag!r}")
+    return {"name": f"close_{tag}", "azimuth": azimuth, "elevation": elevation, "lens": lens,
+            "bounds": bounds(engine, mine), "margin": 1.12}
+
+
 def export_meshes(engine, parts, mesh_dir: Path) -> dict[str, str]:
     mesh_dir.mkdir(parents=True, exist_ok=True)
     out = {}
@@ -133,12 +144,18 @@ def render_model(engine, model, out_dir, *, views=("three_quarter",), size=900, 
     """`settings` overrides scene keys read by blender_scene.py, e.g. world_strength,
     light_power, trans_density, ground_color."""
     out_dir = Path(out_dir).resolve()
+    if placed is None and any(isinstance(v, str) and v.startswith("close:") for v in views):
+        pose = model.pose(pose_t) if (pose_t is not None and model.pose) else None
+        placed = model.flatten(pose=pose)
     scene = model_scene(engine, model, pose_t=pose_t, lights_on=lights_on, placed=placed)
     w, h = (size, size) if isinstance(size, int) else size
     offset = float(model.meta.get("azimuth_offset", 0.0))   # where the model's front faces
     specs = []
     for v in views:
-        spec = dict(v) if isinstance(v, dict) else view_spec(v, lens)
+        if isinstance(v, str) and v.startswith("close:"):      # "close:TAG": a close-up
+            spec = close_spec(engine, model, v.split(":", 1)[1], placed)
+        else:
+            spec = dict(v) if isinstance(v, dict) else view_spec(v, lens)
         spec["azimuth"] = spec["azimuth"] + offset
         specs.append(spec)
     scene.update({

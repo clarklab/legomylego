@@ -1,0 +1,8 @@
+0 brickkit overlay for "Wing 2 x 3 Right without Chamfer" (43722a, wedge plate 3 x 2)
+0 // The LDCad shadow library has no file for this wedge plate and its underside is drawn with
+0 // plain cylinders, so it gets no stud holes and never sits on anything. Holes under its stud
+0 // column and under the full-width end, as LDCad gives the 4 x 2 wedge plates (41769a).
+0 !LDCAD SNAP_CYL [gender=F] [caps=one] [secs=R 6 4] [pos=10 8 -20]
+0 !LDCAD SNAP_CYL [gender=F] [caps=one] [secs=R 6 4] [pos=10 8 0]
+0 !LDCAD SNAP_CYL [gender=F] [caps=one] [secs=R 6 4] [pos=10 8 20]
+0 !LDCAD SNAP_CYL [gender=F] [caps=one] [secs=R 6 4] [pos=-10 8 20]

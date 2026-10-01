@@ -193,7 +193,8 @@ def model_json(engine, proj, model, placed, *, files: dict, variants: list[tuple
         "parts": len(placed), "pieces": sum(r["qty"] for r in bom), "dims_mm": dims,
         "price": _price(engine, placed, model.extras, proj.out / "price.json"),
         "hardware": _hardware_rows(engine, placed, model),
-        "features": {"mechanism": model.pose is not None, "lights": bool(model.lights)},
+        "features": {"mechanism": model.pose is not None, "lights": bool(model.lights),
+                     "minifigs": len(getattr(model, "minifigs", ()))},
         "front_azimuth": float(model.meta.get("azimuth_offset", 0.0)),
         "colors": _colors(engine, codes), "variants": var_out,
         "nodes": nodes, "steps": steps, "mechanism": mech, "lights": lights,
@@ -234,7 +235,9 @@ def _bom_rows(engine, placed, extras=()) -> list[dict]:
     return [{"qty": l.qty, "part": l.ldraw_part, "name": l.name, "colour": l.color.name,
              "hex": engine.lib.colors[l.color.ldraw].rgb if l.color.ldraw in engine.lib.colors else "",
              "element_id": l.element_id, "bricklink_part": l.bl_part,
-             "bricklink_colour": l.color.bl_id, "bricklink_type": l.bl_type, "rare": l.rare}
+             "bricklink_colour": l.color.bl_id, "bricklink_type": l.bl_type, "rare": l.rare,
+             **({"minifig": l.kind, "rebrickable_part": l.rb_part, "stand_in": l.stand_in}
+                if l.kind else {})}
             for l in build_bom(placed, engine.catalog, extras)]
 
 

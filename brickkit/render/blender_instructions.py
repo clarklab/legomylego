@@ -34,6 +34,7 @@ class Instr:
         self.s = s
         self.mats = {}
         self.meshes = {}
+        self.fixed_of = {}      # object -> its mesh's fixed (printed) colour codes, slots 1..
 
     def material(self, code, pale=False):
         key = (int(code), pale)
@@ -98,8 +99,9 @@ class Instr:
             if got is None:
                 objs.append(None)
                 continue
-            me, _ = got
+            me, fixed = got
             ob = bpy.data.objects.new(f"{set_name}_{k}", me)
+            self.fixed_of[ob] = fixed
             coll.objects.link(ob)
             ob.matrix_world = TO_BLENDER @ Matrix(inst["matrix"])
             ob.material_slots[0].link = "OBJECT"
@@ -151,8 +153,13 @@ def mask_pass(sc, s, job, is_new):
              sc.display.render_aa, sc.world.color[:], sc.view_settings.exposure,
              sc.render.image_settings.file_format, sc.render.image_settings.color_mode)
     mats = {ob: ob.material_slots[0].material for ob in is_new}
+    slots = []                  # printed areas (fixed colours) too, not just the base colour
     for ob, new in is_new.items():
         ob.material_slots[0].material = MASK["new" if new else "old"]
+        for slot in list(ob.material_slots)[1:]:
+            slots.append((slot, slot.link, slot.material if slot.link == "OBJECT" else None))
+            slot.link = "OBJECT"
+            slot.material = MASK["new" if new else "old"]
     sh.light = "FLAT"
     sh.show_cavity = sh.show_object_outline = sh.show_specular_highlight = False
     sc.display.render_aa = "OFF"
@@ -168,6 +175,9 @@ def mask_pass(sc, s, job, is_new):
     sc.world.color = wc
     for ob, m in mats.items():
         ob.material_slots[0].material = m
+    for slot, link, m in slots:
+        slot.material = m
+        slot.link = link
 
 
 def view_rotation(az, el):
@@ -231,6 +241,16 @@ def main():
                 visible.add(ob)
             if ob.material_slots[0].material != mat:
                 ob.material_slots[0].material = mat
+            # printed areas (fixed colours, e.g. a minifig torso's print) pale with the rest
+            pale = mat.name.endswith("p")
+            for code, slot in zip(ins.fixed_of.get(ob, ()), list(ob.material_slots)[1:]):
+                if pale:
+                    pm = ins.material(code, pale=True)
+                    if slot.link != "OBJECT" or slot.material != pm:
+                        slot.link = "OBJECT"
+                        slot.material = pm
+                elif slot.link != "DATA":
+                    slot.link = "DATA"
         sc.render.resolution_x, sc.render.resolution_y = W, H
         sc.render.film_transparent = bool(job.get("transparent", job["name"].startswith("sub_")))
         if sc.render.film_transparent:

@@ -20,7 +20,16 @@ def _build(engine, slug, variant=None):
     model = proj.build(engine.catalog, variant)
     placed = model.flatten()
     out = write_mpd(model, _out(proj, variant) / f"{slug}.mpd", engine.lib)
-    print(f"{model.name}: {len(placed)} parts, {len(model.instruction_order())} steps -> {out}")
+    figs = len([p for p in placed if p.buy is not None and p.buy_lead and p.buy.kind == "torso"])
+    print(f"{model.name}: {len(placed)} parts, {len(model.instruction_order())} steps"
+          + (f", {figs} minifigure(s)" if figs else "") + f" -> {out}")
+    for fig in model.minifigs:
+        for c in fig.stand_ins:
+            print(f"  {fig.title}: no LDraw model of {c.kind} {c.rb_part} ({c.name[:60]}); "
+                  "drawn plain in its colours")
+    for part in sorted({p.part for p in placed if engine.catalog.is_approximate(p.part)}):
+        print(f"  {part[:-4]} ({engine.catalog.part_name(part)[:60]}): a real LEGO part LDraw "
+              "has no model of, drawn with brickkit's approximate 3D model")
     return proj, model
 
 
@@ -50,7 +59,10 @@ def _bom(engine, proj, model) -> None:
         write_hardware_csv(hardware, out / "hardware.csv")
     else:
         (out / "hardware.csv").unlink(missing_ok=True)
-    write_bricklink_xml(lines, out / "bricklink_wanted.xml")
+    missing = write_bricklink_xml(lines, out / "bricklink_wanted.xml")
+    for l in missing:
+        print(f"  not in bricklink_wanted.xml (no BrickLink number known): {l.qty} x "
+              f"{l.rb_part} {l.color.name} {l.name[:70]}")
     write_pick_a_brick_csv(lines, out / "pick_a_brick.csv")
     import json
     from .bom.live_price import live_prices
@@ -62,12 +74,18 @@ def _bom(engine, proj, model) -> None:
         print(f"live prices unavailable ({e}); using price bands")
     day = live["day"] if live else None
     priced = estimate(lines, engine.catalog, live)
-    low, high = write_estimate_md(model.name, priced, out / "price_estimate.md", day, hardware)
+    from .bom.bom import minifig_count
+    n_figs = minifig_count(model)
+    low, high = write_estimate_md(model.name, priced, out / "price_estimate.md", day, hardware,
+                                  minifigs=n_figs)
     s = summary(priced, day)
+    if n_figs:
+        s["minifigs"] = n_figs
     if hardware:
         s["hardware"] = hardware_summary(hardware)
     (out / "price.json").write_text(json.dumps(s, indent=1))
-    print(f"parts list: {sum(l.qty for l in lines)} pieces in {len(lines)} lines "
+    print(f"parts list: {sum(l.qty for l in lines)} pieces in {len(lines)} lines"
+          + (f" ({n_figs} minifigure(s))" if n_figs else "") + " "
           f"-> {out / 'parts.csv'}; price ${low:,.0f}-${high:,.0f}"
           f"{f' (BrickLink, {day})' if day else ' (rough estimate)'}")
     if hardware:
@@ -102,7 +120,9 @@ def main(argv=None) -> int:
         p.add_argument("--variant")
     p = sub.add_parser("render", help="render stills with Blender")
     p.add_argument("slug")
-    p.add_argument("--views", default="three_quarter,front,side,top")
+    p.add_argument("--views", default="three_quarter,front,side,top",
+                   help="comma list: front, three_quarter, three_quarter_right, side, back, top, low, "
+                        "or close:TAG for a close-up of the parts under a tag (a minifigure)")
     p.add_argument("--size", type=int, default=900)
     p.add_argument("--samples", type=int, default=64)
     p.add_argument("--pose", type=float)
@@ -161,6 +181,12 @@ def main(argv=None) -> int:
     p.add_argument("text")
     p.add_argument("--color")
     p.add_argument("--limit", type=int, default=40)
+    p.add_argument("--minifig", choices=("head", "torso", "legs", "any"),
+                   help="search minifigure components (assemblies as sold), one row per colour")
+    p.add_argument("--ldraw", action="store_true", help="--minifig: only prints LDraw models")
+    p = sub.add_parser("figs", help="search whole minifigures by name and list their parts")
+    p.add_argument("text")
+    p.add_argument("--limit", type=int, default=15)
     args = ap.parse_args(argv)
 
     if args.cmd == "fetch":
@@ -194,9 +220,28 @@ def main(argv=None) -> int:
                 print(f"  {c.kind} {c.gender} {shape:18s} at {o} axis {a}"
                       f"{' centred' if c.center else ''}{' group=' + c.group if c.group else ''}")
         return 0
+    if args.cmd == "find" and args.minifig:
+        figs = engine.catalog.figs
+        kind = None if args.minifig == "any" else args.minifig
+        for r in figs.search(args.text, kind, args.color, args.limit, ldraw_only=args.ldraw):
+            print(f"{r['sets']:4d} {r['year'] or '':>4} {r['part']:20s} {r['colour'][:18]:18s} "
+                  f"{(r['ldraw'] or '-')[:12]:12s} {(r['bricklink'] or '-')[:14]:14s} "
+                  f"{'E' if r['element'] else ' '} {r['name'][:110]}")
+        return 0
     if args.cmd == "find":
         for sets, part, name, has_ld in engine.catalog.search(args.text, args.color, args.limit):
             print(f"{sets:5d}  {part:12s} {'ldraw' if has_ld else '     '}  {name}")
+        return 0
+    if args.cmd == "figs":
+        cat = engine.catalog
+        for r in cat.figs.figures(args.text, args.limit):
+            print(f"{r['fig']}  {r['name']}  ({r['sets']} set(s), {r['year'] or 'no set'})")
+            for part, cid, qty in r["parts"]:
+                ld = cat.figs._sources(part, cat.figs.kind(part)) if cat.figs.kind(part) else []
+                has = (ld[0] if ld else "-") if cat.figs.kind(part) else (
+                    "ldraw" if cat.ldraw.resolve(part) else "-")
+                print(f"    {qty} x {part:20s} {cat.rb.colors[cid]['name'][:18]:18s} "
+                      f"{has[:12]:12s} {cat.part_name(part)[:90]}")
         return 0
     proj, model = _build(engine, args.slug, getattr(args, "variant", None))
     if args.cmd == "turntable":

@@ -51,7 +51,8 @@ class CheckContext:
     @cached_property
     def connections(self) -> list[Connection]:
         return (find_connections(self.world_connectors())
-                + press_links(self.model, self.engine.press_collide, self.placed))
+                + press_links(self.model, self.engine.press_collide, self.placed)
+                + kit_links(self.placed))
 
 
 NUDGES = [np.array(v, float) for v in ((1, 0, 0), (-1, 0, 0), (0, 1, 0), (0, -1, 0),
@@ -98,6 +99,22 @@ def press_links(model, collide, placed) -> list[Connection]:
                 press[i] = max(press.get(i, 0.0), model.press_fits[t]["reach"])
     pairs = press_pairs(collide, [(p.part, p.M) for p in placed], press)
     return [Connection(i, j, None, None, "press", 0.0) for i, j in pairs]
+
+
+def kit_links(placed) -> list[Connection]:
+    """Pieces of one bought kit (a minifig's torso with its arms and hands, its hips and
+    legs) come assembled: "kit" connections join them, whatever their snaps say."""
+    first: dict[int, int] = {}
+    out = []
+    for i, p in enumerate(placed):
+        k = getattr(p, "kit", None)
+        if k is None:
+            continue
+        if k in first:
+            out.append(Connection(first[k], i, None, None, "kit", 0.0))
+        else:
+            first[k] = i
+    return out
 
 
 def components(n: int, edges) -> list[list[int]]:

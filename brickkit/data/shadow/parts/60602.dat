@@ -1,5 +1,6 @@
 0 brickkit overlay for "Glass for Window 1 x 2 x 3 Flat Front" (60602)
 0 // The LDCad shadow library has no file for this glass, so it never meets its frame
 0 // (60593 Window 1 x 2 x 3 Flat Front). The frame's glazing slot is a SNAP_FGR (seq 1 60 1,
-0 // radius 2, at 0 33.5 -5); the glass gets the matching finger, placed at the frame's origin.
-0 !LDCAD SNAP_FGR [genderOfs=M] [seq=60] [radius=2] [pos=0 33.5 -5]
+0 // radius 2, at 0 33.5 -5, genderOfs F); the glass gets the complementary sequence (fingers
+0 // interleave: male where the frame's is female), placed at the frame's origin.
+0 !LDCAD SNAP_FGR [genderOfs=M] [seq=1 60 1] [radius=2] [pos=0 33.5 -5]

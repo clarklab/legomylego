@@ -28,8 +28,12 @@ The cache location can be overridden with `BRICKKIT_CACHE` (useful in git worktr
 | `brickkit sizzle [SLUG ...] [--stills F,F] [--preview]` | `showreel/sizzle.mp4`: one quick brand reel of several models cut on the music's beats, from their showreels' footage (config `showreel/sizzle.toml`; see Video) |
 | `python tools/hero.py SLUG` | hero stills: `out/hero/`, `out/hero_lit/` (lights), `out/hero_open/` (pose 1) |
 | `brickkit find "words" [--color C]` | search real LEGO parts by name, ranked by how many sets used them in that colour |
+| `brickkit find "words" --minifig head\|torso\|legs\|any [--color C] [--ldraw]` | search minifigure components as sold (one row per colour): sets, last year, Rebrickable number, the LDraw file that models it (`~` the same print on other arms, `plain` an unprinted assembly), BrickLink number, `E` if LEGO has an element ID; `--ldraw` only those LDraw can draw |
+| `brickkit figs "words"` | whole Rebrickable minifigures by name (e.g. "sea captain"), in most sets first, with their parts |
 
-Views: `front, three_quarter, three_quarter_right, side, back, top, low`.
+Views: `front, three_quarter, three_quarter_right, side, back, top, low`, or `close:TAG`: a
+close-up framing the parts under a tag (e.g. `close:captain_nemo`, one minifigure), written as
+`close_TAG.png`; the rest of the model stays in the scene.
 
 ## Units and axes
 LDraw units (LDU): 1 stud = 20, 1 plate = 8, 1 brick = 24, 1 LDU = 0.4 mm. **-Y is up.**
@@ -131,6 +135,92 @@ Use `model.extra` for bought items whose geometry is only partly placed (a light
 and plug); `data/part_map.json` sets `"bom": false` on the placed head so nothing counts twice,
 and `"bricklink_type": "S"` for items BrickLink sells as sets.
 
+### Minifigures
+```python
+from brickkit.model.minifig import grip_up
+fig = model.minifig("captain_nemo", (-40, 0, -30), title="Captain Nemo",
+                    head=("3626bpr0251", "Yellow"),         # Rebrickable numbers, as sold
+                    torso=("973c03h01pr0049", "Black"),     # colour: the torso's
+                    legs=("970c03", "Black"),               # colour: the hips'
+                    hair=("92081", "Dark Bluish Gray"),     # or hat=; ordinary parts
+                    accessory=dict(part="64644", color="Pearl Gold", hand="right"),
+                    pose=dict(arm_r=45, head=-8))           # degrees
+```
+LEGO, Rebrickable and BrickLink sell a minifigure's body as three **assemblies**, numbered per
+print and colour combination: a head (Rebrickable `3626cprNNNN`), a torso with its arms and
+hands (`973cAAhBBprNNNN`: `AA`/`BB` are Rebrickable's minifig colour codes for the arms and
+hands, e.g. `01` Yellow, `05` Dark Blue; BrickLink `973pbNNNNc01`) and hips with legs
+(`970cAA...`, `AA` the legs' colour; BrickLink `970c00` when hips and legs match, else
+`970c` + the legs' BrickLink colour id, printed `970c00pbNNNN`). LDraw models the pieces:
+torso `973` (prints `973pXXX`), arms `3818`/`3819`, hands `3820`, hips `3815b`, legs
+`3816c`/`3817c` (prints), head `3626c` (prints `3626cpXXX`/`3626bpXXX`), with "shortcut"
+files for many assemblies (`76382pXXX` a torso with arms and hands, `73200bpXX`/`21019bpXX`
+hips and legs).
+
+- **Catalogue** (`catalog/minifig.py`, `catalog/xref.py`): the only cross-reference between
+  the systems that ships with the libraries is LDraw's `!KEYWORDS Rebrickable ...,
+  BrickLink ...` header lines; brickkit indexes them (`.cache/ldraw_xref.pkl`) and reads a
+  shortcut's sub-files for the pieces and colours of an assembly. A component is given by its
+  Rebrickable number (or an LDraw file or BrickLink number the headers cite), alone (its usual
+  colour) or as `(number, colour)`. `catalog.rb_part` / `bl_part` also use the headers for
+  any printed part whose LDraw name Rebrickable doesn't know (`3626cp01` -> `3626cpr0001`).
+  Minifigure parts sit in the figures' own Rebrickable inventories (`fig-NNNNNN`); with the
+  `minifigs` and `inventory_minifigs` tables (`brickkit fetch`) every part's set count and
+  last year count the sets its figures come in.
+- **Geometry** (`model/minifig.py`): the figure's origin is on the plate top, midway between
+  the two studs its feet go on (x = ±10: `at` sits where the centre of a 1 x 2 plate lying
+  along X would). Standard LDraw/LDCad minifig geometry: feet 28 below
+  the hip pins, hips 12 above them, torso 32 tall, the head on the neck stud; the body stands
+  1.2 LDU behind its foot holes; arms hang on the shoulder pins tilted out 9.79 degrees and
+  swing about them (`arm_r`, `arm_l`: + forward), hands sit on the wrists at 45 degrees and
+  twist (`hand_r`, `hand_l`), legs swing on the hip pins (`leg_r`, `leg_l`: 90 sits), the head
+  turns (`head`: + to the figure's left). Headwear goes on the head stud. An accessory's
+  3.2 mm bar (LDCad) is laid in the hand's clip: by default the middle of its thinnest stretch
+  (a bottle by its neck), upright side (LDraw's -Y) on the thumb's side; `grip`, `spin`,
+  `flip`, `bar` adjust it. `grip_up()` is the arm swing that stands a held bar up (leaning out
+  with the shoulder's 9.8 degrees).
+- **What is bought**: the torso and legs are **kits** (`Submodel.kit`, a sub-assembly of the
+  LDraw pieces named `NAME_torso` / `NAME_legs`); the head is a placement with `buy=`. Kits
+  are not built: the instructions skip their steps and show them like parts, pictured whole;
+  their pieces are joined by `kit` connections and may touch each other; buildability pushes
+  the whole kit on. Headwear fits over the head (`Submodel.fits`, `Model.fits`: the two may
+  overlap and the hair slides over the head). Each figure is built in its own section: legs,
+  torso, head, headwear, accessory.
+- **Parts lists**: a component is one line (`parts.csv` column `minifig`; BrickLink number in
+  the wanted list; its LEGO element ID, when there is one, in the Pick a Brick list) instead
+  of its LDraw pieces; prices use `price_bands.json` `minifig` bands. A component whose
+  BrickLink number no LDraw header gives takes it from `data/minifig_bricklink.json`
+  (Rebrickable number -> BrickLink number, checked on bricklink.com by hand), else it is
+  left out of `bricklink_wanted.xml` (the command says so) and listed by its Rebrickable
+  number. The build and bom summaries and
+  `price.json` count the minifigures.
+- **real_elements** checks each component as sold (that print on that colour: set count,
+  last year, the usual rare warning), and notes (severity `info`) prints drawn as **stand-ins**
+  and missing BrickLink numbers. A print LDraw has no model of (and no LDraw model of the same
+  print on other arms, matched by Rebrickable's print number and description) is drawn with
+  plain pieces in its colours; the build command lists them. Prefer prints LDraw models
+  (`find --minifig ... --ldraw`).
+
+### Real LEGO parts LDraw has no model of
+Some real elements have no LDraw file at all (the Series 8 Diver's brass helmet, `10165c01`).
+brickkit draws them with its **own approximate 3D model**, a BFC-certified LDraw file named
+after the part's real number under `brickkit/data/ldraw/parts/` (made by
+`tools/approximate_parts.py`, with any LDCad snaps in `brickkit/data/shadow/parts/` and a
+mass in `data/masses.json`), listed in `brickkit/data/approximate.json` (name, `bricklink`
+number if it differs, what the `shape` gets right and leaves out).
+```python
+fig = model.minifig("diver", at, head=..., torso=..., legs=...,
+                    hat=("10165c01", "Pearl Gold"))      # placed like any part
+```
+- Unlike a hardware stand-in it **is** LEGO: it stays on `parts.csv` (note "approximate 3D
+  model"), the BrickLink wanted list and Pick a Brick under its real number, and
+  `real_elements` checks it like any part (set count, year, rare warning), adding an `info`
+  item that its shape is approximate; the build command lists it.
+- The library's own file wins if LDraw ever adds the part. The MPD embeds the model, so
+  Studio and LDCad show it.
+- `catalog.is_approximate(part)` tells them apart. A custom file that is in neither
+  `hardware.json` nor `approximate.json` fails `real_elements`.
+
 ### Non-LEGO hardware
 Bought items that are not LEGO elements (a quartz clock insert) go in the model as **stand-in
 parts**: simple LDraw-style meshes under `brickkit/data/ldraw/parts/` (made by
@@ -169,7 +259,7 @@ model.moving_group("top", "tower_top", lifts_off=True)            # the pose lif
 | stability | centre of mass outside the footprint of the lowest parts, or tips over under 10° |
 | mechanism | moving parts collide / disconnect across the pose sweep; gear spacing wrong |
 | electrics | cable runs longer than the cable |
-| technique | warnings: clips on transparent parts, moving transparent parts, uncertified geometry |
+| technique | warnings: clips on transparent parts, moving transparent parts, uncertified geometry, locking hinges set between their clicks, parts sitting on studs their snap data has no holes for |
 
 Connection points come from the LDCad shadow library. When a part has none there (for example
 74611 Plate Round 8 x 8 with hole, whose underside would otherwise connect to nothing), add a
@@ -191,9 +281,39 @@ freely in that plane, only about 25 degrees across it.
 **Window glass.** Glass that clicks into its frame is matched through LDCad snaps too:
 60601 meets 60592 with a generic snap (SNAP_GEN), and the overlay
 `brickkit/data/shadow/parts/60602.dat` gives 60602 (glass for 60593, Window 1 x 2 x 3 Flat
-Front) the finger its frame's glazing slot expects. Generic snaps count as clicking in for
-the buildability check, like clips and hinges; give the glass `insert=` pointing to the
-side it goes in from.
+Front) the fingers its frame's glazing slot expects (the complementary sequence). Generic snaps
+count as clicking in for the buildability check, like clips and hinges; give the glass
+`insert=` pointing to the side it goes in from.
+
+**Finger hinges** (`SNAP_FGR`: hinge bricks, click hinges, locking hinge plates). As in LDCad,
+a finger sequence is centred on the snap's position unless the meta says `[center=false]`;
+fingers and gaps alternate from `genderOfs`. Two halves on the same line engage when their
+extents overlap by 1 LDU or more and their fingers interleave: no finger of one may sit on a
+finger of the other by more than 1.5 LDU. So a pair works whichever way round its halves face
+(44301b's single finger in 54657's pair, 44567b on 60471), at any angle about the hinge line,
+and two single fingers in one place don't. The joint doesn't model click steps: locking
+hinges hold only at their clicks (22.5-degree steps, by builders' accounts), so keep their
+angles to those: the technique check warns when a locking hinge (LDCad group `lckHng`) is set
+more than 1 degree off a click, measuring the turn of one half's frame from the other's about
+the hinge line (`[checks.technique] click_step`, `click_tolerance`, `click_groups` change
+that). Bar-and-clip and the friction hinges hold anywhere. Hinge pairs also have a
+range the collision check enforces: 3937 + 6134 open one way only, 0 to 90 degrees; a 1 x 4
+swivel (2429 + 2430) folds one way only; locking hinge plates and bar-and-clip swing about
++-90 and +-120 degrees.
+
+**Angled frames.** Connectors are bucketed by their line (direction to 0.001, foot of the line
+to 0.5 LDU). A connector sitting exactly on a bucket boundary, as feet can in frames made of
+several 45- or 30-degree turns, goes in both buckets, so float noise can't split a pair.
+
+The overlays `43722a/43723a/43722b/43723b.dat` (Wedge Plate 3 x 2) give those wedge plates the
+stud holes LDCad's library lacks. The technique check finds gaps like that one: it warns when a
+part with studs on top but nothing that connects through its underside sits on another part's
+studs.
+
+**Swivel hinges.** The 1 x 4 swivel plate is sold assembled (73983), but LDraw draws it
+straight; to set it at an angle, place its halves 2429 (base) and 2430 (top) separately, turned
+about the pivot. The parts list counts each 2429 as one 73983 and leaves 2430 out
+(`data/part_map.json`). The swivel folds one way only.
 
 ## Workflow loop
 1. `brickkit find` to pick parts that exist in your colours (prefer ≥3 sets since 2016).

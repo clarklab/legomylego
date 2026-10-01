@@ -82,7 +82,9 @@ def _make(kind: str, P: dict) -> Connector:
         bounding = ("sph", P.get("radius", "0"))
     return Connector(
         kind=k, gender=gender, M=np.eye(4), secs=_secs(P.get("secs", "")),
-        caps=P.get("caps", "one").lower(), center=_bool(P.get("center")),
+        caps=P.get("caps", "one").lower(),
+        # LDCad centres a finger sequence on the snap's position unless [center=false]
+        center=_bool(P.get("center", "true" if kind == "SNAP_FGR" else "false")),
         slide=_bool(P.get("slide")), group=P.get("group", "").lower(),
         cid=P.get("id", "").lower(),
         radius=float(P.get("radius", 4.0 if kind == "SNAP_CLP" else 0.0)),
