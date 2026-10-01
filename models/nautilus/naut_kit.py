@@ -424,38 +424,6 @@ def connected(layers: list[list]) -> int:
     return len({root(a) for a in list(parent)})
 
 
-# ------------------------------------------------------------------ weathering
-WEATHER_SEED = 1954
-
-
-def _lattice(ix, iy, seed):
-    h = (ix * 374761393 + iy * 668265263 + seed * 2147483647) & 0xFFFFFFFF
-    h = ((h ^ (h >> 13)) * 1274126177) & 0xFFFFFFFF
-    return (h & 0xFFFF) / 65535.0
-
-
-def weather_role(x, u, side, small=False, seed=WEATHER_SEED) -> str:
-    """Subtle rusty iron: a visible skin element at (x along the hull, u across its face) is
-    mostly the base colour. A few scattered small elements (one or two studs; about one in
-    twenty, never in patches) are Dark Brown, plates darkened with age, and a very few Dark
-    Orange, flecks of rust. Chosen by a hash of the element's position, so it is repeatable."""
-    h = _lattice(int(round(x)), int(round(u)) * 7 + (17 if side > 0 else 0), seed)
-    if small and h > 0.975:
-        return "w_rust"
-    if small and h < 0.05:
-        return "w_dark"
-    return "hull"
-
-
-def weather(part, x, u, side, base="hull", small=None) -> str:
-    """The weathering role for a part, or `base` where LEGO doesn't make it in that colour."""
-    if small is None:
-        lo, hi = bbox(part)
-        small = (hi[0] - lo[0]) * (hi[2] - lo[2]) <= 40 * 20 + 1
-    r = weather_role(x, u, side, small)
-    return r if r != "hull" and AV.ok(part, r) else base
-
-
 # ------------------------------------------------------------------ placing by connectors
 def about(point, R) -> np.ndarray:
     """4x4 rotation R about a line (or point) through `point`."""

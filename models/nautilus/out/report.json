@@ -5,7 +5,7 @@
     {
       "name": "real_elements",
       "status": "warn",
-      "summary": "136 part/colour combinations: 0 not real, 1 rare",
+      "summary": "128 part/colour combinations: 0 not real, 1 rare",
       "items": [
         {
           "part": "64228",
@@ -22,7 +22,7 @@
         }
       ],
       "stats": {
-        "combinations": 136,
+        "combinations": 128,
         "not_real": 0,
         "rare": 1,
         "hardware": 0,
@@ -34,16 +34,16 @@
     {
       "name": "connections",
       "status": "pass",
-      "summary": "5494 connections (5446 stud, 26 pin, 11 press, 6 clip, 4 bar, 1 axle); 1 separate piece(s)",
+      "summary": "5446 connections (5400 stud, 28 pin, 11 press, 4 bar, 2 clip, 1 axle); 1 separate piece(s)",
       "items": [],
       "stats": {
-        "connections": 5494,
+        "connections": 5446,
         "by_kind": {
-          "stud": 5446,
-          "pin": 26,
+          "stud": 5400,
+          "pin": 28,
           "bar": 4,
           "axle": 1,
-          "clip": 6,
+          "clip": 2,
           "press": 11
         },
         "pieces": 1
@@ -52,7 +52,7 @@
     {
       "name": "collisions",
       "status": "pass",
-      "summary": "0 overlapping pair(s) among 1306 parts",
+      "summary": "0 overlapping pair(s) among 1215 parts",
       "items": [],
       "stats": {
         "pairs": 0
@@ -61,34 +61,34 @@
     {
       "name": "buildability",
       "status": "pass",
-      "summary": "1244 insertions tried across 30 submodel(s); 0 problem(s)",
+      "summary": "1153 insertions tried across 26 submodel(s); 0 problem(s)",
       "items": [],
       "stats": {
-        "insertions": 1244
+        "insertions": 1153
       }
     },
     {
       "name": "stability",
       "status": "pass",
-      "summary": "about 1462 g; centre of mass inside the base (100% margin); tips at 35.9 deg",
+      "summary": "about 1454 g; centre of mass inside the base (100% margin); tips at 36.0 deg",
       "items": [],
       "stats": {
-        "mass_g": 1461.8169372841892,
+        "mass_g": 1454.4652442263603,
         "com": [
-          -3.2873709053999463,
-          -192.89678987611,
-          0.556552957922536
+          -3.409612326628427,
+          -192.07261431865624,
+          0.5601217201120705
         ],
         "approx_parts": 0,
-        "margin": 0.9960246217291246,
-        "tip_angle_deg": 35.86284595837261,
-        "com_height_ldu": 192.89678987611
+        "margin": 0.995999130570628,
+        "tip_angle_deg": 35.97870422582338,
+        "com_height_ldu": 192.07261431865624
       }
     },
     {
       "name": "mechanism",
       "status": "pass",
-      "summary": "24 poses swept for 6 moving group(s); 0 gear pair(s); 0 problem(s)",
+      "summary": "24 poses swept for 2 moving group(s); 0 gear pair(s); 0 problem(s)",
       "items": [],
       "stats": {
         "poses": 24

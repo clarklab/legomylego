@@ -1,26 +1,21 @@
 [model]
 name = "Nautilus"
 design = "design.py"
-description = "Captain Nemo's Nautilus from Walt Disney's 20,000 Leagues Under the Sea (1954), 46 cm long in real LEGO: a riveted-iron fish of a submarine with its toothed crest arch, ram, saw keel, shark's dorsal fin and swept fish tail, held over a sea of rolling waves on two clear posts. The salon windows light up, the propeller spins, the rudder swings and the dive planes tilt."
+description = "Captain Nemo's Nautilus from Walt Disney's 20,000 Leagues Under the Sea (1954), 46 cm long in real LEGO: an iron fish of a submarine with its toothed crest arch, ram, saw keel, shark's dorsal fin and swept fish tail, held over a sea of rolling waves on two clear posts. The salon windows light up, the propeller spins and the rudder swings."
 notice = "The Nautilus design is from Walt Disney's 20,000 Leagues Under the Sea (1954). Unofficial fan model, not affiliated with or endorsed by Disney."
 palette_title = "Rusty iron"
 
-# Roles -> real colours. The hull is mostly `hull`; the weathering roles (w_*) go on a few
-# scattered small visible parts, chosen by a hash of their position (naut_kit.weather_role),
-# and fall back to `hull` wherever LEGO doesn't make that part in that colour.
+# Roles -> real colours. The hull is one colour, Reddish Brown; Dark Brown (`frame`) is kept
+# for a few deliberate accents (the hatch's rim, the skiff).
 [palette]
 hull = "Reddish Brown"         # the iron hull: panels, side keels, deck, fins, wheelhouse
-w_dark = "Dark Brown"          # weathering: a few scattered plates darkened with age
-w_rust = "Dark Orange"         # weathering: a few small flecks of rust
-rivet = "Dark Brown"           # rivet rows
-core = "Reddish Brown"         # the core: seen only deep in the seams, so hull-coloured
-hinge = "Reddish Brown"        # clips under the panels (seen in the seam over the side keels)
+core = "Reddish Brown"         # the core: hull-coloured where it shows (the saw keel's blade)
 spine = "Reddish Brown"        # the teeth along the crest, keels and fin
 ram = "Reddish Brown"
-frame = "Dark Brown"           # the salon windows' bosses
-trim = "Pearl Gold"            # brass: the salon windows' iris rings, the propeller
-glass = "Trans-Clear"          # the windows
-lights = "Trans-Yellow"        # the ring of lights round each salon window
+frame = "Dark Brown"           # accents: the hatch's rim, the skiff
+trim = "Pearl Gold"            # brass: the salon windows' rings
+glass = "Trans-Clear"          # the windows' domes and the wheelhouse's eyes
+lights = "Trans-Yellow"        # the eight small lights round each salon window
 lamp_base = "Yellow"           # under each of those lights, so they read yellow by day
 lamp = "Trans-Yellow"          # the wheelhouse's searchlight eyes
 propeller = "Pearl Gold"
@@ -45,17 +40,13 @@ nameplate = "Black"
 title = "Steel"
 hull = "Dark Bluish Gray"
 core = "Dark Bluish Gray"
-hinge = "Dark Bluish Gray"
-w_dark = "Black"
-w_rust = "Dark Orange"
-rivet = "Black"
 frame = "Black"
 spine = "Black"
 ram = "Dark Bluish Gray"
 
 [booklet]
-subtitle = "Captain Nemo's submarine from Walt Disney's 20,000 Leagues Under the Sea (1954): 46 cm of riveted iron over a sea of rolling waves. Its salon windows light up, its propeller spins, its rudder swings and its dive planes tilt."
-intro = "The hull starts from its side keels: a pointed lens of plates two layers thick at the waterline, wedge plates making the taper. A core two studs wide stands on them up to the deck and hangs under them down to the keel, with a course of bricks with side studs above and below; the hull's sides are built flat, layer on layer of plates as deep as the hull is wide at each stud row, and pushed onto those side studs. Cheese slopes join the rows into smooth sides, with rivet lines down the plate seams. On top: a low wheelhouse like an alligator's head with two round eye windows, the toothed crest arching from its brow down to the ram, breathers, a shark's dorsal fin, a hatch, the skiff and ladders up each side. Underneath: the saw keel along the bow, two keel fins, teeth along the side keels. At the stern a swept fish tail, the propeller in a window with its guard, and the rudder hinged on the guard's post. A Power Functions light behind each salon window glows through a clear dome inside a brass ring and eight yellow lights; the battery box hides in the sea base."
+subtitle = "Captain Nemo's submarine from Walt Disney's 20,000 Leagues Under the Sea (1954): 46 cm of iron over a sea of rolling waves. Its salon windows light up, its propeller spins and its rudder swings."
+intro = "The hull starts from its side keels: a pointed lens of plates two layers thick at the waterline, wedge plates making the taper. A core two studs wide stands on them up to the deck and hangs under them down to the keel, with a course of bricks with side studs above and below; the hull's sides are built flat, layer on layer of plates as deep as the hull is wide at each stud row, and pushed onto those side studs. Cheese slopes join the rows into smooth sides, all one Reddish Brown. On top: a low wheelhouse like an alligator's head with two round eye windows, the toothed crest arching from its brow down to the ram, a shark's dorsal fin, a hatch and the skiff. Underneath: the saw keel along the bow, two keel fins, teeth along the side keels. At the stern a swept fish tail, the propeller in a window with its guard, and the rudder hinged on the guard's post. Each salon window is a clear dome in a brass ring with eight small yellow lights round it, a Power Functions light glowing inside; the battery box hides in the sea base."
 you_will_need = [
   "1x LEGO Power Functions LED light unit (8870): one lamp goes behind each salon window.",
   "6 AAA batteries for the Power Functions AAA battery box (set 88000, listed in the parts as 64228), which stands inside the sea base.",
@@ -64,12 +55,12 @@ notes = [
   "Each lamp's lead goes in behind its window: from the lamp up into the open cell beside it, in to the core and down the shaft left in the core (just aft of the window's middle), out under the hull behind the forward keel fin. Thread it before you press the window's frame on, and leave a little slack.",
   "From the hull the leads run down beside the front post and through the hole in the sea next to it to the battery box, which stands on its back in the base with its on/off button behind the slot in the back wall. Plug them onto it before you set the sea's top on the base.",
   "To change the batteries or lift the Nautilus off its stand, lift the sea's top off the base (the Nautilus lifts off its posts too; unplug the leads first).",
-  "The propeller sits on a smooth pin: spin it with a finger. The rudder is clipped to the guard's post and swings on it; the dive planes are clipped to bars along the side keels and tilt.",
+  "The propeller sits on a smooth pin: spin it with a finger. The rudder is clipped to the guard's post and swings on it.",
   "Power Functions was discontinued in 2018: the light unit and the battery box are easy to find used on BrickLink.",
 ]
 works = [
-  { title = "Lights in the salon", text = "A Power Functions lamp pushed into the centre of each window's round brass frame shines through a clear jumper plate and a clear dome; the battery box's button switches them on and off.", image = "hero_lit/hero.png" },
-  { title = "Propeller, rudder and dive planes", text = "The propeller spins on a smooth Technic pin in the tail stock, the rudder swings on the propeller guard's post, and the four dive planes tilt on their bars.", image = "hero_open/hero.png" },
+  { title = "Lights in the salon", text = "A Power Functions lamp pushed into the centre of each window's round brass ring shines through a clear jumper, a clear round plate and a clear dome; the battery box's button switches them on and off.", image = "hero_lit/hero.png" },
+  { title = "Propeller and rudder", text = "The propeller spins on a smooth Technic pin in the tail stock, and the rudder swings on the propeller guard's post.", image = "hero_open/hero.png" },
 ]
 
 [checks]
@@ -87,7 +78,7 @@ lift_label = "Lifts off its stand"
 lift = { exclude_tag = "stand", height = 80 }
 
 # the cold open: the Nautilus cruising through deep water (the stand hidden), its propeller,
-# rudder and dive planes running (design.performance)
+# rudder running (design.performance)
 [video.cold_open]
 scene = "deep_sea"
 seconds = 7
@@ -101,11 +92,6 @@ sub = "spins on a smooth pin"
 label = "Rudder"
 tag = "rudder"
 sub = "swings on the guard's post"
-
-[[video.callouts]]
-label = "Dive planes"
-tag = "dive_*"
-sub = "tilt on bars"
 
 [[video.callouts]]
 label = "Salon window"

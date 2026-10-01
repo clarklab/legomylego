@@ -5,7 +5,7 @@
     {
       "name": "real_elements",
       "status": "warn",
-      "summary": "137 part/colour combinations: 0 not real, 1 rare",
+      "summary": "133 part/colour combinations: 0 not real, 1 rare",
       "items": [
         {
           "part": "64228",
@@ -22,7 +22,7 @@
         }
       ],
       "stats": {
-        "combinations": 137,
+        "combinations": 133,
         "not_real": 0,
         "rare": 1,
         "hardware": 0,

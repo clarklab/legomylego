@@ -8,8 +8,8 @@ qty,part,name,colour,ldraw_colour,rebrickable_part,rebrickable_colour,bricklink_
 1,973p05,"Torso Boat Captain, Suit Double Breasted and Gold Anchor Logo Print, Black Arms, Yellow Hands",Black,0,973c03h01pr0049,0,973pb0049c01,11,,1,minifig torso
 1,973puc,"Torso Vest with White Shirt and Blue Tie, Buttons Print, White Arms, Yellow Hands",Black,0,973c27h01pr4203,0,973pb3159c01,11,6219624,0,minifig torso
 1,3815b,Hips and Dark Blue Legs,Dark Blue,272,970c05,272,970c00,63,4569107,0,minifig legs
-1,3815b,Hips and Dark Bluish Gray Legs,Dark Bluish Gray,72,970c12,72,970c00,85,6168713,0,minifig legs
 1,3815b,Hips and Medium Nougat Legs with Reddish Brown Kneepads Print,Dark Bluish Gray,72,970c23pr0378,72,970c150pb02,85,6007953,1,minifig legs; stand-in render (LDraw has no model of the print)
+1,41879a,Legs Short,Dark Bluish Gray,72,41879a,72,41879,85,6233908,0,minifig legs
 1,92081,Hair Combed Back,Dark Bluish Gray,72,92081,72,92081,85,6359369,0,
 1,60474,Plate Round 4 x 4 with Pin Hole,Dark Brown,308,60474,308,60474,120,6005030,0,
 2,6636,Tile 1 x 6 with Groove,Dark Brown,308,6636,308,6636,120,6295366,0,

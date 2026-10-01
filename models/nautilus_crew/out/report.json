@@ -102,16 +102,16 @@
     {
       "name": "connections",
       "status": "pass",
-      "summary": "528 connections (438 stud, 35 pin, 30 kit, 20 bar, 5 clip); 1 separate piece(s)",
+      "summary": "524 connections (438 stud, 35 pin, 28 kit, 18 bar, 5 clip); 1 separate piece(s)",
       "items": [],
       "stats": {
-        "connections": 528,
+        "connections": 524,
         "by_kind": {
           "stud": 438,
-          "bar": 20,
           "pin": 35,
+          "bar": 18,
           "clip": 5,
-          "kit": 30
+          "kit": 28
         },
         "pieces": 1
       }
@@ -119,7 +119,7 @@
     {
       "name": "collisions",
       "status": "pass",
-      "summary": "0 overlapping pair(s) among 136 parts",
+      "summary": "0 overlapping pair(s) among 134 parts",
       "items": [],
       "stats": {
         "pairs": 0
@@ -128,7 +128,7 @@
     {
       "name": "buildability",
       "status": "pass",
-      "summary": "105 insertions tried across 17 submodel(s); 0 problem(s)",
+      "summary": "105 insertions tried across 16 submodel(s); 0 problem(s)",
       "items": [],
       "stats": {
         "insertions": 105
@@ -137,19 +137,19 @@
     {
       "name": "stability",
       "status": "pass",
-      "summary": "about 139 g; centre of mass inside the base (77% margin); tips at 40.6 deg",
+      "summary": "about 139 g; centre of mass inside the base (76% margin); tips at 40.6 deg",
       "items": [],
       "stats": {
-        "mass_g": 139.4646628583456,
+        "mass_g": 138.9909376985097,
         "com": [
-          0.9940106279182404,
-          -55.41769750095136,
-          18.76680753289105
+          1.4118689388669377,
+          -55.17940100958509,
+          18.88912286458523
         ],
         "approx_parts": 0,
-        "margin": 0.7654149058388618,
-        "tip_angle_deg": 40.6096289851548,
-        "com_height_ldu": 71.41769750095136
+        "margin": 0.7638859641926846,
+        "tip_angle_deg": 40.647647764787536,
+        "com_height_ldu": 71.17940100958509
       }
     },
     {

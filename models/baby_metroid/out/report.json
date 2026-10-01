@@ -25,7 +25,10 @@
         "combinations": 60,
         "not_real": 0,
         "rare": 1,
-        "hardware": 0
+        "hardware": 0,
+        "minifig_components": 0,
+        "stand_ins": 0,
+        "approximate": 0
       }
     },
     {
@@ -115,9 +118,15 @@
     },
     {
       "name": "technique",
-      "status": "pass",
-      "summary": "0 note(s)",
-      "items": [],
+      "status": "warn",
+      "summary": "1 note(s)",
+      "items": [
+        {
+          "severity": "warn",
+          "part": "4285b Trans-Light Blue (#2256, baby_metroid step 180)",
+          "problem": "sits on studs but its snap data has no stud holes, so it connects to nothing there (add a shadow overlay)"
+        }
+      ],
       "stats": {}
     }
   ]

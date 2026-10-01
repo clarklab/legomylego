@@ -11,7 +11,10 @@
         "combinations": 54,
         "not_real": 0,
         "rare": 0,
-        "hardware": 0
+        "hardware": 0,
+        "minifig_components": 0,
+        "stand_ins": 0,
+        "approximate": 0
       }
     },
     {

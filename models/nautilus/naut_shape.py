@@ -125,7 +125,7 @@ FL_A, FL_B = -8, 0        # the flange's two plate layers (tops); it spans y -8.
 WIDE = (-100.0, 20.0)     # the widest part: the salon windows
 BOW_TIP_X = -500.0        # the side keels meet here (two studs wide); the ram goes on
 STERN_X = 420.0           # the side keels end here, two studs wide; the tail stock goes on
-PROW_X = -340.0           # the deck's grilles run aft from here
+PROW_X = -340.0           # the deck's narrow forward stretch starts here
 # taper segments from WIDE outward: (x_wide, x_narrow, hw at x_wide, kind) where kind is the
 # wedge plate that makes the edge: "12x3" (1:6) or "4x2" (1:4)
 TAPERS = ((-100, -340, 100, "12x3"), (-340, -420, 60, "4x2"), (-420, -500, 40, "4x2"),

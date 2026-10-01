@@ -28,7 +28,7 @@ import naut_shape as shp
 from brickkit.ldraw.matrix import rot, transform
 from naut_frame import deck_hw
 from naut_kit import (AV, PLATE, S, TILE, Batch, connected, ids_of, orient, pack,
-                      rect_part, runs, side_R, weather)
+                      rect_part, runs, side_R)
 
 CORE_HW = 20              # the core: two studs wide
 LEDGE = 20                # the side keels stand this far proud of the hull body
@@ -175,11 +175,10 @@ class Relief:
 
     def caps(self) -> dict:
         """(i, r) -> ('slope', (dx, dy)) - a cheese slope, its high side that way; ('tile',
-        None); or ('rivet', None) - a round tile, a rivet head in a seam. The row next to the
-        side keels is tiled (so the side keels' own studs can be covered); the others rise in
-        cheese slopes to the row nearer the side keels, or toward amidships along the taper.
-        Rivet lines run down the hull's plate seams every few columns, with the odd diagonal
-        between them (the plating's triangles)."""
+        None); ('grille', None) - the vents along the lower hull. The row next to
+        the side keels is tiled (so the side keels' own studs can be covered); the others rise
+        in cheese slopes to the row nearer the side keels, or toward amidships along the
+        taper. The salon windows' bosses are left bare for the windows."""
         out = {}
         for (i, r), l in self.L.items():
             if self.boss(i, r) in ("face", "lamp", "shaft"):
@@ -187,11 +186,7 @@ class Relief:
             inner = self.L.get((i, r - 1), l + 2) if r > 0 else l
             mid = i + 1 if xc(i) < 0 else i - 1
             dx = self.L.get((mid, r), 0) - l
-            if self.kind == "up" and LADDER[0] <= xc(i) < LADDER[1]:
-                out[(i, r)] = ("ladder", None)
-            elif self.rivet(i, r):
-                out[(i, r)] = ("rivet", self.rivet(i, r))
-            elif self.kind == "lo" and r == 0 and any(a <= xc(i) < b for a, b in GRILLES):
+            if self.kind == "lo" and r == 0 and any(a <= xc(i) < b for a, b in GRILLES):
                 out[(i, r)] = ("grille", None)
             elif inner - l >= 2:
                 out[(i, r)] = ("slope", (0, self.toward_keel()))
@@ -201,22 +196,6 @@ class Relief:
                 out[(i, r)] = ("tile", None)
         return out
 
-    def rivet(self, i: int, r: int) -> str:
-        """'seam': a rivet on a plate seam, every RIVET_PITCH columns amidships (a dark round
-        tile); 'diag': a short diagonal a column clear of the seam in every other panel, a hint
-        of the plating's triangles (round tiles in the hull's colour: the shape alone shows);
-        '' elsewhere. Never two dark rivets side by side, so they read as rivet lines."""
-        x = xc(i)
-        if not (-320 < x < 300) or r == 0:
-            return ""
-        k = i % RIVET_PITCH
-        if k == 0:
-            return "seam"
-        panel = i // RIVET_PITCH
-        return "diag" if panel % 2 == 0 and k == r + 1 else ""
-
-RIVET_PITCH = 7               # columns between the hull's vertical rivet seams
-LADDER = (140, 180)           # a ladder up each side to the hatch: handles on the rows here
 # grilles (the vents along the lower hull, traced from the photo): x ranges on the row under
 # the side keels
 GRILLES = ((-280, -200), (-180, -120), (100, 160), (180, 240))
@@ -370,12 +349,10 @@ def build_relief(model, rel: Relief, side: int):
     bt = Batch(relief_frame(side))                     # built flat, layer 0 on the table
     for n, rs in enumerate(relief_rects(rel, side)):
         z = side * (CORE_HW + 8 + 8 * n)
-        face = boss_face(rel, n, rel.layer(n))
         for i0, i1, r0, r1 in rs:
             part, Rl = rect_part(PLATE, i1 - i0 + 1, r1 - r0 + 1)
             pos = (S * (i0 + i1 + 1) / 2, (rel.y(r0) + rel.y(r1)) / 2, z)
-            role = "frame" if (i0, r0) in face else "hull"
-            bt.add(part, role, transform(pos, R @ Rl), f"layer{n}", insert=UP)
+            bt.add(part, "hull", transform(pos, R @ Rl), f"layer{n}", insert=UP)
     caps = rel.caps()
     groups = defaultdict(set)
     for c, v in caps.items():
@@ -387,34 +364,22 @@ def build_relief(model, rel: Relief, side: int):
             for i0, i1, r, _ in runs(cells, (2, 1)):
                 part = {2: "85984", 1: "54200"}[i1 - i0 + 1]
                 pos = (S * (i0 + i1 + 1) / 2, rel.y(r), zf)
-                bt.add(part, weather(part, pos[0], pos[1], side), transform(pos, cap_R(side, ty)),
+                bt.add(part, "hull", transform(pos, cap_R(side, ty)),
                        "caps", insert=UP)
         elif kind == "slope":
             for i, r in sorted(cells):
                 pos = (xc(i), rel.y(r), zf)
-                bt.add("54200", weather("54200", pos[0], pos[1], side),
-                       transform(pos, cap_R(side, ty)), "caps", insert=UP)
-        elif kind == "ladder":            # a rung on each row: a tile with a handle
-            for i0, i1, r, _ in runs(cells, (2, 1)):
-                part, h = ("2432", 32) if i1 > i0 else ("3070b", 8)
-                pos = (S * (i0 + i1 + 1) / 2, rel.y(r), zf + side * h)
-                bt.add(part, "hull", transform(pos, R), "caps", insert=UP)
+                bt.add("54200", "hull", transform(pos, cap_R(side, ty)), "caps", insert=UP)
         elif kind == "grille":
             for i0, i1, r, _ in runs(cells, (2, 1)):
                 part = "2412b" if i1 > i0 else "3070b"
                 pos = (S * (i0 + i1 + 1) / 2, rel.y(r), zf + side * 8)
                 bt.add(part, "hull", transform(pos, R), "caps", insert=UP)
-        elif kind == "rivet":
-            for i, r in sorted(cells):
-                pos = (xc(i), rel.y(r), zf + side * 8)
-                bt.add("98138", "rivet" if ty == "seam" else "hull", transform(pos, R), "caps",
-                       insert=UP)
         else:
             for i0, i1, r, _ in runs(cells, tile_lengths):
                 part, Rl = rect_part(TILE, i1 - i0 + 1, 1)
                 pos = (S * (i0 + i1 + 1) / 2, rel.y(r), zf + side * 8)
-                bt.add(part, weather(part, pos[0], pos[1], side), transform(pos, R @ Rl),
-                       "caps", insert=UP)
+                bt.add(part, "hull", transform(pos, R @ Rl), "caps", insert=UP)
     captions = {f"layer{n}": f"Layer {n + 1}" for n in range(NL)}
     captions["layer0"] = f"The {where} hull side: plates on the core's side studs"
     captions["caps"] = "Cheese slopes and tiles: the rows join into a smooth side"

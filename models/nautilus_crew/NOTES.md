@@ -10,7 +10,8 @@ glass, a ring of eight yellow lights). The characters come from the public-domai
 costumes follow the film loosely and no actor likeness is claimed.
 
 - **106 LEGO pieces** in 51 part/colour lines, **5 minifigures** among them (each a head, a
-  torso assembly, a legs assembly, headwear and something to hold: 25 pieces).
+  torso assembly, legs (hips and legs, or Conseil's one-piece short legs), headwear and
+  something to hold: 25 pieces).
 - **12.8 x 6.4 cm** base (16 x 8 studs), **9.3 cm** to the top of the bulkhead; the figures
   are the usual 4.4 cm. About 140 g.
 - **Price**: roughly $29-$120 for new parts on BrickLink (price bands, `out/price_estimate.md`;
@@ -89,14 +90,14 @@ can hold; the magnifying glass suits the naturalist. A brown "Gent" suit
 
 ### Conseil (left)
 Aronnax's devoted assistant and classifier: a black waistcoat over shirt sleeves with a blue
-tie, a bowler hat, a worried face (the head's other side smiles), holding up a specimen
-bottle for the professor.
+tie, a bowler hat, a worried face (the head's other side smiles), on short legs (a head
+shorter than the others), holding up a specimen bottle for the professor.
 
 | | Part | Colour | Rebrickable | BrickLink | LDraw | Sets / last | Element |
 |---|---|---|---|---|---|---|---|
 | Head | Scared / Lopsided Smile (dual-sided) | Yellow | 3626cpr2224 | 3626pb1879 | 3626cp8w | 46 / 2026 | 6662107 |
 | Torso | Vest with White Shirt and Blue Tie, Buttons | Black (white arms, yellow hands) | 973c27h01pr4203 | 973pb3159c01 | 76382puc | 43 / 2026 | 6219624 |
-| Legs | Hips and Dark Bluish Gray Legs | Dark Bluish Gray | 970c12 | 970c00 | 3815b + 3816c + 3817c | 397 / 2026 | 6168713 |
+| Legs | Legs Short (one piece) | Dark Bluish Gray | 41879a | 41879 | 41879a | 34 / 2026 | 6233908 |
 | Hat | Bowler | Black | 95674 | 95674 | 95674 | 17 / 2026 | 6414524 |
 | Holds | Bottle | Trans-Clear | 95228 | 95228 | 95228 | 80 / 2026 | 6507876 |
 
@@ -173,7 +174,8 @@ plating leaves their studs bare), so neighbours' hands and what they hold never 
 stands in the middle, in front of his salon window. Conseil holds up a specimen bottle,
 Aronnax holds his magnifying glass at his chest, Nemo his spyglass, the diver his speargun,
 and Ned Land stands at the end with his harpoon upright, on the outside so it never hides a
-face.
+face. On his short legs Conseil holds the bottle a little higher, so it clears the deck's
+gold edge.
 
 ## Engine notes
 This is the first model with minifigures (`model.minifig`, see the guide's "Minifigures"):

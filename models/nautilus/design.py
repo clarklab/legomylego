@@ -36,8 +36,6 @@ def build(model):
     hs.use(det.ram(model), insert=(1, 0, 0))
     hs.step("The wheelhouse")
     hs.use(det.wheelhouse(model), insert=(0, -1, 0))
-    det.breathers().emit(hs, phases=[["vents"]], captions={"vents": "The breathers"},
-                         per_step=8, reach=160)
     hs.step()
     hs.use(det.crest_foot(model), insert=(0, -1, 0))
     hs.step("The crest arch")
@@ -49,12 +47,8 @@ def build(model):
                 if side < 0 else "")
         hs.use(win, tag="salon_port" if side < 0 else "salon_stbd", insert=(0, 0, side))
         lights.emit(hs, phases=[["bases"], ["lights"]],
-                    captions={"bases": "Eight yellow lights round the window, rivets on the "
-                                       "boss"}, per_step=14, reach=200)
-    for which in ("fwd", "aft"):
-        for side in (-1, 1):
-            hs.step("The dive planes" if (which, side) == ("fwd", -1) else "")
-            hs.use(det.dive_plane(model, which, side), insert=(0, -1, 0))
+                    captions={"bases": "Eight small yellow lights round the window"},
+                    per_step=8, reach=200)
     hs.step("The dorsal fin")
     hs.use(det.dorsal_fin(model), insert=(0, -1, 0))
     hs.step()
@@ -89,24 +83,13 @@ def build(model):
         if key not in outer or abs(z) > abs(outer[key][2]):
             outer[key] = (x, y, z)
     det.keel_teeth(hs, [st for (x, _), st in sorted(outer.items()) if int(x // S) % 2 == 0])
-    # tiles over every stud left bare: the side keels, the deck (grilles down its middle), the
-    # core's tops and the tail
+    # tiles over every stud left bare: the side keels, the deck, the core's tops and the tail
     flat = [(p, M) for p, _, M in hs.flatten_local()]
     # (not the side keels' studs inside the salon windows' bosses, where the leads go in)
     bare = [st for st in exposed_studs(flat)
             if not (shp.SALON_X[0] <= st[0] < shp.SALON_X[1] and abs(st[2]) < 60
                     and abs(st[1] - shp.FL_A) < 0.5)]
-    hs.step("Rivets and tiles along the side keels")
-    # the side keels' studs: round rivet heads and square tiles by turns along each row
-    keel = [st for st in bare if abs(st[1] - shp.FL_A) < 0.5]
-    for x, y, z in keel:
-        i = int(x // S)
-        rivet = (i + int(abs(z) // S)) % 2 == 0
-        hs.place("98138" if rivet else "3070b", "rivet" if rivet else "hull", (x, y - 8, z),
-                 insert=(0, -1, 0))
-    # the deck's middle two rows are grilles (the grated deck); everything else plain tiles
-    rest = [st for st in bare if abs(st[1] - shp.FL_A) >= 0.5]
-    tile_studs(hs, rest, grille=lambda x, z: abs(z) < 20 and shp.PROW_X < x < 300)
+    tile_studs(hs, bare)
     main.step("The display stand")
     main.use(stand.stand(model), tag="stand")
     main.step("Set the Nautilus on its posts (plug the lights' leads in first)")
@@ -119,48 +102,26 @@ def build(model):
 PROP_AXIS = (0.0, Y_HULL + det.PROP_Y, 0.0)          # the propeller's shaft (world)
 RUDDER_AXIS = (det.GUARD_X, 0.0, 0.0)                # the guard post the rudder swings on
 RUDDER_SWING = 22.0                                  # degrees each way
-DIVE = [(w, s) for w in ("fwd", "aft") for s in (-1, 1)]
-
-
-def _dive(which, side, angle):
-    yb, zb = det.DIVE_BAR
-    return about((0.0, Y_HULL + yb, side * zb), rot(x=angle * side))
-
-
-def _group(which, side):
-    return f"dive_{which}_{'port' if side < 0 else 'stbd'}"
 
 
 def pose(t: float) -> dict:
-    """t 0..1: the propeller turns once, the rudder swings hard over, the dive planes tilt
-    (the forward pair down, the after pair up)."""
-    out = {"prop": about(PROP_AXIS, rot(x=360.0 * t)),
-           "rudder": about(RUDDER_AXIS, rot(y=RUDDER_SWING * t))}
-    for w, s in DIVE:
-        out[_group(w, s)] = _dive(w, s, det.DIVE_TILT * t * (1 if w == "fwd" else -1))
-    return out
+    """t 0..1: the propeller turns once and the rudder swings hard over."""
+    return {"prop": about(PROP_AXIS, rot(x=360.0 * t)),
+            "rudder": about(RUDDER_AXIS, rot(y=RUDDER_SWING * t))}
 
 
 def performance(u: float) -> dict:
-    """The video's loop (u 0..1): three turns of the propeller, the rudder easing to and fro,
-    the dive planes tilting in turn."""
-    a = math.sin(2 * math.pi * u)
-    out = {"prop": about(PROP_AXIS, rot(x=360.0 * 3 * u)),
-           "rudder": about(RUDDER_AXIS, rot(y=RUDDER_SWING * a))}
-    for w, s in DIVE:
-        tilt = det.DIVE_TILT * math.sin(2 * math.pi * u + (0 if w == "fwd" else math.pi / 2))
-        out[_group(w, s)] = _dive(w, s, tilt)
-    return out
+    """The video's loop (u 0..1): three turns of the propeller, the rudder easing to and fro."""
+    return {"prop": about(PROP_AXIS, rot(x=360.0 * 3 * u)),
+            "rudder": about(RUDDER_AXIS, rot(y=RUDDER_SWING * math.sin(2 * math.pi * u)))}
 
 
 def _mechanism(model):
     model.moving_group("prop", "prop")
     model.moving_group("rudder", "rudder")
-    for w, s in DIVE:
-        model.moving_group(_group(w, s), _group(w, s))
     model.pose = pose
-    model.meta["mechanism_name"] = "Propeller, rudder and dive planes"
-    model.meta["mechanism_labels"] = ["At rest", "Propeller turned, rudder over, planes tilted"]
+    model.meta["mechanism_name"] = "Propeller and rudder"
+    model.meta["mechanism_labels"] = ["At rest", "Propeller turned, rudder hard over"]
     model.meta["performance"] = performance
     model.meta["performance_info"] = {"hide_tags": ["stand"], "ground_y": Y_HULL + FIN_BOTTOM,
                                       "pivot": [0.0, 0.0], "cycle_s": 4.0,

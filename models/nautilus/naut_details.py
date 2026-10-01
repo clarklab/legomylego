@@ -1,6 +1,7 @@
-"""The Nautilus's superstructure and ends: the wheelhouse (an alligator's head, its two round
-eye windows looking forward, searchlight eyes over them), the breathers behind it, the toothed
-crest arch, the ram, and the fish tail with its propeller and rudder.
+"""The Nautilus's superstructure, ends and fittings: the wheelhouse (an alligator's head, its
+two round eye windows looking forward, searchlight eyes over them), the toothed crest arch, the
+ram, the fish tail with its propeller, guard and rudder, the keel fins and saw teeth, the
+dorsal fin, hatch and skiff, and the salon windows.
 
 Hull frame as naut_shape: side keels centred on y = 0, bow toward -X, port toward -Z. The deck
 strip's top is at y = -80."""
@@ -24,7 +25,6 @@ WH_C1 = WH_BASE - 24                 # the head's first course's top
 WH_C2 = WH_C1 - 24                   # its second course's top
 EYE_Y = WH_C1 + 10                   # the eye windows' middle (the front brick's side studs)
 EYE_Z = 30                           # on that brick's outer side studs, at the head's corners
-VENTS = (-60, 20)                    # the breathers behind it
 SEARCHLIGHT_Z = 30
 
 
@@ -82,21 +82,6 @@ def searchlights(hs):
                  insert=(0, -1, 0))
 
 
-
-
-# ------------------------------------------------------------------ breathers
-def breathers() -> Batch:
-    """Vent flaps behind the wheelhouse: two rows of grille slopes rising aft, the second row
-    on a plate step (built on the hull)."""
-    bt = Batch()
-    i0 = int(VENTS[0] // S)
-    _plates(bt, {(i, k) for i in range(i0 + 2, i0 + 4) for k in range(-2, 2)}, DECK - 8,
-            "hull", "vents")
-    for ia, bottom in ((i0, DECK), (i0 + 2, DECK - 8)):
-        for k in range(-2, 2):
-            bt.add("61409", "hull", transform((S * ia + 20, bottom, S * k + 10), rot(y=90)),
-                   "vents")
-    return bt
 
 
 # ------------------------------------------------------------------ crest arch
@@ -187,7 +172,7 @@ def crest_arch(model):
             if k in teeth_here or (n % 2 == 0 and (k in (0, n_studs - 1) or n > 0 and k == 1
                                                    or k == n_studs - 2)):
                 continue                     # a tooth, under the next plate, or right by it
-                                             # (that stud stays bare: a rivet)
+                                             # (that stud stays bare)
             sp = a + d * (20 * k)
             tile = "3070b" if n % 2 else "98138"     # round where it sits by the next plate
             bt.add(tile, "spine", transform((sp[0], sp[1], zt - 8), R), f"tiles{n}",
@@ -448,18 +433,19 @@ def skiff(model):
 
 
 # ------------------------------------------------------------------ salon windows
-WIN_LIGHTS = ((-10, -50), (10, -50), (-50, -10), (50, -10),      # (dx, dy) from the centre:
-              (-10, 50), (10, 50), (-50, 30), (50, 30))          # two over, one each side, four under
-WIN_STUDS = ((-30, -50), (30, -50), (-50, -30), (50, -30), (-30, 50), (30, 50))  # rivets
-RING_STUDS = ((-30, -10), (30, -10), (-30, 10), (30, 10), (-10, -30), (10, -30),
-              (-10, 30), (10, 30))
+WIN_LIGHTS = ((-30, -50), (30, -50), (-50, -10), (50, -10),      # (dx, dy) from the centre, as
+              (-30, 50), (-10, 50), (10, 50), (30, 50))          # the photo model's: two over,
+                                                                 # one each side, four under
+WIN_TILES = (((-10, -50), (10, -50)), ((-50, -30),), ((50, -30),), ((-50, 30),), ((50, 30),))
+                                     # tiles over the boss's other studs (runs along x)
 
 
 def salon_window(model, side):
-    """One salon window on its boss (the hull's raised face): a round 4 x 4 frame with a pin
-    hole (Pearl Gold, the iris ring, brass studs round it) with a Power Functions lamp pushed
-    into its centre hole from behind, a clear jumper and a clear dish over the hole, eight
-    yellow lights round it and dark rivets."""
+    """One salon window on its boss (the hull's raised face): a round 4 x 4 plate with a pin
+    hole (Pearl Gold: the brass ring) with a Power Functions lamp pushed into its centre hole
+    from behind, a clear jumper, a clear round plate and a clear 3 x 3 dish, the window's
+    dome, inside the ring. Returns the sub-assembly and the eight small yellow lights round
+    it (placed on the hull)."""
     name = "salon_port" if side < 0 else "salon_stbd"
     sub = model.submodel(name, f"Salon window ({'port' if side < 0 else 'starboard'})")
     cx, cy = shp.SALON_C
@@ -471,53 +457,22 @@ def salon_window(model, side):
 
     led_R = rot(z=180) if side < 0 else rot(x=180)  # the lamp's nub outward, its lead up
     sub.place("62498c01", "led", at(0, 0, -2), led_R, tag="led", insert=(0, 0, side))
-    sub.step("The frame, the lamp pushed into its centre hole from behind")
+    sub.step("The window's brass ring, the lamp pushed into its centre hole from behind")
     sub.place("60474", "trim", at(0, 0, 8), R, insert=(0, 0, side))
-    sub.step("Feed the lead in and down the shaft; press the frame on")
+    sub.step("Feed the lead in and down the shaft; press the ring on")
     sub.place("87580", "glass", at(0, 0, 16), R, tag="glass", insert=(0, 0, side))
-    sub.step()
-    sub.place("4740", "glass", at(0, 0, 24), R, tag="glass", insert=(0, 0, side))
-    for dx, dy in RING_STUDS:
-        sub.place("98138", "trim", at(dx, dy, 16), R, insert=(0, 0, side))
+    sub.step("The window's dome, on a clear round plate")
+    sub.place("6141", "glass", at(0, 0, 24), R, tag="glass", insert=(0, 0, side))
+    sub.place("43898", "glass", at(0, 0, 32), R, tag="glass", insert=(0, 0, side))
     lights = Batch()
-    for dx, dy in WIN_LIGHTS:                       # yellow round plates under clear yellow
+    for dx, dy in WIN_LIGHTS:                  # clear yellow on yellow, so they read as lamps
         lights.add("4073", "lamp_base", transform(at(dx, dy, 8), R), "bases",
                    insert=(0, 0, side))
         lights.add("98138", "lights", transform(at(dx, dy, 16), R), "lights", "lights",
                    insert=(0, 0, side))
-    for dx, dy in WIN_STUDS:
-        lights.add("98138", "frame", transform(at(dx, dy, 8), R), "bases",
+    for run in WIN_TILES:                      # the boss's face smooth round the window
+        part = "3069b" if len(run) == 2 else "3070b"
+        dx = sum(d[0] for d in run) / len(run)
+        lights.add(part, "hull", transform(at(dx, run[0][1], 8), R), "bases",
                    insert=(0, 0, side))
     return sub, lights
-
-
-# ------------------------------------------------------------------ dive planes
-DIVE_X = {"fwd": -200, "aft": 120}   # each plane's hinge: middle of its bar plate (x)
-DIVE_BAR = (-22.0, 90.0)             # the hinge bar: (y, |z|), at the side keels' edge
-DIVE_TILT = 15.0                     # degrees each way
-
-
-def dive_plane(model, which, side):
-    """A dive plane: on the side keel's edge a plate with a handle (the hinge bar) on a plate,
-    and the plane - a plate with a clip on its end and a tile - clipped on it, so it tilts
-    about the bar."""
-    sname = "port" if side < 0 else "stbd"
-    tag = f"dive_{which}_{sname}"
-    sub = model.submodel(tag, f"Dive plane ({which}, {sname})")
-    x0 = DIVE_X[which]
-    yb, zb = DIVE_BAR
-    sub.place("3023", "hull", (x0, shp.FL_A - 8, side * (zb - 20)))
-    sub.step()
-    sub.place("48336", "hull", (x0, yb - 2, side * (zb - 20)), None if side < 0 else rot(y=180))
-    sub.step("The dive plane clipped on the bar")
-    R = orient((0, 0, -side), (0, 1, 0))          # the clip outboard of the plate, on the bar
-    sub.place("63868", "hull", (x0, yb - 2, side * (zb + 30)), R, tag=tag, insert=(0, 0, side))
-    sub.place("3069b", "hull", (x0, yb - 10, side * (zb + 30)), rot(y=90), tag=tag)
-    return sub
-
-
-def dive_pose(side, angle):
-    """A plane's 4x4 transform (hull frame) tilted `angle` degrees about its bar."""
-    from naut_kit import about
-    yb, zb = DIVE_BAR
-    return about((0.0, yb, side * zb), rot(x=angle))

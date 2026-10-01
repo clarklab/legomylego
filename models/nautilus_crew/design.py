@@ -15,10 +15,10 @@ CREW = [
     dict(name="conseil", title="Conseil", x=-120,
          head=("3626cpr2224", "Yellow"),          # scared / lopsided smile
          torso=("973c27h01pr4203", "Black"),      # waistcoat, shirt sleeves, blue tie
-         legs=("970c12", "Dark Bluish Gray"),
+         legs=("41879a", "Dark Bluish Gray"),     # short legs: the shorter assistant
          hat=("95674", "Black"),                  # bowler hat
          accessory=dict(part="95228", color="Trans-Clear", hand="right"),   # specimen bottle
-         pose=dict(arm_r=48, arm_l=0, head=25)),
+         pose=dict(arm_r=62, arm_l=0, head=25)),
     dict(name="aronnax", title="Professor Aronnax", x=-60, z=-10,
          head=("3626cpr2522", "Yellow"),          # grey beard, moustache and eyebrows
          torso=("973c14h01pr6850", "Light Bluish Gray"),   # three-piece suit, vest and tie

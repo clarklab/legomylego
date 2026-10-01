@@ -19,7 +19,7 @@ For a real quote, upload `bricklink_wanted.xml` as a BrickLink Wanted List and u
 | 1 | 3626pb2199 Minifig Head, Grey Beard, Moustache and Eyebrows | Yellow | 0.70-3.50 | 0.70-3.50 | minifig head, in 21 set(s) |
 | 1 | 970c00 Hips and Black Legs | Black | 0.75-3.00 | 0.75-3.00 | minifig legs |
 | 1 | 970c00 Hips and Dark Blue Legs | Dark Blue | 0.75-3.00 | 0.75-3.00 | minifig legs |
-| 1 | 970c00 Hips and Dark Bluish Gray Legs | Dark Bluish Gray | 0.75-3.00 | 0.75-3.00 | minifig legs |
+| 1 | 41879 Legs Short | Dark Bluish Gray | 0.75-3.00 | 0.75-3.00 | minifig legs |
 | 1 | 970c00 Hips and Light Bluish Gray Legs | Light Bluish Gray | 0.75-3.00 | 0.75-3.00 | minifig legs |
 | 1 | 92081 Hair Combed Back | Dark Bluish Gray | 0.70-3.00 | 0.70-3.00 | hair, in 5 set(s) |
 | 1 | 3626pb1965 Minifig Head, Beard Stubble, Raised Eyebrow, White Pupils Print, Stubble Goatee [Hollow Stud] | Yellow | 0.50-2.50 | 0.50-2.50 | minifig head |
