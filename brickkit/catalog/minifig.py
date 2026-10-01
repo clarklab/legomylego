@@ -8,6 +8,7 @@ per print and colour combination:
 | head | 3626c (print 3626cpXXX) | 3626cprNNNN | 3626cpbNNNN |
 | torso | 973 (print 973pXXX), arms 3818/3819, hands 3820 x2 | 973cAAhBBprNNNN | 973pbNNNNc01 |
 | legs | hips 3815b, legs 3816c/3817c (+ prints) | 970cAA[patBB][prNNNN] | 970c00[pbNNNN] |
+| short legs | 41879a (one piece; prints 41879apXX) | 41879a[prNNNN] | 41879[pbNNN] |
 
 The torso assembly's colour is the torso's, `AA`/`BB` (Rebrickable's minifigure colour codes,
 e.g. 05 Dark Blue, 02 Light Nougat) give the arms and hands; the legs assembly's colour is the
@@ -65,6 +66,11 @@ class Component:
 
     def piece(self, slot: str) -> FigPiece:
         return next(p for p in self.pieces if p.slot == slot)
+
+    @property
+    def short(self) -> bool:
+        """Short legs (one piece, no separate hips or moving legs)."""
+        return any(p.slot == "legs_short" for p in self.pieces)
 
     @property
     def label(self) -> str:
@@ -186,7 +192,7 @@ class FigCatalog:
         k = KIND_CATEGORY.get(row[1])
         if k == TORSO and not rb_part.startswith("973"):
             return None             # one-piece torsos, robes, ... (not the standard body)
-        if k == LEGS and not rb_part.startswith("970"):
+        if k == LEGS and not rb_part.startswith(("970", "41879")):
             return None
         if k == HEAD and not rb_part.startswith(("3626", "28621")):
             return None
@@ -350,7 +356,18 @@ class FigCatalog:
         return Component(TORSO, rb_part, col, name, bl, pieces, not source, source,
                          arm_color=arm, hand_color=hand)
 
+    def _short_legs(self, rb_part, col, name) -> Component:
+        """Short legs (41879a, prints 41879aprNNNN): one piece, hips and legs in one colour."""
+        src = self._sources(rb_part, LEGS)
+        plain = rb_part == "41879a"
+        f = src[0] if src else "41879a"
+        bl = self._bl(f, r"^41879") if (src or plain) else ""
+        return Component(LEGS, rb_part, col, name, bl, (FigPiece("legs_short", f + ".dat", col),),
+                         not src and not plain, src[0] if src else "", leg_color=col)
+
     def _legs(self, rb_part, col, name) -> Component:
+        if rb_part.startswith("41879"):
+            return self._short_legs(rb_part, col, name)
         m = CODE_RE[LEGS].match(rb_part)
         leg = self.code_color(m.group(1)) if m else None
         if leg is None:

@@ -155,7 +155,9 @@ hands, e.g. `01` Yellow, `05` Dark Blue; BrickLink `973pbNNNNc01`) and hips with
 torso `973` (prints `973pXXX`), arms `3818`/`3819`, hands `3820`, hips `3815b`, legs
 `3816c`/`3817c` (prints), head `3626c` (prints `3626cpXXX`/`3626bpXXX`), with "shortcut"
 files for many assemblies (`76382pXXX` a torso with arms and hands, `73200bpXX`/`21019bpXX`
-hips and legs).
+hips and legs). **Short legs** (children, short characters) are one piece in every system:
+Rebrickable `41879a` (prints `41879aprNNNN`), BrickLink `41879` (`41879pbNNN`), LDraw
+`41879a` (prints `41879apXX`): give them as `legs=("41879a", "Dark Bluish Gray")`.
 
 - **Catalogue** (`catalog/minifig.py`, `catalog/xref.py`): the only cross-reference between
   the systems that ships with the libraries is LDraw's `!KEYWORDS Rebrickable ...,
@@ -174,7 +176,9 @@ hips and legs).
   1.2 LDU behind its foot holes; arms hang on the shoulder pins tilted out 9.79 degrees and
   swing about them (`arm_r`, `arm_l`: + forward), hands sit on the wrists at 45 degrees and
   twist (`hand_r`, `hand_l`), legs swing on the hip pins (`leg_r`, `leg_l`: 90 sits), the head
-  turns (`head`: + to the figure's left). Headwear goes on the head stud. An accessory's
+  turns (`head`: + to the figure's left). On short legs (24 LDU tall, hip studs on top, foot
+  holes straight under the body) the torso sits 16 LDU lower and the legs don't move
+  (`leg_r`/`leg_l` raise an error). Headwear goes on the head stud. An accessory's
   3.2 mm bar (LDCad) is laid in the hand's clip: by default the middle of its thinnest stretch
   (a bottle by its neck), upright side (LDraw's -Y) on the thumb's side; `grip`, `spin`,
   `flip`, `bar` adjust it. `grip_up()` is the arm swing that stands a held bar up (leaning out
@@ -183,7 +187,7 @@ hips and legs).
   LDraw pieces named `NAME_torso` / `NAME_legs`); the head is a placement with `buy=`. Kits
   are not built: the instructions skip their steps and show them like parts, pictured whole;
   their pieces are joined by `kit` connections and may touch each other; buildability pushes
-  the whole kit on. Headwear fits over the head (`Submodel.fits`, `Model.fits`: the two may
+  the whole kit on. Short legs, like the head, are one placement bought as itself. Headwear fits over the head (`Submodel.fits`, `Model.fits`: the two may
   overlap and the hair slides over the head). Each figure is built in its own section: legs,
   torso, head, headwear, accessory.
 - **Parts lists**: a component is one line (`parts.csv` column `minifig`; BrickLink number in
@@ -259,7 +263,7 @@ model.moving_group("top", "tower_top", lifts_off=True)            # the pose lif
 | stability | centre of mass outside the footprint of the lowest parts, or tips over under 10° |
 | mechanism | moving parts collide / disconnect across the pose sweep; gear spacing wrong |
 | electrics | cable runs longer than the cable |
-| technique | warnings: clips on transparent parts, moving transparent parts, uncertified geometry, locking hinges set between their clicks, parts sitting on studs their snap data has no holes for |
+| technique | warnings: clips on transparent parts, moving transparent parts, uncertified geometry, locking hinges set between their clicks, parts sitting on studs their snap data has no holes for (a stud another part already fills doesn't count) |
 
 Connection points come from the LDCad shadow library. When a part has none there (for example
 74611 Plate Round 8 x 8 with hole, whose underside would otherwise connect to nothing), add a

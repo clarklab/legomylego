@@ -171,3 +171,26 @@ def test_bricklink_numbers_added_by_hand(engine):
     data/minifig_bricklink.json."""
     t = engine.catalog.figs.component("torso", "973c23h12pr2119")
     assert t.stand_in and t.bl_part == "973pb1240c01"
+
+
+def test_short_legs(engine):
+    """Short legs (41879a) are one piece: the body sits 16 LDU lower, straight over the foot
+    holes, and the parts lists name the single part (BrickLink 41879)."""
+    legs = engine.catalog.figs.component("legs", "41879a", "Dark Bluish Gray")
+    assert legs.short and not legs.stand_in and legs.bl_part == "41879"
+    assert [p.part for p in legs.pieces] == ["41879a.dat"]
+    m, _ = figure(engine, legs=("41879a", "Dark Bluish Gray"), hair=None,
+                  hat=("95674", "Black"), accessory=("95228", "Trans-Clear"),
+                  pose={"arm_r": 48})
+    placed = m.flatten()
+    by = {p.part: p for p in placed}
+    assert np.allclose(by["41879a.dat"].M[:3, 3], (0, -24, 10))
+    assert np.allclose(by["973p3w.dat"].M[:3, 3], (0, -56, 10))     # the torso on its studs
+    results = {r.name: r for r in run_checks(engine.context(m))}
+    assert all(r.status == "pass" for r in results.values()), \
+        {n: r.items[:3] for n, r in results.items() if r.status != "pass"}
+    lines = {l.rb_part: l for l in build_bom(placed, engine.catalog)}
+    assert lines["41879a"].kind == "legs" and lines["41879a"].bl_part == "41879"
+    assert lines["41879a"].element_id and "3815b" not in {l.ldraw_part for l in lines.values()}
+    with pytest.raises(ValueError):                 # one piece: the legs don't move
+        figure(engine, legs=("41879a", "Dark Bluish Gray"), pose={"leg_r": 30})

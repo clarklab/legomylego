@@ -80,6 +80,33 @@ def test_part_on_studs_without_holes_warns(engine, monkeypatch):
     assert len(notes) == 1 and "3024" in notes[0]["part"]
 
 
+def test_dish_on_a_round_plate_pedestal_is_fine(engine):
+    """A 3 x 3 dish's stud hole is raised a plate above its rim: on a round plate on a jumper
+    its rim comes down level with the jumper's top, beside the jumper's stud - which the
+    round plate already fills, so the dish isn't sitting on it (upright or turned on its
+    side). Moved down onto a plain 2 x 2 plate's free studs (no pedestal), it is."""
+    def dish(pedestal, turned=False):
+        m = Model("D", "d", {}, engine.catalog)
+        T = rot(x=90) if turned else np.eye(3)
+        parts = [("3958", "Black", (0, 0, 0))]                     # a 6 x 6 plate
+        if pedestal:
+            parts += [("87580", "Black", (0, -8, 0)),              # a jumper, stud in the middle
+                      ("6141", "Black", (0, -16, 0)),              # a round plate on that stud
+                      ("43898", "Trans-Clear", (0, -24, 0))]       # rim on the jumper's top
+        else:
+            parts += [("3022", "Black", (0, -8, 0)),
+                      ("43898", "Trans-Clear", (0, -24, 0))]       # rim on the 2 x 2's top
+        for n, (part, colour, pos) in enumerate(parts):
+            if n:
+                m.main.step()
+            m.main.place(part, colour, tuple(T @ np.asarray(pos, float)), T)
+        return m
+
+    for turned in (False, True):
+        assert not _notes(run(engine, dish(True, turned), "technique"), "no stud holes")
+        assert _notes(run(engine, dish(False, turned), "technique"), "no stud holes")
+
+
 def test_swivel_halves_are_bought_as_one_hinge(engine):
     m = Model("S", "s", {}, engine.catalog)
     m.main.place("3022", "Black")

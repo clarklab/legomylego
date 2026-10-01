@@ -57,7 +57,10 @@ def _is_stud(c) -> bool:
 def holeless_items(ctx) -> list:
     """Parts with studs on top but no stud holes underneath in their snap data that sit on
     another part's studs: they look seated but connect to nothing there (a gap in the snap
-    data, to fill with an overlay in brickkit/data/shadow)."""
+    data, to fill with an overlay in brickkit/data/shadow). A stud already filled by a third
+    part's stud hole doesn't count: the part is resting beside that part (a radar dish whose
+    rim comes down level with the jumper plate its round-plate pedestal stands on), not on the
+    stud."""
     up = np.array([0.0, -1.0, 0.0])
     cand = []
     for i, p in enumerate(ctx.placed):
@@ -73,6 +76,22 @@ def holeless_items(ctx) -> list:
         return []
     items_all = [(p.part, p.M) for p in ctx.placed]
     boxes = ctx.collide.aabbs(items_all)
+    holes = [(k, np.asarray(c.origin, float), np.asarray(c.axis, float))
+             for k, cs in enumerate(ctx.world_connectors()) for c in cs
+             if c.kind == "cyl" and c.gender == "F"]
+    hole_pts = np.array([h[1] for h in holes]) if holes else np.zeros((0, 3))
+    hole_ax = np.array([h[2] for h in holes]) if holes else np.zeros((0, 3))
+    hole_own = np.array([h[0] for h in holes]) if holes else np.zeros(0, int)
+
+    def filled(world, axis, i, j) -> bool:
+        """Is the stud at `world` (part j's, pointing along `axis`) already in a stud hole of
+        a part other than i?"""
+        if not len(hole_pts):
+            return False
+        d = np.linalg.norm(hole_pts - world, axis=1)
+        par = np.abs(hole_ax @ axis) > 0.999
+        return bool(np.any((d < 1.0) & par & (hole_own != i) & (hole_own != j)))
+
     out, seen = [], set()
     for i in cand:
         p = ctx.placed[i]
@@ -92,6 +111,9 @@ def holeless_items(ctx) -> list:
                     continue
                 x, y, z = w.origin
                 if abs(y - hi[1]) < 0.6 and lo[0] + 2 < x < hi[0] - 2 and lo[2] + 2 < z < hi[2] - 2:
+                    cw = c.transformed(ctx.placed[j].M)
+                    if filled(np.asarray(cw.origin, float), np.asarray(cw.axis, float), i, j):
+                        continue
                     found = True
                     break
         if found and p.part not in seen:

@@ -30,6 +30,8 @@ CLIP = np.array([[1, 0, 0, 0], [0, 0.9681, -0.2504, -0.82275], [0, 0.2504, 0.968
                  [0, 0, 0, 1]], float)
 FOOT_Z = 1.2                           # the body stands this far behind its studs
 HIPS_Y, TORSO_Y = -40.0, -72.0         # tops of the hips and of the torso (the neck's base)
+# short legs (41879a, one piece): hip studs on top, 24 tall, foot holes right under the body
+SHORT_Y, SHORT_TORSO_Y = -24.0, -56.0
 BAR_RADIUS = 4.0
 
 
@@ -67,15 +69,17 @@ class Pose:
         return cls(**dict(p))
 
 
-def frames(pose: Pose) -> dict[str, np.ndarray]:
-    """Each piece's frame in the figure's frame."""
+def frames(pose: Pose, short: bool = False) -> dict[str, np.ndarray]:
+    """Each piece's frame in the figure's frame (`short`: on short legs, 16 LDU lower and
+    straight over the foot holes)."""
     hips = translate(0, HIPS_Y, FOOT_Z)
-    torso = translate(0, TORSO_Y, FOOT_Z)
+    torso = translate(0, SHORT_TORSO_Y, 0) if short else translate(0, TORSO_Y, FOOT_Z)
     sx, sy, sz = SHOULDER
     wx, wy, wz = WRIST
     arm_r = torso @ translate(-sx, sy, sz) @ _rz(SHOULDER_TILT) @ _rx(-pose.arm_r)
     arm_l = torso @ translate(sx, sy, sz) @ _rz(-SHOULDER_TILT) @ _rx(-pose.arm_l)
     return {
+        "legs_short": translate(0, SHORT_Y, 0),
         "hips": hips,
         "leg_r": hips @ translate(0, 12, 0) @ _rx(-pose.leg_r),
         "leg_l": hips @ translate(0, 12, 0) @ _rx(-pose.leg_l),
@@ -201,7 +205,9 @@ def build_minifig(model, name: str, at=(0, 0, 0), rot3=None, *, head, torso, leg
 
     c_head, c_torso, c_legs = comp(HEAD, head), comp(TORSO, torso), comp(LEGS, legs)
     pz = Pose.of(pose)
-    F = frames(pz)
+    if c_legs.short and (pz.leg_r or pz.leg_l):
+        raise ValueError(f"{name}: short legs ({c_legs.rb_part}) are one piece and don't move")
+    F = frames(pz, short=c_legs.short)
     title = title or name.replace("_", " ").title()
     sub = model.submodel(name, title)
 
@@ -214,7 +220,12 @@ def build_minifig(model, name: str, at=(0, 0, 0), rot3=None, *, head, torso, leg
         return k
 
     sub.step("Legs", view="above")
-    sub.use(kit(c_legs, "Legs"))
+    if len(c_legs.pieces) == 1:          # short legs: one piece, bought as it is
+        lp = c_legs.pieces[0]
+        sub.place(lp.part, lp.color, F[lp.slot][:3, 3], F[lp.slot][:3, :3], buy=c_legs,
+                  tag="legs")
+    else:
+        sub.use(kit(c_legs, "Legs"))
     sub.step("Torso")
     sub.use(kit(c_torso, "Torso"))
     sub.step("Head")
