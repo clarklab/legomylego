@@ -215,7 +215,7 @@ chromium`). A full render takes roughly an hour of GPU time per model; iterate w
 | `--segments build,scan` | only those segments → `out/video_build+scan.mp4` |
 | `--no-render` | no Blender: compose from the plates already rendered (grey where missing) |
 | `--stills 120,480` | write single composed frames to `out/video_frames/<q>/stills/`, no video |
-| `--cold-open SCENE` | try a cold open (`sunset_road`, `night_desk`) for this run, tagged like `--theme` (`out/video_cold_open...`); `--segments cold_open,open` renders just it and the cut into the reel |
+| `--cold-open SCENE` | try a cold open (`sunset_road`, `night_desk`, `deep_sea`) for this run, tagged like `--theme` (`out/video_cold_open...`); `--segments cold_open,open` renders just it and the cut into the reel |
 | `--scratch DIR` | write the run's work and outputs under `DIR` (the model's `out/` is only read): previews of a model someone else is working on |
 | `--theme NAME` | try another theme for this run (model.toml's theme and its overrides left out): writes `out/video_NAME[...].mp4` and `out/video_frames/<q>@NAME/` (stills there too), never the model's own video, poster or plates; with `--no-render` it composes over the model's rendered plates read-only, keeping their tempo and backdrop so they line up |
 | `--no-audio` | no music or sound effects |
@@ -225,7 +225,7 @@ chromium`). A full render takes roughly an hour of GPU time per model; iterate w
 
 | Segment | Beats | Shows | When |
 |---|---:|---|---|
-| cold_open | seconds + 1 | the model performs in a set of its own before anything else (a figure on a sunset road, a tap lamp on a desk at night), in two or three shots, then a hard cut to black for a beat and straight into the open (below) | `[video.cold_open]` |
+| cold_open | seconds + 1 | the model performs in a set of its own before anything else (a figure on a sunset road, a tap lamp on a desk at night, a vessel gliding under the sea), in two or three shots, then a hard cut to black for a beat and straight into the open (below) | `[video.cold_open]` |
 | open | 6 | a brick drops and snaps, stud wipe, REAL LEGO PIECES. / CHECKED BY COMPUTER. | always |
 | title | 8 | the name in kinetic type over a transparent Cycles hero, piece counter, one row of stats | always |
 | build | 36 | the time-lapse build growing up from the table (parts by the height of their lowest point, outward from the centre, each waiting for something to stand on or connect to, dropping a short way into place); one orbiting shot per height band; HUD: pieces placed, height, progress | always |
@@ -240,7 +240,7 @@ chromium`). A full render takes roughly an hour of GPU time per model; iterate w
 **Config** in model.toml (all optional; `model.meta["video"]` from design.py wins key by key):
 ```toml
 [video]
-theme = "tape"                  # brand (default) | scan | tape | playful | grindhouse
+theme = "tape"                  # brand (default) | scan | tape | playful | grindhouse | abyss
 beats = { build = 28 }          # segment lengths in beats
 skip = ["scan"]                 # leave segments out
 facts = ["1:1 scale"]           # extra title chips (words from the model's own docs)
@@ -271,6 +271,8 @@ hide_tags = ["stand"]           # parts left out (added to performance_info's)
 # taps = [1.0, 3.0, 4.0] (s: on, off, on...; default beats 2, 6 and 8); the desk's look
 # (DESK_LOOK): exposure = 0.9, moon_strength = 3.4, moon_color = "#9DB8FF", lamp_gain = 2.5
 # (x the LEDs' own power), spill_strength = 2.2 (W), spill_color = "#FF7040"
+# underwater: scene = "deep_sea" (motion "glide" and hiding the "stand" parts by default);
+# optional forward = [-1, 0, 0] (else along the longest horizontal extent), glide_lengths = 1.6
 
 [[video.callouts]]              # mechanism callouts; without any, one per moving group
 label = "Dust door"
@@ -325,6 +327,25 @@ and a softer one as it goes off, the night under it all and a faint mains hum wh
 Its plates take about 0.7 s a frame at preview size and 1.7 s at full (the set renders at two
 thirds of the job's samples).
 
+A **glide** (`motion = "glide"`, the default in `scene = "deep_sea"`) carries the whole model
+forward through the water along its long axis (`performance_info` "forward", else the longest
+horizontal extent, towards -X or -Z) for 1.6 of its own lengths, banking, pitching and bobbing
+gently, its `meta["performance"]` loop (else its pose, swinging) playing; parts tagged "stand"
+are hidden. Three shots: a wide approach from below as it comes out of the blue towards the
+camera (28 mm), a tracking shot along the side shown to the camera (its front) a little below
+it and slower, so it slides through the frame (40 mm), and a still close one just off its path,
+the bow sweeping past the lens (20 mm); the camera is keyed too, so motion blur follows what it
+tracks. `deep_sea` is open water scaled to the model: a volume of water that pales and greens
+under a rippling bright surface and thickens to deep blue with distance and depth, shafts of
+light along the sun's line through it, marine snow drifting, bubbles rising from vents in a
+rocky seabed with kelp far below and streaming from the model's stern, caustics on the sand;
+its LEDs (if any) lit throughout. The sound is the set's own (shared recordings in
+`brickkit/data/audio/deep_sea/`, made by `tools/elevenlabs_sfx.py brickkit/data/audio/deep_sea`)
+unless the model's `[video.audio]` gives its own: the deep's rumble under it, a sonar ping at
+the start and after each cut, bubbles on the cuts and as the bow passes, the hull groaning
+once, the propeller churning louder as the stern nears the camera. About 0.4 s a frame at
+preview size and 1.6 s at full.
+
 **Recorded sounds** (optional). The music and effects are synthesised unless the model has
 `[video.audio]`: sound files in the model's `audio/` (committed, so the video rebuilds offline)
 by role. `tools/elevenlabs_sfx.py SLUG` generates them from `audio/sfx.toml` (`[[sfx]]` name,
@@ -351,6 +372,12 @@ clicks = ["click_2.mp3", ...]     # the switch, on each tap in turn
 snaps_on = ["snap_on_1.mp3", ...] # a pop as the light comes on (in turn)...
 snaps_off = ["snap_off_1.mp3"]    # ...and a soft one as it goes off
 room = "crickets_2.mp3"           # the night outside, looped under it
+# a glide (deep_sea; reel.SCENE_SOUNDS fills in what isn't given, from the set's shared folder):
+ambience = "..."                  # the deep, looped under it
+pings = ["..."]                   # sonar pings: at the start and after each cut
+bubbles = ["..."]                 # on the cuts and as the bow passes
+groan = "..."                     # the hull, once
+churn = "..."                     # the propeller, looped, louder as the stern nears
 ```
 Everything in the cold open stops dead at its cut; the synthesised music bed stays (ducked under
 the stings) and the mix is mastered to the same -16 LUFS / -1.5 dBTP. Without the table a model
@@ -373,7 +400,18 @@ bone type, blood red and apron yellow; gate weave, flicker, dust, hairs, scratch
 leaks; film-burn cuts spliced in with a frame slip, frame slips between build sections, a
 projector roll between colourways; the name rubber-stamped, typewritten labels, evidence-tag
 callouts; a heartbeat, drone, string swells and scraped metal, with a two-stroke chainsaw on
-the title). Fonts are bundled OFL fonts in `brickkit/video/web/fonts/` (Menlo is the
+the title), `abyss` (the deep, at 106 BPM: teal-black and sea blue, brass and copper, aqua
+light; a deep blue studio backdrop; a brass-rimmed porthole irises shut on riveted hull plating
+over every big cut, turning as it closes, bubbles rushing past it; a sonar sweep - range rings,
+the beam going once round, a ping ringing out - between build sections; the next colourway
+seen through a porthole opening up; caustics rippling down from the surface, slow light
+shafts, marine snow and a few bubbles over everything, fainter over the plates and thinning out
+over the model; the name engraved letter by letter into a brushed brass plaque that swings up
+into place and is riveted round its edge, dive-log section titles over a riveted brass rule,
+porthole callouts, gauge-plate chips in brass rims; the score: a slow heartbeat pulse under
+drones and string swells, a knock on the hull for a backbeat, sonar pings on the beat (each
+with its echo off the sea floor, through the dotted delay), bubbly arps, a rush of bubbles on
+every cut and a deep undertow swelling into it). Fonts are bundled OFL fonts in `brickkit/video/web/fonts/` (Menlo is the
 system's; elsewhere it falls back to the default monospace). Try one without
 touching the model: `brickkit video SLUG --theme grindhouse --no-render --stills 90,150,600`.
 

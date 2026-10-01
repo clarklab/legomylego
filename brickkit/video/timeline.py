@@ -714,8 +714,10 @@ def colourway_plan(seg: dict, names: list[str], beat: int) -> dict:
 COLD = {"scene": "sunset_road", "seconds": 7.0, "motion": "performance", "spin_turns": 1.5,
         "hide_tags": [], "cycle": 2.5, "sun_elevation": 2.4, "sun_azimuth": 0.0,
         "sun_size": 1.4, "letterbox": 0.09, "rev_tag": "saw"}
-COLD_SCENES = ("sunset_road", "night_desk")
-COLD_MOTIONS = ("performance", "pose", "tap")
+COLD_SCENES = ("sunset_road", "night_desk", "deep_sea")
+COLD_MOTIONS = ("performance", "pose", "tap", "glide")
+COLD_HIDE = {"deep_sea": ("stand",)}    # a set that hides a display stand by default
+COLD_MOTION = {"night_desk": "tap", "deep_sea": "glide"}   # a set's motion unless one is given
 # the set's look: [video.cold_open] keys handed to the set as they are (render/blender_cold_open.py
 # LOOK and DESK_LOOK have the defaults and the units)
 COLD_LOOK = ("exposure", "sky_strength", "sky_tint", "sun_strength", "sun_color", "sun_disc",
@@ -741,6 +743,12 @@ DESK_SHOTS = ((0.0, "room", 40.0, 1.25, -28.0, 0.2, 0.72, 0.14, 0.0),
 TAP_BEATS = (2.0, 6.0, 8.0)
 TAP_DOWN, TAP_HOLD, TAP_UP = 4, 2, 7    # frames: pressed in, held at the bottom (the click), let go
 TAP_KICK = {"on": 0.05, "off": 0.025}   # the camera punches in on a tap: this much more lens
+# motion "glide" (deep_sea): the whole model cruises forward GLIDE_LENGTHS of its own length
+# over the performance, banking, pitching and bobbing gently, its performance loop (or pose)
+# running; three shots (from, name, lens mm): a wide approach from below, a low tracking shot
+# along its side, a close one of the bow passing the camera
+GLIDE_LENGTHS = 1.6
+GLIDE_SHOTS = ((0.0, "approach", 28.0), (0.38, "side", 40.0), (0.7, "bow", 20.0))
 
 def cold_open_config(model, cfg) -> dict | None:
     """The cold open's settings ([video.cold_open] over the defaults), or None without one."""
@@ -754,15 +762,117 @@ def cold_open_config(model, cfg) -> dict | None:
             if key in info:
                 out[k] = info[key]
     out.update(co if isinstance(co, dict) else {})
-    out["hide_tags"] = sorted(set(out.get("hide_tags") or []) | set(info.get("hide_tags") or []))
+    if "motion" not in (co if isinstance(co, dict) else {}):
+        out["motion"] = COLD_MOTION.get(out["scene"], out["motion"])
+    out["hide_tags"] = sorted(set(out.get("hide_tags") or []) | set(info.get("hide_tags") or [])
+                              | set(COLD_HIDE.get(out["scene"], ())))
     if out["scene"] not in COLD_SCENES:
         raise SystemExit(f"unknown cold open scene {out['scene']!r}; choose from "
                          f"{', '.join(COLD_SCENES)}")
     if out["motion"] not in COLD_MOTIONS:
         raise SystemExit(f"cold open motion {out['motion']!r}: {', '.join(COLD_MOTIONS)}")
-    if out["motion"] == "tap" and "spin_turns" not in (co if isinstance(co, dict) else {}):
-        out["spin_turns"] = 0.0                   # a lamp stays put
+    if out["motion"] in ("tap", "glide") and "spin_turns" not in (co if isinstance(co, dict) else {}):
+        out["spin_turns"] = 0.0                   # a lamp stays put; a glide doesn't spin
+    if "forward" in info and "forward" not in out:
+        out["forward"] = info["forward"]
     return out
+
+
+def glide_axes(Cv, pivot, front: float, forward=None):
+    """The model's own axes for a glide (LDraw): F forward (horizontal: `forward`, else along
+    its longest horizontal extent, towards -X or -Z), U up, N the side shown to the camera (the
+    model's front, made square to F); and its extents from the pivot: ahead, behind (along F),
+    half-width (along N), above and below."""
+    U = np.array([0.0, -1.0, 0.0])
+    if forward is not None:
+        F = np.asarray(forward, float) * [1, 0, 1]
+    else:
+        span = np.ptp(Cv, axis=0)
+        F = np.array([-1.0, 0, 0]) if span[0] >= span[2] else np.array([0, 0, -1.0])
+    F /= np.linalg.norm(F)
+    N = view_basis(front, 0.0)[0]
+    N = N - F * float(N @ F)
+    if np.linalg.norm(N) < 1e-3:
+        N = np.cross(U, F)
+    N /= np.linalg.norm(N)
+    d = Cv - pivot
+    ext = {"ahead": float((d @ F).max()), "behind": float(-(d @ F).min()),
+           "half": float(np.abs(d @ N).max()), "above": float((d @ U).max()),
+           "below": float(-(d @ U).min())}
+    return F, U, N, ext
+
+
+def glide_carry(m: int, fps: int, pivot, F, U, N, length: float, lengths: float = GLIDE_LENGTHS):
+    """Per frame the whole model's transform (LDraw 4x4) for a glide: forward through the pivot
+    at mid-performance, `lengths` of its `length` in all, banking a few degrees, its nose
+    lifting and dipping, a slow bob; and its centre's path (m, 3)."""
+    t = np.arange(m) / fps
+    s = np.arange(m) / max(1, m - 1) - 0.5
+    roll = 4.0 * np.sin(2 * np.pi * t / 5.5 + 0.6)
+    pitch = 2.5 * np.sin(2 * np.pi * t / 4.3 + 2.0) - 1.0
+    yaw = 1.5 * np.sin(2 * np.pi * t / 7.0)
+    bob = 0.02 * length * np.sin(2 * np.pi * t / 3.7)
+    path = pivot + np.outer(s * lengths * length, F) + np.outer(bob, U)
+    out = []
+    for k in range(m):
+        R = (_axis_rot(F, roll[k]) @ _axis_rot(N, pitch[k]) @ _axis_rot(U, yaw[k]))
+        M = np.eye(4)
+        M[:3, :3] = R
+        out.append(translate(*path[k]) @ M @ translate(*(-np.asarray(pivot, float))))
+    return np.array(out), path
+
+
+def _axis_rot(axis, deg: float) -> np.ndarray:
+    x, y, z = np.asarray(axis, float) / np.linalg.norm(axis)
+    a = math.radians(deg)
+    c, s_ = math.cos(a), math.sin(a)
+    return np.array([[c + x * x * (1 - c), x * y * (1 - c) - z * s_, x * z * (1 - c) + y * s_],
+                     [y * x * (1 - c) + z * s_, c + y * y * (1 - c), y * z * (1 - c) - x * s_],
+                     [z * x * (1 - c) - y * s_, z * y * (1 - c) + x * s_, c + z * z * (1 - c)]])
+
+
+def glide_camera(m: int, path, F, U, N, ext: dict, length: float):
+    """The glide's three shots, per frame: camera pos, target, focus (LDraw), lens; shots.
+    approach: still, below it and off its bow, as it comes out of the blue towards the camera;
+    side: tracking along its shown side a little below and slower than it, so it slides
+    through the frame; bow: still, just off its path, the bow sweeping past the lens."""
+    pos, tgt, foc, lens = np.zeros((m, 3)), np.zeros((m, 3)), np.zeros((m, 3)), np.zeros(m)
+    D = -U
+    shots = []
+    bounds = [int(round(a * m)) for a, _, _ in GLIDE_SHOTS] + [m]
+
+    def towards(az, el):                       # a unit vector from the model: az from F to N
+        a, e = math.radians(az), math.radians(el)
+        return (F * math.cos(a) + N * math.sin(a)) * math.cos(e) + U * math.sin(e)
+    for i, (_, name, ln) in enumerate(GLIDE_SHOTS):
+        f0, f1 = bounds[i], bounds[i + 1]
+        if f1 <= f0:
+            continue
+        shots.append([f0, name])
+        k = np.arange(f0, f1)
+        e = smootherstep((k - f0) / max(1, f1 - f0 - 1))
+        if name == "approach":
+            p = path[f1 - 1] + towards(42.0, -15.0) * 0.82 * length
+            pos[k] = p + np.outer(1 - e, towards(42.0, -15.0) * 0.1 * length)   # easing in
+            tgt[k] = path[k] + F * 0.12 * length
+            foc[k] = path[k] + F * 0.2 * length
+        elif name == "side":
+            speed = path[f1 - 1] - path[f0]
+            base = path[f0] + np.outer(0.75 * (k - f0) / max(1, f1 - f0 - 1), speed)
+            pos[k] = base + towards(90.0, -7.0) * (ext["half"] + 1.0 * length) - F * 0.05 * length
+            aim = np.outer(-0.18 + 0.4 * e, F * length)
+            tgt[k] = path[k] + aim
+            foc[k] = path[k] + aim * 0.5
+        else:
+            fb = f0 + int(0.62 * (f1 - f0))
+            p = path[min(fb, m - 1)] + F * ext["ahead"] * 0.55 + N * (ext["half"] + 0.07 * length) \
+                + D * 0.03 * length
+            pos[k] = p
+            bow = path[k] + F * ext["ahead"] * 0.6
+            tgt[k] = bow
+            foc[k] = path[k] + F * ext["ahead"] * 0.45 + N * ext["half"]
+        lens[k] = ln
+    return pos, tgt, foc, lens, shots
 
 
 def tap_program(m: int, fps: int, beat: int, taps=None):
@@ -860,7 +970,9 @@ def cold_open_plan(engine, model, placed, C, seg: dict, co: dict, fps: int, beat
         catch                  the frame the engine catches
     and with motion "tap" (tap_program): motion, taps [[frame, "on" | "off"]] (absolute), led
     (per frame, above 1 in the flash as they come on), leds (led_list); scene night_desk adds
-    front (the model's azimuth_offset: the room is laid out behind it)"""
+    front (the model's azimuth_offset: the room is laid out behind it); with motion "glide":
+    motion, leds and led (lit throughout), glide {forward, side, length, extent, path (its
+    centre per frame)}, the spin carrying it along the path, and camera.focus per frame"""
     n = seg["end"] - seg["start"]
     m = n - COLD_BLACK_BEATS * beat
     info = model.meta.get("performance_info") or {}
@@ -879,10 +991,11 @@ def cold_open_plan(engine, model, placed, C, seg: dict, co: dict, fps: int, beat
     # the motion: the performance loop (or the pose swinging 0..1..0), coming up to speed; or
     # tapped, a tap lamp
     tap = co["motion"] == "tap"
-    perf = model.meta.get("performance") if co["motion"] == "performance" else None
+    glide = co["motion"] == "glide"
+    perf = model.meta.get("performance") if co["motion"] in ("performance", "glide") else None
     fn = perf or model.pose
     t = np.arange(m) / fps
-    tp = np.cumsum(smootherstep((t - COLD_START) / COLD_RAMP)) / fps
+    tp = t if glide else np.cumsum(smootherstep((t - COLD_START) / COLD_RAMP)) / fps
     cyc = float(co["cycle"])
     u = (tp / cyc) % 1.0 if perf else 0.5 - 0.5 * np.cos(2 * np.pi * tp / cyc)
     if tap:
@@ -906,6 +1019,13 @@ def cold_open_plan(engine, model, placed, C, seg: dict, co: dict, fps: int, beat
     from ..ldraw.matrix import rot, transform
     spins = np.array([translate(*pivot) @ transform((0, 0, 0), rot(y=a)) @ translate(*(-pivot))
                       for a in yaw])
+    if glide:                                     # cruising: carried through the water
+        front = float(model.meta.get("azimuth_offset", 0.0))
+        centre = (Cv.min(0) + Cv.max(0)) / 2
+        F, U, N, ext = glide_axes(Cv, centre, front, co.get("forward"))
+        length = ext["ahead"] + ext["behind"]
+        spins, gpath = glide_carry(m, fps, centre, F, U, N, length,
+                                   float(co.get("glide_lengths", GLIDE_LENGTHS)))
     # every part's centre per frame (for the height, the reach and the saw's speed)
     gi = np.array(inst)
     ctr = C.mean(1)
@@ -943,7 +1063,7 @@ def cold_open_plan(engine, model, placed, C, seg: dict, co: dict, fps: int, beat
     catch = int(round(COLD_CATCH * fps))
     rev = rev * smootherstep((t - COLD_START) / COLD_RAMP)
     rev[:catch] = 0.0
-    if tap:                                       # no engine
+    if tap or glide:                              # no engine
         rev[:] = 0.0
         catch = 0
     # the camera: hard cuts between the shots, each a slow move
@@ -960,6 +1080,9 @@ def cold_open_plan(engine, model, placed, C, seg: dict, co: dict, fps: int, beat
         cut_at = ((taps[1][0] + taps[2][0]) / 2 / m if tap and len(taps) >= 3 else 0.5)
         plan = tuple((cut_at if a0 is None else a0, name, ln, hc_k, -(front + az), feet, top_k,
                       dolly, ev_k) for a0, name, ln, hc_k, az, feet, top_k, dolly, ev_k in DESK_SHOTS)
+    if glide:
+        plan = ()
+        pos, tgt, focus, lens, shots = glide_camera(m, gpath, F, U, N, ext, length)
     for i, (a0, name, ln, hc_k, az, feet, top_k, dolly, ev_k) in enumerate(plan):
         f0 = int(round(a0 * m))
         f1 = int(round(plan[i + 1][0] * m)) if i + 1 < len(plan) else m
@@ -992,6 +1115,14 @@ def cold_open_plan(engine, model, placed, C, seg: dict, co: dict, fps: int, beat
                      leds=led_list(model, placed))
     if co["scene"] == "night_desk":
         extra["front"] = float(model.meta.get("azimuth_offset", 0.0))
+    if glide:
+        extra.update(motion="glide", leds=led_list(model, placed), led=[1.0] * m,
+                     glide={"forward": r5(F), "side": r5(N), "length": round(length, 3),
+                            "extent": {k: round(v, 3) for k, v in ext.items()},
+                            "path": r5(gpath)})
+    cam_out = {"pos": r5(pos), "target": r5(tgt), "lens": lens.tolist(), "exposure": ev.tolist()}
+    if glide:
+        cam_out["focus"] = r5(focus)
     return extra | {
         "start": seg["start"], "end": seg["end"], "cut": seg["start"] + m, "scene": co["scene"],
         "sun": {"elevation": el, "azimuth": float(co["sun_azimuth"]), "size": float(co["sun_size"])},
@@ -1001,8 +1132,7 @@ def cold_open_plan(engine, model, placed, C, seg: dict, co: dict, fps: int, beat
         "groups": {"names": names, "instance": inst},
         "frames": [[r5(M.reshape(-1)) for M in row] for row in mats],
         "spin": [r5(M.reshape(-1)) for M in spins], "u": r5(u), "yaw": r5(yaw),
-        "camera": {"pos": r5(pos), "target": r5(tgt), "lens": lens.tolist(),
-                   "exposure": ev.tolist()}, "shots": shots,
+        "camera": cam_out, "shots": shots,
         "rev": r5(rev), "catch": seg["start"] + catch,
     }
 

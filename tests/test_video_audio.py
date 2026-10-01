@@ -231,6 +231,59 @@ def test_grindhouse_sound(tmp_path):
     assert a["lufs"] == pytest.approx(-16.0, abs=0.5) and a["true_peak_db"] <= -1.0
 
 
+def test_abyss_sound(tmp_path, monkeypatch):
+    """The abyss style: a heartbeat pulse on the grid (none in the breakdown) that still lifts
+    the groove over the quiet moods; sonar pings on the beat, each with its echo; a rush of
+    bubbles on every cut and a deep swell ending exactly on it (no crashes, no bright risers);
+    pitched bubbles that rise; deterministic at the loudness target."""
+    cues = _cues("abyss")
+    played = []
+    real = A.Arranger.play
+
+    def spy(self, bus, inst, beat, dur_beats=0.25, **kw):
+        played.append((bus, inst, float(beat), float(dur_beats), bool(kw.get("end"))))
+        return real(self, bus, inst, beat, dur_beats, **kw)
+    monkeypatch.setattr(A.Arranger, "play", spy)
+    st = A.render_stems(cues, SR)
+    monkeypatch.setattr(A.Arranger, "play", real)
+    level = {m: _section_lufs(st["music"], cues, m) for m in MOODS}
+    assert level["groove"] > level["intro"] + 3.0
+    assert level["groove"] > level["breakdown"] + 1.5
+    assert level["groove"] > level["groove_light"]
+    kicks = np.array(st["arranger"].kicks) / SR / 0.5
+    assert len(kicks) and np.allclose(kicks * 4, np.round(kicks * 4), atol=1e-3)
+    s = cues["sections"][MOODS.index("breakdown")]
+    assert not ((kicks >= s["start"] / 15) & (kicks < s["end"] / 15)).any()
+    pings = [b for bus, inst, b, *_ in played if inst == "sonar"]
+    assert pings and all(bus == "keys" for bus, inst, *_ in played if inst == "sonar")
+    assert np.allclose(pings, np.round(pings))                        # on the beat
+    cuts = [sec["start"] / 15 for sec in cues["sections"][1:]]
+    rush = [b for bus, inst, b, *_ in played if inst == "bubbles"]
+    assert rush == pytest.approx(cuts)
+    swells = [(b, end) for bus, inst, b, d, end in played if inst == "undertow"]
+    assert [b for b, _ in swells] == pytest.approx(cuts) and all(end for _, end in swells)
+    assert not {inst for _, inst, *_ in played} & {"crash", "uplift", "rev_crash"}
+    assert {"heart", "hull", "drone", "swell", "bubble", "bass_sub"} <= {inst for _, inst, *_ in played}
+    V = A.Voices(SR, 1)
+    ping = V.get("sonar", 83, 1.0)                                    # the ping, then its echo
+    env = np.convolve(np.abs(ping), np.ones(480) / 480, "same")
+    at = int(0.37 * SR)
+    assert env[at + int(0.02 * SR)] > 3 * env[at - int(0.02 * SR)]
+    blip = V.get("bubble", 76, 0.25, rise=0.45)                       # a bubble's pitch rises
+    zc = np.nonzero(np.diff(np.signbit(blip)))[0] / SR
+
+    def hz(t0, t1):
+        k = zc[(zc >= t0) & (zc < t1)]
+        return (len(k) - 1) / 2 / (k[-1] - k[0])
+    assert hz(0.1, 0.2) > 1.2 * hz(0.0, 0.03)
+    rush = V.get("bubbles", None, 1.5)
+    assert rush.ndim == 2 and np.abs(rush[:, 0] - rush[:, 1]).max() > 0.05      # spread wide
+    a = A.render_audio(cues, tmp_path / "a.wav")
+    b = A.render_audio(cues, tmp_path / "b.wav")
+    assert (tmp_path / "a.wav").read_bytes() == (tmp_path / "b.wav").read_bytes() and a == b
+    assert a["lufs"] == pytest.approx(-16.0, abs=0.5) and a["true_peak_db"] <= -1.5
+
+
 def test_cold_open_sound(tmp_path):
     """A cold open: no music under it, the chainsaw bed (pull, catch, idle, revving with its
     curve) and wind, cut dead at the cut, silence for the black, then the reel as before; the

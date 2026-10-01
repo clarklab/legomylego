@@ -1,0 +1,49 @@
+# Shared sounds for the deep_sea cold open (any model gliding underwater uses them unless its
+# own [video.audio] says otherwise), generated with ElevenLabs' sound-generation API (Creator
+# plan: commercial use allowed) by tools/elevenlabs_sfx.py brickkit/data/audio/deep_sea. Each
+# [[sfx]] makes NAME_1.mp3 .. NAME_<variants>.mp3 here; sfx_generated.json records the prompt
+# and settings behind every file. Committed with the code, so a video never calls the API.
+# brickkit/video/reel.py SCENE_SOUNDS picks the ones used.
+
+[defaults]
+prompt_influence = 0.6
+model_id = "eleven_text_to_sound_v2"
+
+[[sfx]]
+name = "ambience"
+seconds = 12.0
+variants = 2
+loop = true
+prompt = """Deep underwater ambience far below the surface: a low, dark, steady ocean rumble \
+and pressure, distant muffled water movement, faint distant whale-like creaks, continuous and \
+even. No music, no voices, no bubbles."""
+
+[[sfx]]
+name = "ping"
+seconds = 3.0
+variants = 2
+prompt = """A single submarine sonar ping underwater: a clean, high, ringing ping with a long \
+fading echo tail, eerie and deep. No music, no voices."""
+
+[[sfx]]
+name = "bubbles"
+seconds = 2.0
+variants = 3
+prompt = """A burst of air bubbles rising underwater, close microphone: a rush of gurgling, \
+bubbling water that fades away. No music, no voices."""
+
+[[sfx]]
+name = "groan"
+seconds = 4.0
+variants = 2
+prompt = """The deep, slow metallic groan and creak of a huge iron submarine hull under water \
+pressure, resonant, low and ominous, heard underwater. No music, no voices."""
+
+[[sfx]]
+name = "churn"
+seconds = 6.0
+variants = 2
+loop = true
+prompt = """A big ship's propeller churning underwater as it passes: a deep rhythmic thrumming \
+whoosh of turning blades and swirling water, heard underwater, continuous and even. No music, \
+no voices."""

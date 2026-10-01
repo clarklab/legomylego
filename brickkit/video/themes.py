@@ -3,7 +3,7 @@
 A theme is a flat dict of tokens the compositor (web/reel.js) and the sound (audio.py) read:
 tempo (`beat` frames per beat at 30 fps), colours (`backdrop` is the 3D studio's), fonts, the
 transition and title styles, the overlay and the music style. Pick one in model.toml
-(brand | scan | tape | playful | grindhouse) and override any token:
+(brand | scan | tape | playful | grindhouse | abyss) and override any token:
 
     [video]
     theme = "tape"
@@ -90,6 +90,22 @@ THEMES: dict[str, dict] = {
         "transition": "burn", "title": "stamp", "callout": "tag", "overlay": "film",
         "grain": 0.09, "xray": "#E3B42C", "xray_bg": "#0E0906",
         "grade": {"tint": "#8C5A2A", "amount": 0.2, "contrast": 1.12, "saturate": 0.7},
+    },
+    # the deep: teal-black and sea blue, brass and copper (portholes, rivets), aqua light; a
+    # brass-rimmed porthole irises shut over every big cut, a sonar sweep between build sections,
+    # caustics, light shafts and drifting particles over everything; the name riveted onto a
+    # brass plaque, porthole callouts; a slow, pulsing underwater score with sonar pings
+    "abyss": {
+        "backdrop": "#1C4560",
+        "beat": 17, "music": "abyss",
+        "bg": "#04141F", "bg2": "#0B3247", "ink": "#E4F3F0", "muted": "#7FA2A6",
+        "accent": "#C98B3E", "accent2": "#58E1D3", "ok": "#5EDFAE", "warn": "#E9A23B",
+        "hud": "#8FE6DC", "hud_ink": "#04141F", "panel": "rgba(4,20,31,0.8)",
+        "panel_ink": "#E4F3F0", "line": "#C98B3E", "paper": "#B98543",
+        "display": SITE_DISPLAY, "mono": SITE_MONO,
+        "transition": "porthole", "title": "plaque", "callout": "porthole", "overlay": "caustics",
+        "grain": 0.035, "xray": "#58E1D3", "xray_bg": "#021019",
+        "grade": {"tint": "#0D4A63", "amount": 0.14, "contrast": 1.04, "saturate": 0.92},
     },
 }
 

@@ -63,6 +63,7 @@ const WIPES = {
     const th = TH.name;
     if (th === 'tape') { vhsGlitch(f, 1 - Math.abs(p), 0.5); return; }
     if (th === 'grindhouse') { frameSlip(f, p, t, 0.16); return; }
+    if (th === 'abyss') { sonarSweep(f, p, t); return; }
     if (th === 'scan') {
       const x = lerp(-60, L + 60, (p + 1) / 2);
       CX.save(); CX.globalCompositeOperation = 'screen';
@@ -196,6 +197,229 @@ const WIPES = {
   },
 };
 
+// ------------------------------------------------------------------------------ abyss
+// abyss: a brass-rimmed porthole irises shut on the hull plating over the cut, turning as it
+// dogs down, bubbles streaming past it; then it opens again on the new shot
+WIPES.porthole = function (f, p, t) {
+  const c = cover(p);                              // 0 open .. 1 shut at the cut
+  const cx = L / 2, cy = L / 2;
+  const r = (Math.hypot(L, L) / 2 + 80) * (1 - c);
+  const turn = (p < 0 ? 1 + p : p - 1) * 0.8;      // turned home at the cut, turned back after
+  CX.save();
+  CX.beginPath(); CX.rect(-20, -20, L + 40, L + 40); CX.arc(cx, cy, r, 0, Math.PI * 2, true);
+  CX.clip();
+  CX.drawImage(hullTexture(), -20, -20, L + 40, L + 40);
+  CX.restore();
+  if (r > 2) brassRing(cx, cy, r, 58 * clamp(r / 160 + 0.3), turn, 18);
+  const b = 1 - Math.abs(p);
+  if (b > 0.2) bubbleBurst(f, t.frame, (b - 0.2) / 0.8);
+};
+
+// riveted hull plating (made once): dark sea-worn iron, staggered plates, rows of rivets
+let HULL = null;
+function hullTexture() {
+  if (HULL) return HULL;
+  const W = L + 40;
+  HULL = document.createElement('canvas');
+  HULL.width = HULL.height = Math.round(W * S);
+  const x = HULL.getContext('2d');
+  x.setTransform(S, 0, 0, S, 0, 0);
+  const g = x.createLinearGradient(0, 0, W, W);
+  g.addColorStop(0, '#1A3540'); g.addColorStop(0.5, '#0D2029'); g.addColorStop(1, '#06121A');
+  x.fillStyle = g; x.fillRect(0, 0, W, W);
+  const pw = 372, ph = 280;
+  for (let row = 0; row * ph < W + ph; row++) {
+    const y = row * ph + 20, sh = (row % 2) * pw / 2;
+    for (let px = -sh; px < W; px += pw) {           // each plate a touch lighter or darker
+      x.fillStyle = rgba(hash(row * 17 + Math.round(px), 3) < 0.5 ? '#000000' : '#6FB2BE', 0.04 + 0.05 * hash(row, Math.round(px)));
+      x.fillRect(px, y, pw, ph);
+    }
+    x.fillStyle = rgba('#000000', 0.6); x.fillRect(0, y - 1.5, W, 3);
+    x.fillStyle = rgba('#7FC2CC', 0.13); x.fillRect(0, y + 2, W, 1.5);
+    for (let rx = 14; rx < W; rx += 32) rivet(rx, y + 14, 4.2, '#3A5A64', x);
+    for (let px = -sh; px < W + pw; px += pw) {
+      x.fillStyle = rgba('#000000', 0.6); x.fillRect(px - 1.5, y, 3, ph);
+      x.fillStyle = rgba('#7FC2CC', 0.1); x.fillRect(px + 2, y, 1.5, ph);
+      for (let ry = y + 46; ry < y + ph - 10; ry += 32) rivet(px + 14, ry, 4.2, '#3A5A64', x);
+    }
+  }
+  return HULL;
+}
+
+// brass, lit from the top left; a rivet is a small dome of `col` (brass by default)
+function brassGrad(x0, y0, x1, y1, c = CX) {
+  const b = TH.accent, g = c.createLinearGradient(x0, y0, x1, y1);
+  g.addColorStop(0, mix(b, '#FFF1CF', 0.55)); g.addColorStop(0.3, mix(b, '#FFE0A3', 0.18));
+  g.addColorStop(0.58, b); g.addColorStop(0.84, mix(b, '#2A1505', 0.45)); g.addColorStop(1, mix(b, '#FFE0A3', 0.2));
+  return g;
+}
+function rivet(x, y, r, col = null, c = CX) {
+  const b = col || TH.accent;
+  c.fillStyle = rgba('#000000', 0.45); circle(x + r * 0.25, y + r * 0.35, r * 1.08, c); c.fill();
+  const g = c.createRadialGradient(x - r * 0.35, y - r * 0.4, r * 0.08, x, y, r);
+  g.addColorStop(0, mix(b, '#FFF7E2', 0.75)); g.addColorStop(0.45, b); g.addColorStop(1, mix(b, '#120A02', 0.6));
+  c.fillStyle = g; circle(x, y, r, c); c.fill();
+}
+// a porthole's brass ring of width w round a window of radius r, bolted `n` times
+function brassRing(cx, cy, r, w, turn = 0, n = 16) {
+  CX.save();
+  CX.strokeStyle = rgba('#000000', 0.5); CX.lineWidth = w + 12;
+  circle(cx + 7, cy + 10, r + w / 2); CX.stroke();
+  const g = CX.createRadialGradient(cx, cy, r, cx, cy, r + w);
+  const b = TH.accent;
+  g.addColorStop(0, mix(b, '#1A0D03', 0.6)); g.addColorStop(0.16, mix(b, '#FFE6B0', 0.45));
+  g.addColorStop(0.5, b); g.addColorStop(0.84, mix(b, '#FFE6B0', 0.3)); g.addColorStop(1, mix(b, '#1A0D03', 0.55));
+  CX.strokeStyle = g; CX.lineWidth = w; circle(cx, cy, r + w / 2); CX.stroke();
+  const sh = CX.createLinearGradient(cx - r - w, cy - r - w, cx + r + w, cy + r + w);
+  sh.addColorStop(0, rgba('#FFF4D6', 0.32)); sh.addColorStop(0.45, rgba('#FFF4D6', 0)); sh.addColorStop(1, rgba('#000000', 0.28));
+  CX.strokeStyle = sh; CX.stroke();
+  const br = Math.max(2.5, w * 0.12);
+  for (let i = 0; i < n; i++) {
+    const a = turn + i / n * Math.PI * 2;
+    rivet(cx + Math.cos(a) * (r + w / 2), cy + Math.sin(a) * (r + w / 2), br);
+  }
+  CX.strokeStyle = rgba('#000000', 0.55); CX.lineWidth = 3; circle(cx, cy, r + 1.5); CX.stroke();
+  CX.restore();
+}
+// a bubble: a thin bright skin, a faint fill and a highlight
+function bubble(x, y, r, a) {
+  if (a <= 0.01 || r <= 0.3) return;
+  CX.strokeStyle = rgba('#DFFBF6', 0.6 * a); CX.lineWidth = Math.max(1, r * 0.16);
+  circle(x, y, r); CX.stroke();
+  CX.fillStyle = rgba('#BDF3EC', 0.1 * a); CX.fill();
+  CX.fillStyle = rgba('#FFFFFF', 0.75 * a); circle(x - r * 0.36, y - r * 0.4, r * 0.22); CX.fill();
+}
+// a rush of bubbles up through the frame around a cut (frame `at`)
+function bubbleBurst(f, at, a) {
+  const R = rng(at * 31 + 7);
+  CX.save();
+  for (let i = 0; i < 48; i++) {
+    const x0 = R() * L, y0 = L + 40 + R() * L * 0.9, v = 22 + R() * 30, r = 3 + R() * R() * 26;
+    const k = f - at + 14;
+    const y = y0 - v * k;
+    if (y < -40 || y > L + 40) continue;
+    bubble(x0 + Math.sin(k * 0.3 + i) * (6 + r * 0.4), y, r, a);
+  }
+  CX.restore();
+}
+
+// between build sections: a sonar sweep - range rings, the beam going once round with a fading
+// wake, and a ping ringing out from the cut
+function sonarSweep(f, p, t) {
+  const q = (p + 1) / 2, env = Math.sin(Math.PI * q);
+  const cx = L / 2, cy = L / 2, R = Math.hypot(L, L) / 2;
+  const a = -Math.PI / 2 + q * Math.PI * 2;
+  CX.save(); CX.globalCompositeOperation = 'screen';
+  CX.strokeStyle = rgba(TH.accent2, 0.18 * env); CX.lineWidth = 1.5;
+  for (let k = 1; k <= 4; k++) { circle(cx, cy, k * 175); CX.stroke(); }
+  const g = CX.createConicGradient(a - Math.PI * 0.6, cx, cy);
+  g.addColorStop(0, rgba(TH.accent2, 0)); g.addColorStop(0.299, rgba(TH.accent2, 0.34 * env));
+  g.addColorStop(0.3, rgba(TH.accent2, 0)); g.addColorStop(1, rgba(TH.accent2, 0));
+  CX.fillStyle = g; CX.fillRect(0, 0, L, L);
+  CX.strokeStyle = rgba(mix(TH.accent2, '#ffffff', 0.5), 0.75 * env); CX.lineWidth = 2.5;
+  CX.beginPath(); CX.moveTo(cx, cy); CX.lineTo(cx + Math.cos(a) * R, cy + Math.sin(a) * R); CX.stroke();
+  if (p >= 0) {
+    CX.strokeStyle = rgba(TH.accent2, 0.6 * (1 - p)); CX.lineWidth = 3 * (1 - p) + 1;
+    circle(cx, cy, 60 + p * R); CX.stroke();
+  }
+  CX.restore();
+}
+
+// the deep's light (over everything but the house open/outro and the booklet): caustics
+// rippling down from the surface, slow light shafts, marine snow drifting and a few bubbles
+// rising at the edges; over the plates all of it is fainter and thins out over the model
+let CAUSTIC = null;
+function causticTile() {                         // tileable: integer wave vectors, warped
+  if (CAUSTIC) return CAUSTIC;
+  const n = 256, T = Math.PI * 2;
+  CAUSTIC = document.createElement('canvas');
+  CAUSTIC.width = CAUSTIC.height = n;
+  const x = CAUSTIC.getContext('2d');
+  const im = x.createImageData(n, n);
+  const W = [[2, 1, 0.4], [-1, 3, 1.9], [3, -2, 3.1], [1, 4, 4.4], [-4, -1, 5.6]];
+  for (let j = 0; j < n; j++) for (let i = 0; i < n; i++) {
+    const u = i / n, v = j / n;
+    const wu = u + 0.06 * Math.sin(T * (2 * v + u)), wv = v + 0.06 * Math.sin(T * (3 * u - v));
+    let sum = 0;
+    for (const [a, b, ph] of W) sum += Math.sin(T * (a * wu + b * wv) + ph);
+    const val = Math.pow(Math.max(0, 1 - Math.abs(sum) / 1.6), 4);    // bright where they cancel
+    const k = 4 * (j * n + i);
+    im.data[k] = im.data[k + 1] = im.data[k + 2] = Math.round(255 * val);
+    im.data[k + 3] = 255;
+  }
+  x.putImageData(im, 0, 0);
+  return CAUSTIC;
+}
+function caustics(f, a) {
+  if (a <= 0) return;
+  const [c, x] = off('caustic');
+  const tile = causticTile();
+  [[2.7, 0.5, 0.3, 'source-over'], [3.6, -0.38, 0.46, 'lighten']].forEach(([sc, vx, vy, op]) => {
+    const pat = x.createPattern(tile, 'repeat');
+    pat.setTransform(new DOMMatrix().translate(f * vx, f * vy).scale(sc, sc));
+    x.globalCompositeOperation = op; x.fillStyle = pat; x.fillRect(0, 0, L, L);
+  });
+  x.globalCompositeOperation = 'multiply'; x.fillStyle = mix(TH.accent2, '#ffffff', 0.4); x.fillRect(0, 0, L, L);
+  x.globalCompositeOperation = 'destination-in';
+  const g = x.createLinearGradient(0, 0, 0, L);
+  g.addColorStop(0, 'rgba(0,0,0,1)'); g.addColorStop(0.55, 'rgba(0,0,0,0.45)'); g.addColorStop(1, 'rgba(0,0,0,0.15)');
+  x.fillStyle = g; x.fillRect(0, 0, L, L);
+  CX.save(); CX.setTransform(1, 0, 0, 1, 0, 0);
+  CX.globalCompositeOperation = 'screen'; CX.globalAlpha = a; CX.drawImage(c, 0, 0);
+  CX.restore();
+}
+function shafts(f, a) {                          // drawn small and blown up: soft edges for free
+  if (a <= 0) return;
+  const k = 8, n = Math.round(L / k);
+  let c = OFF.shafts;
+  if (!c) { c = OFF.shafts = document.createElement('canvas'); c.width = c.height = n; }
+  const x = c.getContext('2d');
+  x.setTransform(1, 0, 0, 1, 0, 0); x.clearRect(0, 0, n, n); x.scale(1 / k, 1 / k);
+  for (let i = 0; i < 5; i++) {
+    const R = rng(i * 7349 + 3);
+    const x0 = (0.08 + 0.84 * R()) * L + Math.sin(f * 0.011 + i * 1.7) * 46;
+    const lean = 0.12 + 0.3 * R(), w0 = 26 + R() * 60, len = L * (0.75 + 0.35 * R());
+    const al = a * (0.45 + 0.55 * Math.sin(f * 0.017 + i * 2.3) ** 2) * (0.5 + 0.5 * R());
+    const x1 = x0 + lean * len;
+    const g = x.createLinearGradient(x0, 0, x1, len);
+    g.addColorStop(0, rgba(TH.hud, al)); g.addColorStop(1, rgba(TH.hud, 0));
+    x.fillStyle = g;
+    x.beginPath(); x.moveTo(x0 - w0, -20); x.lineTo(x0 + w0, -20);
+    x.lineTo(x1 + w0 * 2.4, len); x.lineTo(x1 - w0 * 2.4, len); x.closePath(); x.fill();
+  }
+  CX.save(); CX.globalCompositeOperation = 'screen'; CX.imageSmoothingQuality = 'high';
+  CX.drawImage(c, 0, 0, L, L);
+  CX.restore();
+}
+function marineSnow(f, a, thin) {
+  CX.save();
+  for (let i = 0; i < 70; i++) {
+    const R = rng(i * 104729 + 31);
+    const sz = 0.7 + R() * R() * 2.4, vx = (R() - 0.5) * 0.35, vy = 0.12 + R() * 0.3;
+    const x = (((R() * L + vx * f + 10 * Math.sin(f * 0.02 + i)) % L) + L) % L;
+    const y = (((R() * L + vy * f) % L) + L) % L;
+    let al = a * (0.3 + 0.6 * R()) * (0.7 + 0.3 * Math.sin(f * 0.05 + i));
+    if (thin) al *= clamp(Math.hypot(x - L / 2, y - L / 2) / (L * 0.32));
+    if (al <= 0.01) continue;
+    CX.fillStyle = rgba('#CFF5EE', al); circle(x, y, sz); CX.fill();
+  }
+  for (let i = 0; i < 7; i++) {                  // bubbles going up the sides
+    const R = rng(i * 7919 + 77);
+    const period = 140 + R() * 120, ph = ((f + R() * period) % period) / period;
+    const side = R() < 0.5 ? R() * 0.16 : 0.84 + R() * 0.16;
+    bubble(side * L + Math.sin(ph * 12 + i) * 10, L + 30 - ph * (L + 60), 2.5 + R() * 6,
+      a * 1.4 * Math.sin(Math.PI * ph));
+  }
+  CX.restore();
+}
+function abyssLook(f, s) {
+  const pl = s.kind === 'scene';
+  caustics(f, pl ? 0.08 : 0.16);
+  shafts(f, pl ? 0.07 : 0.13);
+  marineSnow(f, pl ? 0.55 : 0.85, pl);
+  vignette(0.42, 0.3, 0.86);
+}
+
 // grindhouse: the film slips a frame in the gate - the picture jumps by `amt` of a frame, the
 // frame line and the sprocket holes show, the lamp flares; |p| < 1 is the slip's span
 function frameSlip(f, p, t, amt) {
@@ -238,6 +462,7 @@ function brickPalette() {
   if (t === 'scan') return ['#0B3A46', '#0F5563', '#35F2E0', '#072634', '#18B7FF', '#0A2F3A'];
   if (t === 'tape') return ['#2B0F47', '#FF3EA5', '#1C0B33', '#29E3FF', '#3D1766', '#FFD23F'];
   if (t === 'grindhouse') return ['#2B2019', TH.accent, '#4A3A2E', TH.accent2, '#1A120E', TH.ink];
+  if (t === 'abyss') return ['#0B3247', TH.accent, '#13506A', TH.accent2, '#04141F', '#7A4A22'];
   if (t === 'playful') {
     const P = (D.palette || []).slice(0, 4).map(c => c.rgb);
     return [TH.bg2, TH.accent, TH.accent2, ...P];
@@ -472,6 +697,7 @@ function post(f, s) {
   if (t === 'tape') vhsLook(f, s);
   if (t === 'scan' && (isScene || s.name === 'title' || s.name === 'palette')) scanlines(f, 0.05, 3);
   if (t === 'grindhouse') filmLook(f, s);
-  else vignette(t === 'brand' ? 0.1 : t === 'playful' ? 0.08 : 0.3);
+  else if (t === 'abyss' && !['open', 'outro', 'booklet', 'cold_open'].includes(s.name)) abyssLook(f, s);
+  else vignette(t === 'brand' ? 0.1 : t === 'playful' ? 0.08 : t === 'abyss' ? 0.12 : 0.3);
   grain(f, TH.grain || 0);
 }

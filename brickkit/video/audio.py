@@ -7,14 +7,15 @@
 Everything is made here with numpy/scipy: band-limited oscillators, biquads, a noise-based
 convolution reverb, a small drum machine and a handful of melodic voices (plucks, FM bells,
 marimba, Karplus-Strong, pads, whistle, string swells, drones, struck and scraped metal, a
-heartbeat), arranged section by section in one of five styles, plus the SFX events, then
+heartbeat, sonar pings, bubbles, a knock on a hull), arranged section by section in one of six
+styles, plus the SFX events, then
 mastered to `lufs` with a lookahead true-peak limiter (<= -1 dBTP).
 No samples, no external audio, no licensed music.
 
 Cue sheet (the video's edit plan produces it):
     fps, frames     frame rate and video length; the WAV is exactly round(frames / fps * sr) samples
     beat_frames     frames per beat (bpm = 60 * fps / beat_frames); beat 0 is at frame 0
-    style           "brand" | "scan" | "tape" | "playful" | "grindhouse"
+    style           "brand" | "scan" | "tape" | "playful" | "grindhouse" | "abyss"
     seed            every random choice derives from it: the same cue sheet gives identical samples
     key             optional {"root": MIDI note, "mode": "major" | "minor"} (else a style default)
     sections        [{name, start, end, mood}] contiguous frames covering [0, frames); moods:
@@ -748,6 +749,80 @@ class Voices:
         y += 0.15 * bw(tone, "low", 5000.0, sr)[:, None]
         return _norm(_fade(y * (u ** 2)[:, None], sr, 0.0, 0.006))
 
+    # ---------------------------------------------------------------- the deep (abyss)
+    def sonar(self, midi, dur, rng, decay=0.16, echo=0.42, gap=0.37):
+        """A sonar ping: a pure tone with a soft attack that settles a hair flat, ringing, and its
+        echo off the sea floor `gap` s later, duller and quieter."""
+        sr, f0 = self.sr, float(mtof(midi if midi is not None else 83))
+        n, t = self._t(gap + decay * 6 + 0.2)
+        f = f0 * (1.0 + 0.01 * np.exp(-t / 0.025))
+        ping = osc_sine(f, n, sr) * env_perc(n, sr, decay, 0.006)
+        ping += 0.06 * osc_sine(2.0 * f, n, sr) * env_perc(n, sr, decay * 0.25, 0.006)
+        d = int(gap * sr)
+        back = np.zeros(n)
+        back[d:] = bw(ping, "low", f0 * 1.2, sr)[:n - d]
+        return _norm(_fade(ping + echo * back, sr, 0.0, 0.08))
+
+    def bubble(self, midi, dur, rng, rise=0.45, decay=0.09):
+        """A pitched bubble: a sine whose pitch rises as it goes (a bubble's resonance as it
+        shrinks), a quick bloom and a short ring; `midi` sets where it starts."""
+        sr, f0 = self.sr, float(mtof(midi))
+        n, t = self._t(decay * 5 + 0.02)
+        f = f0 * (1.0 + rise * (1.0 - np.exp(-t / (decay * 0.8))))
+        y = osc_sine(f, n, sr) * env_perc(n, sr, decay, 0.002)
+        y += 0.15 * osc_sine(2.0 * f, n, sr) * env_perc(n, sr, decay * 0.3, 0.002)
+        return _norm(_fade(y, sr, 0.0, 0.01))
+
+    def bubbles(self, midi, dur, rng, n_bubbles=48):
+        """A rush of bubbles (stereo) over `dur` s: a gush of low water noise, then bubbles of all
+        sizes rising, thick at first and thinning out."""
+        sr = self.sr
+        T = max(dur, 0.4)
+        n, t = self._t(T + 0.3)
+        y = np.zeros((n, 2))
+        gush = tv_filter(rng.standard_normal((n, 2)), "bp", 300.0 * 2.0 ** (2.0 * np.exp(-t / 0.25)), sr, q=0.9)
+        y += 0.5 * _norm(gush) * (np.exp(-t / (0.3 * T)) * (1 - np.exp(-t / 0.01)))[:, None]
+        for k in range(n_bubbles):
+            at = int(T * rng.random() ** 1.8 * sr)
+            size = rng.random()
+            f0 = 350.0 + 2600.0 * size ** 1.5
+            dec = 0.012 + 0.07 * (1 - size)
+            m = int((dec * 5 + 0.01) * sr)
+            if at + m >= n:
+                continue
+            tt = np.arange(m) / sr
+            b = np.sin(2 * np.pi * np.cumsum(f0 * (1 + 0.6 * (1 - np.exp(-tt / (dec * 0.6))))) / sr)
+            b *= np.exp(-tt / dec) * (1 - np.exp(-tt / 0.0015))
+            amp = (0.35 + 0.65 * rng.random()) * (1.0 - 0.6 * at / (T * sr))
+            y[at:at + m] += amp * b[:, None] * pan_gains(float(rng.uniform(-0.8, 0.8)))[None, :]
+        return _norm(_fade(y, sr, 0.0, 0.2))
+
+    def hull(self, midi, dur, rng, f0=110.0, decay=0.35):
+        """A knock on a submarine's hull: a deep damped thud and the iron's inharmonic ring,
+        muffled by the water."""
+        sr = self.sr
+        n, t = self._t(decay * 4 + 0.1)
+        f = f0 * (1.0 + 0.5 * np.exp(-t / 0.012))
+        thud = np.sin(2 * np.pi * np.cumsum(f) / sr) * env_perc(n, sr, decay * 0.4, 0.001)
+        ring = np.zeros(n)
+        for k, (ratio, a) in enumerate(((2.32, 0.5), (4.17, 0.35), (6.9, 0.22), (9.6, 0.12))):
+            ring += a * np.sin(2 * np.pi * f0 * ratio * rng.uniform(0.99, 1.01) * t + rng.uniform(0, 6.3)) \
+                * np.exp(-t / (decay / (1 + 0.6 * k)))
+        knock = bw(rng.standard_normal(n), "band", (180.0, 900.0), sr) * env_perc(n, sr, 0.01, 0.0005)
+        y = np.tanh(1.5 * (thud + 0.6 * ring + 0.4 * _norm(knock)))
+        return _norm(_fade(bw(y, "low", 1800.0, sr), sr, 0.0, 0.05))
+
+    def undertow(self, midi, dur, rng):
+        """A deep swell into a cut (stereo): dark water noise opening up and a sub tone rising
+        under it, peaking at its end."""
+        sr = self.sr
+        n, t = self._t(max(dur, 0.2))
+        u = t / t[-1] if n > 1 else t
+        nz = tv_filter(rng.standard_normal((n, 2)), "lp", 140.0 * (1100.0 / 140.0) ** (u ** 1.6), sr, q=1.4)
+        sub = osc_sine(34.0 * (1.0 + 0.6 * u ** 2), n, sr)
+        y = _norm(nz) + 0.8 * sub[:, None]
+        return _norm(_fade(y * (u ** 2.4)[:, None], sr, 0.0, 0.01))
+
     # ---------------------------------------------------------------- bass
     def bass_pluck(self, midi, dur, rng):
         """Pop-house bass: saw + square through a plucked filter, sine sub."""
@@ -1451,6 +1526,9 @@ PROG = {
     # i(b9) bVImaj7 bII vii-dim7: close clusters, a Phrygian lean
     "grindhouse": {"minor": [(0, (0, 3, 7, 13)), (8, (0, 4, 7, 11)), (1, (0, 4, 7)), (11, (0, 3, 6, 9))],
                    "major": [(0, (0, 4, 7, 11)), (1, (0, 4, 7)), (8, (0, 4, 7)), (6, (0, 3, 6))]},
+    # i(add9) bVImaj7 iv7 bVII(add9): open, slow-moving, a sea-swell of a progression
+    "abyss": {"minor": [(0, (0, 3, 7, 14)), (8, (0, 4, 7, 11)), (5, (0, 3, 7, 10)), (10, (0, 4, 7, 14))],
+              "major": [(0, (0, 4, 7, 14)), (9, (0, 3, 7, 10)), (5, (0, 4, 7, 11)), (7, (0, 4, 7))]},
 }
 
 
@@ -1613,6 +1691,45 @@ STYLES = {
         rev_cuts=0.55, tex=0.8, tape=False, film=True,
         mix=dict(kick=-4, back=-9, hats=-17, perc=-16, bass=-6, pad=-7, keys=-11, arp=-12, lead=-9,
                  fx=-8, tex=-16, metal=-13)),
+    # the deep: a slow heartbeat of a pulse under drones and wide swells, sonar pings on the beat
+    # (each with its echo, through the dotted delay), bubbly arps, a knock on the hull for a
+    # backbeat; a rush of bubbles on every cut and a deep undertow swelling into it
+    "abyss": dict(
+        key=(47, "minor"), swing=0.0, pump=2.0, rt=(1.4, 5.0), delay=0.75, bright=0.5, booms=True,
+        kick_inst="heart", kick=dict(gap=0.26, f_hi=105.0, f_lo=38.0, decay=0.3, dub=0.55),
+        kicks={"rise": (0, 8), "groove_light": (0, 8), "groove": (0, 4, 8, 12),
+               "feature": (0, 4, 8, 12), "halftime": (0,)},
+        kick_vel={4: 0.8, 12: 0.8},
+        backs={"groove": (8,), "feature": (8,), "halftime": (8,)},
+        back=(("hull", 1.0, {}),), light_back=(("hull", 0.5, dict(f0=98.0)),),
+        fill=("tom", (40, 38, 36, 33)),
+        hats={"groove": (("tick", "8", (0.5, 0.25)),),
+              "feature": (("tick", "16", (0.5, 0.18, 0.32, 0.18)),),
+              "groove_light": (("tick", (4, 12), (0.35,)),),
+              "halftime": (("tick", (2, 6, 10, 14), (0.25,)),)},
+        bass="bass_sub", break_bass=False,
+        bass_pat={"drive": ((0, 3, 0, 1.0), (4, 2, 0, 0.6), (6, 2, 0, 0.7), (8, 3, 0, 0.95),
+                            (12, 2, 12, 0.6), (14, 2, 7, 0.7)),
+                  "light": ((0, 6, 0, 1.0), (8, 6, 0, 0.85)),
+                  "half": ((0, 12, 0, 1.0), (12, 4, 7, 0.75))},
+        pad=("swell", dict(detune=14.0, voices=5, bright=1500.0, release=2.0)), pad_lo=52,
+        drone=("drone", dict(bright=380.0), ("intro", "rise", "groove_light", "groove", "breakdown",
+                                              "halftime", "feature"), ((0, 0.7), (7, 0.3))),
+        keys=None, strum=False,
+        arp=("bubble", 76, (0, 2, 4, 1, 3, 2, 4, 0),
+             {"intro": (4, 0.3), "rise": (2, 0.45), "groove_light": (2, 0.45), "groove": (2, 0.55),
+              "feature": (1, 0.6), "breakdown": (2, 0.5), "halftime": (4, 0.5)},
+             dict(rise=0.18, decay=0.11)),
+        lead=("bell", 71, {"groove": 0.55, "feature": 0.9}, dict(decay=1.4, ratio=2.0, index=1.0)),
+        lead2=None,
+        hooks=(((0, 8), (8, 4), (12, 4), (16, 8), (24, 8)),
+               ((0, 6), (6, 2), (8, 8), (16, 6), (22, 10))),
+        pings={"intro": (8, 0.6), "rise": (4, 0.7), "groove_light": (4, 0.65), "groove": (4, 0.8),
+               "feature": (2, 0.85), "breakdown": (8, 0.7), "halftime": (8, 0.75)},
+        cut_fx=("bubbles", 0.9, 1.6), swell_cuts=0.75,
+        tex=1.0, tape=False,
+        mix=dict(kick=-4, back=-11, hats=-19, perc=-16, bass=-6, pad=-6, keys=-9, arp=-11, lead=-10,
+                 fx=-8, tex=-14, metal=-14)),
 }
 
 
@@ -1757,7 +1874,11 @@ class Arranger:
     def _cut(self, sec):
         """Every section start is a video cut: crash, and a boom/kick where it should hit hard."""
         mood, b, P = sec["mood"], sec["b0"], self.P
-        self.play("fx", "crash", b, vel=CRASH_VEL[mood])
+        cut = P.get("cut_fx")                    # the style's own sound on the cut, or a crash
+        if cut:
+            self.play("fx", cut[0], b, cut[2], vel=cut[1] * CRASH_VEL[mood])
+        else:
+            self.play("fx", "crash", b, vel=CRASH_VEL[mood])
         if mood in ("breakdown", "halftime", "end", "feature") or (P["booms"] and mood != "rise"):
             self.play("fx", "boom", b, vel=0.6 if mood == "breakdown" else 0.85)
         if mood == "end":
@@ -1766,6 +1887,11 @@ class Arranger:
     def _approach(self, sec, nxt):
         """The last beats before a cut: a riser into bigger sections, else a reversed cymbal."""
         mood, b0, b1 = sec["mood"], sec["b0"], sec["b1"]
+        sw = self.P.get("swell_cuts")
+        if sw:                                   # a deep swell into every cut, longer into a drive
+            ln = 8.0 if mood == "rise" else 4.0 if nxt in DRIVE else 2.0
+            self.play("fx", "undertow", b1, min(ln, b1 - b0), vel=sw, end=True)
+            return
         rev = self.P.get("rev_cuts")
         if (nxt in DRIVE and mood not in DRIVE) or (nxt == "groove_light" and mood in ("intro", "rise")):
             L = min(8.0 if mood == "rise" else 4.0, b1 - b0)
@@ -1942,6 +2068,12 @@ class Arranger:
                 self.play("metal", "scrape", float(b) + int(rng.integers(0, 4)) / 4 + 0.13,
                           float(rng.choice([1.0, 1.5, 2.0])), vel=vel * rng.uniform(0.6, 1.0),
                           pan=rng.uniform(-0.7, 0.7), var=int(rng.integers(3)))
+        pg = P.get("pings", {}).get(mood)
+        if pg:                                               # sonar pings on the beat
+            every, vel = pg
+            m = 79 + (self.root_pc - 79) % 12
+            for b in np.arange(sec["b0"], sec["b1"] - 1e-9, float(every)):
+                self.play("keys", "sonar", float(b), 1.0, midi=m, vel=vel, pan=0.0)
         if P["booms"] and mood in ("intro", "breakdown"):
             for b in np.arange(sec["b0"], sec["b1"] - 1e-9, 8.0):
                 if b > sec["b0"] or sec["f0"] == 0:

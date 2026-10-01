@@ -1445,11 +1445,403 @@ def night_desk(sc, co, eevee):
     return NightDesk(sc, co, eevee)
 
 
+# ---------------------------------------------------------------------------- deep_sea
+SEA_LOOK = {"exposure": 0.5,         # EV
+            "sun_strength": 8.0, "sun_color": "#C8EEFF",     # the light from the surface
+            "water_color": "#0B4A8A",                         # what the water scatters
+            "visibility": 1.5,       # model lengths: the water takes 63 % of the light this far
+            "shafts": 16.0,          # how much denser the water is in the light's shafts
+            "lamp_gain": 6.0,        # the model's LEDs (their own power) x this
+            "look": "AgX - Medium High Contrast"}
+
+
+class DeepSea:
+    """Open water, well below a rippling surface, the model cruising through it (motion
+    "glide"): a blue that thickens with distance and darkens with depth, shafts of light from
+    the surface (its ripples cast them, and dapple the model), marine snow drifting, bubbles
+    rising from vents in a rocky seabed far below with kelp swaying, and from the model's stern
+    as it goes; its LEDs glow in the water. Scaled to the model: S Blender units is its length
+    (the plan's glide length); the world's axes: x, y as Blender's, z up."""
+
+    BLUR = {"approach": 0.02, "side": 0.022, "bow": 0.03}
+    TRIM = {}
+    KEY_CAMERA = True                       # the camera tracks: blur with it, not against it
+
+    def __init__(self, sc, co, eevee):
+        self.sc, self.co, self.eevee = sc, co, eevee
+        self.look = dict(SEA_LOOK, **(co.get("look") or {}))
+        g = co.get("glide") or {}
+        R3 = TO_B.to_3x3()
+        self.S = float(g.get("length", co["height"])) * LDU
+        self.path = [TO_B @ Vector(p) for p in g.get("path") or [(0, -co["height"] / 2, 0)]]
+        self.F = (R3 @ Vector(g.get("forward", (-1, 0, 0)))).normalized()
+        self.N = (R3 @ Vector(g.get("side", (0, 0, -1)))).normalized()
+        ext = g.get("extent") or {}
+        self.back = float(ext.get("behind", 0.5 * self.S / LDU)) * LDU
+        mid = self.path[len(self.path) // 2]
+        self.mid = mid
+        self.top = mid.z + 1.35 * self.S                  # the surface
+        self.floor = mid.z - 2.0 * self.S                 # the seabed
+        self.rng = np.random.default_rng(20000)
+        self.sun_down = (Vector((0, 0, -1)) - 0.3 * self.N - 0.15 * self.F).normalized()
+        self.world()
+        self.surface()
+        self.seabed()
+        self.snow()
+        self.bubbles_setup()
+        self.lights()
+        self.compositor()
+        ee = sc.eevee
+        ba._try(ee, "bokeh_threshold", 1e5)
+        ba._try(ee, "bokeh_max_size", 60.0)
+        ba._try(ee, "volumetric_tile_size", "8")
+        ba._try(ee, "volumetric_samples", 40)
+        ba._try(ee, "use_volumetric_shadows", True)
+        ba._try(ee, "volumetric_shadow_samples", 8)
+        ba._try(ee, "volumetric_start", 0.02 * self.S)
+        ba._try(ee, "volumetric_end", 12.0 * self.S)
+        sc.view_settings.view_transform = "AgX"
+        ba._try(sc.view_settings, "look", self.look["look"])
+        sc.view_settings.exposure = 0.0
+
+    def _mat(self, name, build, method=None):
+        m = bpy.data.materials.new(name)
+        nb = NB(m.node_tree)
+        out = nb.clear("OUTPUT_MATERIAL")
+        m.node_tree.links.new(build(nb), out.inputs["Surface"])
+        if method:
+            ba._try(m, "surface_render_method", method)
+        return m
+
+    def _ob(self, mesh, name, mat, shadow=True):
+        ob = mesh.build(name, mat, 1.0, (0, 0, 0))
+        ob.scale = (1, 1, 1)
+        if not shadow:
+            ba._try(ob, "visible_shadow", False)
+        return ob
+
+    # -- the water ----------------------------------------------------------------------------
+    def world(self):
+        """The water itself: a world volume that scatters the surface's light blue and absorbs
+        the red (so it thickens to deep blue with distance), and behind it a blue that pales
+        towards the surface and darkens into the deep."""
+        w = bpy.data.worlds.new("sea")
+        self.sc.world = w
+        nb = NB(w.node_tree)
+        out = nb.clear("OUTPUT_WORLD")
+        d = nb.vec("NORMALIZE", nb.node("ShaderNodeTexCoord").outputs["Generated"])
+        z = nb.xyz(d)[2]
+        up = nb.smooth(z, -0.4, 0.9)
+        col = nb.mix(up, (0.002, 0.012, 0.035), (0.03, 0.16, 0.34))
+        bg = nb.node("ShaderNodeBackground", Strength=3.5)
+        nb.set(bg.inputs["Color"], col)
+        w.node_tree.links.new(bg.outputs[0], out.inputs["Surface"])
+        ba._try(w, "sun_threshold", 1e6)
+        # the water: a volume filling the sea from the seabed to the surface (a world volume
+        # would put out the sun: EEVEE takes the sun's light through all of it)
+        S, c = self.S, self.mid
+        bpy.ops.mesh.primitive_cube_add(size=1.0, location=(c.x, c.y, (self.top + self.floor) / 2 - 0.1 * S))
+        ob = bpy.context.object
+        ob.name = "water"
+        ob.scale = (30 * S, 30 * S, self.top - self.floor + 0.2 * S)
+        ba._try(ob, "visible_shadow", False)
+        m = bpy.data.materials.new("water")
+        vb = NB(m.node_tree)
+        vout = vb.clear("OUTPUT_MATERIAL")
+        vis = float(self.look["visibility"]) * S
+        vol = vb.node("ShaderNodeVolumePrincipled", Anisotropy=0.6)
+        # shafts: streaks along the sun's light, brightest under the surface, fading with depth
+        pos = vb.vec("SCALE", vb.vec("SUBTRACT", vb.node("ShaderNodeNewGeometry").outputs["Position"],
+                                     tuple(c)), 1.0 / S)
+        L = self.sun_down
+        along = vb.vec("DOT_PRODUCT", pos, tuple(L), out=1)
+        across = vb.vec("SUBTRACT", pos, vb.vec("SCALE", vb.comb(L.x, L.y, L.z), along))
+        sw = vb.node("ShaderNodeValue")
+        self.waves = getattr(self, "waves", []) + [sw]
+        n1 = vb.node("ShaderNodeTexNoise", Scale=4.0, Detail=1.0, Roughness=0.5)
+        n1.noise_dimensions = "4D"
+        vb.set(n1.inputs["Vector"], across)
+        vb.set(n1.inputs["W"], sw.outputs[0])
+        shafts = vb.smooth(n1.outputs["Fac"], 0.57, 0.64)
+        depth = vb.math("EXPONENT", vb.math("DIVIDE", vb.sub(vb.xyz(pos)[2], (self.top - c.z) / S), 1.8))
+        dens = vb.mul(vb.add(1.0, vb.mul(vb.mul(shafts, depth), float(self.look["shafts"]))), 1.0 / vis)
+        vb.set(vol.inputs["Density"], dens)
+        # the water's own colour: paler and greener under the surface, deep blue below
+        wc = bs.hex_to_linear(self.look["water_color"])
+        vb.set(vol.inputs["Color"], vb.mix(depth, [x * 0.35 for x in wc], [min(1.0, x * 2.2) for x in wc]))
+        vb.set(vol.inputs["Absorption Color"], (0.08, 0.42, 0.8))
+        m.node_tree.links.new(vol.outputs[0], vout.inputs["Volume"])
+        ob.data.materials.append(m)
+
+    def surface(self):
+        """The underside of the sea's surface: bright straight up (the sky through it), dimmer
+        at a slant, rippled with drifting bands of light (tick moves them). It casts no shadow:
+        the shafts are in the water's own density (world), the caustics on the seabed."""
+        S = self.S
+        m = Mesh()
+        c = self.mid
+        h = 24.0 * S
+        m.quad([(c.x - h, c.y - h, self.top), (c.x + h, c.y - h, self.top),
+                (c.x + h, c.y + h, self.top), (c.x - h, c.y + h, self.top)])
+
+        def build(nb):
+            geo = nb.node("ShaderNodeNewGeometry")
+            p = nb.vec("SCALE", geo.outputs["Position"], 1.0 / S)
+            lines = self._caustic(nb, p, 1.3)
+            v = nb.xyz(geo.outputs["Incoming"])[2]
+            up = nb.smooth(v, 0.15, 0.95)
+            soft = nb.noise(nb.vec("MULTIPLY", p, (1.2, 1.2, 0.0)), 1.0, 3.0, 0.5)
+            col = nb.mix(nb.add(nb.mul(lines, 0.18), nb.mul(nb.smooth(soft, 0.35, 0.75), 0.5)),
+                         (0.08, 0.36, 0.5), (0.65, 0.95, 1.05))
+            em = nb.node("ShaderNodeEmission", Strength=1.0)
+            nb.set(em.inputs["Color"], nb.vec("SCALE", col, nb.add(0.4, nb.mul(up, 2.6))))
+            return em.outputs[0]
+        ob = self._ob(m, "sea_surface", self._mat("sea_surface", build), shadow=False)
+        ba._try(ob, "visible_volume_scatter", False)
+
+    def _caustic(self, nb, p, scale):
+        """0..1 bright caustic lines over (x, y) of `p`, two layers drifting through each other
+        (their phase a Value node per material, all set by tick)."""
+        w = nb.node("ShaderNodeValue")
+        self.waves = getattr(self, "waves", []) + [w]
+        warp = nb.noise(nb.vec("MULTIPLY", p, (0.8, 0.8, 0.0)), 1.0, 3.0, 0.55, out="Color")
+        lines = None
+        for sc_, dw in ((scale, 0.0), (scale * 1.6, 1.7)):
+            q = nb.vec("ADD", nb.vec("MULTIPLY", p, (sc_, sc_, 0.0)), nb.vec("SCALE", warp, 0.9))
+            vor = nb.node("ShaderNodeTexVoronoi", Scale=1.0)
+            vor.voronoi_dimensions = "4D"
+            vor.feature = "DISTANCE_TO_EDGE"
+            nb.set(vor.inputs["Vector"], q)
+            nb.set(vor.inputs["W"], nb.add(w.outputs[0], dw))
+            l_ = nb.smooth(vor.outputs["Distance"], 0.035, 0.0)
+            lines = l_ if lines is None else nb.math("MAXIMUM", lines, nb.mul(l_, 0.7))
+        return lines
+
+    # -- the bottom ---------------------------------------------------------------------------
+    def seabed(self):
+        """Rocky sand far below, a few boulders, kelp swaying up from it."""
+        S, rng = self.S, self.rng
+        c = self.mid
+        n = 140
+        xs = np.linspace(-9 * S, 9 * S, n)
+        X, Y = np.meshgrid(xs + c.x, xs + c.y)
+        Z = np.zeros_like(X)
+        for k in range(6):
+            f = rng.uniform(0.3, 1.0) * 2 ** k / (6 * S)
+            a = rng.uniform(0, 2 * np.pi, 2)
+            Z += 0.35 * S / (k + 1.5) * np.sin(X * f * 2 * np.pi + a[0]) * np.cos(Y * f * 1.7 * np.pi + a[1])
+        Z += self.floor
+        V = np.stack([X, Y, Z], -1).reshape(-1, 3)
+        i = np.arange(n - 1)[:, None] * n + np.arange(n - 1)[None, :]
+        F = np.concatenate([np.stack([i, i + 1, i + n + 1], -1).reshape(-1, 3),
+                            np.stack([i, i + n + 1, i + n], -1).reshape(-1, 3)])
+        bed = Mesh()
+        bed.tris(V, F)
+
+        def sand(nb):
+            p = nb.vec("SCALE", nb.node("ShaderNodeNewGeometry").outputs["Position"], 1.0 / S)
+            n1 = nb.noise(p, 3.0, 4.0, 0.6)
+            col = nb.mix(n1, (0.025, 0.035, 0.03), (0.07, 0.08, 0.065))
+            b = nb.node("ShaderNodeBsdfPrincipled", Roughness=0.95)
+            nb.set(b.inputs["Base Color"], col)
+            em = nb.node("ShaderNodeEmission", Strength=0.35)          # the surface's caustics
+            nb.set(em.inputs["Color"], nb.vec("SCALE", nb.comb(0.4, 0.8, 0.9), self._caustic(nb, p, 2.0)))
+            add = nb.node("ShaderNodeAddShader")
+            nb.nt.links.new(b.outputs[0], add.inputs[0])
+            nb.nt.links.new(em.outputs[0], add.inputs[1])
+            return add.outputs[0]
+        self._ob(bed, "seabed", self._mat("sand", sand), shadow=False).data.polygons.foreach_set(
+            "use_smooth", np.ones(len(F), bool))
+        rocks, kelp = Mesh(), Mesh()
+        for _ in range(26):
+            a = rng.uniform(0, 2 * np.pi)
+            r = rng.uniform(0.5, 7.0) * S
+            px, py = c.x + r * math.cos(a), c.y + r * math.sin(a)
+            size = rng.uniform(0.15, 0.6) * S
+            k = 6
+            C = np.stack([px + rng.normal(0, size * 0.5, k), py + rng.normal(0, size * 0.5, k),
+                          self.floor + rng.uniform(0, size * 0.6, k)], -1)
+            _leaves(rocks, rng, C, rng.uniform(0.4, 0.8, k) * size, 60, size * 0.5, 0.7)
+        self.kelp = []
+        for _ in range(40):
+            a = rng.uniform(0, 2 * np.pi)
+            r = rng.uniform(0.8, 6.0) * S
+            px, py = c.x + r * math.cos(a), c.y + r * math.sin(a)
+            hgt = rng.uniform(0.3, 0.8) * S
+            pts = [[px, py, self.floor - 0.05 * S]]
+            for j in range(1, 9):
+                pts.append([px + 0.05 * S * math.sin(j * 0.9 + a), py + 0.04 * S * math.cos(j * 0.7),
+                             self.floor + hgt * j / 8])
+            kelp.tube(pts, np.linspace(0.025, 0.008, 9) * S, 4)
+        self._ob(rocks, "rocks", self._mat("rock", lambda nb: self._bsdf(nb, (0.05, 0.06, 0.05), 0.9)),
+                 shadow=False)
+        self._ob(kelp, "kelp", self._mat("kelp", lambda nb: self._bsdf(nb, (0.06, 0.12, 0.04), 0.7)),
+                 shadow=False)
+
+    @staticmethod
+    def _bsdf(nb, col, rough):
+        b = nb.node("ShaderNodeBsdfPrincipled", Roughness=rough)
+        nb.set(b.inputs["Base Color"], col)
+        return b.outputs[0]
+
+    # -- what floats ----------------------------------------------------------------------------
+    def snow(self):
+        """Marine snow: specks hanging in the water round the model's path, sinking slowly."""
+        S, rng = self.S, self.rng
+        n = 9000
+        P = np.array(self.path)
+        lo, hi = P.min(0) - 1.6 * S, P.max(0) + 1.6 * S
+        C = rng.uniform(lo, hi, (n, 3))
+        size = S * 0.0022 * rng.uniform(0.5, 1.6, n)[:, None]
+        d = rng.normal(size=(n, 3, 3))
+        V = (C[:, None, :] + d * size[:, None, :]).reshape(-1, 3)
+        m = Mesh()
+        m.tris(V, np.arange(len(V)).reshape(-1, 3))
+
+        def build(nb):
+            em = nb.node("ShaderNodeEmission", Strength=0.45)
+            nb.set(em.inputs["Color"], (0.6, 0.85, 1.0))
+            b = self._bsdf(nb, (0.7, 0.8, 0.8), 0.6)
+            return nb.shader_mix(0.5, b, em.outputs[0])
+        self.snow_ob = self._ob(m, "marine_snow", self._mat("snow", build), shadow=False)
+
+    def bubbles_setup(self):
+        """Streams of bubbles: from vents in the seabed, and from the model's stern as it goes.
+        One mesh of little spheres, moved every frame (tick)."""
+        S, rng = self.S, self.rng
+        c = self.mid
+        self.vents = [(c.x + r * math.cos(a), c.y + r * math.sin(a))
+                      for a, r in zip(rng.uniform(0, 2 * np.pi, 5), rng.uniform(0.6, 3.0, 5) * S)]
+        self.nb_vent, self.nb_wake = 60, 90
+        n = len(self.vents) * self.nb_vent + self.nb_wake
+        self.b_phase = rng.uniform(0, 1, n)
+        self.b_size = S * 0.008 * rng.uniform(0.4, 1.4, n)
+        self.b_wob = rng.uniform(0, 2 * np.pi, n)
+        ico = bpy.data.meshes.new("_ico")
+        import bmesh
+        bm = bmesh.new()
+        bmesh.ops.create_icosphere(bm, subdivisions=1, radius=1.0)
+        bm.to_mesh(ico)
+        bm.free()
+        iv = np.array([v.co[:] for v in ico.vertices])
+        it = np.array([[v for v in p.vertices] for p in ico.polygons])
+        bpy.data.meshes.remove(ico)
+        self.ico = iv
+        V = np.zeros((n * len(iv), 3))
+        F = (it[None] + (np.arange(n) * len(iv))[:, None, None]).reshape(-1, 3)
+        m = Mesh()
+        m.tris(V, F)
+
+        def build(nb):
+            lw = nb.node("ShaderNodeLayerWeight", Blend=0.35)
+            em = nb.node("ShaderNodeEmission", Strength=0.9)
+            nb.set(em.inputs["Color"], (0.75, 0.95, 1.0))
+            tr = nb.node("ShaderNodeBsdfTransparent")
+            return nb.shader_mix(nb.math("POWER", lw.outputs["Facing"], 2.0), tr.outputs[0], em.outputs[0])
+        self.bubble_ob = self._ob(m, "bubbles", self._mat("bubble", build, "BLENDED"), shadow=False)
+        self.bubble_ob.data.polygons.foreach_set("use_smooth", np.ones(len(F), bool))
+
+    def tick(self, k, fps=30.0):
+        """The water at plan frame k: ripples drift, snow sinks, bubbles rise."""
+        S = self.S
+        t = k / fps
+        for w in self.waves:
+            w.outputs[0].default_value = 0.35 * t
+        self.snow_ob.location = (0.01 * S * t, 0.004 * S * t, -0.02 * S * t)
+        n_v = len(self.vents) * self.nb_vent
+        rise = 0.35 * S                                   # per second
+        P = np.zeros((len(self.b_phase), 3))
+        # vents: bubbles cycling up a column
+        life_v = (self.top - self.floor) / rise
+        for j, (vx, vy) in enumerate(self.vents):
+            s = slice(j * self.nb_vent, (j + 1) * self.nb_vent)
+            age = ((t / life_v + self.b_phase[s]) % 1.0) * life_v
+            P[s, 0] = vx + 0.03 * S * np.sin(2.5 * age + self.b_wob[s])
+            P[s, 1] = vy + 0.03 * S * np.cos(2.1 * age + self.b_wob[s])
+            P[s, 2] = self.floor + rise * age
+        # the wake: born at the stern over the last two seconds, rising and spreading
+        path = self.path
+        life_w = 2.0
+        w = slice(n_v, None)
+        age = (self.b_phase[w] * life_w)
+        born = np.clip(k - age * fps, 0, len(path) - 1).astype(int)
+        src = np.array([path[i] - self.F * self.back for i in born])
+        spread = 0.05 * S * age[:, None] * np.stack([np.sin(self.b_wob[w] * 3), np.cos(self.b_wob[w] * 5),
+                                                    np.zeros(len(age))], -1)
+        P[w] = src + spread + np.outer(rise * 0.6 * age, (0, 0, 1))
+        V = (P[:, None, :] + self.ico[None] * self.b_size[:, None, None]).reshape(-1)
+        me = self.bubble_ob.data
+        me.vertices.foreach_set("co", V.astype(np.float32))
+        me.update()
+
+    # -- light ----------------------------------------------------------------------------------
+    def lights(self):
+        """The sun through the surface, nearly overhead, leaning a little towards the deep
+        camera (its shafts slant across the frame); a faint blue from below for the bellies."""
+        sd = bpy.data.lights.new("sea_sun", "SUN")
+        sd.color = tuple(bs.hex_to_linear(self.look["sun_color"]))
+        sd.energy = float(self.look["sun_strength"])
+        sd.angle = math.radians(2.0)
+        ba._try(sd, "use_shadow_jitter", False)
+        ba._try(sd, "volume_factor", 1.0)
+        so = bpy.data.objects.new("sea_sun", sd)
+        self.sc.collection.objects.link(so)
+        so.rotation_euler = self.sun_down.to_track_quat("-Z", "Y").to_euler()
+        fd = bpy.data.lights.new("sea_fill", "SUN")
+        fd.color = (0.1, 0.35, 0.6)
+        fd.energy = 1.2
+        fd.angle = math.radians(60)
+        ba._try(fd, "use_shadow", False)
+        ba._try(fd, "volume_factor", 0.0)
+        fo = bpy.data.objects.new("sea_fill", fd)
+        self.sc.collection.objects.link(fo)
+        fo.rotation_euler = Vector((0.2, 0.1, 1.0)).normalized().to_track_quat("-Z", "Y").to_euler()
+
+    def compositor(self):
+        sc = self.sc
+        ng = bpy.data.node_groups.new("cold_open_lens", "CompositorNodeTree")
+        ng.interface.new_socket("Image", in_out="OUTPUT", socket_type="NodeSocketColor")
+        sc.compositing_node_group = ng
+        ba._try(sc.render, "use_compositing", True)
+        ba._try(sc.render, "compositor_device", "GPU")
+        nb = NB(ng)
+        rl = nb.node("CompositorNodeRLayers")
+        self.gain = nb.node("ShaderNodeMix", data_type="RGBA", blend_type="MULTIPLY", Factor=1.0)
+        ng.links.new(rl.outputs["Image"], self.gain.inputs[6])
+        img = self.gain.outputs[2]
+        g = nb.node("CompositorNodeGlare", Type="Bloom", Quality="High")
+        for k, v in dict(Threshold=0.8, Smoothness=0.6, Strength=0.45, Size=0.8,
+                         Tint=(0.8, 0.95, 1.0)).items():
+            nb.set(g.inputs[k], v)
+        ng.links.new(img, g.inputs["Image"])
+        ng.links.new(nb.mix(1.0, img, g.outputs["Glare"], "ADD"), nb.node("NodeGroupOutput").inputs[0])
+
+    def frame(self, cam, shot, ev, focus):
+        g = 2.0 ** (ev + self.TRIM.get(shot, 0.0))
+        sock = self.gain.inputs[7]
+        if abs(sock.default_value[0] - g) > 1e-6:
+            sock.default_value = (g, g, g, 1.0)
+        cd = cam.data
+        mw = cam.matrix_world
+        s = max(0.05, (focus - mw.translation).dot(-(mw.to_3x3() @ Vector((0, 0, 1)))))
+        f = cd.lens / 1000.0
+        b = self.BLUR.get(shot, 0.02) * cd.sensor_width / 1000.0
+        cd.dof.use_dof = True
+        cd.dof.focus_distance = s
+        cd.dof.aperture_fstop = max(0.5, f * f / (b * max(1e-3, s - f)))
+        cd.dof.aperture_blades = 0
+        cd.dof.aperture_ratio = 1.0
+
+
+def deep_sea(sc, co, eevee):
+    return DeepSea(sc, co, eevee)
+
+
 def sunset_road(sc, co, eevee):
     return SunsetRoad(sc, co, eevee)
 
 
-SETS = {"sunset_road": sunset_road, "night_desk": night_desk}
+SETS = {"sunset_road": sunset_road, "night_desk": night_desk, "deep_sea": deep_sea}
 
 
 # ---------------------------------------------------------------------------- the shoot
@@ -1595,9 +1987,38 @@ class ColdOpen:
     def shot(self, k):
         return [n for f, n in self.shots if f <= k][-1] if k >= self.shots[0][0] else self.shots[0][1]
 
+    def _cam_at(self, k):
+        cam = self.co["camera"]
+        k = min(max(k, 0), len(cam["pos"]) - 1)
+        loc = TO_B @ Vector(cam["pos"][k])
+        tgt = TO_B @ Vector(cam["target"][k])
+        return loc, (tgt - loc).to_track_quat("-Z", "Y")
+
+    def _key_camera(self, k):
+        """Key the camera either side of k within its shot (a tracking camera blurs with what
+        it follows; nothing blurs across a cut)."""
+        T = self.BLUR_AT
+        lo = max([f for f, _ in self.shots if f <= k] or [0])
+        hi = min([f for f, _ in self.shots if f > k] or [len(self.co["camera"]["pos"])]) - 1
+        ob = self.cam
+        ob.animation_data_clear()
+        ob.rotation_mode = "QUATERNION"
+        prev = None
+        for dk in (-1, 0, 1):
+            loc, q = self._cam_at(min(max(k + dk, lo), hi))
+            if prev is not None and q.dot(prev) < 0:
+                q.negate()
+            prev = q
+            ob.location, ob.rotation_quaternion = loc, q
+            ob.keyframe_insert("location", frame=T + dk)
+            ob.keyframe_insert("rotation_quaternion", frame=T + dk)
+        self.sc.frame_set(T)
+
     def apply(self, f):
         co = self.co
         k = min(max(f - co["start"], 0), len(co["spin"]) - 1)
+        if hasattr(self.set, "tick"):
+            self.set.tick(k, float(self.tl.get("fps", 30)))
         if self.blur:
             self._key_rig(k)
         else:
@@ -1609,8 +2030,11 @@ class ColdOpen:
         cam = co["camera"]
         loc = TO_B @ Vector(cam["pos"][k])
         tgt = TO_B @ Vector(cam["target"][k])
-        self.cam.location = loc
-        self.cam.rotation_euler = (tgt - loc).to_track_quat("-Z", "Y").to_euler()
+        if self.blur and getattr(self.set, "KEY_CAMERA", False):
+            self._key_camera(k)
+        else:
+            self.cam.location = loc
+            self.cam.rotation_euler = (tgt - loc).to_track_quat("-Z", "Y").to_euler()
         self.cam.data.lens = cam["lens"][k]
         if self.disc is not None:                     # the sun stays at infinity
             self.disc.location = loc + self.sun_dir * DISC_AT
@@ -1618,7 +2042,8 @@ class ColdOpen:
         ev = self.exposure + float(cam.get("exposure", [0.0] * (k + 1))[k])
         if hasattr(self.set, "frame"):
             px, pz = co["pivot"]
-            chest = TO_B @ Vector((px, co["ground_y"] - 0.6 * co["height"], pz))
+            chest = TO_B @ Vector(cam["focus"][k] if cam.get("focus") else
+                                  (px, co["ground_y"] - 0.6 * co["height"], pz))
             bpy.context.view_layer.update()
             self.set.frame(self.cam, self.shot(k), ev, chest)
         else:

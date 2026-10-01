@@ -56,6 +56,14 @@ function background(f) {
       const y = row * 150 + (k % 2) * 34 - drift * 0.55;
       pawPrint(x, y, 34, TH.accent2, -0.5, CX, 0.1);
     }
+  } else if (t === 'abyss') {
+    // the deep: light from the surface above, fading into the dark below
+    const g = CX.createLinearGradient(0, 0, 0, L);
+    g.addColorStop(0, TH.bg2); g.addColorStop(0.6, mix(TH.bg2, TH.bg, 0.65)); g.addColorStop(1, TH.bg);
+    CX.fillStyle = g; CX.fillRect(0, 0, L, L);
+    const h = CX.createRadialGradient(L / 2, -L * 0.2, 40, L / 2, -L * 0.2, L);
+    h.addColorStop(0, rgba(TH.accent2, 0.15)); h.addColorStop(1, rgba(TH.accent2, 0));
+    CX.fillStyle = h; CX.fillRect(0, 0, L, L);
   } else if (t === 'grindhouse') {
     // a dark, warm, stained wall under one bulb
     const g = CX.createRadialGradient(L / 2, L * 0.4, 40, L / 2, L / 2, L * 0.82);
@@ -245,6 +253,10 @@ function panel(x, y, w, h, o = {}) {
     CX.fillStyle = rgba('#000000', 0.12); rrect(x + 6, y + 8, w, h, 26); CX.fill();
     CX.fillStyle = TH.panel; rrect(x, y, w, h, 26); CX.fill();
     CX.strokeStyle = TH.ink; CX.lineWidth = 3.5; rrect(x, y, w, h, 26); CX.stroke();
+  } else if (t === 'abyss') {                  // dark glass in a brass frame, riveted at the corners
+    CX.fillStyle = TH.panel; rrect(x, y, w, h, 12); CX.fill();
+    CX.strokeStyle = brassGrad(x, y, x + w, y + h); CX.lineWidth = 4; rrect(x + 2, y + 2, w - 4, h - 4, 11); CX.stroke();
+    for (const [rx, ry] of [[x + 15, y + 15], [x + w - 15, y + 15], [x + 15, y + h - 15], [x + w - 15, y + h - 15]]) rivet(rx, ry, 4.5);
   } else if (t === 'grindhouse') {             // an old title card: double rules, a red tab
     CX.fillStyle = TH.panel; CX.fillRect(x, y, w, h);
     CX.strokeStyle = rgba(TH.ink, 0.55); CX.lineWidth = 2; CX.strokeRect(x + 1, y + 1, w - 2, h - 2);
@@ -263,7 +275,7 @@ function statusIcon(x, y, r, st, p, na = false) {
   const sc = E.spring(clamp(p * 1.6), 2.0, 7);
   if (sc <= 0) return;
   CX.save(); CX.translate(x, y); CX.scale(sc, sc);
-  if (TH.name === 'scan' || TH.name === 'tape') {
+  if (TH.name === 'scan' || TH.name === 'tape' || TH.name === 'abyss') {
     CX.strokeStyle = col; CX.lineWidth = 2.5; circle(0, 0, r); CX.stroke();
     CX.fillStyle = rgba(col, 0.16); circle(0, 0, r); CX.fill();
   } else if (TH.name === 'grindhouse') {        // a box on a form, ticked in ink
@@ -273,7 +285,7 @@ function statusIcon(x, y, r, st, p, na = false) {
   } else {
     CX.fillStyle = col; circle(0, 0, r); CX.fill();
   }
-  const ink = (TH.name === 'scan' || TH.name === 'tape' || TH.name === 'grindhouse') ? col : '#FFFFFF';
+  const ink = (TH.name === 'scan' || TH.name === 'tape' || TH.name === 'grindhouse' || TH.name === 'abyss') ? col : '#FFFFFF';
   if (na) {
     CX.strokeStyle = ink; CX.lineWidth = r * 0.22; CX.lineCap = 'round';
     CX.beginPath(); CX.moveTo(-r * 0.4, 0); CX.lineTo(r * 0.4, 0); CX.stroke();
@@ -314,6 +326,10 @@ function chip(value, lab, x, y, p, k = 0, o = {}) {
     CX.fillStyle = rgba('#000000', 0.4); CX.fillRect(4, 6, w, h);
     CX.fillStyle = TH.paper; CX.fillRect(0, 0, w, h);
     fg = TH.accent; lc = TH.bg;
+  } else if (t === 'abyss') {                 // a gauge plate: dark glass in a brass rim
+    CX.fillStyle = rgba(TH.bg, 0.8); rrect(0, 0, w, h, h / 2); CX.fill();
+    CX.strokeStyle = brassGrad(0, 0, w, h); CX.lineWidth = 3; rrect(1.5, 1.5, w - 3, h - 3, h / 2 - 1.5); CX.stroke();
+    fg = mix(TH.accent, '#FFE9C2', 0.45); lc = TH.accent2;
   } else if (t === 'scan') {
     CX.fillStyle = rgba(TH.bg, 0.72); CX.fillRect(0, 0, w, h);
     CX.strokeStyle = rgba(TH.hud, 0.55); CX.lineWidth = 1.5; CX.strokeRect(0.75, 0.75, w - 1.5, h - 1.5);
@@ -420,6 +436,8 @@ SEG.cold_open = {
     const k = Math.min(f - C.start, C.sun.length - 1);
     if (C.taps) {
       lampGlow(C, k);
+    } else if (C.scene === 'deep_sea') {            // the water's own light: bloom, no sun
+      if (bm) sunBloom(bm, null, 0);
     } else {
       const sun = C.sun[k];
       const lit = sunLight(bm, sun, C, k);
@@ -431,7 +449,7 @@ SEG.cold_open = {
     const bar = C.letterbox * L;
     CX.fillStyle = '#000000'; CX.fillRect(0, 0, L, bar); CX.fillRect(0, L - bar, L, bar);
     if (C.taps) tapCaption(f, C);
-    else {
+    else if (!C.scene) {
       osd(f, s, '\u25B6 PLAY');
       visor(f, s, 'COLD OPEN');
     }
@@ -766,9 +784,92 @@ function titleStamp(f, m, lines, size) {
   rubberStamp(lines, L / 2, cy, sz, col, { rot, sc, alpha, lh: lh / sz, seed: 1 });
 }
 
+// the plaque style: the name engraved in a brass plate that swings up into place on the name's
+// beat, riveted round its edge one rivet after another, a glint crossing it now and then
+function plaqueLayout(lines, size) {
+  const sz = Math.min(size, 108, ...lines.map(l => fitSize(l, size, L - 2 * M - 170, 700, null, -TITLE_TRACK)));
+  const capH = sz * 0.72, lh = sz * 1.04, pad = 64;
+  const w = Math.max(...lines.map(l => measure(l, font(sz, 700), -sz * TITLE_TRACK))) + 170;
+  const h = capH + lh * (lines.length - 1) + 2 * pad;
+  return { sz, capH, lh, pad, w, h, cx: L / 2, cy: 52 + h / 2 };
+}
+function plaqueRivets(P) {
+  const x0 = P.cx - P.w / 2, y0 = P.cy - P.h / 2, ins = 22;
+  const n = Math.max(1, Math.round((P.w - 2 * ins) / 190));
+  const pts = [];
+  for (let i = 0; i <= n; i++) pts.push([x0 + ins + (P.w - 2 * ins) * i / n, y0 + ins]);
+  if (P.h > 160) pts.push([x0 + P.w - ins, P.cy]);
+  for (let i = n; i >= 0; i--) pts.push([x0 + ins + (P.w - 2 * ins) * i / n, y0 + P.h - ins]);
+  if (P.h > 160) pts.push([x0 + ins, P.cy]);
+  return pts;
+}
+function titlePlaque(f, m, lines, size) {
+  const P = plaqueLayout(lines, size);
+  const q = ramp(f, m.name - 5, m.name + 2);
+  if (q <= 0) return;
+  const x0 = P.cx - P.w / 2, y0 = P.cy - P.h / 2, R = 18;
+  CX.save();
+  CX.globalAlpha = clamp(q * 3);
+  CX.translate(0, (1 - E.outBack(q, 1.5)) * -70);
+  CX.fillStyle = rgba('#000000', 0.5); CX.filter = `blur(${12 * S}px)`;
+  rrect(x0 + 6, y0 + 14, P.w, P.h, R); CX.fill(); CX.filter = 'none';
+  CX.fillStyle = brassGrad(x0, y0, x0 + P.w * 0.55, y0 + P.h * 1.6); rrect(x0, y0, P.w, P.h, R); CX.fill();
+  CX.save(); rrect(x0, y0, P.w, P.h, R); CX.clip();
+  for (let k = 0; k < 110; k++) {                // brushed: fine streaks along it
+    CX.fillStyle = rgba(hash(k, 4) < 0.5 ? '#FFF1CC' : '#3A2008', 0.04 + 0.06 * hash(k, 5));
+    CX.fillRect(x0, y0 + hash(k, 3) * P.h, P.w, 0.8 + hash(k, 6) * 1.6);
+  }
+  const gk = (f - m.name - 8) % 96;              // a glint crossing it every few seconds
+  if (f >= m.name + 8 && gk < 26) {
+    const gx = lerp(x0 - 300, x0 + P.w + 300, gk / 26);
+    const g = CX.createLinearGradient(gx - 140, y0, gx + 140, y0 + P.h);
+    g.addColorStop(0, rgba('#FFF6DE', 0)); g.addColorStop(0.5, rgba('#FFF6DE', 0.42)); g.addColorStop(1, rgba('#FFF6DE', 0));
+    CX.globalCompositeOperation = 'screen'; CX.fillStyle = g; CX.fillRect(x0, y0, P.w, P.h);
+    CX.globalCompositeOperation = 'source-over';
+  }
+  CX.restore();
+  CX.lineWidth = 2.5;                            // the bevel and an engraved border
+  CX.strokeStyle = rgba('#FFF4D6', 0.55); rrect(x0 + 1.5, y0 + 1.5, P.w - 3, P.h - 3, R); CX.stroke();
+  CX.strokeStyle = rgba('#241204', 0.6); CX.lineWidth = 2;
+  rrect(x0 + 44, y0 + 40, P.w - 88, P.h - 80, 8); CX.stroke();
+  CX.strokeStyle = rgba('#FFF1CC', 0.35); CX.lineWidth = 1.2;
+  rrect(x0 + 45.5, y0 + 41.5, P.w - 88, P.h - 80, 8); CX.stroke();
+  // the name, engraved letter by letter: the cut dark, a light lip under it, a spark at the tool
+  const fnt = font(P.sz, 700), sp = -P.sz * TITLE_TRACK;
+  const e = ramp(f, m.name + 1, m.name + 1 + Math.max(10, lines.join('').length * 0.8)) * lines.length;
+  const ink = mix(TH.accent, '#170B02', 0.74);
+  lines.forEach((ln, i) => {
+    const ei = clamp(e - i);
+    if (ei <= 0) return;
+    const y = y0 + P.pad + P.capH + i * P.lh, w = measure(ln, fnt, sp), xl = P.cx - w / 2;
+    CX.save(); CX.beginPath(); CX.rect(xl - 8, y - P.sz, (w + 16) * ei, P.sz * 1.3); CX.clip();
+    text(ln, P.cx, y + 2.5, { font: fnt, color: rgba('#FFF0C8', 0.6), align: 'center', spacing: sp });
+    text(ln, P.cx, y, { font: fnt, color: ink, align: 'center', spacing: sp });
+    CX.restore();
+    if (ei < 1) {
+      const sx = xl - 8 + (w + 16) * ei, sy = y - P.capH * 0.45;
+      const g = CX.createRadialGradient(sx, sy, 0, sx, sy, 46);
+      g.addColorStop(0, rgba('#FFF6DA', 0.95)); g.addColorStop(0.3, rgba('#FFC867', 0.5)); g.addColorStop(1, rgba('#FF9A2A', 0));
+      CX.save(); CX.globalCompositeOperation = 'screen'; CX.fillStyle = g; circle(sx, sy, 46); CX.fill(); CX.restore();
+    }
+  });
+  // the rivets, punched in one after another round the edge as it lands
+  plaqueRivets(P).forEach(([rx, ry], k) => {
+    const rk = f - (m.name + 1 + k * 1.3);
+    if (rk < 0) return;
+    rivet(rx, ry, 8 * (1 + 0.5 * Math.exp(-rk / 1.6)));
+    if (rk < 4) {
+      CX.strokeStyle = rgba('#FFF4D6', 0.8 * (1 - rk / 4)); CX.lineWidth = 2;
+      circle(rx, ry, 9 + rk * 5); CX.stroke();
+    }
+  });
+  CX.restore();
+}
+
 SEG.title = {
   shake(f) {
     if (TH.title === 'stamp') shakeAt(f, [D.marks.title.hero], 9, 8);
+    if (TH.title === 'plaque') shakeAt(f, [D.marks.title.name + 1], 5, 7);
   },
   draw(f, s) {
     const m = D.marks.title, b = B();
@@ -782,6 +883,7 @@ SEG.title = {
     const y0 = lines.length > 1 ? 146 : 184;
     let nameBottom = y0 + (lines.length - 1) * size * 0.98 + size * 0.2;
     if (TH.title === 'stamp') { const st = stampLayout(lines, size); nameBottom = st.cy + st.h / 2 - 12; }
+    if (TH.title === 'plaque') { const pl = plaqueLayout(lines, size); nameBottom = pl.cy + pl.h / 2 - 8; }
     if (bm) {
       const r = heroRect(nameBottom + 26);
       const hp = ramp(f, m.hero, m.hero + b * 1.5);
@@ -797,6 +899,14 @@ SEG.title = {
         const g = CX.createRadialGradient(cx, gy, 10, cx, gy, gw * 1.3);
         g.addColorStop(0, rgba(TH.accent, 0.45 * hp)); g.addColorStop(1, rgba(TH.accent, 0));
         CX.fillStyle = g; CX.beginPath(); CX.ellipse(cx, gy, gw * 1.3, 60, 0, 0, Math.PI * 2); CX.fill();
+      } else if (t === 'abyss') {                // a pool of light on the sea floor
+        CX.save(); CX.translate(cx, gy); CX.scale(1, 0.18);
+        const g = CX.createRadialGradient(0, 0, 10, 0, 0, gw * 1.5);
+        g.addColorStop(0, rgba(TH.accent2, 0.28 * hp)); g.addColorStop(1, rgba(TH.accent2, 0));
+        CX.fillStyle = g; circle(0, 0, gw * 1.5); CX.fill();
+        CX.restore();
+        CX.fillStyle = rgba('#000000', 0.45 * hp); CX.filter = `blur(${14 * S}px)`;
+        CX.beginPath(); CX.ellipse(cx, gy, gw * 0.75, 18, 0, 0, Math.PI * 2); CX.fill(); CX.filter = 'none';
       } else if (t === 'grindhouse') {           // a pool of bulb light on the floor
         CX.save(); CX.translate(cx, gy); CX.scale(1, 0.16);
         const g = CX.createRadialGradient(0, 0, 10, 0, 0, gw * 1.6);
@@ -837,6 +947,13 @@ SEG.title = {
         const sy = 0.6 + 0.4 * q, sx = 1.25 - 0.25 * q;
         CX.translate(cx, r.box[3]); CX.scale(sx * q, sy * q); CX.translate(-cx, -r.box[3]);
         CX.drawImage(bm, r.x, r.y, r.w, r.h);
+      } else if (t === 'abyss') {                 // it rises out of the murk into focus
+        const e = E.outCubic(hp);
+        CX.translate(0, (1 - e) * 46);
+        CX.globalAlpha = clamp(hp * 2);
+        CX.filter = `blur(${lerp(16, 0, e) * S}px) brightness(${lerp(0.45, 1, e)}) saturate(${lerp(0.4, 1, e)})`;
+        CX.drawImage(bm, r.x, r.y, r.w, r.h);
+        CX.filter = 'none';
       } else if (t === 'grindhouse') {            // it flickers up out of the dark, like a bad bulb
         const on = hp >= 1 ? 1 : clamp(hp * 1.3) * (hash(f, 41) < 0.3 + 0.7 * hp ? 1 : 0.25);
         CX.globalAlpha = on;
@@ -862,6 +979,8 @@ SEG.title = {
       const style = TH.title;
       if (style === 'stamp') {                  // one stamp for all the lines
         if (li === 0) titleStamp(f, m, lines, size);
+      } else if (style === 'plaque') {          // one plaque for all the lines
+        if (li === 0) titlePlaque(f, m, lines, size);
       } else if (style === 'decode') {
         const glyph = '#%&@0123456789<>/\\{}[]=+*ABCDEFGHKMNRSTXZ';
         kinetic(ln, L / 2, y, fnt, (i, n, gl) => {
@@ -1057,6 +1176,14 @@ function lowerThird(num, title, p, k) {
   } else if (t === 'tape') {
     text(`CHAPTER ${String(num).padStart(2, '0')}`, x, y + 6, { font: font(40, 400, VCR), color: TH.accent2, shadow: rgba('#000', 0.8), sx: 3, sy: 3, spacing: 2 });
     text(UP(title), x, y + 12 + tsize * 0.95, { size: tsize, color: TH.ink, shadow: rgba(TH.accent, 0.8), sx: 4, sy: 0 });
+  } else if (t === 'abyss') {                 // a dive log: the section's number, a riveted brass rule
+    label(`dive ${String(num).padStart(2, '0')}`, x, y + 4, { color: TH.accent2, shadow: rgba('#000', 0.85), blur: 8 });
+    CX.save(); CX.shadowColor = rgba('#000', 0.75); CX.shadowBlur = 14;
+    text(UP(title), x, y + 14 + tsize * 0.95, { size: tsize, color: TH.ink });
+    CX.restore();
+    const rw = (tw_ + 30) * E.outExpo(clamp((k - 2) / 14)), ry = y + 30 + tsize;
+    CX.fillStyle = brassGrad(x, ry, x, ry + 6); CX.fillRect(x, ry, rw, 6);
+    if (rw > 14) { rivet(x + 5, ry + 3, 4.5); rivet(x + rw - 5, ry + 3, 4.5); }
   } else if (t === 'grindhouse') {            // a reel label, the title typed on, a red rule
     CX.translate(-slide, 0);
     label(`reel ${String(num).padStart(2, '0')}`, x, y + 4, { color: TH.accent2, shadow: rgba('#000', 0.9), blur: 6 });
@@ -1102,7 +1229,7 @@ function hudCounters(f, s, step, nSteps, pieces, done) {
   const fnt = font(64, 700);
   const w2 = tnumWidth(` / ${nSteps}`, font(34, 600));
   tnum(str, x - w2, y + 60, { font: fnt, spacing: track(64), color: TH.ink, align: 'right',
-    shadow: t === 'scan' ? null : t === 'grindhouse' ? rgba('#000000', 0.85) : rgba('#ffffff', 0.6), blur: 12 });
+    shadow: t === 'scan' ? null : t === 'grindhouse' || t === 'abyss' ? rgba('#000000', 0.85) : rgba('#ffffff', 0.6), blur: 12 });
   tnum(` / ${nSteps}`, x, y + 60, { font: font(34, 600), color: lc, align: 'right', alpha: 0.8 });
 }
 
@@ -1123,7 +1250,7 @@ function heightCounter(f, s, mm, total) {
   label('height', x, y - 2, { align: 'right', color: lc });
   const w2 = tnumWidth(` / ${tot} ${unit}`, font(34, 600));
   tnum(v, x - w2, y + 60, { font: font(64, 700), spacing: track(64), color: TH.ink, align: 'right',
-    shadow: t === 'scan' ? null : t === 'grindhouse' ? rgba('#000000', 0.85) : rgba('#ffffff', 0.6), blur: 12 });
+    shadow: t === 'scan' ? null : t === 'grindhouse' || t === 'abyss' ? rgba('#000000', 0.85) : rgba('#ffffff', 0.6), blur: 12 });
   tnum(` / ${tot} ${unit}`, x, y + 60, { font: font(34, 600), color: lc, align: 'right', alpha: 0.8 });
 }
 
@@ -1146,9 +1273,9 @@ function progressBar(f, s, p, done) {
   }
   const trackCol = t === 'scan' ? rgba(TH.hud, 0.25) : rgba(TH.ink, 0.16);
   const fillCol = t === 'scan' ? TH.hud : TH.accent;
-  const h = t === 'scan' ? 4 : t === 'grindhouse' ? 8 : 14;
+  const h = t === 'scan' ? 4 : t === 'grindhouse' ? 8 : t === 'abyss' ? 10 : 14;
   if (t !== 'scan') {
-    CX.fillStyle = t === 'grindhouse' ? rgba('#000000', 0.45) : rgba('#ffffff', 0.7);
+    CX.fillStyle = t === 'grindhouse' || t === 'abyss' ? rgba('#000000', 0.45) : rgba('#ffffff', 0.7);
     rrect(x0 - 4, y - h / 2 - 4, x1 - x0 + 8, h + 8, (h + 8) / 2); CX.fill();
   }
   CX.fillStyle = trackCol; rrect(x0, y - h / 2, x1 - x0, h, h / 2); CX.fill();
@@ -1169,7 +1296,7 @@ function progressBar(f, s, p, done) {
   const lc = t === 'scan' ? TH.hud : TH.ink;
   const txt = `${fmt(pieces)} / ${fmt(D.model.pieces)}`;
   const tw2 = tnum(txt, x1, y - 24, { size: 34, color: TH.ink, align: 'right',
-    shadow: t === 'scan' ? null : t === 'grindhouse' ? rgba('#000000', 0.85) : rgba('#ffffff', 0.7), blur: 10 });
+    shadow: t === 'scan' ? null : t === 'grindhouse' || t === 'abyss' ? rgba('#000000', 0.85) : rgba('#ffffff', 0.7), blur: 10 });
   label('pieces', x1 - tw2 - 14, y - 26, { align: 'right', color: lc });
   if (done) {
     const q = tw(f, D.build.land_last, D.build.land_last + 10);
@@ -1327,10 +1454,55 @@ function checksPanel(f, s, lay) {
 }
 
 // ------------------------------------------------------------------------------ mechanism
+// a porthole label (the abyss callout): a little brass-ringed window where the line comes in,
+// popping in, then a dark plate with a brass rim sliding out of it with the words
+function portholeLabel(title, sub, x, y, side, p, k) {
+  const maxW = (side === 'center' ? 296 : 440) - 40;
+  const h = sub ? 86 : 62, d = side === 'center' ? 52 : h;     // a row of three: a small window
+  const T = UP(title);
+  const ts = Math.min(30, fitSize(T, 30, maxW - d - 36, 700, null, -0.022));
+  const [U, us] = fitMono(sub ? UP(sub) : '', 17, maxW - d - 36);
+  const tw_ = measure(T, font(ts, 700), track(ts)), sw = U ? measure(U, monoFont(us), monoSpace(us)) : 0;
+  const w = Math.max(tw_, sw) + 40 + d;
+  const bx = side === 'left' ? x : side === 'center' ? x - w / 2 : x - w;
+  const portL = side !== 'right';
+  const pcx = portL ? bx + d / 2 : bx + w - d / 2, pcy = y + h / 2;
+  const q1 = E.outBack(clamp(p * 2.2), 1.8), q2 = E.outExpo(clamp((p - 0.25) / 0.75));
+  CX.save(); CX.globalAlpha = clamp(p * 3);
+  const pw = (w - d / 2) * q2;
+  if (pw > 1) {
+    const px0 = portL ? pcx : pcx - pw, ph = h - 14;
+    CX.fillStyle = rgba(TH.bg, 0.86); rrect(px0, y + 7, pw, ph, ph / 2); CX.fill();
+    CX.strokeStyle = brassGrad(px0, y, px0 + pw, y + h); CX.lineWidth = 2.5; rrect(px0, y + 7, pw, ph, ph / 2); CX.stroke();
+    CX.save(); CX.beginPath(); CX.rect(px0, y, pw, h); CX.clip();
+    const tx = portL ? bx + d + 12 : bx + w - d - 12, al = portL ? 'left' : 'right';
+    text(T, tx, y + (U ? 41 : 43), { size: ts, color: TH.ink, align: al });
+    if (U) text(U, tx, y + 68, { font: monoFont(us), color: TH.accent2, align: al, spacing: monoSpace(us) });
+    CX.restore();
+  }
+  CX.save(); CX.translate(pcx, pcy); CX.scale(q1, q1);
+  const r = d / 2 - 3;
+  CX.fillStyle = rgba('#000000', 0.45); circle(3, 5, r + 3); CX.fill();
+  const g = CX.createRadialGradient(-r * 0.3, -r * 0.35, 2, 0, 0, r);
+  g.addColorStop(0, mix(TH.accent2, '#ffffff', 0.55)); g.addColorStop(0.45, mix(TH.accent2, TH.bg2, 0.45));
+  g.addColorStop(1, TH.bg);
+  CX.fillStyle = g; circle(0, 0, r - 5); CX.fill();
+  CX.strokeStyle = rgba('#ffffff', 0.5); CX.lineWidth = 2;
+  CX.beginPath(); CX.arc(0, 0, r * 0.62, Math.PI * 1.08, Math.PI * 1.42); CX.stroke();
+  CX.strokeStyle = brassGrad(-r, -r, r, r); CX.lineWidth = 8; circle(0, 0, r - 2); CX.stroke();
+  for (let i = 0; i < 8; i++) {
+    const a = i / 8 * Math.PI * 2 + 0.2;
+    rivet(Math.cos(a) * (r - 2), Math.sin(a) * (r - 2), 2.4);
+  }
+  CX.restore();
+  CX.restore();
+}
+
 function calloutLabel(title, sub, x, y, side, p, k) {
   if (p <= 0) return;
   const t = TH.name;
   if (t === 'grindhouse') { evidenceTag(title, sub, x, y, side, p, k); return; }
+  if (t === 'abyss') { portholeLabel(title, sub, x, y, side, p, k); return; }
   const al = side === 'left' ? 'left' : 'right';
   // a row of labels above/below the model is spaced 320 px apart: keep each under that
   const maxW = (side === 'center' ? 296 : 440) - 40;
@@ -1410,7 +1582,7 @@ SEG.mechanism = {
         }
         CX.stroke();
         // anchor dot and ring
-        CX.fillStyle = TH.name === 'brand' ? TH.accent : TH.name === 'playful' || TH.name === 'grindhouse' ? TH.accent : TH.hud;
+        CX.fillStyle = TH.name === 'brand' ? TH.accent : TH.name === 'playful' || TH.name === 'grindhouse' || TH.name === 'abyss' ? TH.accent : TH.hud;
         circle(ax, ay, 6.5 * E.outBack(clamp(p * 2))); CX.fill();
         const rp = ((f - t0) % 24) / 24;
         CX.strokeStyle = rgba(TH.name === 'brand' || TH.name === 'playful' || TH.name === 'grindhouse' ? TH.accent : TH.hud, 1 - rp);
@@ -1448,7 +1620,10 @@ function gauge(f, s) {
   // the name over the two ends' labels, over the bar; the reading under the knob
   const bx0 = x0 - 40, bw = w + 80, by0 = y - 78, bh = 132;
   if (t === 'brand' || t === 'playful') { CX.fillStyle = rgba(TH.bg, 0.86); rrect(bx0, by0, bw, bh, 26); CX.fill(); }
-  else { CX.fillStyle = rgba('#000', 0.45); CX.fillRect(bx0, by0, bw, bh); }
+  else if (t === 'abyss') {                    // a gauge in a brass bezel
+    CX.fillStyle = rgba(TH.bg, 0.8); rrect(bx0, by0, bw, bh, 18); CX.fill();
+    CX.strokeStyle = brassGrad(bx0, by0, bx0 + bw, by0 + bh); CX.lineWidth = 3; rrect(bx0 + 1.5, by0 + 1.5, bw - 3, bh - 3, 17); CX.stroke();
+  } else { CX.fillStyle = rgba('#000', 0.45); CX.fillRect(bx0, by0, bw, bh); }
   const lab = MM.labels;
   const ink = TH.ink;
   label(MM.name, x0, y - 50, { color: t === 'scan' ? TH.hud : t === 'tape' || t === 'grindhouse' ? TH.accent2 : TH.accent,
@@ -1613,6 +1788,13 @@ function wipe(f, p, bm, i) {
       CX.fillRect(0, 0, L, L);
     }
     CX.restore();
+    return;
+  }
+  if (t === 'abyss') {                      // the next colourway through a porthole opening up
+    const r = p * (Math.hypot(L, L) / 2 + 60);
+    if (r <= 1) return;
+    CX.save(); CX.beginPath(); CX.arc(L / 2, L / 2, r, 0, Math.PI * 2); CX.clip(); drawPlate(bm); CX.restore();
+    brassRing(L / 2, L / 2, r, 40, p * 1.2, 18);
     return;
   }
   if (t === 'tape') {                       // a tracking band rolls down the new tape

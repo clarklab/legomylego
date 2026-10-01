@@ -2,6 +2,7 @@
 no browser)."""
 import json
 import math
+import re
 
 import numpy as np
 import pytest
@@ -339,6 +340,45 @@ def test_grindhouse_theme():
     assert 90 < 60 * T.FPS / th["beat"] < 110                 # a slower, heavier pulse
 
 
+def test_abyss_theme():
+    """The deep-sea theme: every token the other themes have, the site's type, deep blues with
+    brass and aqua, its own wipe, title, callouts, overlay and music, a slow pulse."""
+    th = themes.theme_for({"theme": "abyss"})
+    for name, other in themes.THEMES.items():
+        assert set(other) <= set(th), name
+        assert set(other["grade"]) <= set(th["grade"])
+    assert (th["transition"], th["title"], th["callout"], th["overlay"], th["music"]) == (
+        "porthole", "plaque", "porthole", "caustics", "abyss")
+    assert th["display"] == themes.SITE_DISPLAY and th["mono"] == themes.SITE_MONO
+    from brickkit.video import audio as A
+    assert th["music"] in A.STYLES and th["music"] in A.PROG
+    assert 95 < 60 * T.FPS / th["beat"] < 115                 # slow, but it still drives
+
+    def rgb(h):
+        return [int(h[i:i + 2], 16) for i in (1, 3, 5)]
+    for key in ("backdrop", "bg", "bg2"):                     # deep blue-green, dark
+        r, g, b = rgb(th[key])
+        assert b > r and g > r and (r + g + b) / 3 < 110, key
+    r, g, b = rgb(th["accent"])                               # brass: warm
+    assert r > g > b
+    r, g, b = rgb(th["accent2"])                              # aqua: cool and bright
+    assert g > r and b > r and g > 180
+
+
+def test_the_page_knows_every_theme():
+    """Each theme's wipe is one of the compositor's WIPES, its title style is drawn, its band,
+    post look and brick palette exist (a typo there would fall back without a word)."""
+    from brickkit.video.compose import WEB
+    fx = (WEB / "fx.js").read_text()
+    seg = (WEB / "segments.js").read_text()
+    for name, th in themes.THEMES.items():
+        tr = th["transition"]
+        assert re.search(rf"^  {tr}\(f, p, t\) {{|^WIPES\.{tr} = function", fx, re.M), (name, tr)
+        assert th["title"] == "slam" or f"=== '{th['title']}'" in seg, (name, th["title"])
+        if name != "brand":
+            assert f"t === '{name}'" in fx or f"TH.name === '{name}'" in fx, name
+
+
 def test_trial_theme():
     """`brickkit video --theme`: another theme for one run, the model's overrides left out; over
     the model's rendered plates it keeps their tempo and backdrop."""
@@ -380,6 +420,27 @@ def test_grindhouse_cues(engine, tmp_path):
     # the other themes keep their sound
     other = R.cue_sheet(rp, tl, themes.theme_for({"theme": "brand"}))
     assert not {e["type"] for e in other["events"]} & {"chainsaw", "burn", "typewriter"}
+
+
+def test_abyss_edit(engine, tmp_path):
+    """The abyss edit: a porthole over the cuts between segments (bricks into the build, the
+    house studs into the outro), a sonar band between build sections, the abyss score on its
+    own beat; the plan's sounds are the house ones (the score carries the theme)."""
+    model = _rigged(engine)
+    theme = themes.theme_for({"theme": "abyss"})
+    segs = T.plan_segments(model, booklet=False, beat=theme["beat"])
+    tl = T.build_timeline(engine, model, segs, beat=theme["beat"], backdrop=theme["backdrop"])
+    rp = R.plan_reel(engine, Project("_sample"), model, tl, theme, tmp_path, tmp_path,
+                     log=lambda m: None)
+    cues = rp["cues"]
+    assert cues["style"] == "abyss" and cues["beat_frames"] == 17
+    kinds = {t["to"]: t["type"] for t in rp["transitions"] if t["type"] != "band"}
+    assert kinds.pop("build") == "bricks" and kinds.pop("outro") == "studs"
+    assert set(kinds.values()) == {"porthole"}
+    bands = [t for t in rp["transitions"] if t["type"] == "band"]
+    assert len(bands) == len(tl["build"]["sections"]) - 1
+    brand = R.cue_sheet(rp, tl, themes.theme_for({"theme": "brand"}))
+    assert sorted(e["type"] for e in cues["events"]) == sorted(e["type"] for e in brand["events"])
 
 
 # ---------------------------------------------------------------------------- cold open
@@ -588,7 +649,7 @@ def test_cold_open_tap(engine):
     _, _, _, tl2 = _tap_timeline(engine, taps=[0.5, 2.0, 2.5])
     assert [f - tl2["cold_open"]["start"] for f, _ in tl2["cold_open"]["taps"]] == [15, 60, 75]
     _, _, _, tl3 = _cold_timeline(engine)
-    assert not {"taps", "led", "leds", "motion", "front"} & set(tl3["cold_open"])
+    assert not {"taps", "led", "leds", "motion", "front", "glide"} & set(tl3["cold_open"])
     with pytest.raises(SystemExit):
         T.cold_open_config(model, {"cold_open": {"motion": "wiggle"}})
 
@@ -639,6 +700,91 @@ def test_cold_open_tap_reel_and_cues(engine, tmp_path):
     assert not {"snap", "power", "power_off", "wind"} & {e["type"] for e in cues["events"]
                                                          if e["frame"] < cut}
     assert cues["events"] != rp["cues"]["events"]
+
+
+def _glide_timeline(engine, **cold):
+    model = _rigged(engine)
+    model.meta["video"] = {"cold_open": dict({"scene": "deep_sea", "seconds": 5}, **cold)}
+    theme = themes.theme_for({"theme": "scan"})
+    segs = T.plan_segments(model, booklet=False, beat=theme["beat"])
+    return model, theme, segs, T.build_timeline(engine, model, segs, beat=theme["beat"],
+                                                backdrop=theme["backdrop"])
+
+
+def test_cold_open_glide(engine):
+    """deep_sea's motion is a glide (unless told otherwise): the whole model carried forward
+    along its long axis (GLIDE_LENGTHS of its length, through its centre at mid-performance),
+    tilting a few degrees, its pose playing; a display stand hidden; three shots - approach,
+    side, bow - all keeping it in front of the camera; its LEDs lit throughout."""
+    model, theme, segs, tl = _glide_timeline(engine)
+    co = tl["cold_open"]
+    m = co["cut"] - co["start"]
+    assert co["motion"] == "glide" and co["scene"] == "deep_sea" and "stand" in T.COLD_HIDE["deep_sea"]
+    assert [n for _, n in co["shots"]] == ["approach", "side", "bow"]
+    g = co["glide"]
+    path = np.array(g["path"])
+    F = np.array(g["forward"])
+    assert len(path) == len(co["spin"]) == len(co["camera"]["focus"]) == m
+    assert np.dot(path[-1] - path[0], F) == pytest.approx(T.GLIDE_LENGTHS * g["length"], rel=0.02)
+    assert abs(np.dot(F, g["side"])) < 1e-6 and F[1] == 0
+    centres = []                                    # the spin carries one point along the path
+    for k in (0, m // 3, m // 2, m - 1):
+        M = np.array(co["spin"][k]).reshape(4, 4)
+        R_ = M[:3, :3]
+        centres.append(np.linalg.solve(R_, path[k] - M[:3, 3]))
+        assert np.degrees(np.arccos(np.clip((np.trace(R_) - 1) / 2, -1, 1))) < 8
+    assert np.allclose(centres, centres[0], atol=1e-3 * g["length"])
+    assert np.ptp(co["u"]) > 0.5                    # the pose plays
+    assert co["leds"] and co["led"] == [1.0] * m and max(co["rev"]) == 0
+    c = co["camera"]
+    bow = co["shots"][2][0]
+    for k in range(0, m, 4):                        # in frame (till its bow sweeps past)
+        x, y, z = T.project(path[k][None], c["pos"][k], c["target"][k], c["lens"][k], 1080.0)[0]
+        assert z > 0 and (k >= bow or (0 < x < 1080 and 0 < y < 1080))
+        assert np.linalg.norm(np.array(c["pos"][k]) - path[k]) > g["extent"]["half"]
+    json.dumps(co)
+    # a stand is hidden; a motion given in the config wins
+    model.main.items[0].tag = "stand"
+    co2 = T.cold_open_config(model, {"cold_open": {"scene": "deep_sea", "motion": "pose"}})
+    assert co2["motion"] == "pose" and "stand" in co2["hide_tags"]
+
+
+def test_cold_open_glide_reel_and_cues(engine, tmp_path):
+    """The compositor gets no sun underwater; the sound is the set's own recordings (shared,
+    brickkit/data/audio/deep_sea) unless the model brings its own: the deep under it all, a
+    ping at the start and after each cut, bubbles on the cuts and as the bow passes, a groan,
+    the propeller churning louder as the stern nears; all stopped at the cut."""
+    from types import SimpleNamespace
+    model, theme, segs, tl = _glide_timeline(engine)
+    rp = R.plan_reel(engine, Project("_sample"), model, tl, theme, tmp_path, tmp_path,
+                     log=lambda m: None)
+    co, g = tl["cold_open"], rp["cold_open"]
+    assert g["scene"] == "deep_sea" and all(s is None for s in g["sun"])
+    cut = co["cut"]
+    cues = rp["cues"]
+    smp = [e for e in cues["events"] if e["type"] == "sample" and e["frame"] < segs[0]["end"]]
+    files = {e["file"] for e in smp}
+    assert set(cues["samples"]) >= files and all(
+        "brickkit/data/audio/deep_sea" in cues["samples"][f]["path"] for f in files)
+    roles = R.SCENE_SOUNDS["deep_sea"]
+    amb = [e for e in smp if e["file"] == roles["ambience"]]
+    assert len(amb) == 1 and amb[0]["loop"] and amb[0]["until"] == cut
+    shots = [co["start"] + f for f, _ in co["shots"]]
+    pings = sorted(e["frame"] for e in smp if e["file"] in roles["pings"])
+    assert len(pings) == 3 and pings[0] < shots[1] and shots[1] < pings[1] < shots[2] < pings[2]
+    assert {e["frame"] for e in smp if e["file"] in roles["bubbles"]} >= set(shots[1:])
+    churn = [e for e in smp if e["file"] == roles["churn"]]
+    assert len(churn) == 1 and len(churn[0]["gain_curve"]) == cut - co["start"]
+    assert max(churn[0]["gain_curve"]) <= 1 and min(churn[0]["gain_curve"]) >= 0.25
+    assert all(e["until"] == cut for e in smp)
+    # a model's own sound for a role wins over the set's; no set, no sounds of its own: None
+    from brickkit.video import audio as A
+    A.write_wav(tmp_path / "audio" / "deep.wav", np.full((4800, 2), 0.1), 48000)
+    own = R.audio_assets(SimpleNamespace(dir=tmp_path), {"audio": {"ambience": "deep.wav"}},
+                         "deep_sea")
+    assert own["roles"]["ambience"] == ["deep.wav"] and own["roles"]["pings"] == roles["pings"]
+    assert R.audio_assets(SimpleNamespace(dir=tmp_path), {}, "sunset_road") is None
+    assert R.audio_assets(SimpleNamespace(dir=tmp_path), {}) is None
 
 
 # ---------------------------------------------------------------------------- recorded sounds

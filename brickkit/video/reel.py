@@ -56,7 +56,15 @@ MAX_POINTS = 1400        # connection points drawn in the scan
 # recorded sounds by role: peak level (dBFS, against the music bed at audio.MUSIC_REF)
 SAMPLE_LEVEL = {"pull_start": -9.0, "idle": -17.5, "scream": -8.5, "burst": -11.0,
                 "sting": -11.0, "hit": -11.5, "boom": -11.0, "band": -12.0,
-                "click": -12.0, "snap_on": -11.0, "snap_off": -15.0, "room": -30.0}
+                "click": -12.0, "snap_on": -11.0, "snap_off": -15.0, "room": -30.0,
+                "ambience": -20.0, "ping": -15.0, "bubbles": -17.0, "groan": -13.0,
+                "churn": -16.0}
+# a cold-open set's own sounds (shared, in brickkit/data/audio/<set>/, made by
+# tools/elevenlabs_sfx.py from the sfx.toml there): used for the roles a model's [video.audio]
+# doesn't give
+SCENE_SOUNDS = {"deep_sea": {"ambience": "ambience_2.mp3", "pings": ["ping_1.mp3", "ping_2.mp3"],
+                             "bubbles": ["bubbles_2.mp3", "bubbles_3.mp3"],
+                             "groan": "groan_1.mp3", "churn": "churn_2.mp3"}}
 SCREAM_GAP = 1.4         # s: at least this between the cold open's screams
 
 
@@ -650,7 +658,8 @@ def plan_reel(engine, proj, model, tl, theme, out_dir: Path, work: Path, *,
               "booklet": reel.get("booklet")}
     reel["marks"] = marks(tl, extras)
     reel["transitions"] = transitions(tl, theme)
-    reel["cues"] = cue_sheet(reel, tl, theme, audio_assets(proj, cfg))
+    reel["cues"] = cue_sheet(reel, tl, theme,
+                             audio_assets(proj, cfg, (tl.get("cold_open") or {}).get("scene")))
     return reel
 
 
@@ -678,6 +687,8 @@ def cold_open_graphics(tl) -> dict:
            "sun": sun, "size": co["sun"]["size"], "lens": cam["lens"]}
     if co.get("taps") is not None:                  # a tap lamp: when it clicks, how bright
         out.update(scene=co["scene"], taps=co["taps"], led=co["led"], lamp=lamp)
+    elif not outdoors:
+        out["scene"] = co["scene"]
     return out
 
 
@@ -710,7 +721,7 @@ def colourway_items(engine, proj, model, placed, tl, cfg) -> dict:
 
 
 # ---------------------------------------------------------------------------- sound cues
-def audio_assets(proj, cfg) -> dict | None:
+def audio_assets(proj, cfg, scene: str | None = None) -> dict | None:
     """[video.audio]: the model's recorded sounds (files in its `dir`, default "audio/"):
 
         pull_start = "pull_start_1.mp3"   the cold open's pull-start; `catch` = s into it where
@@ -728,29 +739,45 @@ def audio_assets(proj, cfg) -> dict | None:
         snaps_on = [...]                  a pop as the light comes on (in turn)...
         snaps_off = [...]                 ...and a softer one as it goes off
         room = "crickets_2.mp3"           the night outside, looped under it
+    and for a glide (deep_sea; the set's own SCENE_SOUNDS fill in what isn't given):
+        ambience = "..."                  the deep, looped under it
+        pings = [...]                     sonar pings, at the start and after each cut
+        bubbles = [...]                   bursts of bubbles on the cuts and as the bow passes
+        groan = "..."                     the hull groaning, once
+        churn = "..."                     the propeller, looped, louder as the stern nears
 
-    Returns {"samples": {name: {path, sha1}}, "roles": {role: [names]}, "catch", "levels"} or
-    None without the table."""
+    `scene`: the cold open's set (its own sounds). Returns {"samples": {name: {path, sha1}},
+    "roles": {role: [names]}, "catch", "levels"} or None without the table or set sounds."""
     import hashlib
-    a = cfg.get("audio")
-    if not a:
+
+    from ..paths import DATA_DIR
+    a = dict(cfg.get("audio") or {})
+    shared = SCENE_SOUNDS.get(scene or "")
+    if not a and not shared:
         return None
     d = proj.dir / str(a.get("dir", "audio"))
     samples, roles = {}, {}
 
-    def use(name):
-        p = d / str(name)
+    def use(name, where=d):
+        p = where / str(name)
         if not p.exists():
             raise SystemExit(f"[video.audio]: {p} is missing (tools/elevenlabs_sfx.py makes it)")
         samples[str(name)] = {"path": str(p), "sha1": hashlib.sha1(p.read_bytes()).hexdigest()}
         return str(name)
-    for role in ("pull_start", "idle", "burst", "room"):
+    singles = ("pull_start", "idle", "burst", "room", "ambience", "groan", "churn")
+    lists = ("screams", "stings", "hits", "booms", "clicks", "snaps_on", "snaps_off", "pings",
+             "bubbles")
+    for role in singles:
         if a.get(role):
             roles[role] = [use(a[role])]
-    for role in ("screams", "stings", "hits", "booms", "clicks", "snaps_on", "snaps_off"):
+    for role in lists:
         if a.get(role):
             v = a[role]
             roles[role] = [use(x) for x in ([v] if isinstance(v, str) else v)]
+    for role, v in (shared or {}).items():
+        if role not in roles:
+            where = DATA_DIR / "audio" / scene
+            roles[role] = [use(x, where) for x in ([v] if isinstance(v, str) else v)]
     return {"samples": samples, "roles": roles, "catch": float(a.get("catch", 0.5)),
             "levels": {**SAMPLE_LEVEL, **(a.get("levels") or {})}}
 
@@ -808,6 +835,44 @@ def tap_cues(cut: int, co: dict, roles: dict, add, play) -> None:
         add(a, "hum", dur=n, curve=np.round(led, 3).tolist(), gain=1.0)
 
 
+def glide_cues(cut: int, co: dict, roles: dict, add, play, fps: float) -> None:
+    """A glide's sound (deep_sea): the deep's rumble under it all, a sonar ping at the start
+    and after each cut, bubbles bursting on the cuts and as the bow sweeps past, the hull
+    groaning once, the propeller churning louder as the stern nears the camera (recorded, the
+    set's own unless the model has its own; else a low wind and blips); all stopped at the
+    cut."""
+    a = co["start"]
+    n = cut - a
+    shots = [f for f, _ in co["shots"]]
+    if roles.get("ambience"):
+        play(a, roles["ambience"][0], "ambience", loop=True, dur=n, until=cut, fade_in=0.6)
+    else:
+        add(a, "wind", dur=n, gain=0.6)
+    pings = [a + int(0.25 * fps)] + [a + f + int(0.4 * fps) for f in shots[1:]]
+    for i, f in enumerate(p for p in pings if p < cut - int(0.3 * fps)):
+        if roles.get("pings"):
+            play(f, roles["pings"][i % len(roles["pings"])], "ping", until=cut, fade_out=0.3)
+        else:
+            add(f, "blip", pitch=-6, gain=0.6)
+    if roles.get("bubbles"):
+        b = roles["bubbles"]
+        fb = a + shots[-1] + int(0.62 * (n - shots[-1])) if len(shots) > 1 else a + n // 2
+        for i, f in enumerate([a + f for f in shots[1:]] + [fb]):
+            if f < cut:
+                play(f, b[i % len(b)], "bubbles", until=cut, fade_out=0.2)
+    if roles.get("groan") and len(shots) > 1:
+        play(a + shots[1] + int(0.5 * fps), roles["groan"][0], "groan", until=cut, fade_out=0.4)
+    if roles.get("churn"):
+        g = co["glide"]
+        F = np.asarray(g["forward"], float)
+        stern = np.asarray(g["path"], float)[:n] - F * float(g["extent"]["behind"])
+        d = np.linalg.norm(np.asarray(co["camera"]["pos"], float)[:n] - stern, axis=1)
+        near = (float(g["length"]) * 0.6 / np.maximum(d, 1e-6)) ** 1.5
+        gc = np.clip(0.25 + near, 0.0, 1.0)
+        play(a, roles["churn"][0], "churn", loop=True, dur=n, until=cut, fade_in=0.4,
+             offset=1.5, gain_curve=np.round(gc, 3).tolist())
+
+
 def cue_sheet(reel, tl, theme, assets: dict | None = None) -> dict:
     """The audio.py cue sheet: sections with moods, and every SFX on the frame it belongs.
     With `assets` (audio_assets) recorded sounds take over the chainsaw and add horror stings."""
@@ -830,6 +895,8 @@ def cue_sheet(reel, tl, theme, assets: dict | None = None) -> dict:
     cold = tl.get("cold_open") or {}
     if "cold_open" in mk and cold.get("taps") is not None:
         tap_cues(mk["cold_open"]["cut"], cold, roles, add, play)
+    elif "cold_open" in mk and cold.get("glide") is not None:
+        glide_cues(mk["cold_open"]["cut"], cold, roles, add, play, fps)
     elif "cold_open" in mk and "idle" in roles:   # the real chainsaw: pulled, running, screaming
         m, co = mk["cold_open"], tl["cold_open"]
         a, cut = co["start"], m["cut"]
