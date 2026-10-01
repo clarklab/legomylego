@@ -1,0 +1,125 @@
+{
+  "title": "Nautilus",
+  "status": "warn",
+  "checks": [
+    {
+      "name": "real_elements",
+      "status": "warn",
+      "summary": "136 part/colour combinations: 0 not real, 1 rare",
+      "items": [
+        {
+          "part": "64228",
+          "name": "Battery Box, Power Functions, with Dark Bluish Gray Bottom [Non-Rechargeable]",
+          "colour": "Light Bluish Gray",
+          "severity": "warn",
+          "problem": "rare: in 7 set(s), last seen 2015",
+          "element_ids": [
+            "4578042",
+            "4638959",
+            "6116239",
+            "6197414"
+          ]
+        }
+      ],
+      "stats": {
+        "combinations": 136,
+        "not_real": 0,
+        "rare": 1,
+        "hardware": 0,
+        "minifig_components": 0,
+        "stand_ins": 0,
+        "approximate": 0
+      }
+    },
+    {
+      "name": "connections",
+      "status": "pass",
+      "summary": "5494 connections (5446 stud, 26 pin, 11 press, 6 clip, 4 bar, 1 axle); 1 separate piece(s)",
+      "items": [],
+      "stats": {
+        "connections": 5494,
+        "by_kind": {
+          "stud": 5446,
+          "pin": 26,
+          "bar": 4,
+          "axle": 1,
+          "clip": 6,
+          "press": 11
+        },
+        "pieces": 1
+      }
+    },
+    {
+      "name": "collisions",
+      "status": "pass",
+      "summary": "0 overlapping pair(s) among 1306 parts",
+      "items": [],
+      "stats": {
+        "pairs": 0
+      }
+    },
+    {
+      "name": "buildability",
+      "status": "pass",
+      "summary": "1244 insertions tried across 30 submodel(s); 0 problem(s)",
+      "items": [],
+      "stats": {
+        "insertions": 1244
+      }
+    },
+    {
+      "name": "stability",
+      "status": "pass",
+      "summary": "about 1462 g; centre of mass inside the base (100% margin); tips at 35.9 deg",
+      "items": [],
+      "stats": {
+        "mass_g": 1461.8169372841892,
+        "com": [
+          -3.2873709053999463,
+          -192.89678987611,
+          0.556552957922536
+        ],
+        "approx_parts": 0,
+        "margin": 0.9960246217291246,
+        "tip_angle_deg": 35.86284595837261,
+        "com_height_ldu": 192.89678987611
+      }
+    },
+    {
+      "name": "mechanism",
+      "status": "pass",
+      "summary": "24 poses swept for 6 moving group(s); 0 gear pair(s); 0 problem(s)",
+      "items": [],
+      "stats": {
+        "poses": 24
+      }
+    },
+    {
+      "name": "electrics",
+      "status": "pass",
+      "summary": "2 light(s), 2 cable run(s); longest lead needs 19 of 40 cm; 0 problem(s)",
+      "items": [],
+      "stats": {
+        "runs": [
+          {
+            "cable": "salon_port_lead",
+            "need_cm": 19.2,
+            "length_cm": 40.0
+          },
+          {
+            "cable": "salon_stbd_lead",
+            "need_cm": 18.5,
+            "length_cm": 40.0
+          }
+        ]
+      }
+    },
+    {
+      "name": "technique",
+      "status": "pass",
+      "summary": "0 note(s)",
+      "items": [],
+      "stats": {}
+    }
+  ]
+}

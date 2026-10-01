@@ -19,6 +19,8 @@ at **[bricks.superfun.games](https://bricks.superfun.games)**.
 | [Ferret](models/ferret/NOTES.md) | 895 | 51 cm nose to tail | head turns on a turntable; sable, albino and cinnamon coats | $37-$117 |
 | [Chainsaw Face](models/chainsaw_face/NOTES.md) | 838 | 33.4 cm (13.1 in) tall on his stand, 31.4 cm soles to hair; 12.8 cm chainsaw | posable figure: ball joints at the neck, shoulders, wrists, hips and ankles, ratchet elbows and knees, a waist turntable; swings the chainsaw from overhead down across his hips in both fists; spattered or clean apron | $31-$113 |
 | [The Caldwell County Courthouse](models/caldwell_courthouse/NOTES.md) | 6,659 | 44.8 x 44.8 cm base, 65.4 cm tall | four clocks that keep real time (quartz clock inserts, not LEGO, behind SNOT dials); the dome lifts off to set them; clock tower flanked by bell domes, crested corner pavilions; dark red or reddish brown trim | $258-$862 (+ $20-$60 clock inserts) |
+| [Nautilus](models/nautilus/NOTES.md) | 1,305 | 46 cm long (18 in) with the ram, 8 cm across the side keels; 19 cm tall on its sea stand | the salon windows light up (Power Functions, battery box hidden in the sea); the propeller spins, the rudder swings and the dive planes tilt; lifts off its clear posts; rusty iron or steel | $60-$185 |
+| [Nautilus Crew](models/nautilus_crew/NOTES.md) | 106 (5 minifigures) | 12.8 x 6.4 cm base, 9.3 cm tall | Captain Nemo, Ned Land, Professor Aronnax, Conseil and a Nautilus diver in a brass deep-sea helmet as real printed minifigures (heads, torsos and legs as sold, listed by their BrickLink numbers) with a harpoon, a spyglass, a magnifying glass, a specimen bottle and a speargun, on a slice of the Nautilus deck before a salon window | $29-$120 |
 
 *Rough range from typical per-part prices (`out/price_estimate.md`), not live market data.
 Upload `out/bricklink_wanted.xml` to a BrickLink Wanted List for a real quote.
@@ -61,7 +63,10 @@ Part geometry comes from the [LDraw](https://www.ldraw.org) library (CC BY 4.0),
 data from the LDCad shadow library, and part/colour/set data from
 [Rebrickable](https://rebrickable.com). LEGO® is a trademark of the LEGO Group, which does
 not sponsor, authorize or endorse this project. Metroid is © Nintendo. VHS is a trademark of
-JVC KENWOOD Corporation.
+JVC KENWOOD Corporation. The Nautilus design is from Walt Disney's 20,000 Leagues Under the
+Sea (1954); the model is an unofficial fan model, not affiliated with or endorsed by Disney.
+The Nautilus Crew's characters are from Jules Verne's 20,000 Leagues Under the Sea, as in
+Walt Disney's 1954 film; an unofficial fan model, not affiliated with or endorsed by Disney.
 
 ## Site
 

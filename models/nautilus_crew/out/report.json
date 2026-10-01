@@ -1,0 +1,177 @@
+{
+  "title": "Nautilus Crew",
+  "status": "warn",
+  "checks": [
+    {
+      "name": "real_elements",
+      "status": "warn",
+      "summary": "51 part/colour combinations: 0 not real, 5 rare; 15 minifig component(s), 2 drawn as stand-ins; 1 with an approximate 3D model",
+      "items": [
+        {
+          "part": "10165c01",
+          "name": "Helmet Underwater Deep Diver with Trans-Clear Glass",
+          "colour": "Pearl Gold",
+          "severity": "info",
+          "problem": "LDraw has no model of this part: its 3D shape is brickkit's approximation (data/approximate.json)"
+        },
+        {
+          "part": "10165c01",
+          "name": "Helmet Underwater Deep Diver with Trans-Clear Glass",
+          "colour": "Pearl Gold",
+          "severity": "warn",
+          "problem": "rare: in 1 set(s), last seen 2012",
+          "element_ids": [
+            "6018281"
+          ]
+        },
+        {
+          "part": "3626bpr0251",
+          "name": "Minifig Head, Beard with Gray Hair, Moustache, and Angry Eyebrows Print",
+          "colour": "Yellow",
+          "minifig": "head",
+          "bricklink": "3626px132",
+          "severity": "warn",
+          "problem": "rare: in 11 set(s), last seen 2009",
+          "element_ids": [
+            "4187305"
+          ]
+        },
+        {
+          "part": "970c23pr0378",
+          "name": "Hips and Medium Nougat Legs with Reddish Brown Kneepads Print",
+          "colour": "Dark Bluish Gray",
+          "minifig": "legs",
+          "bricklink": "970c150pb02",
+          "severity": "warn",
+          "problem": "rare: in 1 set(s), last seen 2012",
+          "element_ids": [
+            "6007953"
+          ]
+        },
+        {
+          "part": "970c23pr0378",
+          "name": "Hips and Medium Nougat Legs with Reddish Brown Kneepads Print",
+          "colour": "Dark Bluish Gray",
+          "minifig": "legs",
+          "bricklink": "970c150pb02",
+          "severity": "info",
+          "problem": "LDraw has no model of this print: drawn plain in its colours (the parts lists name the printed part)"
+        },
+        {
+          "part": "973c03h01pr0049",
+          "name": "Torso Boat Captain, Suit Double Breasted and Gold Anchor Logo Print, Black Arms, Yellow Hands",
+          "colour": "Black",
+          "minifig": "torso",
+          "bricklink": "973pb0049c01",
+          "severity": "warn",
+          "problem": "rare: in 5 set(s), last seen 1991",
+          "element_ids": []
+        },
+        {
+          "part": "973c23h12pr2119",
+          "name": "Torso Diving Suit with Crossed Belts and Weight Belt Print, Medium Nougat Arms, Dark Bluish Gray Hands",
+          "colour": "Medium Nougat",
+          "minifig": "torso",
+          "bricklink": "973pb1240c01",
+          "severity": "warn",
+          "problem": "rare: in 1 set(s), last seen 2012",
+          "element_ids": [
+            "6008374"
+          ]
+        },
+        {
+          "part": "973c23h12pr2119",
+          "name": "Torso Diving Suit with Crossed Belts and Weight Belt Print, Medium Nougat Arms, Dark Bluish Gray Hands",
+          "colour": "Medium Nougat",
+          "minifig": "torso",
+          "bricklink": "973pb1240c01",
+          "severity": "info",
+          "problem": "LDraw has no model of this print: drawn plain in its colours (the parts lists name the printed part)"
+        }
+      ],
+      "stats": {
+        "combinations": 51,
+        "not_real": 0,
+        "rare": 5,
+        "hardware": 0,
+        "minifig_components": 15,
+        "stand_ins": 2,
+        "approximate": 1
+      }
+    },
+    {
+      "name": "connections",
+      "status": "pass",
+      "summary": "528 connections (438 stud, 35 pin, 30 kit, 20 bar, 5 clip); 1 separate piece(s)",
+      "items": [],
+      "stats": {
+        "connections": 528,
+        "by_kind": {
+          "stud": 438,
+          "bar": 20,
+          "pin": 35,
+          "clip": 5,
+          "kit": 30
+        },
+        "pieces": 1
+      }
+    },
+    {
+      "name": "collisions",
+      "status": "pass",
+      "summary": "0 overlapping pair(s) among 136 parts",
+      "items": [],
+      "stats": {
+        "pairs": 0
+      }
+    },
+    {
+      "name": "buildability",
+      "status": "pass",
+      "summary": "105 insertions tried across 17 submodel(s); 0 problem(s)",
+      "items": [],
+      "stats": {
+        "insertions": 105
+      }
+    },
+    {
+      "name": "stability",
+      "status": "pass",
+      "summary": "about 139 g; centre of mass inside the base (77% margin); tips at 40.6 deg",
+      "items": [],
+      "stats": {
+        "mass_g": 139.4646628583456,
+        "com": [
+          0.9940106279182404,
+          -55.41769750095136,
+          18.76680753289105
+        ],
+        "approx_parts": 0,
+        "margin": 0.7654149058388618,
+        "tip_angle_deg": 40.6096289851548,
+        "com_height_ldu": 71.41769750095136
+      }
+    },
+    {
+      "name": "mechanism",
+      "status": "pass",
+      "summary": "no moving parts defined",
+      "items": [],
+      "stats": {}
+    },
+    {
+      "name": "electrics",
+      "status": "pass",
+      "summary": "no electrics in this model",
+      "items": [],
+      "stats": {}
+    },
+    {
+      "name": "technique",
+      "status": "pass",
+      "summary": "0 note(s)",
+      "items": [],
+      "stats": {}
+    }
+  ]
+}

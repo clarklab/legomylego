@@ -1,0 +1,33 @@
+[model]
+name = "Nautilus Crew"
+design = "design.py"
+description = "Captain Nemo, Ned Land, Professor Aronnax, Conseil and one of Nemo's divers in a brass deep-sea helmet, from 20,000 Leagues Under the Sea, as LEGO minifigures on a slice of the Nautilus's riveted deck in front of a salon window ringed with yellow lights: real printed heads, torsos and legs, a harpoon, a spyglass, a magnifying glass, a specimen bottle and a speargun. A companion to the Nautilus model."
+notice = "Characters from Jules Verne's 20,000 Leagues Under the Sea, as in Walt Disney's 1954 film. Unofficial fan model, not affiliated with or endorsed by Disney."
+
+# Roles -> real colours. The figures' parts are chosen by their real printed part numbers in
+# design.py (what LEGO sells); these roles are the display base's.
+[palette]
+base = "Black"                 # the bottom plate
+deck = "Reddish Brown"         # the iron deck plates and the bulkhead (the Nautilus's hull)
+walk = "Dark Brown"            # the deck's walkway tiles and the hatch (the Nautilus's rivets)
+trim = "Pearl Gold"            # the deck's front edge, the window frame, the hatch wheel
+nameplate = "Black"            # a blank 2 x 4 tile for a printed or stickered name
+glass = "Trans-Clear"          # the salon window
+lights = "Trans-Yellow"        # the ring of lights round it
+
+[booklet]
+subtitle = "Captain Nemo, Ned Land, Professor Aronnax, Conseil and a Nautilus diver on the deck of the Nautilus, in front of a salon window ringed with yellow lights."
+intro = "Four minifigures of the main characters of Jules Verne's 20,000 Leagues Under the Sea, dressed as in Walt Disney's 1954 film, and one of Captain Nemo's divers in a brass deep-sea helmet, on a slice of the Nautilus's deck. Each figure is built from what LEGO sells: a printed head, a torso with its arms and hands, hips with legs, headwear and something to hold. The deck is riveted iron plating in reddish brown with a dark walkway, a round hatch and a mooring bollard, and a gold-trimmed edge with a blank black nameplate. Behind the crew a bulkhead carries one of the Nautilus's salon windows: a gold round frame, clear glass and a ring of eight yellow lights."
+notes = [
+  "The figures' torsos come with their arms and hands already fitted, and their hips with the legs: you never take a figure apart to build it.",
+  "Ned Land's harpoon, Nemo's spyglass, Aronnax's magnifying glass, Conseil's bottle and the diver's speargun clip into the figures' hands. Turn the arms and heads as you like: the pictures show one way to pose them.",
+  "The diver's brass helmet (10165c01, from the 2012 Collectible Minifigures Series 8 Diver) has no model in the LDraw library: the pictures show brickkit's approximation of it. Its suit's print isn't modelled either, so the pictures show the torso and legs plain.",
+  "The nameplate is a plain black 2 x 4 tile: add a printed tile or a sticker with the name if you like.",
+]
+works = [
+  { title = "Real printed figures", text = "Every head, torso and pair of legs is a real LEGO part with its print, listed by its BrickLink and Rebrickable number: no custom prints or stickers. Ned Land's striped shirt, Nemo's double-breasted captain's coat with its gold anchor and Aronnax's three-piece suit are all real LEGO torsos.", image = "renders/close_captain_nemo.png" },
+]
+
+[checks]
+enabled = ["real_elements", "connections", "collisions", "buildability", "stability",
+           "mechanism", "electrics", "technique"]
