@@ -7,11 +7,11 @@
       "collection": "quick_bricks",
       "pieces": 23,
       "steps": 17,
-      "video": null,
-      "poster": "/models/avocado/renders/renders_qa_front.png?v=5f7bb3420a8e",
+      "video": "/quick/avocado-1080x1920.mp4?v=0ccd80d08559",
+      "poster": "/models/avocado/quick_poster.jpg?v=6e6b549f1ecc",
       "instructions": "/models/avocado/booklet.pdf?v=8d7bb5d0b174",
       "url": "/quick/avocado/",
-      "model": "/models/avocado/model.json?v=43c594fe494d",
+      "model": "/models/avocado/model.json?v=0dce1dc979f4",
       "geometry": "/models/avocado/model.glb?v=0ae0ed717315"
     },
     {
@@ -35,11 +35,11 @@
       "collection": "quick_bricks",
       "pieces": 20,
       "steps": 12,
-      "video": null,
-      "poster": "/models/birthday_cake/renders/renders_qa_front.png?v=b2ec0561fa23",
+      "video": "/quick/birthday_cake-1080x1920.mp4?v=3ad4b27cef73",
+      "poster": "/models/birthday_cake/quick_poster.jpg?v=871dc6a8f4ec",
       "instructions": "/models/birthday_cake/booklet.pdf?v=5cb7b87fe9ed",
       "url": "/quick/birthday_cake/",
-      "model": "/models/birthday_cake/model.json?v=5d000ccfa230",
+      "model": "/models/birthday_cake/model.json?v=dee2d14fc411",
       "geometry": "/models/birthday_cake/model.glb?v=49a1d6635215"
     },
     {
@@ -91,11 +91,11 @@
       "collection": "quick_bricks",
       "pieces": 23,
       "steps": 12,
-      "video": null,
-      "poster": "/models/taco/renders/renders_qa_front.png?v=6b43987d2b5f",
+      "video": "/quick/taco-1080x1920.mp4?v=2a06bb0a31ea",
+      "poster": "/models/taco/quick_poster.jpg?v=ee68039bb81d",
       "instructions": "/models/taco/booklet.pdf?v=56a58cdd67ca",
       "url": "/quick/taco/",
-      "model": "/models/taco/model.json?v=16952432055a",
+      "model": "/models/taco/model.json?v=17aa5e3d6dc7",
       "geometry": "/models/taco/model.glb?v=1beff6cb67f5"
     },
     {
@@ -105,11 +105,11 @@
       "collection": "quick_bricks",
       "pieces": 23,
       "steps": 13,
-      "video": null,
-      "poster": "/models/watermelon_ice_lolly/renders/renders_qa_front.png?v=635a38ad4d2c",
+      "video": "/quick/watermelon_ice_lolly-1080x1920.mp4?v=ab199d839298",
+      "poster": "/models/watermelon_ice_lolly/quick_poster.jpg?v=fbaceacf1dbd",
       "instructions": "/models/watermelon_ice_lolly/booklet.pdf?v=ae8f6c3664a5",
       "url": "/quick/watermelon_ice_lolly/",
-      "model": "/models/watermelon_ice_lolly/model.json?v=7fe727f2f5f2",
+      "model": "/models/watermelon_ice_lolly/model.json?v=ab43245ecd7b",
       "geometry": "/models/watermelon_ice_lolly/model.glb?v=b0bf360dbe46"
     }
   ]
