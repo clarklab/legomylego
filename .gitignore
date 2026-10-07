@@ -29,3 +29,6 @@ models/*/out/*_preview.mp4
 # scratch models (experiments), all but the tests' sample
 models/_*/
 !models/_sample/
+# LEGO's own instruction booklets (reference copies) stay local: the repo is public
+docs/references/**/*.pdf
+docs/references/*.zip
