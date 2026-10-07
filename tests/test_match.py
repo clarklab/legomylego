@@ -100,6 +100,20 @@ def test_side_finger_hinge_connects_either_way_round(engine):
         assert len(_hinges(engine, [("60471.dat", transform()), ("44567b.dat", M)])) == 1, a
 
 
+def test_half_sphere_canopy_clicks_onto_one_finger_hinges(engine):
+    """50747 (Windscreen 6 x 6 x 3 Canopy Half Sphere with Dual 2 Fingers) locks onto single
+    finger click hinges; the overlay in brickkit/data/shadow gives its fingers LDCad's
+    locking-hinge group, which the library's own file leaves out."""
+    # its two pairs of fingers are on the line y = 0, z = 0 at x = -20 and 20; a 44567b's
+    # single finger (at (0, 2, -20) in its own frame) in each pair, at any angle about the line
+    for a in (0, 90, -45):
+        for x in (-20, 20):
+            M = _about((x, 0, 0), rot(x=a)) @ transform((x, -2, 20))
+            kinds = [c.kind for c in find_connections(world(engine, [("50747.dat", transform()),
+                                                                     ("44567b.dat", M)]))]
+            assert kinds == ["hinge"], (a, x, kinds)
+
+
 def test_hinge_fingers_must_interleave(engine):
     # two single fingers (or two pairs) in the same place would clash: not a hinge
     M = transform((60, 0, 0), rot(y=180))
