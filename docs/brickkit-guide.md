@@ -881,8 +881,9 @@ part under motion blur made Metal fault and the render hang. A chunk that still 
 (a Metal fault, or 20 minutes without a word from Blender) is run again, up to three times,
 keeping the frames it had (`video._run_blender`); never start another Blender outside the
 `blender_slot()` lock while one renders - that is what sets the faults off. See-through parts are tinted more
-strongly here than in the stills (`blender_quick.TINT`): at real size and this close, the
-stills' absorption leaves a flame all but clear. The next one: add `[quick]` to the model's model.toml
+strongly here than in the stills (`blender_quick.TINT`), with some of a vivid colour in the
+surface too (`BODY`; none for clear parts): at real size and this close, the stills' glass
+leaves a flame all but clear, or dark with the room it mirrors. The next one: add `[quick]` to the model's model.toml
 (or nothing: the defaults work) and run `brickkit quick SLUG --preview`, then `brickkit quick
 SLUG`.
 

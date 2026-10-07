@@ -71,8 +71,14 @@ class SceneBuilder:
             # clear surfaces; the colour comes from absorption inside the plastic, so thin walls
             # stay light and thick stacks get richer, like real translucent LEGO
             tint = [min(1.0, c * 0.35 + 0.65) for c in rgb]
+            # trans_body (Quick Bricks: seen close, at real size): some of the colour in the
+            # surface as well, the more the more vivid it is and none for clear, so a small
+            # solid part (a flame) is its colour from every side, not dark glass full of the room
+            body = float(self.s.get("trans_body", 0.0)) * (max(rgb) - min(rgb))
+            if body > 0:
+                tint = [min(1.0, c * 0.95 + 0.05) for c in rgb]
             _set(b, "Base Color", (*tint, 1.0))
-            _set(b, "Transmission Weight", 1.0)
+            _set(b, "Transmission Weight", 1.0 - body)
             _set(b, "Roughness", 0.02)
             _set(b, "IOR", 1.58)
             _set(b, "Coat Weight", 0.0)

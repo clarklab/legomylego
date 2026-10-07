@@ -31,6 +31,7 @@ TO_B = bs.TO_BLENDER
 BLUR_AT = 100
 TINT = 450.0      # see-through plastic's colour, as absorption per metre: this close, at the
                   # parts' real size (a few mm of plastic), the stills' 18 leaves a flame clear
+BODY = 0.35       # and this share of a vivid colour in its surface (blender_scene's trans_body)
 
 
 class Quick:
@@ -40,6 +41,7 @@ class Quick:
         scene.update(engine="cycles", size=job["size"], samples=int(job["samples"]), lights=[],
                      ground=False)
         scene.setdefault("trans_density", TINT)
+        scene.setdefault("trans_body", BODY)
         self.b, self.center, self.radius = bs.build_scene(scene)
         sc = self.sc = bpy.context.scene
         for ob in list(sc.objects):                       # SceneBuilder's studio lights: ours instead
