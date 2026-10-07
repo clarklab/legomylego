@@ -7,9 +7,12 @@
 writes models/SLUG/out/SLUG-1080x1920.mp4 (60 fps, H.264 + AAC, about 14 s, made to loop) and
 out/quick_poster.jpg. Photoreal (Cycles) in a little workshop - a surface, a room and a
 light, mix and match (render/quick_sets.py) - build only: it opens on
-the empty set; the parts fly in from just off frame in instruction order, in short arcs that
-end along each part's own insertion axis, and settle onto their studs with a tiny bounce,
-faster and faster; the camera circles low round the model in one smooth orbit that never turns
+the empty set; the pieces fly in from just off frame in instruction order, each over or round
+what is built to line up with its place and be pressed home (no bounce), faster and faster -
+and it goes together for real (video/assemble.py): no part ever passes through another or
+the table, none lands on nothing, a sub-assembly that cannot be built in place is built
+beside the model and joined, and what is built is lifted for a piece that goes underneath;
+the camera circles low round the model in one smooth orbit that never turns
 back, growing with the build - on the front to start, on the side each close-up's part faces
 as that part lands (it moves in to macro close-ups on a few landings), quicker round the back,
 on the front again to end - then a cut to the empty set (the first frame again: it loops).
@@ -53,8 +56,9 @@ Configured by model.toml's [quick] (all optional):
                                  # true) or "agx" (softer; a bright yellow goes pale orange)
     watermark = false            # true: the Bricks logo, small and faint, top centre
 
-Planning is here (no Blender): `plan(engine, model, cfg)` -> the schedule, each part's flight
+Planning is here (no Blender): `plan(engine, model, cfg)` -> the schedule, each part's moves
 (a 4 x 4 transform per frame while it moves), the camera per frame and the sound's cues;
+`clashes(engine, placed, plan)` checks a plan's own frames (part against part);
 render/blender_quick.py renders the frames; ffmpeg encodes them with the logo and the sound.
 """
 from __future__ import annotations
@@ -71,6 +75,7 @@ from pathlib import Path
 import numpy as np
 
 from .. import paths
+from . import assemble as A
 from . import timeline as T
 
 FPS = 60              # the finals: the top rate Reels and TikTok take (every timing is in s)
@@ -94,8 +99,16 @@ HERO = 2.0            # s from the last landing to the cut
 TAIL = 0.3            # s of the empty set after the cut (it runs on into the first frame)
 RATE_RAMP = 3.2       # the last parts land this many times as often as the first
 FLIGHT = (0.45, 0.24)  # s a part takes to fly in: the first, the last ones
-SETTLE = 0.2          # s of the little bounce after a part lands
-BOUNCE = 2.5          # LDU: how far it bounces back off its studs (the last part: x 1.6)
+SETTLE = 0.2          # s a part is held after it lands (what was lifted for it set down)
+CLICK = 4.0           # LDU short of its place: where a part lines up before it is pressed home
+PRESS = 0.86          # of its time: when it is lined up there (the rest is the press)
+LIFT = 0.3            # of a piece's time: what is built is lifted clear for it by then
+UNDER = (0.68, 0.72)  # of its time: a piece that goes underneath is in place; the set-down starts
+LATER = (0.0, 0.05, 0.1, 0.17, 0.25, 0.37)   # s: how much later a piece may come, to keep clear
+                      # of another that is still in the air
+SLOW = {"join": (0.9, 0.2, 0.7), "under": (0.95, 0.2, 0.75), "lift": (0.65, 0.2, 0.45)}   # s
+                      # before, after and for: a unit joined, the build set down on a piece, or
+                      # lifted for one (before: its own time and the last piece's settling)
 CLOSE = (0.6, 0.55)   # s of the build held round a close-up's landing: before, after
 SWING = 0.45          # s the camera takes to move in to (and out of) a close-up
 ORBIT = (16.0, 46.0)  # degrees a second the camera circles at: early in the build, late
@@ -186,19 +199,6 @@ def build_sequence(model, placed) -> list[int]:
                                                       i))
 
 
-def insert_axes(model, placed) -> np.ndarray:
-    """Each part's insertion axis (unit, the way it comes in from, LDraw): its hint, else its
-    own top (it is pressed down onto its studs along its own -Y)."""
-    hints = T.insert_directions(model)
-    out = np.zeros((len(placed), 3))
-    for i, p in enumerate(placed):
-        d = hints[i] if i < len(hints) else None
-        if d is None:
-            d = np.asarray(p.M[:3, :3], float) @ np.array([0.0, -1.0, 0.0])
-        out[i] = np.asarray(d, float) / (np.linalg.norm(d) + 1e-12)
-    return out
-
-
 PRINTED = re.compile(r"^\d+[a-z]?p[0-9a-z]+(\.dat)?$")
 
 
@@ -225,13 +225,15 @@ def highlight_groups(placed, seq, cfg) -> list[list[int]]:
 
 # ---------------------------------------------------------------------------- the schedule
 def schedule(n: int, seconds: float, highlights: list[int] | None = None, fps: int = FPS,
-             laid: bool = False) -> dict:
+             laid: bool = False, slow: dict | None = None) -> dict:
     """When each part (in build order, 0..n-1) lands and how long it flies (s): the first after
     PRE s of the empty set, the rest faster and faster (RATE_RAMP), a pause before the last one,
     and CLOSE s of room round each highlighted landing (positions in the order); the last
     landing HERO s before the cut, the cut TAIL s before the end. `laid` (the parts start laid
     out on the table): LAYOUT_PRE s to look at them first, slower flights (FLOAT) and a longer
-    hero (LAYOUT_HERO)."""
+    hero (LAYOUT_HERO). `slow` {position: (s before it lands, s after, s it takes)}: what needs
+    the table to itself (the build lifted for a piece, a unit joined): nothing else lands in
+    that time."""
     highlights = sorted(set(highlights or []))
     u = np.arange(n) / max(1, n - 1)
     pre, fly, hero = (LAYOUT_PRE, FLOAT, LAYOUT_HERO) if laid else (PRE, FLIGHT, HERO)
@@ -247,6 +249,12 @@ def schedule(n: int, seconds: float, highlights: list[int] | None = None, fps: i
         fixed[h] = max(fixed[h], CLOSE[0])
         if h + 1 < n:
             fixed[h + 1] = max(fixed[h + 1], CLOSE[1])
+    for h, (before, after, takes) in (slow or {}).items():
+        flight[h] = max(flight[h], takes)
+        if h > 0:
+            fixed[h] = max(fixed[h], before)
+        if h + 1 < n:
+            fixed[h + 1] = max(fixed[h + 1], after)
     span = seconds - pre - hero - TAIL - flight[0]
     free = span - fixed.sum()
     if free <= 0.05 * n or span <= 0:
@@ -254,6 +262,9 @@ def schedule(n: int, seconds: float, highlights: list[int] | None = None, fps: i
     rel = np.where(fixed > 0, 0.0, gaps)
     k = free / rel.sum() if rel.sum() > 0 else 0.0
     g = np.where(fixed > 0, np.maximum(fixed, gaps * k), gaps * k)
+    loose = (fixed == 0) & (g > 0)                     # the fixed gaps are kept whole: the others
+    if loose.any() and g[~loose].sum() < span - 0.03 * loose.sum():     # give (or take) the rest
+        g[loose] *= (span - g[~loose].sum()) / g[loose].sum()
     g = g * (span / g.sum()) if g.sum() > 0 else g
     land = pre + flight[0] + np.cumsum(g)
     cut = land[-1] + hero
@@ -406,7 +417,7 @@ def orbit(t: np.ndarray, sch: dict, windows: list, faces: list, front: float,
 
 
 def plan_camera(model, placed, C, seq, sch: dict, groups: list[list[int]], cfg: dict, axes,
-                fps: int = FPS, size=SIZE, laid: dict | None = None) -> dict:
+                fps: int = FPS, size=SIZE, laid: dict | None = None, final=None) -> dict:
     """The camera per frame: one smooth orbit low round the model (orbit(): it starts on the
     front's three-quarter view and never turns back), framing what is built so far (and
     growing with it), moving in to a macro close-up on up to `close_ups` landings - per group
@@ -417,7 +428,9 @@ def plan_camera(model, placed, C, seq, sch: dict, groups: list[list[int]], cfg: 
     grid behind it, stopped down to keep them sharp; it frames the build and what still lies
     there, so it closes in and comes down as the grid empties, drifting across the front, and
     makes its turn once the table is clear. Its close-ups are only on parts that land once
-    half the grid has gone (no diving in and out of the wide shot).
+    half the grid has gone (no diving in and out of the wide shot). `C`: every part's corners
+    where it lands (a unit built beside the model, the build standing lower on the table than
+    it will); `final`: where they end up (else the same) - the hero's frame.
     Returns {pos, target, lens, focus, fstop (per frame, LDraw / mm), windows [[t0, t1,
     part]], az}."""
     n = sch["frames"]
@@ -461,7 +474,7 @@ def plan_camera(model, placed, C, seq, sch: dict, groups: list[list[int]], cfg: 
     # what is built (or flying in) at each frame frames the shot; never less than the first
     # part and half the model
     built = np.zeros((n, 2, 3))
-    allp = C.reshape(-1, 3)
+    allp = (C if final is None else final).reshape(-1, 3)
     lo_all, hi_all = allp.min(0), allp.max(0)
     for f in range(n):
         tf = f / fps
@@ -478,7 +491,7 @@ def plan_camera(model, placed, C, seq, sch: dict, groups: list[list[int]], cfg: 
     lo, hi = np.maximum.accumulate(-lo, axis=0) * -1, np.maximum.accumulate(hi, axis=0)
     height = np.clip((hi[:, 1] - lo[:, 1]) / max(1e-6, hi_all[1] - lo_all[1]), 0, 1)
     el = ELEVATION[0] + (ELEVATION[1] - ELEVATION[0]) * height
-    t_h = max([land[-1]] + [b for _, b, _ in windows])
+    t_h = max([float(sch.get("last", land[-1]))] + [b for _, b, _ in windows])
     hero = t >= t_h
     el = np.where(hero, ELEVATION[1] + 1.0, el)
     wide = np.zeros(n)                                 # 1: on the laid-out parts, 0: on the build
@@ -675,7 +688,7 @@ def resting(engine, part: str) -> dict:
     return out
 
 
-def lay_out(engine, placed, C, seq, front: float = 0.0) -> dict:
+def lay_out(engine, placed, C, seq, front: float = 0.0, bodies: list | None = None) -> dict:
     """The parts laid out on the table before the build, knolled: a tidy grid behind the
     build's place, every part lying as it would (resting) with its long side along the rows.
     The grid is the model taken apart: its rows are the build's steps in order, the first
@@ -684,8 +697,10 @@ def lay_out(engine, placed, C, seq, front: float = 0.0) -> dict:
     the rows empty towards the build as it is built; no row is wider than the build, so in
     the upright frame the grid stands tall. In a row the same parts sit together and the row
     mirrors the model: each part on the side it will be on, the middle ones in the middle,
-    the right-hand ones turned round to face the left-hand ones. Returns {start: {part index:
-    4 x 4}, corners (n, 8, 3), tall, a, b (the grid's size along and across the rows), rows}."""
+    the right-hand ones turned round to face the left-hand ones. `bodies`: the pieces (a bought
+    kit's parts lie together, as the kit stands in the model). Returns {start: {part index:
+    4 x 4}, corner_of {part index: (8, 3)}, box (the grid's [[x0, z0], [x1, z1]]), tall, a, b
+    (the grid's size along and across the rows), rows}."""
     allp = C.reshape(-1, 3)
     lo, hi = allp.min(0), allp.max(0)
     mid = (lo + hi) / 2
@@ -694,7 +709,22 @@ def lay_out(engine, placed, C, seq, front: float = 0.0) -> dict:
     if abs((F @ view_dir(front, 0.0))[2] + 1) > 1e-6:
         F = F.T
     across = lambda i: float((F @ (C[i].mean(0) - mid))[0])     # noqa: E731
-    lie = {i: resting(engine, placed[i].part) for i in seq}
+    mates = {b[0]: list(b) for b in (bodies or [[i] for i in seq])}     # a piece by its first part
+    seq = [i for i in seq if i in mates]
+    lie, local = {}, {}
+    for i, body in mates.items():
+        if len(body) == 1:
+            lie[i] = resting(engine, placed[i].part)
+            L = np.eye(4)
+            L[:3, :3], L[:3, 3] = lie[i]["R"], lie[i]["t"]
+            local[i] = {i: L}
+            continue
+        q = np.concatenate([A.hull(engine, placed[j].part) @ np.asarray(placed[j].M, float)[:3, :3].T
+                            + np.asarray(placed[j].M, float)[:3, 3] for j in body])
+        qlo, qhi = q.min(0), q.max(0)                  # a kit: upright, as it stands in the model
+        tr = A.trans(-np.array([(qlo[0] + qhi[0]) / 2, qhi[1], (qlo[2] + qhi[2]) / 2]))
+        lie[i] = {"size": (float(qhi[0] - qlo[0]), float(qhi[2] - qlo[2]), float(qhi[1] - qlo[1]))}
+        local[i] = {j: tr @ np.asarray(placed[j].M, float) for j in body}
     gap, row_gap = LAYOUT_GAP
     width = lambda row: sum(lie[i]["size"][0] for i in row) + gap * (len(row) - 1)   # noqa: E731
     foot = np.abs((allp - mid) @ F.T).max(0)           # half the build's footprint, in the grid
@@ -729,7 +759,7 @@ def lay_out(engine, placed, C, seq, front: float = 0.0) -> dict:
         cur = cur + st
     if cur:
         rows.append(cur)
-    start, corners = {}, []
+    start, corners = {}, {}
 
     def place(row, z):
         groups = {}
@@ -746,13 +776,14 @@ def lay_out(engine, placed, C, seq, front: float = 0.0) -> dict:
         for j, i in enumerate(left + middle + right):
             r = lie[i]
             Y = np.eye(3) if j < len(left) + len(middle) else T._axis_rot([0.0, 1.0, 0.0], 180.0)
-            M = np.eye(4)
-            M[:3, :3] = F.T @ Y @ r["R"]
-            M[:3, 3] = mid * [1, 0, 1] + [0.0, ground, 0.0] + F.T @ (
-                np.array([x + r["size"][0] / 2, 0.0, z]) + Y @ r["t"])
-            start[i] = M
-            Mf = np.asarray(placed[i].M, float)
-            corners.append((C[i] - Mf[:3, 3]) @ Mf[:3, :3] @ M[:3, :3].T + M[:3, 3])
+            slot = np.eye(4)
+            slot[:3, :3] = F.T @ Y
+            slot[:3, 3] = mid * [1, 0, 1] + [0.0, ground, 0.0] + F.T @ np.array([x + r["size"][0] / 2, 0.0, z])
+            for m, L in local[i].items():
+                M = slot @ L
+                start[m] = M
+                Mf = np.asarray(placed[m].M, float)
+                corners[m] = (C[m] - Mf[:3, 3]) @ Mf[:3, :3] @ M[:3, :3].T + M[:3, 3]
             x += r["size"][0] + gap
 
     depth = lambda row: max(lie[i]["size"][1] for i in row)     # noqa: E731
@@ -760,7 +791,9 @@ def lay_out(engine, placed, C, seq, front: float = 0.0) -> dict:
     for row in reversed(rows):                         # nearest it, the first furthest back
         place(row, z + depth(row) / 2)
         z += depth(row) + row_gap
-    return {"start": start, "corners": np.array(corners),
+    every = np.concatenate(list(corners.values()))
+    return {"start": start, "corner_of": corners, "corners": np.array([corners[i] for i in sorted(corners)]),
+            "box": np.array([every.min(0)[[0, 2]], every.max(0)[[0, 2]]]),
             "a": float(max(width(r) for r in rows)), "b": float(z - row_gap - foot[2] - LAYOUT_CLEAR),
             "tall": float(max(r["size"][2] for r in lie.values())), "rows": [list(r) for r in rows]}
 
@@ -785,170 +818,404 @@ def _axis_rot(axis, deg):
     return T._axis_rot(axis, deg)
 
 
-def floats(engine, placed, C, seq, axes, sch: dict, laid: dict, fps: int = FPS) -> list[dict]:
-    """The laid-out parts' ways in, per frame like flights(): each lifts straight up off the
-    table, turning the way it will sit (never dipping into the table as it turns), floats over
-    on a cubic arc above what is built so far, and comes down (or in, or up) the last stretch
-    along its insertion axis onto its studs, easing in and out; then the tiny bounce. Returns
-    [{launch, land, frames, start}] (start: where it lies until then, and again after the
-    cut)."""
-    from scipy.spatial.transform import Rotation, Slerp
-    out = [None] * len(placed)
-    ground = float(C.reshape(-1, 3)[:, 1].max())
-    top = ground                                       # the top of what has landed (-Y up)
-    for k, i in enumerate(seq):
-        M = np.asarray(placed[i].M, float)
-        S = laid["start"][i]
-        rest, d = M[:3, 3], axes[i]
-        ext = C[i].max(0) - C[i].min(0)
-        f0 = int(round(sch["launch"][k] * fps))
-        f1 = max(int(round(sch["land"][k] * fps)), f0 + 3)
-        h_a = max(12.0, 1.4 * float(abs(ext @ d)))
-        floor = ground - float(ext[1]) - 6.0           # no lower than this: clear of the table
-        P0 = S[:3, 3]
-        P2 = rest + d * h_a * 2.6
-        P2[1] = min(P2[1], max(floor, rest[1]))
-        P1 = np.array([P0[0], min(P2[1], top, P0[1] - 30.0) - 24.0, P0[2]])
-        if d[1] > 0.5:                                 # pressed up from below: under, not over
-            P1[1] = min(P2[1] - 6.0, P0[1] - 30.0)
-        turn = Slerp([0.0, 1.0], Rotation.from_matrix(np.stack([S[:3, :3], M[:3, :3]])))
-        H = resting(engine, placed[i].part)["hull"]
-        bounce = BOUNCE * (1.6 if k == len(seq) - 1 else 1.0)
-        settle = max(2, int(round(SETTLE * fps)))
-        frames = []
-        for f in range(f0, f1 + settle):
-            Mf = np.eye(4)
-            if f < f1:
-                u = (f - f0) / (f1 - f0)
-                e = u * u * (3 - 2 * u)                # floats: eases out of rest and into place
-                Mf[:3, 3] = (((1 - e) ** 3) * P0 + 3 * ((1 - e) ** 2) * e * P1
-                             + 3 * (1 - e) * e * e * P2 + e ** 3 * rest)
-                Mf[:3, :3] = turn(float(T.smootherstep(min(1.0, e / 0.7)))).as_matrix()
-                low = float((H @ Mf[:3, :3].T)[:, 1].max()) + Mf[1, 3]
-                Mf[1, 3] -= max(0.0, low - ground)     # (a corner swinging down as it turns)
-            else:
-                sb = (f - f1 + 1) / settle
-                Mf[:3, 3] = rest + d * bounce * math.sin(math.pi * min(1.0, sb * 1.4)) * (1 - sb)
-                Mf[:3, :3] = M[:3, :3]
-            frames.append(np.round(Mf.reshape(-1), 4).tolist())
-        out[i] = {"launch": f0, "land": f1, "frames": frames,
-                  "start": np.round(S.reshape(-1), 4).tolist()}
-        top = min(top, float(C[i][:, 1].min()))
-    return out
+def _ease(u: float, laid: bool) -> float:
+    """How far along its way a piece is at u of its time: off frame it comes fast and settles;
+    off the table it eases out of rest and into place."""
+    return u * u * (3 - 2 * u) if laid else 1 - (1 - u) ** 2.4
 
 
-def flights(placed, C, seq, axes, sch: dict, cam: dict, fps: int = FPS, size=SIZE) -> list[dict]:
-    """Each part's way in, per frame from its launch to the end of its bounce: a 4 x 4 world
-    transform (LDraw, flat). It starts just off the frame - out to the side it faces (or to
-    the camera's left or right of it, also if it faces the camera) and up - and comes in on a
-    cubic arc whose last stretch runs along its insertion axis onto its studs, slowing as it
-    lands, tumbling a little and straightening; then a tiny bounce back off the studs. Returns
-    [{launch, land, frames}]."""
-    out = [None] * len(placed)
+def _press(u: float, length: float, laid: bool, click: float = CLICK) -> float:
+    """The distance covered at u of the time, on a way `length` long: eased to a near stop
+    `click` LDU short of the end (lined up on its studs) by PRESS of the time, then pressed
+    home - quicker and quicker, and it stops dead: no bounce."""
+    click = min(click, 0.4 * length)
+    if u >= 1.0:
+        return length
+    if u <= PRESS:
+        return (length - click) * _ease(u / PRESS, laid)
+    return length - click + click * ((u - PRESS) / (1 - PRESS)) ** 1.7
+
+
+def _at(path: dict, dist: float):
+    """(middle's offset from its seat, turn left 1..0) `dist` along a route."""
+    s = path["s"]
+    k = int(np.clip(np.searchsorted(s, dist), 1, len(s) - 1))
+    w = 0.0 if s[k] - s[k - 1] < 1e-9 else float(np.clip((dist - s[k - 1]) / (s[k] - s[k - 1]), 0, 1))
+    return path["p"][k - 1] + (path["p"][k] - path["p"][k - 1]) * w, float(path["q"][k - 1] + (path["q"][k] - path["q"][k - 1]) * w)
+
+
+def _blend(A0, A1, w: float) -> np.ndarray:
+    """Between two poses that differ by a move (not a turn)."""
+    M = np.array(A1, float)
+    M[:3, 3] = A0[:3, 3] + (A1[:3, 3] - A0[:3, 3]) * w
+    return M
+
+
+def motion(engine, placed, script: dict, sch: dict, cam: dict, laid: dict | None, fps: int = FPS,
+           size=SIZE, log=None) -> tuple[list[dict], list[float], list[str]]:
+    """Every part's moves, per frame, from the build's script (assemble.assemble) and the
+    schedule of its items: [{launch, land, frames (4 x 4 world transforms, flat, from its
+    launch to the end of its settling), start (laid out: where it lies till then, and again
+    after the cut), moves [{at, frames}] (later: its unit lifted for a piece, or joined)}].
+    A piece starts just off the frame, out to the side it faces and up (or lying in the
+    grid, or where its unit was built), and takes assemble.route()'s way in - over or round
+    what is built, down at a gate in line with its way in, straight in the last stretch - to
+    line up a hair short of its place and press home (no bounce). What is built is lifted for
+    a piece that needs it under it, and set down on it. Two pieces in the air at once keep out
+    of each other's way: the later one comes from the other side, or a few frames later (so a
+    landing may be a little after its time in the schedule: never before the one before it).
+    Also returns when (s) each item lands, and what had no clear way."""
+    n = len(placed)
+    out: list = [None] * n
+    notes: list[str] = []
     up = np.array([0.0, -1.0, 0.0])
-    for k, i in enumerate(seq):
-        p = placed[i]
-        M = np.asarray(p.M, float)
-        rest = M[:3, 3]
-        d = axes[i]
-        ext = C[i].max(0) - C[i].min(0)
-        f0 = int(round(sch["launch"][k] * fps))
-        f1 = int(round(sch["land"][k] * fps))
-        f1 = max(f1, f0 + 3)
-        fc = min(len(cam["pos"]) - 1, f0)
+    settle = max(2, int(round(SETTLE * fps)))
+    ground = script["ground"]
+    items = script["items"]
+    col = engine.collide
+    lying = set(range(n)) if laid else set()           # still in the grid
+    air: list = []                                     # (f0, f1, parts, frames) still on their way
+    lands: list[float] = []
+    last_land, last_end, held = -1, 0, 0               # (held: the build is up for a piece till then)
+    flat = lambda Ms: [np.round(np.asarray(M, float).reshape(-1), 4).tolist() for M in Ms]   # noqa: E731
+    for k, it in enumerate(items):
+        f0s = int(round(sch["launch"][k] * fps))
+        f1s = max(int(round(sch["land"][k] * fps)), f0s + 3)
+        span = f1s - f0s
+        slow = it.kind == "join" or bool(it.carry)
+        movers = [(placed[i].part, it.seat[i]) for i in it.parts]
+        lying -= set(it.parts)
+        still = list(it.still) + [(j, during) for j, (_, during, _) in it.carry.items()]
+        if laid:
+            still += [(j, laid["start"][j]) for j in sorted(lying)]
+        world = A.World(engine, placed, still, ground)
+        pts = np.concatenate([col.world_aabb(part, M) for part, M in movers])
+        c = (pts.min(0) + pts.max(0)) / 2
+        lead = it.parts[0]
+        fc = min(len(cam["pos"]) - 1, f0s)
         cpos, ctgt = cam["pos"][fc], cam["target"][fc]
         dcam = (cpos - ctgt) / np.linalg.norm(cpos - ctgt)
-        right, cup = basis(dcam)
-        # out to the side: sideways parts out along their axis, the rest out to whichever side
-        # of the frame they are on (from the middle) and back a little
-        side = outward(C[i], C, d)
-        if abs(float(d @ up)) > 0.7 or float(side @ dcam) > 0.5:    # (not straight at the lens)
-            s_r = float(side @ right)
-            sgn = math.copysign(1.0, s_r) if abs(s_r) > 0.15 else (1.0 if k % 2 else -1.0)
-            side = right * sgn * 0.8 + side * 0.35 - dcam * 0.25
-            side *= [1, 0, 1]
-            side /= np.linalg.norm(side) + 1e-12
-        tx, ty = tangents(float(cam["lens"][fc]), size)
-        dist = float(np.linalg.norm(cpos - ctgt))
-        reach = 1.15 * dist * tx                         # just off the frame's side
-        h_a = max(12.0, 1.4 * float(abs(ext @ d)))       # the last stretch along its axis
-        S = rest + side * reach + up * 0.55 * reach + d * h_a
-        P1 = S + (rest - S) * 0.3 + up * 0.35 * reach
-        P2 = rest + d * h_a * 2.6
-        tilt_axis = np.cross(up, side)
-        if np.linalg.norm(tilt_axis) < 1e-6:
-            tilt_axis = np.array([1.0, 0.0, 0.0])
-        tilt_axis /= np.linalg.norm(tilt_axis)
-        bounce = BOUNCE * (1.6 if k == len(seq) - 1 else 1.0)
-        settle = max(2, int(round(SETTLE * fps)))
-        frames = []
-        for f in range(f0, f1 + settle):
-            if f < f1:
-                u = (f - f0) / (f1 - f0)
-                e = 1 - (1 - u) ** 2.4                   # fast in, settling
-                b = ((1 - e) ** 3) * S + 3 * ((1 - e) ** 2) * e * P1 + 3 * (1 - e) * e * e * P2 + e ** 3 * rest
-                ang = TILT * (1 - e) ** 2
+        right, _ = basis(dcam)
+        from_table = it.source is not None or bool(laid)
+        routes: dict = {}
+
+        def way(flip: bool) -> dict:
+            if flip in routes:
+                return routes[flip]
+            turn, tilt = None, None
+            if from_table:                             # from where it stands or lies
+                X0 = np.asarray(it.source[lead] if it.source is not None else laid["start"][lead], float) \
+                    @ np.linalg.inv(it.seat[lead])
+                turn, start = X0[:3, :3], X0[:3, :3] @ c + X0[:3, 3] - c
+            else:                                      # from just off the frame
+                a = it.axis * [1, 0, 1]
+                side = a / np.linalg.norm(a) if np.linalg.norm(a) > 0.5 else unit_out(c, script["middle"])
+                if abs(float(it.axis @ up)) > 0.7 or float(side @ dcam) > 0.5:    # (not straight at the lens)
+                    s_r = float(side @ right)
+                    sgn = math.copysign(1.0, s_r) if abs(s_r) > 0.15 else (1.0 if k % 2 else -1.0)
+                    side = right * sgn * (-0.8 if flip else 0.8) + side * 0.35 - dcam * 0.25
+                    side *= [1, 0, 1]
+                    side /= np.linalg.norm(side) + 1e-12
+                elif flip:                             # (sideways on: from higher up instead)
+                    side = side * 0.6
+                tx, _ = tangents(float(cam["lens"][fc]), size)
+                reach = 1.15 * float(np.linalg.norm(cpos - ctgt)) * tx      # just off the frame's side
+                start = side * reach + up * (0.9 if flip and np.linalg.norm(side) < 0.9 else 0.55) * reach \
+                    + it.axis * it.travel
+                tilt_axis = np.cross(up, side)
+                if np.linalg.norm(tilt_axis) > 1e-6:
+                    tilt = (tilt_axis, TILT)
+            if it.mode == "under":                     # along the table, in under what is held up
+                flatr = right * [1, 0, 1] / (np.linalg.norm(right * [1, 0, 1]) + 1e-12)
+                sgn = (1.0 if float(start @ flatr) >= 0 else -1.0) * (-1.0 if flip else 1.0)
+                fwd = np.cross(flatr, up)
+                ways = [(h, 16.0) for h in (flatr * sgn, -flatr * sgn, fwd, -fwd)]
             else:
-                s = (f - f1 + 1) / settle
-                b = rest + d * bounce * math.sin(math.pi * min(1.0, s * 1.4)) * (1 - s)
-                ang = 0.0
-            R = _axis_rot(tilt_axis, ang) @ M[:3, :3] if ang else M[:3, :3]
-            Mf = np.eye(4)
-            Mf[:3, :3] = R
-            Mf[:3, 3] = b
-            frames.append(np.round(Mf.reshape(-1), 4).tolist())
-        out[i] = {"launch": f0, "land": f1, "frames": frames}
+                ways = [(it.axis, it.travel)]
+            routes[flip] = A.route(world, movers, start, turn, ways, tilt=tilt, direct=not from_table,
+                                   hop=30.0 if flip and from_table else 10.0)
+            return routes[flip]
+
+        def fly(path: dict, f0: int, f1: int):
+            total = float(path["s"][-1])
+            frames = {i: [] for i in it.parts}
+            carried = {j: [] for j in it.carry}
+            for f in range(f0, f1 + settle):
+                u = (f - f0) / (f1 - f0)
+                if f < f1:
+                    if it.mode == "under":             # (it is there before the set-down)
+                        dist = total * _ease(min(1.0, u / UNDER[0]), True)
+                    else:
+                        dist = _press(u, total, from_table)
+                    pm, q = _at(path, dist)
+                    for (_, M), i in zip(A.poses(movers, path["c"], pm, path["R"](q)), it.parts):
+                        frames[i].append(M)
+                else:                                  # settled; and set down again with the rest
+                    w = T.smootherstep((f - f1 + 1) / settle)
+                    for i in it.parts:
+                        frames[i].append(_blend(it.seat[i], it.rest[i], w))
+                for j, (before, during, after) in it.carry.items():
+                    if f < f1:
+                        M = _blend(before, during, T.smootherstep(u / LIFT))
+                        if it.mode == "under" and u > UNDER[1]:       # set down on the piece
+                            drop = float(np.linalg.norm(during[:3, 3] - after[:3, 3]))
+                            M = _blend(during, after, _press((u - UNDER[1]) / (1 - UNDER[1]), drop, True) / max(drop, 1e-9))
+                    elif it.mode == "under":
+                        M = np.array(after, float)
+                    else:
+                        M = _blend(during, after, T.smootherstep((f - f1 + 1) / settle))
+                    carried[j].append(M)
+            return frames, carried
+
+        def crossing(frames: dict, f0: int, f1: int) -> int:
+            """Frames in which it is in another piece that is still in the air."""
+            hits = 0
+            for g0, g1, others, gframes in air:
+                for f in range(max(f0, g0), min(f1, g1)):
+                    if any(col.collide_pair(placed[i].part, frames[i][f - f0], placed[j].part, gframes[j][f - g0])
+                           for i in it.parts for j in others):
+                        hits += 1
+            return hits
+
+        least = max(0, last_land + 1 - f1s, (last_end - f0s) if slow else (held - f1s))
+        best = None
+        for more in (int(round(x * fps)) for x in LATER):
+            for flip in (False, True):
+                path = way(flip)
+                if best is not None and not path["clear"] and best[1]["clear"]:
+                    continue
+                f0, f1 = f0s + least + more, f1s + least + more
+                frames, carried = fly(path, f0, f1)
+                score = (not path["clear"], crossing(frames, f0, f1), more, flip)
+                if best is None or score < best[0]:
+                    best = (score, path, f0, f1, frames, carried)
+                if score[:2] == (False, 0):
+                    break
+            if best[0][:2] == (False, 0):
+                break
+        _, path, f0, f1, frames, carried = best
+        if not path["clear"] or it.forced:
+            notes.append(f"{A_name(placed, it.parts)}: no clear way in")
+        if best[0][1]:
+            notes.append(f"{A_name(placed, it.parts)}: crosses another piece in the air")
+        for i in it.parts:
+            if it.kind == "piece":
+                out[i] = {"launch": f0, "land": f1, "frames": flat(frames[i]), "moves": []}
+                if laid:
+                    out[i]["start"] = np.round(np.asarray(laid["start"][i], float).reshape(-1), 4).tolist()
+            else:
+                out[i]["moves"].append({"at": f0, "frames": flat(frames[i])})
+        for j, Ms in carried.items():
+            out[j]["moves"].append({"at": f0, "frames": flat(Ms)})
+        air = [g for g in air if g[1] > f0] + [(f0, f1, list(it.parts), frames)]
+        lands.append(float(sch["land"][k]) + (f1 - f1s) / fps if f1 > f1s else float(sch["land"][k]))
+        last_land, last_end = f1, f1 + settle
+        if slow:
+            held = f1 + settle
+    return out, lands, notes
+
+
+def unit_out(c, middle) -> np.ndarray:
+    """Horizontal unit vector from the model's middle out to c (the front, if it is there)."""
+    r = (np.asarray(c, float) - middle) * [1, 0, 1]
+    if np.linalg.norm(r) < 1e-6:
+        return np.array([0.0, 0.0, -1.0])
+    return r / np.linalg.norm(r)
+
+
+def A_name(placed, parts) -> str:
+    p = placed[parts[0]]
+    tag = "/".join(p.tags)
+    return p.part.removesuffix(".dat") + (f" ({tag})" if tag else "")
+
+
+def pose_at(pl: dict, i: int, f: int):
+    """Part i's 4 x 4 at frame f of a plan (None: not there yet, or gone after the cut and not
+    laid out): what render/blender_quick.py shows."""
+    p = pl["parts"][i]
+    if f >= pl["cut"] or f < p["launch"]:
+        return np.array(p["start"]).reshape(4, 4) if "start" in p else None
+    M = p["frames"][min(f - p["launch"], len(p["frames"]) - 1)]
+    for mv in p.get("moves", ()):
+        if f >= mv["at"]:
+            M = mv["frames"][min(f - mv["at"], len(mv["frames"]) - 1)]
+    return np.array(M).reshape(4, 4)
+
+
+def clashes(engine, placed, pl: dict, every: int = 1) -> list[dict]:
+    """Where a plan breaks the rules, straight from its frames: a moving part in a part that
+    stands still (but a clip's last flex onto its bar) or under the table, and a part that
+    lands on nothing. [{part, frame, other | "table" | "air"}], one per part and other."""
+    from ..snaps.match import find_connections
+    wc = [[c.transformed(p.M) for c in engine.shadow.connectors(p.part)] for p in placed]
+    snap, joined = {}, {}
+    for c in find_connections(wc):
+        joined.setdefault(c.a, set()).add(c.b)
+        joined.setdefault(c.b, set()).add(c.a)
+        if c.kind in A.SNAP:                           # a pin in its hole: its whole length
+            snap[(c.a, c.b)] = snap[(c.b, c.a)] = A.FLEX if c.kind in A.CROSS else 30.0
+    col = engine.collide
+    n = len(placed)
+    ground = max(A.low(engine, p.part, np.asarray(p.M, float)) for p in placed)
+    rel = lambda Mi, Mj: np.linalg.inv(Mj) @ Mi        # noqa: E731
+    seated = {}
+    found: dict = {}
+    prev = [None] * n
+    for f in range(0, pl["cut"], every):
+        now = [pose_at(pl, i, f) for i in range(n)]
+        moving = [i for i in range(n) if now[i] is not None and pl["parts"][i]["launch"] <= f
+                  and (prev[i] is None or not np.allclose(prev[i], now[i], atol=1e-4))]
+        there = [i for i in range(n) if now[i] is not None and pl["parts"][i]["launch"] <= f]
+        lying = [i for i in range(n) if now[i] is not None and pl["parts"][i]["launch"] > f]
+        for i in moving:
+            if A.low(engine, placed[i].part, now[i]) > ground + 0.6:
+                found.setdefault((i, "table"), f)
+            box = col.world_aabb(placed[i].part, now[i])
+            for j in there + lying:
+                if j == i or (i, j) in found:
+                    continue
+                if prev[i] is not None and prev[j] is not None and now[j] is not None \
+                        and np.allclose(rel(now[i], now[j]), rel(prev[i], prev[j]), atol=1e-4):
+                    continue                           # moving together
+                bj = col.world_aabb(placed[j].part, now[j])
+                if np.any(box[1] <= bj[0] + 0.5) or np.any(bj[1] <= box[0] + 0.5):
+                    continue
+                if not col.collide_pair(placed[i].part, now[i], placed[j].part, now[j]):
+                    continue
+                if (i, j) in snap:                     # the last of a clip's way onto its bar
+                    off = rel(now[i], now[j])[:3, 3] - rel(np.asarray(placed[i].M, float), np.asarray(placed[j].M, float))[:3, 3]
+                    if np.linalg.norm(off) <= snap[(i, j)] + 0.5:
+                        continue
+                found.setdefault((i, j), f)
+        prev = now
+    for i in range(n):                                 # as it lands: on the table, or on a part
+        f = pl["parts"][i]["land"]
+        M = pose_at(pl, i, min(f, pl["cut"] - 1))
+        if abs(A.low(engine, placed[i].part, M) - ground) < 1.0:
+            continue
+        held = False
+        for j in joined.get(i, ()):
+            Mj = pose_at(pl, j, min(f, pl["cut"] - 1))
+            if Mj is not None and pl["parts"][j]["launch"] <= f and np.allclose(
+                    rel(M, Mj), rel(np.asarray(placed[i].M, float), np.asarray(placed[j].M, float)), atol=0.05):
+                held = True
+                break
+        if not held and not _kit_mate_holds(placed, pl, i, f):
+            found.setdefault((i, "air"), f)
+    return [{"part": i, "other": o, "frame": f} for (i, o), f in sorted(found.items(), key=lambda kv: kv[1])]
+
+
+def report(placed, pl: dict, wrong: list[dict]) -> list[str]:
+    """What a plan gets wrong, in words (nothing, if it builds for real): what clashes()
+    found in its frames, and the pieces no clear way in was found for."""
+    out = [f"  quick: {note}" for note in pl.get("notes", ())]
+    name = lambda i: A_name(placed, [i])               # noqa: E731
+    for w in wrong[:12]:
+        what = {"table": "dips under the table", "air": "lands on nothing"}.get(
+            w["other"]) or f"passes through {name(w['other'])}"
+        out.append(f"  quick: {name(w['part'])} {what} (frame {w['frame']})")
+    if len(wrong) > 12:
+        out.append(f"  quick: ... and {len(wrong) - 12} more")
+    if out:
+        out.append("  quick: (an insert=(x, y, z) hint on that piece in design.py - the way it comes "
+                   "in from - usually settles it)")
     return out
+
+
+def _kit_mate_holds(placed, pl, i, f) -> bool:
+    """A piece of a bought kit lands with the rest of it (held by them)."""
+    k = placed[i].kit
+    return k is not None and any(p.kit == k and j != i and pl["parts"][j]["land"] == f
+                                 for j, p in enumerate(placed))
 
 
 # ---------------------------------------------------------------------------- the plan
-def plan(engine, model, cfg: dict, fps: int = FPS, size=SIZE) -> dict:
-    """Everything the render and the sound need, JSON-able (frames from 0, at `fps`)."""
+def plan(engine, model, cfg: dict, fps: int = FPS, size=SIZE, log=None) -> dict:
+    """Everything the render and the sound need, JSON-able (frames from 0, at `fps`). The
+    build is assemble.assemble()'s: every piece on a clear way in, nothing in the air - so a
+    bought kit is one piece, a sub-assembly that cannot be built in place is built beside the
+    model and joined, and what is built is lifted for a piece that goes underneath. If all
+    that does not fit in [quick] seconds the loop is made as much longer as it needs."""
     from ..render.scene import model_scene
     placed = model.flatten()
     C = T.corners(engine, placed)
     seq = build_sequence(model, placed)
-    axes = insert_axes(model, placed)
-    groups = highlight_groups(placed, seq, cfg)
-    order_of = {i: k for k, i in enumerate(seq)}
-    seconds = float(cfg["seconds"])
-    # laid out first? (layout: "auto" - a model of a few pieces)
-    laid = None
     front = float(model.meta.get("azimuth_offset", 0.0))
-    if cfg.get("layout", "auto") is True or (cfg.get("layout", "auto") == "auto" and len(seq) < LAYOUT_UNDER):
-        laid = lay_out(engine, placed, C, seq, front)
-    # schedule, pick the close-ups on it, schedule again with room round them, then the camera
-    sch = schedule(len(seq), seconds, [], fps, bool(laid))
-    cam = plan_camera(model, placed, C, seq, sch, groups, cfg, axes, fps, size, laid)
-    picks = [order_of[w[2]] for w in cam["windows"]]
-    sch = schedule(len(seq), seconds, picks, fps, bool(laid))
-    groups2 = [[w[2]] for w in cam["windows"]]
-    cam = plan_camera(model, placed, C, seq, sch, groups2, cfg, axes, fps, size, laid)
+    # laid out first? (layout: "auto" - a model of a few pieces)
+    bodies = A.structure(model, placed, seq)["bodies"]
+    laid = None
+    if cfg.get("layout", "auto") is True or (cfg.get("layout", "auto") == "auto" and len(bodies) < LAYOUT_UNDER):
+        laid = lay_out(engine, placed, C, seq, front, bodies)
+    script = A.assemble(engine, model, placed, seq, [laid["box"]] if laid else (), front, log)
+    items, order = script["items"], script["order"]
+    piece = {i: k for k, it in enumerate(items) if it.kind == "piece" for i in it.parts}
+    order_of = {i: k for k, i in enumerate(order)}
+    Cl = np.zeros_like(C)                              # where each part lands (its unit may move later)
+    for i, p in enumerate(placed):
+        X = script["landed"][i] @ np.linalg.inv(np.asarray(p.M, float))
+        Cl[i] = C[i] @ X[:3, :3].T + X[:3, 3]
+    axes = np.array([script["axis"][i] for i in range(len(placed))])
     if laid:
-        fl = floats(engine, placed, C, seq, axes, sch, laid, fps)
-    else:
-        fl = flights(placed, C, seq, axes, sch, cam, fps, size)
+        laid["corners"] = np.array([laid["corner_of"][i] for i in order])
+    slow = {k: SLOW["under" if it.mode == "under" else "join" if it.kind == "join" else "lift"]
+            for k, it in enumerate(items) if it.kind == "join" or it.carry}
+    groups = highlight_groups(placed, order, cfg)
+    seconds = float(cfg["seconds"])
+
+    def timed(picks):
+        nonlocal seconds
+        for _ in range(240):                           # (longer, if the build needs it)
+            try:
+                si = schedule(len(items), seconds, picks, fps, bool(laid), slow)
+                break
+            except SystemExit:
+                if not slow:
+                    raise
+                seconds += 0.5
+        else:
+            raise SystemExit(f"{len(items)} pieces with {len(slow)} lifts and joins don't fit in "
+                             f"{seconds:g} s: make [quick] seconds longer")
+        view = dict(si, launch=np.array([si["launch"][piece[i]] for i in order]),
+                    land=np.array([si["land"][piece[i]] for i in order]), last=float(si["land"][-1]))
+        return si, view
+
+    # schedule, pick the close-ups on it, schedule again with room round them, then the camera
+    si, sch = timed([])
+    cam = plan_camera(model, placed, Cl, order, sch, groups, cfg, axes, fps, size, laid, C)
+    si, sch = timed([piece[w[2]] for w in cam["windows"]])
+    groups2 = [[w[2]] for w in cam["windows"]]
+    cam = plan_camera(model, placed, Cl, order, sch, groups2, cfg, axes, fps, size, laid, C)
+    if seconds > float(cfg["seconds"]) and log:
+        log(f"  quick: {seconds:g} s, not {float(cfg['seconds']):g}: the build takes that long "
+            f"({len(slow)} lifts and joins)")
+    fl, lands, notes = motion(engine, placed, script, si, cam, laid, fps, size)
+    landed = np.array([lands[piece[i]] for i in order])         # (a moment late, some)
     scene = model_scene(engine, model, placed=placed)
     scene["lights"] = []
-    allp = C.reshape(-1, 3)
+    allp = np.concatenate([C.reshape(-1, 3), Cl.reshape(-1, 3)])
     floor = allp if laid is None else np.concatenate([allp, laid["corners"].reshape(-1, 3)])
     r5 = lambda a: np.round(np.asarray(a, float), 4).tolist()   # noqa: E731
     mid = (allp.min(0) + allp.max(0)) / 2
     reach = float(np.linalg.norm((cam["pos"] - mid) * [1, 0, 1], axis=1).max()) * 0.0004   # m
+    clicks = sorted({round(x, 4) for x in lands})
     return {
         "fps": fps, "frames": sch["frames"], "size": list(size), "set": cfg["set"],
         "surface": cfg["surface"], "room": cfg["room"], "light": cfg["light"], "seed": cfg["seed"],
-        "exposure": float(cfg["exposure"]), "view": cfg["view"],
+        "exposure": float(cfg["exposure"]), "view": cfg["view"], "seconds": seconds,
         "cut": int(round(sch["cut"] * fps)), "scene": scene, "reach": round(reach, 4),
         "bounds": [r5(allp.min(0)), r5(allp.max(0))],
         "layout": laid is not None, "floor": [r5(floor.min(0)), r5(floor.max(0))],
-        "order": seq, "land": [int(round(x * fps)) for x in sch["land"]],
-        "land_s": [round(float(x), 4) for x in sch["land"]], "cut_s": round(float(sch["cut"]), 4),
+        "order": order, "land": [int(fl[i]["land"]) for i in order],
+        "land_s": [round(float(x), 4) for x in landed], "cut_s": round(float(sch["cut"]), 4),
+        "clicks_s": clicks,                            # every landing: a piece, or a unit joined
+        "joins": [{"at_s": round(lands[k], 4), "parts": list(it.parts)}
+                  for k, it in enumerate(items) if it.kind == "join"],
+        "notes": notes + list(script["warnings"]),
         "parts": fl,
         "camera": {"pos": r5(cam["pos"]), "target": r5(cam["target"]), "lens": r5(cam["lens"]),
                    "focus": r5(cam["focus"]), "fstop": r5(cam["fstop"])},
         "close_ups": [{"start": int(a * fps), "end": int(b * fps), "part": int(i),
-                       "land": int(round(sch["land"][order_of[i]] * fps)),
+                       "land": int(fl[i]["land"]),
                        "start_s": round(float(a), 4), "end_s": round(float(b), 4)}
                       for a, b, i in cam["windows"]],
     }
@@ -964,7 +1231,7 @@ def moment(model, placed, pl: dict, on) -> float:
         return float(on)
     name = str(on).strip()
     if name in ("first", "last"):
-        return float(land[0 if name == "first" else -1])
+        return float(land[0] if name == "first" else pl.get("clicks_s", land)[-1])
     steps = {(sub.name, k) for sub in model.submodels.values()
              for k, c in enumerate(sub.captions) if c.strip().lower() == name.lower()}
     hits = [k for k, i in enumerate(order) if (placed[i].owner, placed[i].local_step) in steps]
@@ -995,7 +1262,7 @@ def cues(pl: dict, music: bool, seed: int = 1, ending: dict | None = None,
                for f in files}
     rng = np.random.default_rng(seed)
     ev = []
-    land = pl["land_s"]
+    land = pl.get("clicks_s", pl["land_s"])            # (a kit lands as one; a unit joined clicks too)
     n = len(land)
     for k, t in enumerate(land):
         if k == n - 1:
@@ -1077,7 +1344,10 @@ def make_quick(engine, proj, model, *, preview: bool = False, set_name: str | No
                              "render the video first")
         log(f"{model.name}: quick video again from its {pl['frames']} frames, the sound mixed anew")
         return _finish(proj, model, cfg, pl, work, q, audio, preview, t_start, 0.0, log)
-    pl = plan(engine, model, cfg, fps, size)
+    pl = plan(engine, model, cfg, fps, size, log)
+    wrong = clashes(engine, model.flatten(), pl)       # (the plan's own frames, checked)
+    for line in report(model.flatten(), pl, wrong):
+        log(line)
     script = Path(__file__).resolve().parent.parent / "render" / "blender_quick.py"
     stamp = hashlib.sha1(json.dumps([pl, samples, size], sort_keys=True, default=str).encode()
                          + script.read_bytes() + (script.parent / "quick_sets.py").read_bytes()

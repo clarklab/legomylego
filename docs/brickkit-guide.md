@@ -791,14 +791,46 @@ workbench, morning), `linen` (kraft, window, day), `studio` (green_mat, studio, 
 given beside it wins; `set = "random"` picks one of each by `seed` (else by the model), so a
 series of videos varies by itself.
 
-The build (`video/quick.py`, no Blender: `plan`): it opens on the empty set; the parts come in
-instruction order (`build_sequence`), each flying in from just off the frame - out to the side
-it faces, or the camera's left or right of it, and up - on a short cubic arc whose last stretch
-runs along its insertion axis (its `insert=` hint, else its own top: down onto its studs, or
-sideways for a part on side studs) so nothing passes through what is built, slowing as it
-lands, tumbling a little and straightening, then a tiny bounce back off its studs. The pace
-ramps up (the last parts land about 3× as often as the first, several a second), a beat before
-the last piece. The camera circles the model low by the table (11-20°) in one smooth orbit
+The build (`video/quick.py`, no Blender: `plan`): it opens on the empty set; the pieces come
+in instruction order (`build_sequence`), each flying in from just off the frame - out to the
+side it faces, or the camera's left or right of it, and up, tumbling a little and
+straightening - to line up a hair short of its place and be pressed home: it stops dead, no
+bounce. The pace ramps up (the last parts land about 3× as often as the first, several a
+second), a beat before the last piece.
+
+**It goes together for real** (`video/assemble.py`): no part ever passes through another or
+the table, and none lands on nothing.
+
+- *The way in.* Each piece's mesh is swept out from its place against what is built so far
+  (the checks' collision engine), and it goes on the first clear way of: its `insert=` hint;
+  the axes of its connections, from its own side of what it goes onto (studs straight on, a
+  pin or a bar slid in); a clip or hinge pushed on across its bar (its jaws may touch the bar
+  the last 8 LDU: they flex - the T. rex's arms come up from below and clip on); its own top,
+  straight up, the sides, from underneath.
+- *The route.* From where it starts it rises, crosses at the lowest height that is clear,
+  comes down at a gate in line with its way in - out along it, or off to a side - and runs
+  straight in the last stretch; the corners are rounded as far as stays clear. Every sample
+  of it is tested against everything on the table and the table itself. Two pieces in the air
+  at once keep out of each other's way: the later one comes from the other side, or a moment
+  later.
+- *Nothing in the air.* What is built stands on the table on its lowest point (so a model
+  that ends up on a stick is built on the table). A piece that reaches lower lifts it first;
+  one that goes on from underneath and becomes what it stands on slides in under it on the
+  table while it is held up, and it is set down on the piece (the lolly's stick).
+- *Sub-assemblies.* A sub-assembly is built in place when every piece of it can go on there,
+  supported and with a clear way in; if not (the T. rex's second leg: its hip slides on from
+  where the first leg's hip is) it is built beside the model - upright in its own frame, clear
+  of the model's footprint - and joined as one. A bought kit (a minifigure's legs, its torso
+  with its arms) is one piece.
+- *The schedule* gives a lift or a join the table to itself (`SLOW`), and the loop is made
+  longer than `[quick] seconds` if the build needs it.
+
+`brickkit quick` checks the plan it made (`clashes`: the plan's own frames, part against
+part) and lists anything left - a piece with no clear way in, a part that passes through
+another: an `insert=(x, y, z)` hint on that piece (the way it comes in from) usually settles
+it. `tests/test_quick.py::test_quick_builds_for_real` holds every Quick Bricks model to it.
+
+The camera circles the model low by the table (11-20°) in one smooth orbit
 that only ever goes one way (`orbit`): it starts on the front's three-quarter view (the front
 is -Z, or the model's `azimuth_offset`), goes slowly at first and faster as the build speeds
 up, passes the back faster than the front, and ends on the front again. It frames what is
@@ -833,7 +865,8 @@ the last nearest the build, so from the front it reads from the top down like a 
 empties towards the build; no row is wider than the build, so the grid stands tall in the
 upright frame; in a row the same parts sit together and the row mirrors the model, each part
 on the side it will be on. After 1.2 s to take it in, the parts lift one at a time, turn the
-way they will sit, float over what is built and press on (`floats`; slower than the fly-ins).
+way they will sit, float over what is built and press on (the same collision-checked routes
+as the fly-ins, slower; the parts still lying in the grid count as things to keep clear of).
 The camera starts high (55°) in front, square on to the grid, and frames the build's place
 and whatever still lies behind it, so it closes in and comes down as the grid empties; it only
 drifts across the front until the table is all but clear, then makes its whole turn round the

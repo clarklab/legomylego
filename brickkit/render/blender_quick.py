@@ -10,7 +10,8 @@ the model's real size, the model in the middle of it: the plan's surface, room a
 with any (quick_sets.py: five surfaces, five rooms, three lights). The parts
 fly in on the plan's per-frame transforms (hidden before they launch, and all of them from the
 cut on: the empty set again - or, laid out, lying where the plan's `start` puts them before
-they launch and again from the cut on, the surface big enough for them all: `floor`), keyed
+they launch and again from the cut on, the surface big enough for them all: `floor`; and on
+any later `moves` of theirs - what is built lifted for a piece, a unit joined), keyed
 either side of each frame so a 180-degree shutter blurs them, and the camera with them; its
 depth of field from the plan (focus point, f-number), the 36 mm sensor on the frame's height."""
 import json
@@ -91,16 +92,27 @@ class Quick:
         self.moving = set()
 
     def part_matrix(self, i, f):
-        """Part i at frame f (Blender world), or None while it isn't there."""
+        """Part i at frame f (Blender world), or None while it isn't there: on its way in,
+        then where that left it - or where a later move did (its unit lifted for a piece that
+        goes underneath, or joined to the model: `moves`)."""
         p = self.pl["parts"][i]
         if p is None:
             return None
         if f >= self.pl["cut"] or f < p["launch"]:
             return self.start[i]
-        k = f - p["launch"]
-        if k >= len(p["frames"]):
-            return self.rest[i]
-        return TO_B @ ba.ld_matrix(p["frames"][k])
+        fr = p["frames"]
+        M = fr[min(f - p["launch"], len(fr) - 1)]
+        for mv in p.get("moves", ()):
+            if f >= mv["at"]:
+                M = mv["frames"][min(f - mv["at"], len(mv["frames"]) - 1)]
+        return TO_B @ ba.ld_matrix(M)
+
+    def on_the_move(self, i, f):
+        """Is part i on the move at frame f (keyed either side, for the blur)?"""
+        p = self.pl["parts"][i]
+        if p["launch"] <= f < p["launch"] + len(p["frames"]) + 1:
+            return True
+        return any(mv["at"] <= f < mv["at"] + len(mv["frames"]) + 1 for mv in p.get("moves", ()))
 
     def _key(self, ob, mats):
         ob.animation_data_clear()
@@ -133,8 +145,7 @@ class Quick:
             ob.hide_render = M is None
             if M is None:
                 continue
-            p = pl["parts"][i]
-            flying = p["launch"] <= f < p["launch"] + len(p["frames"]) + 1
+            flying = f < pl["cut"] and self.on_the_move(i, f)
             if flying:
                 prev = self.part_matrix(i, f - 1)
                 nxt = self.part_matrix(i, f + 1)

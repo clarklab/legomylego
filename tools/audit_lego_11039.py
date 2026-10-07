@@ -255,7 +255,9 @@ def audit_quick(engine, model, config):
     assert [placed[i].build_order for i in result["order"]] == sorted(p.build_order for p in placed), "Quick reorders source steps"
     for index, flight in enumerate(result["parts"]):
         frames = np.asarray(flight["frames"]).reshape(-1, 4, 4)
-        assert np.isfinite(frames).all() and np.allclose(frames[-1], placed[index].M, atol=1e-3), f"Quick part {index} never reaches its final position"
+        last = quick.pose_at(result, index, result["cut"] - 1)     # (built on the table, then set on its stick)
+        assert np.isfinite(frames).all() and np.allclose(last, placed[index].M, atol=1e-3), f"Quick part {index} never reaches its final position"
+    assert quick.clashes(engine, placed, result) == [] and result["notes"] == [], "Quick parts pass through each other"
     return len(result["order"])
 
 

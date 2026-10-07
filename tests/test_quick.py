@@ -5,6 +5,7 @@ import pytest
 
 from brickkit import paths
 from brickkit.project import Project
+from brickkit.video import assemble as A
 from brickkit.video import quick as Q
 from brickkit.video import timeline as T
 
@@ -84,43 +85,41 @@ def sample_plan(engine):
     return model, cfg, Q.plan(engine, model, cfg)
 
 
+def _ways(engine, model, placed):
+    """Every part's way in (the world direction it comes from), from the build's script."""
+    return A.assemble(engine, model, placed, Q.build_sequence(model, placed))["axis"]
+
+
 def test_quick_plan_flights(engine, sample_plan):
-    """Parts in instruction order; each flies in from just outside the frame and ends its arc
-    along its insertion axis onto its own place, with a tiny bounce after; the paths keep out
-    of what is already built."""
+    """Parts in instruction order; each flies in from just outside the frame, runs straight in
+    along its way in, lines up CLICK short of its place and is pressed home - no bounce - and
+    nothing passes through anything on the way."""
     model, cfg, pl = sample_plan
     placed = model.flatten()
-    C = T.corners(engine, placed)
     roof = placed[pl["order"][-1]]                                     # base, pillars, roof
     assert pl["order"][0] == 0 and roof.part == "3001.dat" and roof.M[1, 3] == -72
     assert len(pl["close_ups"]) == 1 and "right" in placed[pl["close_ups"][0]["part"]].tags
     assert pl["frames"] == 8 * Q.FPS and pl["cut"] < pl["frames"]
-    axes = Q.insert_axes(model, placed)
-    built_at = {i: pl["parts"][i]["land"] for i in pl["order"]}
+    axes = _ways(engine, model, placed)
     for k, i in enumerate(pl["order"]):
         p = pl["parts"][i]
         fr = np.array(p["frames"]).reshape(-1, 4, 4)
         settle = max(2, round(Q.SETTLE * pl["fps"]))
-        assert len(fr) == p["land"] - p["launch"] + settle and p["land"] == pl["land"][k]
+        span = p["land"] - p["launch"]
+        assert len(fr) == span + settle and p["land"] == pl["land"][k] and p["moves"] == []
         rest = np.asarray(placed[i].M, float)
-        assert np.allclose(fr[-1], rest, atol=1e-3)                    # settled in its place
+        assert np.allclose(fr[span:], rest, atol=1e-3)                 # in its place, and still
         x, y, _ = _project(pl["camera"], p["launch"], fr[0][:3, 3][None])[0]
         assert max(abs(x), abs(y)) > 0.85                               # from (just) off frame
-        last = fr[p["land"] - p["launch"] - 1][:3, 3] - rest[:3, 3]      # the frame before it lands
-        assert np.dot(last / np.linalg.norm(last), axes[i]) > 0.95     # along its axis
-        bounce = fr[p["land"] - p["launch"] + 1:, :3, 3] - rest[:3, 3]
-        assert 0 < np.abs(bounce).max() <= 1.6 * Q.BOUNCE + 1e-6
-        # its box along the path never enters a part that has landed (but for its last stretch)
-        box = C[i] - rest[:3, 3]
-        for f in range(p["launch"], p["land"] - max(3, round(0.1 * pl["fps"]))):   # (onto its studs)
-            M = fr[f - p["launch"]]
-            q = box @ M[:3, :3].T @ np.linalg.inv(rest[:3, :3]).T + M[:3, 3]
-            lo, hi = q.min(0), q.max(0)
-            for j, fj in built_at.items():
-                if j == i or fj > f:
-                    continue
-                blo, bhi = C[j].min(0), C[j].max(0)
-                assert np.any(hi <= blo + 1) or np.any(lo >= bhi - 1), (i, j, f)
+        off = fr[:span, :3, 3] - rest[:3, 3]
+        dist = np.linalg.norm(off, axis=1)
+        assert (np.diff(dist) < 1e-6).all()                            # always nearer: no bounce
+        near = dist < 10.0                                             # its straight run in
+        assert near.sum() >= 3 and (off[near] @ axes[i] > 0.999 * dist[near]).all()
+        assert np.allclose(fr[:span][near][:, :3, :3], rest[:3, :3], atol=1e-6)    # and upright
+        lined_up = dist[int(np.ceil(Q.PRESS * span))]                  # then pressed home
+        assert 0 < lined_up <= Q.CLICK + 0.5 and dist[-1] < lined_up
+    assert Q.clashes(engine, placed, pl) == [] and pl["notes"] == []
 
 
 def test_quick_plan_camera(engine, sample_plan):
@@ -221,7 +220,7 @@ def test_quick_orbit(engine, slug):
     pl = Q.plan(engine, model, Q.quick_config(proj.config, slug=slug))
     placed = model.flatten()
     C = T.corners(engine, placed)
-    axes = Q.insert_axes(model, placed)
+    axes = _ways(engine, model, placed)
     allp = C.reshape(-1, 3)
     mid = (allp.min(0) + allp.max(0)) / 2
     cut, fps = pl["cut"], pl["fps"]
@@ -269,7 +268,7 @@ def test_quick_close_ups(engine):
         assert np.ptp(xy[:, 0]) > 0.5                          # half the frame's width or more
         assert pl["camera"]["lens"][f] > cfg["lens"]
     clock = cu[0]["part"]
-    out = Q.outward(C[clock], C, Q.insert_axes(model, placed)[clock])
+    out = Q.outward(C[clock], C, _ways(engine, model, placed)[clock])
     pos, tgt = np.array(pl["camera"]["pos"][cu[0]["land"]]), np.array(pl["camera"]["target"][cu[0]["land"]])
     d = (pos - tgt) * [1, 0, 1]
     assert np.dot(out, d / np.linalg.norm(d)) > 0.5            # seen face on
@@ -283,6 +282,7 @@ def test_quick_cues(sample_plan, tmp_path):
     smp = [e for e in c["events"] if e["type"] == "sample"]
     lands = [e for e in smp if e["file"] != Q.SOUNDS["swish"]]
     assert np.allclose([e["frame"] / pl["fps"] for e in lands], pl["land_s"])   # in seconds
+    assert pl["clicks_s"] == pl["land_s"] and pl["joins"] == []         # (no kits, no units)
     assert lands[-1]["file"] == Q.SOUNDS["snap"]
     assert len({e["file"] for e in lands[:-1]}) == min(len(Q.SOUNDS["click"]), len(lands) - 1)
     assert len([e for e in smp if e["file"] == Q.SOUNDS["swish"]]) == len(pl["close_ups"])
@@ -353,3 +353,102 @@ def test_blank_frames(tmp_path):
                    + rng.normal(0, 3, (192, 108, 3)), 0, 255).astype(np.uint8)
     Image.fromarray(soft).save(tmp_path / "00001.png")
     assert Q.blank_frames(tmp_path, 3) == [0]
+
+
+QUICK = ["dracula", "bat", "caldwell_mini", "dinosaur", "birthday_cake", "watermelon_ice_lolly",
+         "avocado", "taco"]
+
+
+@pytest.mark.parametrize("slug", QUICK)
+def test_quick_builds_for_real(engine, slug):
+    """Every Quick Bricks model goes together the way it really would: in the plan's own
+    frames no part is ever in another (but a clip's last flex onto its bar) or under the
+    table, each lands on the table or on a part it connects to, a clear way in was found for
+    every piece, every part ends in its place - and the instruction order is kept."""
+    proj = Project(slug, paths.MODELS_DIR)
+    model = proj.build(engine.catalog)
+    placed = model.flatten()
+    pl = Q.plan(engine, model, Q.quick_config(proj.config, slug=slug))
+    assert Q.clashes(engine, placed, pl) == [] and pl["notes"] == []
+    assert sorted(pl["order"]) == list(range(len(placed)))
+    assert [placed[i].build_order for i in pl["order"]] == sorted(p.build_order for p in placed)
+    for i, p in enumerate(placed):
+        assert np.allclose(Q.pose_at(pl, i, pl["cut"] - 1), np.asarray(p.M, float), atol=1e-3)
+    assert np.all(np.diff(pl["clicks_s"]) > 0) and pl["clicks_s"][-1] < pl["cut_s"] - 1.0
+
+
+def test_quick_units_and_lifts(engine):
+    """The Mini T. rex: its feet are built beside the legs and pushed on from underneath (the
+    leg held up, then set down on the foot); its second leg cannot be built in place (its hip
+    slides on from where the first leg's is), so it is built beside the model and joined; its
+    arms come up from below and clip onto the shoulder bar. A unit joined is a landing too:
+    a click, and room in the schedule. The watermelon lolly is built on the table and set
+    down on its stick; the courthouse's clockmaster comes as his kits: legs, torso, head."""
+    proj = Project("dinosaur", paths.MODELS_DIR)
+    model = proj.build(engine.catalog)
+    placed = model.flatten()
+    seq = Q.build_sequence(model, placed)
+    sc = A.assemble(engine, model, placed, seq)
+    items = sc["items"]
+    assert sc["order"] == seq and sc["warnings"] == [] and not any(it.forced for it in items)
+    joins = [it for it in items if it.kind == "join"]
+    assert [len(it.parts) for it in joins] == [3, 3, 9]                 # a foot, a foot, a leg
+    for foot in joins[:2]:
+        assert foot.mode == "under" and foot.axis @ [0, 1, 0] > 0.99 and foot.carry
+        for i in foot.parts:                                           # built beside, on the table
+            assert np.linalg.norm((foot.source[i] - foot.seat[i])[[0, 2], 3]) > A.MARGIN
+        for before, during, after in foot.carry.values():              # held up, then set down
+            assert during[1, 3] < after[1, 3] - 8 and during[1, 3] < before[1, 3]
+    assert joins[2].mode == "press" and not joins[2].carry
+    arms = [it for it in items if "arms" in placed[it.parts[0]].tags]
+    assert len(arms) == 2 and all(it.way == "clip^" and it.axis @ [0, 1, 0] > 0.99 for it in arms)
+    pl = Q.plan(engine, model, Q.quick_config(proj.config, slug="dinosaur"))
+    assert len(pl["joins"]) == 3 and len(pl["clicks_s"]) == len(placed) + 3
+    leg = joins[2].parts
+    at = int(round(pl["joins"][2]["at_s"] * pl["fps"]))
+    was = [Q.pose_at(pl, i, at - 60) for i in leg]                      # the leg, a second before
+    assert all(np.linalg.norm((w - np.asarray(placed[i].M, float))[:3, 3]) > A.MARGIN for w, i in zip(was, leg))
+    assert all(np.allclose(Q.pose_at(pl, i, at + 15), np.asarray(placed[i].M, float), atol=1e-3) for i in leg)
+    lolly = Project("watermelon_ice_lolly", paths.MODELS_DIR)
+    m2 = lolly.build(engine.catalog)
+    p2 = m2.flatten()
+    s2 = A.assemble(engine, m2, p2, Q.build_sequence(m2, p2))
+    assert [it.mode for it in s2["items"]][-2:] == ["under", "under"]   # the stick: last, underneath
+    assert s2["landed"][s2["order"][0]][1, 3] > p2[s2["order"][0]].M[1, 3] + 30   # built lower: on the table
+    mini = Project("caldwell_mini", paths.MODELS_DIR)
+    m3 = mini.build(engine.catalog)
+    p3 = m3.flatten()
+    s3 = A.assemble(engine, m3, p3, Q.build_sequence(m3, p3))
+    assert len(p3) == 70 and len(s3["items"]) == 64                     # 64 pieces, as it is sold
+    assert sorted(len(it.parts) for it in s3["items"])[-2:] == [3, 5]   # his legs; torso and arms
+
+
+def test_quick_schedule_slow():
+    """A lift or a join gets the table to itself: nothing else lands in its time."""
+    plain = Q.schedule(20, 14.0)
+    s = Q.schedule(20, 14.0, slow={8: Q.SLOW["join"]})
+    before, after, takes = Q.SLOW["join"]
+    assert s["land"][8] - s["land"][7] >= before - 1e-6 and s["land"][9] - s["land"][8] >= after - 1e-6
+    assert s["flight"][8] >= takes and s["cut"] == pytest.approx(plain["cut"])
+    assert plain["land"][8] - plain["land"][7] < before
+
+
+def test_route_keeps_clear(engine):
+    """A route goes over a wall rather than through it, comes down in line with the way in
+    and runs straight in; with no way round it says so."""
+    wall = [(k, A.trans([0.0, -24.0 * k, 0.0])) for k in range(4)]     # four 2 x 4 bricks, stacked
+
+    class P:                                                           # (parts by index)
+        part = "3001.dat"
+    world = A.World(engine, [P] * 4, wall, 0.0)
+    seat = A.trans([0.0, -24.0, 60.0])                                 # behind the wall
+    start = np.array([0.0, 0.0, -140.0])                               # from in front of it, low
+    path = A.route(world, [("3001.dat", seat)], start, None, [(np.array([0.0, -1.0, 0.0]), 20.0)])
+    assert path["clear"] and np.allclose(path["p"][-1], 0, atol=1e-6) and np.allclose(path["p"][0], start)
+    assert path["p"][:, 1].min() < -24.0 * 3                           # over the top of the wall
+    run = path["p"][path["s"] >= path["sure"]]
+    assert np.allclose(run[:, [0, 2]], 0, atol=1e-6) and (np.diff(run[:, 1]) > 0).all()
+    for p in path["p"][::3]:
+        assert world.free(A.poses([("3001.dat", seat)], path["c"], p, np.eye(3)))
+    boxed = A.World(engine, [P] * 4, [(0, A.trans([0.0, -24.0 - 24.0, 60.0]))], 0.0)   # a brick on its place
+    assert not A.route(boxed, [("3001.dat", seat)], start, None, [(np.array([0.0, -1.0, 0.0]), 20.0)])["clear"]
