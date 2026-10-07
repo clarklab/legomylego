@@ -7,7 +7,11 @@ import pytest
 from brickkit.bom.bom import build_bom, write_bricklink_xml, write_parts_csv, write_pick_a_brick_csv
 from brickkit.io.mpd import write_mpd
 from brickkit.project import Project
-from tools.audit_lego_11039 import SOURCE, audit_exports, audit_geometry, audit_model, audit_source
+from tools.audit_lego_11039 import ROOT, SOURCE, SOURCE_URL, audit_exports, audit_geometry, audit_model, audit_source
+
+# LEGO's own instruction booklet isn't kept in the repo: download it to check the set inventory
+SOURCE_PDF = ROOT / "docs/references/lego_11039/6555451.pdf"
+needs_source_pdf = pytest.mark.skipif(not SOURCE_PDF.exists(), reason=f"needs {SOURCE_PDF.name} from {SOURCE_URL}")
 
 
 @pytest.mark.parametrize("slug", SOURCE)
@@ -57,6 +61,7 @@ def test_source_audit_rejects_same_omission_from_model_and_manifest(engine, slug
 
 
 
+@needs_source_pdf
 def test_full_set_inventory_reconciles_all_primary_models(engine):
     from tools.audit_lego_11039 import audit_set_inventory
     result = audit_set_inventory(engine)
@@ -64,6 +69,7 @@ def test_full_set_inventory_reconciles_all_primary_models(engine):
     assert result["element_entries"] == 67
 
 
+@needs_source_pdf
 @pytest.mark.parametrize("field", ["used_in_primary_models", "remaining_for_rebuilds", "quantity"])
 def test_full_set_inventory_rejects_incorrect_allocation(engine, field):
     from tools.audit_lego_11039 import ROOT, audit_set_inventory
@@ -73,6 +79,7 @@ def test_full_set_inventory_rejects_incorrect_allocation(engine, field):
         audit_set_inventory(engine, inventory)
 
 
+@needs_source_pdf
 def test_full_set_inventory_rejects_altered_source_pdf(engine, tmp_path):
     from tools.audit_lego_11039 import ROOT, audit_set_inventory
     altered = tmp_path / "altered.pdf"
