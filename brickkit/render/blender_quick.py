@@ -29,6 +29,8 @@ import quick_sets  # noqa: E402
 
 TO_B = bs.TO_BLENDER
 BLUR_AT = 100
+TINT = 450.0      # see-through plastic's colour, as absorption per metre: this close, at the
+                  # parts' real size (a few mm of plastic), the stills' 18 leaves a flame clear
 
 
 class Quick:
@@ -37,6 +39,7 @@ class Quick:
         scene = dict(pl["scene"])
         scene.update(engine="cycles", size=job["size"], samples=int(job["samples"]), lights=[],
                      ground=False)
+        scene.setdefault("trans_density", TINT)
         self.b, self.center, self.radius = bs.build_scene(scene)
         sc = self.sc = bpy.context.scene
         for ob in list(sc.objects):                       # SceneBuilder's studio lights: ours instead
@@ -46,7 +49,8 @@ class Quick:
         sc.render.image_settings.file_format = "PNG"
         sc.render.image_settings.color_mode = "RGB"
         sc.render.image_settings.compression = 15
-        if pl.get("view", "agx") == "filmic":          # the parts' colours true: under AgX a
+        filmic = pl.get("view", "agx") == "filmic"
+        if filmic:                                      # the parts' colours true: under AgX a
             sc.view_settings.view_transform = "Filmic"  # bright yellow goes a pale orange
             ba._try(sc.view_settings, "look", "Medium High Contrast")
         else:
@@ -63,6 +67,8 @@ class Quick:
         mx = Vector([max(v[i] for v in corners) for i in range(3)])
         ev = quick_sets.build_set(pl["surface"], pl["room"], pl["light"], mn, mx, int(pl.get("seed", 7)),
                                   float(pl.get("reach", 0.0)))
+        if filmic:
+            ev += quick_sets.LIGHTS[pl["light"]].get("filmic", 0.0)
         sc.view_settings.exposure = exposure + ev
         self.rest = [TO_B @ Matrix(inst["matrix"]) for inst in scene["instances"]]
         self.start = [TO_B @ ba.ld_matrix(p["start"]) if p and p.get("start") else None

@@ -76,21 +76,24 @@ def eevee_settings(sc, samples):
 def cycles_settings(sc, job):
     """Cycles for video: SceneBuilder's still settings, but with a fixed noise seed (steadier
     denoising from frame to frame), fewer bounces and optionally the CPU (when the GPU is
-    shared with other renders)."""
+    shared with other renders). The job can ask for cleaner frames, which flicker less once
+    denoised: `noise` (the adaptive sampling threshold, 0.03) and `clamp` (indirect light)."""
     cy = sc.cycles
     cy.samples = int(job["samples"])
     cy.use_denoising = True
     _try(cy, "denoiser", "OPENIMAGEDENOISE")
     _try(cy, "denoising_input_passes", "RGB_ALBEDO_NORMAL")
     _try(cy, "use_animated_seed", False)
-    cy.seed = 7
+    cy.seed = int(job.get("seed", 7))
     cy.max_bounces = 24
     cy.transmission_bounces = 24
     cy.transparent_max_bounces = 24
     cy.diffuse_bounces = 2
     cy.glossy_bounces = 3
     _try(cy, "use_adaptive_sampling", True)
-    _try(cy, "adaptive_threshold", 0.03)
+    _try(cy, "adaptive_threshold", float(job.get("noise", 0.03)))
+    if job.get("clamp"):                 # no bounce brighter than this: no fireflies for the
+        _try(cy, "sample_clamp_indirect", float(job["clamp"]))   # denoiser to smear
     if job.get("device", "GPU").upper() == "CPU":
         cy.device = "CPU"
         sc.render.threads_mode = "AUTO"

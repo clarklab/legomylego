@@ -489,10 +489,12 @@ def room_bookshelf(x):
 
 # ---------------------------------------------------------------------------- lights
 LIGHTS = {   # key (direction from the model, colour, power, size), fill, world, exposure (EV)
+    # ("filmic": EV on top under the Filmic view, which shows the two daylights much brighter
+    # than AgX does: without it coral goes pale pink, lime yellow, and the mats wash out)
     "morning": {"key": ((-0.8, -0.45, 0.42), "#FFD7A6", 230.0, 0.9), "fill": ((0.8, 0.4, 0.4), "#CFE0FF", 40.0, 1.2),
-                "world": ("#C4A88A", 0.25), "ev": 0.0},
+                "world": ("#C4A88A", 0.25), "ev": 0.0, "filmic": -1.0},
     "day": {"key": ((-0.5, -0.6, 0.85), "#FFF4E6", 260.0, 1.3), "fill": ((0.7, 0.5, 0.5), "#E6EEFF", 80.0, 1.4),
-            "world": ("#D8DCE0", 0.45), "ev": -0.15},
+            "world": ("#D8DCE0", 0.45), "ev": -0.15, "filmic": -1.2},
     # (evening: a big soft warm lamp on the model's front, a cool fill round its back: a hard
     # key from behind burnt out the back and left the face in shadow)
     "evening": {"key": ((-0.7, -0.5, 0.5), "#FFC48A", 95.0, 1.3), "fill": ((0.75, 0.45, 0.4), "#A9B8E6", 45.0, 1.5),

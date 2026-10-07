@@ -866,13 +866,20 @@ on = ["The clock tower", "14769p0m", "last"]   # a step's caption (its first pie
 level = -11.0                       # peak dBFS in the mix (a click: -9); at = s after each
 exposure = -1.0                     # EV, for a brighter or darker set
 view = "filmic"                     # the film response: "filmic" (the parts' colours true) or
-                                    # "agx" (softer; a bright yellow goes pale orange)
+                                    # "agx" (softer; a bright yellow goes pale orange). Under
+                                    # filmic the morning and day lights are exposed 1.0 and
+                                    # 1.2 EV lower (quick_sets.LIGHTS "filmic"), or they wash
+                                    # the colours out
 watermark = false                   # true: the Bricks logo, small and faint, top centre
 ```
 Frames render under the GPU lock, 40 to a Blender process (Cycles, 32 samples, denoised: about
-13 s a frame at 1080×1920 on this Mac, so a 60 fps final of 840 frames takes about three hours;
+8 s a frame at 1080×1920 on this Mac, so a 60 fps final of 840 frames takes about two hours;
 a preview about ten minutes), and are kept between runs until the plan, the samples or the
-scripts change. The next one: add `[quick]` to the model's model.toml
+scripts change. Every Cycles render uses the GPU on its own (`blender_scene.settings`): with
+the CPU sharing each frame it took over twice as long for the same picture, and a see-through
+part under motion blur made Metal fault and the render hang. See-through parts are tinted more
+strongly here than in the stills (`blender_quick.TINT`): at real size and this close, the
+stills' absorption leaves a flame all but clear. The next one: add `[quick]` to the model's model.toml
 (or nothing: the defaults work) and run `brickkit quick SLUG --preview`, then `brickkit quick
 SLUG`.
 

@@ -266,8 +266,12 @@ class SceneBuilder:
             try:
                 prefs.compute_device_type = "METAL"
                 prefs.get_devices()
+                # the GPU on its own: with the CPU sharing each frame a render takes over
+                # twice as long (M2 Max, same picture), and see-through parts under motion
+                # blur fault in Metal and hang the render
+                gpu = any(dev.type != "CPU" for dev in prefs.devices)
                 for dev in prefs.devices:
-                    dev.use = True
+                    dev.use = dev.type != "CPU" if gpu else True
                 sc.cycles.device = "GPU"
             except Exception:
                 pass
