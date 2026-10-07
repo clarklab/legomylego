@@ -5,14 +5,14 @@
     {
       "name": "real_elements",
       "status": "pass",
-      "summary": "160 part/colour combinations: 0 not real, 0 rare; 3 non-LEGO hardware stand-in(s), not checked",
+      "summary": "164 part/colour combinations: 0 not real, 0 rare; 3 minifig component(s); 3 non-LEGO hardware stand-in(s), not checked",
       "items": [],
       "stats": {
-        "combinations": 160,
+        "combinations": 164,
         "not_real": 0,
         "rare": 0,
         "hardware": 3,
-        "minifig_components": 0,
+        "minifig_components": 3,
         "stand_ins": 0,
         "approximate": 0
       }
@@ -20,19 +20,20 @@
     {
       "name": "connections",
       "status": "pass",
-      "summary": "20291 connections (20029 stud, 100 hinge, 60 press, 36 gen, 30 pin, 29 axle, 5 bar, 2 clip); 1 separate piece(s)",
+      "summary": "20311 connections (20032 stud, 100 hinge, 60 press, 37 pin, 36 gen, 29 axle, 9 bar, 6 kit, 2 clip); 1 separate piece(s)",
       "items": [],
       "stats": {
-        "connections": 20291,
+        "connections": 20311,
         "by_kind": {
-          "stud": 20029,
+          "stud": 20032,
           "axle": 29,
-          "pin": 30,
+          "pin": 37,
           "hinge": 100,
-          "bar": 5,
+          "bar": 9,
           "clip": 2,
           "gen": 36,
-          "press": 60
+          "press": 60,
+          "kit": 6
         },
         "pieces": 1
       }
@@ -40,7 +41,7 @@
     {
       "name": "collisions",
       "status": "pass",
-      "summary": "0 overlapping pair(s) among 6671 parts",
+      "summary": "0 overlapping pair(s) among 6681 parts",
       "items": [],
       "stats": {
         "pairs": 0
@@ -49,28 +50,28 @@
     {
       "name": "buildability",
       "status": "pass",
-      "summary": "3961 insertions tried across 17 submodel(s); 0 problem(s)",
+      "summary": "3965 insertions tried across 20 submodel(s); 0 problem(s)",
       "items": [],
       "stats": {
-        "insertions": 3961
+        "insertions": 3965
       }
     },
     {
       "name": "stability",
       "status": "pass",
-      "summary": "about 7134 g; centre of mass inside the base (100% margin); tips at 49.3 deg",
+      "summary": "about 7137 g; centre of mass inside the base (100% margin); tips at 49.3 deg",
       "items": [],
       "stats": {
-        "mass_g": 7133.649719136098,
+        "mass_g": 7137.344230066015,
         "com": [
-          0.2803877742480339,
-          -464.96204141805123,
-          -0.013584380776826862
+          0.22847953416720077,
+          -464.7509974737747,
+          -0.2772713773625411
         ],
         "approx_parts": 0,
-        "margin": 0.9994993075459856,
-        "tip_angle_deg": 49.32782795036726,
-        "com_height_ldu": 480.96204141805123
+        "margin": 0.999504872540424,
+        "tip_angle_deg": 49.340415337016346,
+        "com_height_ldu": 480.7509974737747
       }
     },
     {

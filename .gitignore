@@ -22,3 +22,10 @@ models/*/out/*.tmp.mp4
 models/*/out/turntable_frames/
 models/*/out/turntable_preview.mp4
 showreel/work/
+# Quick Bricks: the rendered frames and previews stay out (the finished SLUG-WxH.mp4 is tracked)
+models/*/out/quick_frames/
+models/*/out/quick_preview.mp4
+models/*/out/*_preview.mp4
+# scratch models (experiments), all but the tests' sample
+models/_*/
+!models/_sample/

@@ -21,6 +21,9 @@ scene; the model-scene segments are planned here, frame by frame, for render/ble
                 model.pose) while it spins, in three shots; or "night_desk", a tap lamp on a
                 desk at night, tapped on, off and on (motion "tap"), in two; then a hard cut to
                 black for a beat (`cold_open_plan`; config [video.cold_open])
+    coda        (opt-in, last) the last image, after the outro: the model far off in the dark
+                sea and a giant squid rising out of the murk, going for it (`coda_plan`;
+                config [video.coda])
 
 `build_timeline(engine, model, segments, ...)` returns a JSON-able dict; every frame number is
 absolute (frame 0 is the first frame of the video, at `fps`):
@@ -40,6 +43,8 @@ absolute (frame 0 is the first frame of the video, at `fps`):
     mechanism           per mechanism frame the pose parameter u (0..1) and the groups' angles
     cold_open           (only with one) its own scene, motion, camera and rev curve: see
                         `cold_open_plan`
+    coda                (only with one) the same fields for the coda, and its creature: see
+                        `coda_plan`
 
 Per-model tweaks go in `model.meta["video"]` or model.toml [video] (all optional), e.g.
     {"lift": {"exclude_tag": "stand", "height": 80}, "beats": {"build": 28}, "drop": 24,
@@ -66,10 +71,11 @@ MARGIN = 1.3              # frame = 1/MARGIN of the image is model (a little air
 DROP = 24.0               # LDU a part travels as it drops in (about a stud)
 DROP_FRAMES = 8           # how long a drop takes
 ORDER = ("cold_open", "open", "title", "build", "scan", "mechanism", "lights", "lift",
-         "colourways", "booklet", "outro")
-KIND = {"open": "gfx", "title": "gfx", "outro": "gfx", "booklet": "booklet", "cold_open": "cold"}
+         "colourways", "booklet", "companions", "outro", "coda")
+KIND = {"open": "gfx", "title": "gfx", "outro": "gfx", "booklet": "booklet", "cold_open": "cold",
+        "coda": "cold", "companions": "gfx"}
 BEATS = {"open": 6, "title": 8, "build": 36, "scan": 12, "mechanism": 12, "lights": 8,
-         "lift": 6, "colourway": 4, "booklet": 12, "outro": 8}
+         "lift": 6, "colourway": 4, "booklet": 12, "outro": 8, "companion": 10}
 LIGHTS_OFF_BEATS = 2      # extra lights beats when the lights also switch off again
 MAX_SECTIONS = 6
 LIGHTS_DIM = 0.16         # studio light level with the LEDs on
@@ -261,19 +267,24 @@ def plan_segments(model, *, booklet: bool, beat: int = BEAT, variants=(), fps: i
     if co is not None and "cold_open" not in (cfg.get("beats") or {}):
         # the performance, then a beat of black
         beats["cold_open"] = max(2, round(co["seconds"] * fps / beat)) + COLD_BLACK_BEATS
+    cc = coda_config(model, cfg)
+    if cc is not None and "coda" not in (cfg.get("beats") or {}):
+        beats["coda"] = max(2, round(cc["seconds"] * fps / beat))
     has = {
-        "cold_open": co is not None,
+        "cold_open": co is not None, "coda": cc is not None,
         "open": True, "title": True, "build": True, "scan": True, "outro": True,
         "mechanism": model.pose is not None and bool(model.groups),
         "lights": bool(model.lights) or bool(model.glow_tags),
         "lift": bool(cfg.get("lift")),
         "colourways": len(variants) > 0,
         "booklet": bool(booklet),
+        "companions": bool(cfg.get("companions")),    # [[companions]] with video = true
     }
     skip = set(cfg.get("skip", ()))
     if cfg.get("lights_off") and "lights" not in (cfg.get("beats") or {}):
         beats["lights"] += LIGHTS_OFF_BEATS
     beats["colourways"] = beats.get("colourways", beats["colourway"] * (1 + len(variants)))
+    beats["companions"] = beats.get("companions", beats["companion"] * len(cfg.get("companions") or []))
     out, f = [], 0
     for n in ORDER:
         if not has[n] or n in skip:
@@ -715,7 +726,7 @@ COLD = {"scene": "sunset_road", "seconds": 7.0, "motion": "performance", "spin_t
         "hide_tags": [], "cycle": 2.5, "sun_elevation": 2.4, "sun_azimuth": 0.0,
         "sun_size": 1.4, "letterbox": 0.09, "rev_tag": "saw"}
 COLD_SCENES = ("sunset_road", "night_desk", "deep_sea")
-COLD_MOTIONS = ("performance", "pose", "tap", "glide")
+COLD_MOTIONS = ("performance", "pose", "tap", "glide", "flythrough")
 COLD_HIDE = {"deep_sea": ("stand",)}    # a set that hides a display stand by default
 COLD_MOTION = {"night_desk": "tap", "deep_sea": "glide"}   # a set's motion unless one is given
 # the set's look: [video.cold_open] keys handed to the set as they are (render/blender_cold_open.py
@@ -771,11 +782,244 @@ def cold_open_config(model, cfg) -> dict | None:
                          f"{', '.join(COLD_SCENES)}")
     if out["motion"] not in COLD_MOTIONS:
         raise SystemExit(f"cold open motion {out['motion']!r}: {', '.join(COLD_MOTIONS)}")
-    if out["motion"] in ("tap", "glide") and "spin_turns" not in (co if isinstance(co, dict) else {}):
+    if out["motion"] in ("tap", "glide", "flythrough") and \
+            "spin_turns" not in (co if isinstance(co, dict) else {}):
         out["spin_turns"] = 0.0                   # a lamp stays put; a glide doesn't spin
     if "forward" in info and "forward" not in out:
         out["forward"] = info["forward"]
     return out
+
+
+# motion "flythrough" (deep_sea): a glide, its shots two dramatic ones - under the bow, then
+# wide from below and to the side, dark against the water - and one long take: along its side to
+# a window, in through it (the hull parts in the camera's way hidden as it passes), through the
+# room past what is there, out the far side and away into a dark sea. The room comes from the
+# model: meta["flythrough"] (or [video.cold_open.flythrough]), points in its own frame (`origin`
+# in the model's): enter, exit (where the camera passes through the hull), path (waypoints
+# inside), look (what to look at from each), slow (how long to linger at each, 1 = the room's
+# pace), interior {bounds [[lo], [hi]], tags} (what the room is; its tagged parts are never hidden)
+FLY_LENGTHS = 1.3
+FLY_SHOTS = ((0.0, "under", 20.0), (0.13, "silhouette", 32.0), (0.26, "flythrough", 22.0))
+# the take's pieces (their shares of its time) and lenses: along the hull, to the window, the
+# room, out through the far wall, back from it, away into the dark
+FLY_PIECES = (("hull", 0.18, 24.0), ("push", 0.06, 20.0), ("room", 0.47, 18.0), ("out", 0.025, 20.0),
+              ("back", 0.09, 24.0), ("away", 0.175, 30.0))
+FLY_CLEAR = 0.018          # the camera's clearance: hull parts closer than this (x the model's
+FLY_AHEAD = 0.022          # length), or this far ahead of it, are hidden while it passes
+FLY_TURN = 0.0012          # a degree's turn takes as long as moving this much of the length
+
+
+def flythrough_config(model, co) -> dict:
+    """The model's flythrough (meta, the config's over it), its points in the model's frame."""
+    f = dict(model.meta.get("flythrough") or {})
+    f.update(co.get("flythrough") or {})
+    if "enter" not in f or "exit" not in f:
+        raise SystemExit("cold open motion flythrough: the model needs meta['flythrough'] (or "
+                         "[video.cold_open.flythrough]) with enter, exit and the interior")
+    o = np.asarray(f.get("origin", (0.0, 0.0, 0.0)), float)
+    pts = lambda v: [np.asarray(p, float) + o for p in v]     # noqa: E731
+    inner = f.get("interior") or {}
+    b = np.asarray(inner.get("bounds", [f["enter"], f["exit"]]), float) + o
+    path = pts(f.get("path") or [])
+    look = pts(f.get("look") or [])
+    return {"enter": np.asarray(f["enter"], float) + o, "exit": np.asarray(f["exit"], float) + o,
+            "path": path, "look": look + [None] * (len(path) - len(look)),
+            "slow": list(f.get("slow") or []) + [1.0] * len(path),
+            "bounds": np.array([b.min(0), b.max(0)]), "tags": set(inner.get("tags") or [])}
+
+
+def _spline(P, n=64):
+    """A centripetal Catmull-Rom curve through the points P (k, 3): (samples (s, 3), the
+    index of the segment each sample is on)."""
+    P = np.asarray(P, float)
+    Q = np.vstack([2 * P[0] - P[1], P, 2 * P[-1] - P[-2]])
+    out, seg = [], []
+    for i in range(1, len(Q) - 2):
+        p0, p1, p2, p3 = Q[i - 1:i + 3]
+        t0 = 0.0
+        t1 = t0 + max(np.linalg.norm(p1 - p0), 1e-6) ** 0.5
+        t2 = t1 + max(np.linalg.norm(p2 - p1), 1e-6) ** 0.5
+        t3 = t2 + max(np.linalg.norm(p3 - p2), 1e-6) ** 0.5
+        for t in np.linspace(t1, t2, n, endpoint=False):
+            a1 = (t1 - t) / (t1 - t0) * p0 + (t - t0) / (t1 - t0) * p1
+            a2 = (t2 - t) / (t2 - t1) * p1 + (t - t1) / (t2 - t1) * p2
+            a3 = (t3 - t) / (t3 - t2) * p2 + (t - t2) / (t3 - t2) * p3
+            b1 = (t2 - t) / (t2 - t0) * a1 + (t - t0) / (t2 - t0) * a2
+            b2 = (t3 - t) / (t3 - t1) * a2 + (t - t1) / (t3 - t1) * a3
+            out.append((t2 - t) / (t2 - t1) * b1 + (t - t1) / (t2 - t1) * b2)
+            seg.append(i - 1)
+    out.append(P[-1])
+    seg.append(len(P) - 2)
+    return np.array(out), np.array(seg)
+
+
+def _turn(c, a, b, f: float, F, N, U):
+    """The point seen from c a fraction f of the way from looking at a to looking at b: the
+    view turning (yaw about U, the shorter way round, and pitch), its distance eased between."""
+    da, db = a - c, b - c
+    ra, rb = np.linalg.norm(da) + 1e-9, np.linalg.norm(db) + 1e-9
+    ya, yb = math.atan2(da @ N, da @ F), math.atan2(db @ N, db @ F)
+    pa, pb = math.asin(np.clip(da @ U / ra, -1, 1)), math.asin(np.clip(db @ U / rb, -1, 1))
+    y = ya + ((yb - ya + math.pi) % (2 * math.pi) - math.pi) * f
+    p = pa + (pb - pa) * f
+    d = (F * math.cos(y) + N * math.sin(y)) * math.cos(p) + U * math.sin(p)
+    return c + d * (ra + (rb - ra) * f)
+
+
+def _box_distance(pts, C):
+    """Distance from each of `pts` (p, 3) to each part's oriented box (corners C (n, 8, 3)):
+    (n, p)."""
+    o = C[:, 0]
+    E = np.stack([C[:, 4] - o, C[:, 2] - o, C[:, 1] - o], 1)          # (n, 3, 3) its edges
+    L2 = np.maximum((E ** 2).sum(-1), 1e-9)                              # (n, 3)
+    q = pts[None, :, :] - o[:, None, :]                                  # (n, p, 3)
+    a = np.clip(np.einsum("npk,nek->npe", q, E) / L2[:, None, :], 0.0, 1.0)
+    near = o[:, None, :] + np.einsum("npe,nek->npk", a, E)
+    return np.linalg.norm(pts[None, :, :] - near, axis=-1)
+
+
+def flythrough_camera(m, fps, spins, path, F, U, N, ext, length, fly, C, keep):
+    """The flythrough's shots, per frame: camera pos, target, focus (model's world, LDraw),
+    lens, exposure; shots; and the take's facts: frames it crosses the hull in and out, the
+    parts hidden per frame (near the camera, not `keep`), how dark the sea is (murk), where
+    something huge waits in the dark."""
+    pos, tgt, foc = np.zeros((m, 3)), np.zeros((m, 3)), np.zeros((m, 3))
+    lens, ev = np.zeros(m), np.zeros(m)
+    D = -U
+    b = [int(round(a * m)) for a, _, _ in FLY_SHOTS] + [m]
+    shots = [[b[i], name] for i, (_, name, _) in enumerate(FLY_SHOTS) if b[i + 1] > b[i]]
+
+    def towards(az, el):
+        a, e = math.radians(az), math.radians(el)
+        return (F * math.cos(a) + N * math.sin(a)) * math.cos(e) + U * math.sin(e)
+    # under the bow: still, low and just off its path, as it passes over
+    k = np.arange(b[0], b[1])
+    e = smootherstep((k - b[0]) / max(1, b[1] - b[0] - 1))
+    p = path[b[1] - 1] + F * (ext["ahead"] * 0.35) + D * (ext["below"] + 0.16 * length) \
+        + N * 0.08 * length
+    pos[k] = p - np.outer(e, F * 0.04 * length)
+    tgt[k] = path[k] + F * ext["ahead"] * 0.55
+    foc[k] = path[k] + F * ext["ahead"] * 0.5
+    lens[k] = FLY_SHOTS[0][2]
+    # wide: below it and to the side, looking up past it at the light
+    k = np.arange(b[1], b[2])
+    e = smootherstep((k - b[1]) / max(1, b[2] - b[1] - 1))
+    p = path[(b[1] + b[2]) // 2] + towards(-70.0, -24.0) * 1.0 * length
+    pos[k] = p + np.outer(e, F * 0.14 * length + U * 0.06 * length)      # drifting up with it
+    tgt[k] = path[k] + U * 0.12 * length
+    foc[k] = path[k]
+    lens[k] = FLY_SHOTS[1][2]
+    # the take, in the model's own frame (carried with it), then into the world
+    t0 = b[2]
+    nt = m - t0
+    cen = fly["bounds"].mean(0)
+    flat = lambda v: v - U * float(v @ U)                               # noqa: E731
+    n_in = flat(fly["enter"] - cen)
+    n_in /= np.linalg.norm(n_in)
+    n_out = flat(fly["exit"] - cen)
+    n_out /= np.linalg.norm(n_out)
+    en, ex = fly["enter"], fly["exit"]
+    room = [en] + fly["path"] + [ex]
+    looks = [en - n_in * 0.1 * length] + list(fly["look"]) + [ex + n_out * 0.3 * length]
+    pieces = {
+        "hull": ([en + n_in * 0.24 * length - F * 0.32 * length + U * 0.05 * length,
+                  en + n_in * 0.12 * length],
+                 [en + F * 0.3 * length, en]),
+        "push": ([en + n_in * 0.12 * length, en], [en, en - n_in * 0.1 * length]),
+        "room": (room, looks),
+        "out": ([ex, ex + n_out * 0.1 * length], [ex + n_out * 0.3 * length] * 2),
+        "back": ([ex + n_out * 0.1 * length,
+                  ex + n_out * 0.55 * length - F * 0.2 * length + D * 0.12 * length],
+                 [ex + n_out * 0.3 * length, cen]),
+        "away": ([ex + n_out * 0.55 * length - F * 0.2 * length + D * 0.12 * length,
+                  ex + n_out * 1.5 * length - F * 0.9 * length + D * 0.45 * length],
+                 [cen, cen]),
+    }
+    share = np.array([s for _, s, _ in FLY_PIECES])
+    ends = np.r_[0, np.round(np.cumsum(share) / share.sum() * nt)].astype(int)
+    cam_m, look_m, lens_t = [], [], []
+    for (name, _, ln), f0, f1 in zip(FLY_PIECES, ends, ends[1:]):
+        pts, lks = pieces[name]
+        if name == "room":
+            cur, seg = _spline(pts)
+            w = np.interp(seg + 0.5, np.arange(len(pts)), [1.0] + fly["slow"][:len(pts) - 2] + [1.0])
+        else:
+            cur = np.array([pts[0] + (pts[1] - pts[0]) * s for s in np.linspace(0, 1, 65)])
+            seg = np.zeros(len(cur), int)
+            w = np.ones(len(cur))
+        # what it looks at along the piece: the given points, else straight ahead
+        L_pts = []
+        for i, (c, sg) in enumerate(zip(cur, seg)):
+            j = min(sg + 1, len(lks) - 1) if name == "room" else 1
+            j0 = min(sg, len(lks) - 1) if name == "room" else 0
+            a_ = lks[j0] if lks[j0] is not None else None
+            b_ = lks[j] if lks[j] is not None else None
+            ahead = cur[min(i + 4, len(cur) - 1)] - cur[max(i - 4, 0)]
+            ahead = c + ahead / (np.linalg.norm(ahead) + 1e-9) * 0.2 * length
+            a_ = ahead if a_ is None else a_
+            b_ = ahead if b_ is None else b_
+            fr = np.clip(i / max(1, len(cur) - 1) * (len(lks) - 1) - j0, 0, 1) if name == "room" \
+                else i / max(1, len(cur) - 1)
+            L_pts.append(_turn(c, a_, b_, smootherstep(fr), F, N, U))
+        L_pts = np.array(L_pts)
+        # time along the piece: for the way it moves (slowed where asked) and the way it turns
+        v = L_pts - cur
+        v /= np.linalg.norm(v, axis=1)[:, None] + 1e-9
+        turn = np.degrees(np.arccos(np.clip((v[1:] * v[:-1]).sum(1), -1.0, 1.0)))
+        dl = np.r_[0.0, np.linalg.norm(np.diff(cur, axis=0), axis=1) * w[1:] + FLY_TURN * length * turn]
+        s_at = np.cumsum(dl) / max(dl.sum(), 1e-9)
+        n = f1 - f0
+        q = np.linspace(0, 1, n, endpoint=False) if name != "away" else np.linspace(0, 1, n)
+        cam_m.append(np.array([np.interp(q, s_at, cur[:, a]) for a in range(3)]).T)
+        look_m.append(np.array([np.interp(q, s_at, L_pts[:, a]) for a in range(3)]).T)
+        lens_t.append(np.full(n, ln))
+    cam_m = np.concatenate(cam_m)
+    look_m = np.concatenate(look_m)
+    lens_t = _gauss(np.concatenate(lens_t), 6.0)
+    # smooth the joins (velocity and aim), keep the window crossings where they are
+    cam_m = np.stack([_gauss(cam_m[:, a], 2.5) for a in range(3)], 1)
+    look_m = np.stack([_gauss(look_m[:, a], 4.0) for a in range(3)], 1)
+    k_in = t0 + int(ends[2])                              # the take reaches the window
+    k_out = t0 + int(ends[3])                             # the far wall
+    for i in range(nt):
+        M = spins[t0 + i]
+        pos[t0 + i] = (M @ np.r_[cam_m[i], 1.0])[:3]
+        tgt[t0 + i] = (M @ np.r_[look_m[i], 1.0])[:3]
+        foc[t0 + i] = tgt[t0 + i]
+    lens[t0:] = lens_t
+    warm = np.zeros(m)                                    # how much we're in the room: the
+    warm[max(0, k_in - 4):k_out + 2] = 1.0                # lamplight leads us in at the window
+    room_k = np.clip(_gauss(warm, 4.0), 0.0, 1.0)
+    murk = smootherstep((np.arange(m) - (k_out - 0.8 * fps)) / (1.3 * fps))   # dark out there
+    # hull parts in the camera's way: near it or just ahead, wherever it goes near the hull
+    hide = {}
+    lo, hi = C.reshape(-1, 3).min(0), C.reshape(-1, 3).max(0)
+    r, ahead = FLY_CLEAR * length, FLY_AHEAD * length
+    cand = np.nonzero(~keep)[0]
+    for i in range(nt):
+        c = cam_m[i]
+        if (c < lo - ahead - r).any() or (c > hi + ahead + r).any():
+            continue
+        d = look_m[i] - c
+        d /= np.linalg.norm(d) + 1e-9
+        probe = c[None] + np.outer(np.linspace(0, ahead, 5), d)
+        near = _box_distance(probe, C[cand]).min(1) < r
+        if near.any():
+            hide[t0 + i] = cand[near].tolist()
+    # something huge in the dark: below and beyond the model as the camera ends up seeing it,
+    # its arms reaching up towards it
+    fwd = cen - cam_m[-1]
+    fwd = flat(fwd) / (np.linalg.norm(flat(fwd)) + 1e-9)
+    side = np.cross(U, fwd)
+    lurk_m = cen + fwd * 0.9 * length + side * 0.2 * length + D * 0.6 * length
+    reach = U * 0.8 - fwd * 0.35 + side * 0.3
+    lurk = (spins[m - 1] @ np.r_[lurk_m, 1.0])[:3]
+    return pos, tgt, foc, lens, ev, shots, {
+        "enter": k_in, "exit": k_out, "inside": [k_in, k_out], "hide": hide, "murk": murk,
+        "room": room_k,
+        "lurk": {"pos": lurk, "facing": spins[m - 1][:3, :3] @ (reach / np.linalg.norm(reach)),
+                 "size": 0.8 * length,
+                 "from": k_out}}
 
 
 def glide_axes(Cv, pivot, front: float, forward=None):
@@ -950,9 +1194,10 @@ def _frame_shot(H: float, R: float, hc: float, lens: float, feet: float, top: fl
     return d, math.degrees(p)
 
 
-def cold_open_plan(engine, model, placed, C, seg: dict, co: dict, fps: int, beat: int) -> dict:
+def cold_open_plan(engine, model, placed, C, seg: dict, co: dict, fps: int, beat: int,
+                   black_beats: int = COLD_BLACK_BEATS) -> dict:
     """The cold open, frame by frame (frames relative to its start, the performance only: the
-    last COLD_BLACK_BEATS are black). JSON-able:
+    last `black_beats` are black). JSON-able:
         start, end, cut        its frames; black from `cut`
         scene, sun             the set ("sunset_road"), the sun's elevation/azimuth/size (deg;
                                azimuth 0 is straight ahead of the camera, down the road, +Z)
@@ -972,9 +1217,13 @@ def cold_open_plan(engine, model, placed, C, seg: dict, co: dict, fps: int, beat
     (per frame, above 1 in the flash as they come on), leds (led_list); scene night_desk adds
     front (the model's azimuth_offset: the room is laid out behind it); with motion "glide":
     motion, leds and led (lit throughout), glide {forward, side, length, extent, path (its
-    centre per frame)}, the spin carrying it along the path, and camera.focus per frame"""
+    centre per frame)}, the spin carrying it along the path, and camera.focus per frame; with
+    motion "flythrough" (a glide through the model's room) also flythrough {enter, exit, inside
+    (absolute frames: the camera crosses the hull), hide {frame (relative): [instances]}, murk
+    and room (per frame 0..1: the sea's dark, the room's lamplight), bounds, at {enter, exit}
+    (LDU), keep (instances never hidden), lurk {pos, facing, size, from (relative frame)}}"""
     n = seg["end"] - seg["start"]
-    m = n - COLD_BLACK_BEATS * beat
+    m = n - black_beats * beat
     info = model.meta.get("performance_info") or {}
     hide = set(co["hide_tags"])
     hidden = [p.index for p in placed if hide & set(p.tags)]
@@ -991,8 +1240,10 @@ def cold_open_plan(engine, model, placed, C, seg: dict, co: dict, fps: int, beat
     # the motion: the performance loop (or the pose swinging 0..1..0), coming up to speed; or
     # tapped, a tap lamp
     tap = co["motion"] == "tap"
-    glide = co["motion"] == "glide"
-    perf = model.meta.get("performance") if co["motion"] in ("performance", "glide") else None
+    fly = co["motion"] == "flythrough"
+    glide = co["motion"] == "glide" or fly
+    perf = model.meta.get("performance") if co["motion"] in ("performance", "glide",
+                                                              "flythrough") else None
     fn = perf or model.pose
     t = np.arange(m) / fps
     tp = t if glide else np.cumsum(smootherstep((t - COLD_START) / COLD_RAMP)) / fps
@@ -1025,7 +1276,7 @@ def cold_open_plan(engine, model, placed, C, seg: dict, co: dict, fps: int, beat
         F, U, N, ext = glide_axes(Cv, centre, front, co.get("forward"))
         length = ext["ahead"] + ext["behind"]
         spins, gpath = glide_carry(m, fps, centre, F, U, N, length,
-                                   float(co.get("glide_lengths", GLIDE_LENGTHS)))
+                                   float(co.get("glide_lengths", FLY_LENGTHS if fly else GLIDE_LENGTHS)))
     # every part's centre per frame (for the height, the reach and the saw's speed)
     gi = np.array(inst)
     ctr = C.mean(1)
@@ -1080,9 +1331,15 @@ def cold_open_plan(engine, model, placed, C, seg: dict, co: dict, fps: int, beat
         cut_at = ((taps[1][0] + taps[2][0]) / 2 / m if tap and len(taps) >= 3 else 0.5)
         plan = tuple((cut_at if a0 is None else a0, name, ln, hc_k, -(front + az), feet, top_k,
                       dolly, ev_k) for a0, name, ln, hc_k, az, feet, top_k, dolly, ev_k in DESK_SHOTS)
-    if glide:
+    if glide and not fly:
         plan = ()
         pos, tgt, focus, lens, shots = glide_camera(m, gpath, F, U, N, ext, length)
+    if fly:                                       # through its room (flythrough_camera)
+        plan = ()
+        fc = flythrough_config(model, co)
+        keep = np.array([bool(fc["tags"] & set(p.tags)) for p in placed]) | ~vis
+        pos, tgt, focus, lens, ev, shots, take = flythrough_camera(
+            m, fps, spins, gpath, F, U, N, ext, length, fc, C, keep)
     for i, (a0, name, ln, hc_k, az, feet, top_k, dolly, ev_k) in enumerate(plan):
         f0 = int(round(a0 * m))
         f1 = int(round(plan[i + 1][0] * m)) if i + 1 < len(plan) else m
@@ -1115,8 +1372,22 @@ def cold_open_plan(engine, model, placed, C, seg: dict, co: dict, fps: int, beat
                      leds=led_list(model, placed))
     if co["scene"] == "night_desk":
         extra["front"] = float(model.meta.get("azimuth_offset", 0.0))
+    if fly:
+        lb = fc["bounds"]
+        extra["flythrough"] = {"enter": seg["start"] + take["enter"],
+                               "exit": seg["start"] + take["exit"],
+                               "inside": [seg["start"] + v for v in take["inside"]],
+                               "hide": {str(k): v for k, v in take["hide"].items()},
+                               "murk": r5(take["murk"]), "room": r5(take["room"]),
+                               "bounds": r5(lb),
+                               "at": {"enter": r5(fc["enter"]), "exit": r5(fc["exit"])},
+                               "keep": np.nonzero(keep & vis)[0].tolist(),
+                               "lurk": {"pos": r5(take["lurk"]["pos"]),
+                                        "facing": r5(take["lurk"]["facing"]),
+                                        "size": round(take["lurk"]["size"], 3),
+                                        "from": take["lurk"]["from"]}}
     if glide:
-        extra.update(motion="glide", leds=led_list(model, placed), led=[1.0] * m,
+        extra.update(motion=co["motion"], leds=led_list(model, placed), led=[1.0] * m,
                      glide={"forward": r5(F), "side": r5(N), "length": round(length, 3),
                             "extent": {k: round(v, 3) for k, v in ext.items()},
                             "path": r5(gpath)})
@@ -1135,6 +1406,137 @@ def cold_open_plan(engine, model, placed, C, seg: dict, co: dict, fps: int, beat
         "camera": cam_out, "shots": shots,
         "rev": r5(rev), "catch": seg["start"] + catch,
     }
+
+
+# ---------------------------------------------------------------------------- the coda
+# [video.coda] (opt-in): the video's last moments, after the outro. scene "deep_sea": the cold
+# open's sea gone dark, the model cruising with its lights on, and its `creature` coming out of
+# the murk at it: "squid", a giant squid about the model's size, arms first - its arms writhing,
+# its two long tentacles uncoiling and reaching for the model, its eye catching the light - the
+# two of them in one frame, seen from off the model's side; the picture fades to black as it
+# closes in (`fade` s). Its own set renders it (render/blender_cold_open.py, as a cold open: the
+# plan has the same fields, see coda_plan). Its keys: scene, creature, seconds; model (false:
+# leave the model out), murk (0..1: how dark the sea is), size (the squid's mantle, in the
+# model's lengths: its body and arms are about twice that, its tentacles reach as far again),
+# glide_lengths (how far the model cruises over the shot), exposure (EV, on the set's own), roll
+# (degrees the squid is turned from side on, away from the camera), fade (s of fading to black
+# at the end; the compositor's).
+CODA = {"scene": "deep_sea", "creature": "squid", "seconds": 4.0, "model": True,
+        "murk": 0.85, "size": 0.34, "glide_lengths": 0.25, "exposure": -0.4, "roll": 25.0,
+        "fade": 1.2}
+CODA_SCENES = ("deep_sea",)
+CODA_CREATURES = ("squid",)
+CODA_LENS = 28.0
+# the shot: the camera off the model's side and a little below it (model lengths), the model up
+# a little left of the middle; the squid's head (screen x, y, depth in model lengths from the
+# camera) from the murk beyond the model, low on the right, closing on it (eased out)
+CODA_CAMERA = (1.9, 0.3)
+CODA_MODEL_AT = (0.42, 0.4)
+CODA_HEAD = ((0.0, (0.98, 0.84), 2.6), (0.55, (0.77, 0.66), 2.0), (1.0, (0.67, 0.58), 1.8))
+
+
+def coda_config(model, cfg) -> dict | None:
+    """The coda's settings ([video.coda] over CODA), or None without one."""
+    cc = cfg.get("coda")
+    if not cc:
+        return None
+    out = dict(CODA)
+    out.update(cc if isinstance(cc, dict) else {})
+    if out["scene"] not in CODA_SCENES:
+        raise SystemExit(f"unknown coda scene {out['scene']!r}; choose from {', '.join(CODA_SCENES)}")
+    if out["creature"] not in CODA_CREATURES:
+        raise SystemExit(f"unknown coda creature {out['creature']!r}; choose from "
+                         f"{', '.join(CODA_CREATURES)}")
+    return out
+
+
+def _unproject(pos, r, u, f, sx, sy, depth, lens):
+    """The point `depth` in front of the camera (along f) at screen fractions (sx, sy)."""
+    k = 36.0 / lens
+    return pos + depth * (f + r * (sx - 0.5) * k - u * (sy - 0.5) * k)
+
+
+def coda_shot(m: int, path, F, U, N, length: float, cc: dict):
+    """The coda's take, per frame (LDraw): camera pos, target, focus, lens; the creature
+    {pos (its head), axis (where its arms point), back, size (its mantle, LDU), reach (its
+    tentacles: 0 coiled .. 1 reaching out), rim, glint (0.. its edges and eyes lit), light (the
+    way its own light travels), seed}; and murk (0..1 per frame, how dark the sea is)."""
+    L = float(length)
+    D = -U
+    mid = path[m // 2]
+    k = np.arange(m)
+    e = smootherstep(k / max(1, m - 1))
+    cam0 = mid + N * CODA_CAMERA[0] * L + D * CODA_CAMERA[1] * L       # off its side, below
+    # aim so the model sits where CODA_MODEL_AT says, a few corrections of the aim
+    f = (mid - cam0) / np.linalg.norm(mid - cam0)
+    for _ in range(4):
+        x, y, _ = project(mid[None], cam0, cam0 + f, CODA_LENS)[0]
+        r, u, _ = camera_basis(cam0, cam0 + f)
+        f = f + (r * (x - CODA_MODEL_AT[0]) - u * (y - CODA_MODEL_AT[1])) * 36.0 / CODA_LENS
+        f /= np.linalg.norm(f)
+    r, u, _ = camera_basis(cam0, cam0 + f)
+    # the squid's head along the shot, in the first frame's view
+    t_k = np.array([a for a, _, _ in CODA_HEAD])
+    e2 = 1.0 - (1.0 - k / max(1, m - 1)) ** 2
+    sx = np.interp(e2, t_k, [p[0] for _, p, _ in CODA_HEAD])
+    sy = np.interp(e2, t_k, [p[1] for _, p, _ in CODA_HEAD])
+    dz = np.interp(e2, t_k, [d for _, _, d in CODA_HEAD]) * L
+    head = np.array([_unproject(cam0, r, u, f, a, b, c, CODA_LENS) for a, b, c in zip(sx, sy, dz)])
+    head = _gauss(head, 3.0)
+    # the camera pushes in a little
+    pos = cam0 + np.outer(e, (mid - cam0) * 0.06)
+    tgt = pos + f * L
+    # it goes for the model arms first: the arms point at its middle, flattened towards the
+    # picture's plane (seen side on), its back up in the picture
+    aim = path + U * 0.04 * L - head
+    aim /= np.linalg.norm(aim, axis=1, keepdims=True)
+    axis = aim - np.outer(aim @ f, f) * 0.85
+    axis /= np.linalg.norm(axis, axis=1, keepdims=True)
+    back = U - axis * (axis @ U)[:, None]
+    fp = f - axis * (axis @ f)[:, None]
+    fp /= np.linalg.norm(fp, axis=1, keepdims=True)
+    back = back - fp * (back * fp).sum(1)[:, None]
+    back /= np.linalg.norm(back, axis=1, keepdims=True)
+    a_ = math.radians(float(cc["roll"]))         # rolled away a little: its belly and fins seen
+    back = back * math.cos(a_) + fp * math.sin(a_)
+    u_ = k / max(1, m - 1)
+    reach = 0.12 + 0.88 * smootherstep((u_ - 0.25) / 0.6)         # coiled, then reaching out
+    rim = smootherstep(u_ / 0.45)                                # out of the murk
+    glint = smootherstep((u_ - 0.42) / 0.1) * (0.85 + 0.6 * np.exp(-np.maximum(u_ - 0.52, 0) * 12))
+    murk = np.full(m, float(cc["murk"]))
+    light = D - f * 0.45 + r * 0.15
+    squid = {"pos": head, "axis": axis, "back": back, "size": float(cc["size"]) * L,
+             "reach": reach, "rim": rim, "glint": glint, "light": light / np.linalg.norm(light),
+             "seed": 7}
+    return pos, tgt, head, np.full(m, CODA_LENS), squid, murk
+
+
+def coda_plan(engine, model, placed, C, seg: dict, cc: dict, fps: int, beat: int) -> dict:
+    """The coda (coda_config), frame by frame: the fields of a deep_sea glide's cold_open_plan
+    (the model cruising far off, slowly: `glide_lengths`; hidden altogether with model =
+    false), one shot ("coda") of coda_shot's camera, and coda {creature, murk (per frame),
+    fade (frames: the compositor fades the last of them to black), squid (coda_shot's, per
+    frame)}."""
+    co = cold_open_config(model, {"cold_open": {"scene": cc["scene"], "motion": "glide",
+                                                "seconds": cc["seconds"],
+                                                "glide_lengths": cc["glide_lengths"]}})
+    plan = cold_open_plan(engine, model, placed, C, seg, co, fps, beat, black_beats=0)
+    m = seg["end"] - seg["start"]
+    g = plan["glide"]
+    F, N = np.array(g["forward"]), np.array(g["side"])
+    U = np.array([0.0, -1.0, 0.0])
+    pos, tgt, foc, lens, squid, murk = coda_shot(m, np.array(g["path"]), F, U, N, g["length"], cc)
+    r5 = lambda a: np.round(a, 5).tolist()   # noqa: E731
+    if not cc.get("model", True):
+        plan.update(hidden=list(range(len(placed))), leds=[])
+    plan.update(camera={"pos": r5(pos), "target": r5(tgt), "focus": r5(foc),
+                        "lens": lens.tolist(), "exposure": [float(cc["exposure"])] * m},
+                shots=[[0, "coda"]],
+                coda={"creature": cc["creature"], "murk": r5(murk),
+                      "fade": int(round(float(cc["fade"]) * fps)),
+                      "squid": {k: (r5(v) if isinstance(v, np.ndarray) else v)
+                                for k, v in squid.items()}})
+    return plan
 
 
 # ---------------------------------------------------------------------------- timeline
@@ -1302,6 +1704,9 @@ def build_timeline(engine, model, segments: list[dict], *, fps: int = FPS, beat:
     if "cold_open" in seg:
         cold = cold_open_plan(engine, model, placed, C, seg["cold_open"],
                               cold_open_config(model, cfg), fps, beat)
+    coda = None
+    if "coda" in seg:
+        coda = coda_plan(engine, model, placed, C, seg["coda"], coda_config(model, cfg), fps, beat)
 
     return {
         "fps": fps, "beat": beat, "frames": total, "segments": segments, "scene": scene,
@@ -1322,7 +1727,7 @@ def build_timeline(engine, model, segments: list[dict], *, fps: int = FPS, beat:
                  "frames": lift_frames},
         "lights": {"leds": leds, "dim": dim.tolist(), "led": led.tolist(), "glow": led.tolist(),
                    "start": s0, "power_on": power_on, "power_off": power_off},
-        "variants": var_out, "colourways": cw, "cold_open": cold,
+        "variants": var_out, "colourways": cw, "cold_open": cold, "coda": coda,
     }
 
 

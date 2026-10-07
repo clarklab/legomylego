@@ -1,0 +1,36 @@
+[model]
+name = "Dracula"
+design = "design.py"
+description = "A tiny Dracula in 32 pieces, about 4.5 cm tall: big round eyes, grey skin, two white fangs over a red mouth, slicked-back black hair with a widow's peak, and his shoes poking out under the cape."
+collection = "quick_bricks"   # a little Quick Bricks model (its own section on the site, soon)
+
+[palette]
+cape = "Black"                # the cape, legs and shoes
+shirt = "White"               # the shirt front
+fang = "White"                # the fangs (1 x 1 plates with a tooth)
+mouth = "Red"
+skin = "Light Bluish Gray"    # the face and the nose
+hair = "Black"
+eye = "White"                 # round tiles printed with a black eye
+
+[booklet]
+subtitle = "A tiny Count with big eyes, fangs and slicked-back hair, in 32 pieces."
+intro = "Dracula, small enough to stand on your hand: build up from his shoes, through the cape and his white shirt front, to the fangs, the grey face and the slicked-back hair, then give him his eyes and nose."
+
+[checks]
+enabled = ["real_elements", "connections", "collisions", "buildability", "stability",
+           "mechanism", "electrics", "technique"]
+
+# Quick Bricks (brickkit quick dracula): the short vertical build video for TikTok and
+# Instagram - in the dark night workshop under the string lights (the night_shift preset),
+# macro close-ups as a fang and an eye land; the camera crosses his front, goes round his
+# back as the hair goes on and is back on his face for the eyes
+[quick]
+set = "night_shift"
+seconds = 14                  # room for one unhurried turn round his back between the close-ups
+highlight = ["15070", "98138p07"]
+close_ups = 2
+music = false                 # just the clicks
+view = "agx"                  # the film response its video was made (and approved) with
+ending = "audio/count_carter_1.mp3"   # his slow, deep laugh (audio/sfx.toml), 2.3 s
+ending_at = -0.15             # the "mwah" just after his nose, the last piece, snaps on

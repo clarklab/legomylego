@@ -17,5 +17,17 @@
   "2430": {
     "bom": false,
     "note": "swivel hinge top half, counted with its base half 2429 as 73983"
+  },
+  "59900": {
+    "bricklink": "4589b",
+    "note": "Cone 1 x 1 with top groove: BrickLink files it as 4589b (checked on BrickLink, Oct 2026)"
+  },
+  "14769p0m": {
+    "bricklink": "14769pb0356",
+    "note": "Tile round 2 x 2, clock with red second hand: BrickLink's number is zero-padded (the LDraw header says 14769pb356; checked on BrickLink, Oct 2026)"
+  },
+  "3069b": {
+    "bricklink": "3069",
+    "note": "Tile 1 x 2 with groove: BrickLink's number is now 3069 (its wanted-list upload accepted 3069 and has no 3069b price guide; checked Oct 2026)"
   }
 }

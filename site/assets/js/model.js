@@ -278,6 +278,94 @@ function renderDownloads() {
   }
 }
 
+// ---------- companions: smaller builds of the same subject, each in its own section ----------
+
+function companionDl(media, path, ic, title, desc, tone = '', newTab = false) {
+  if (!path) return '';
+  const size = media.size(path);
+  const dl = newTab ? 'target="_blank" rel="noopener"' : `download="${esc(String(path).split('/').pop())}"`;
+  return `<a class="dl ${tone}" href="${media.url(path)}" ${dl}><span class="di">${icon(ic)}</span><span><strong>${esc(title)}</strong><span>${esc(desc)}</span></span><span class="go">${size ? `<span class="size">${fmtBytes(size)}</span>` : icon(newTab ? 'external' : 'download')}</span></a>`;
+}
+
+function fmtUsd(n) {
+  return `$${Number(n).toFixed(2)}`;
+}
+
+function fmtDay(iso) {
+  const t = Date.parse(`${iso}T12:00:00`);
+  return Number.isNaN(t) ? iso : new Date(t).toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric' });
+}
+
+function renderCompanions(d) {
+  const list = d.companions || [];
+  const host = $('#companions');
+  if (!host || !list.length) return;
+  const media = state.media;
+  const shot = (c, p, cls = '') => {
+    const info = media.imageInfo(p);
+    const cap = humanize(p.split('/').pop().replace(/\.\w+$/, '').replace(/^(hero|renders?)_/, '')).replace(/^Hero$/, 'Display view');
+    return `<button class="shot ${cls}" type="button" data-src="${media.image(p, 'lg')}" data-cap="${esc(cap)}" aria-label="Open render: ${esc(cap)}">
+      <img src="${media.image(p, cls ? 'lg' : 'sm')}" alt="${esc(c.name)}: ${esc(cap)}" loading="lazy" decoding="async" width="${info?.w || 800}" height="${info?.h || 800}">
+      <span class="cap">${esc(cap)}</span></button>`;
+  };
+  host.innerHTML = list.map((c) => {
+    const [w, h, dp] = c.dims_mm || [0, 0, 0];
+    const f = c.files || {};
+    const stat = (ic, k, v, unit = '') => `<div class="stat"><div class="k">${icon(ic)}${k}</div><div class="v">${v}${unit ? `<small>${unit}</small>` : ''}</div></div>`;
+    const pr = c.price || {};
+    const price = pr.pick_a_brick
+      ? `<div class="price-card"><span class="pi">${icon('cart')}</span><div><p class="ph"><strong>${fmtUsd(pr.pick_a_brick)}</strong> on LEGO Pick a Brick</p><p class="pn">${esc(pr.note || '')}${pr.checked ? ` Prices checked ${esc(fmtDay(pr.checked))}.` : ''}</p></div></div>`
+      : '';
+    const dls = [
+      companionDl(media, f.booklet, 'book', 'Building instructions', `Step-by-step PDF, ${plural(c.steps || 0, 'step')}`, 'red', true),
+      companionDl(media, f.pick_a_brick_csv, 'cart', 'Pick a Brick list (.csv)', 'One set: upload it to LEGO Pick a Brick'),
+      companionDl(media, f.pick_a_brick_x5_csv, 'cart', 'Pick a Brick list, 5 sets (.csv)', 'Five of everything, for a group'),
+      companionDl(media, f.bricklink_xml, 'tag', 'BrickLink wanted list (.xml)', 'One set, as a BrickLink wanted list'),
+      companionDl(media, f.parts_csv, 'list', 'Parts list (.csv)', 'Every part, colour and quantity'),
+    ].join('');
+    const variants = (c.variants || []).map((v) => {
+      const vf = v.files || {};
+      const vp = v.price?.pick_a_brick ? ` · ${fmtUsd(v.price.pick_a_brick)} on Pick a Brick` : '';
+      return `<div class="companion-variant"><h3>${esc(v.title)} <span>${plural(v.pieces || 0, 'piece')}${vp}</span></h3>
+        ${v.note ? `<p>${esc(v.note)}</p>` : ''}
+        <div class="downloads">${companionDl(media, vf.pick_a_brick_csv, 'cart', 'Pick a Brick list (.csv)', `${v.title}: one set`)}${companionDl(media, vf.pick_a_brick_x5_csv, 'cart', 'Pick a Brick list, 5 sets (.csv)', `${v.title}: five sets`)}${companionDl(media, vf.parts_csv, 'list', 'Parts list (.csv)', `${v.title}: every part`)}</div></div>`;
+    }).join('');
+    const [first, ...rest] = c.renders || [];
+    return `<section class="section wrap companion" id="${esc(c.anchor)}" aria-labelledby="${esc(c.anchor)}-h">
+      <div class="section-head"><div>
+        ${c.eyebrow ? `<span class="eyebrow">${esc(c.eyebrow)}</span>` : ''}
+        <h2 id="${esc(c.anchor)}-h">${esc(c.heading)}</h2>
+        <p>${esc(c.text)}</p>
+      </div></div>
+      <div class="companion-body">
+        <div class="companion-shots">${first ? shot(c, first, 'big') : ''}<div class="companion-thumbs">${rest.map((p) => shot(c, p)).join('')}</div></div>
+        <div class="companion-info">
+          <div class="stats companion-stats">${stat('brick', 'Parts', fmtInt(c.pieces))}${stat('ruler', 'Height', fmtCm(h), 'cm')}${stat('steps', 'Steps', fmtInt(c.steps || 0))}${stat('cube', 'Footprint', `${fmtCm(w)} × ${fmtCm(dp)}`, 'cm')}</div>
+          ${price}
+          <div class="downloads">${dls}</div>
+        </div>
+      </div>
+      ${variants}
+    </section>`;
+  }).join('');
+  host.hidden = false;
+  const dlg = $('#lightbox');
+  $$('#companions .shot').forEach((b) => b.addEventListener('click', () => {
+    $('#lightbox-img').src = b.dataset.src;
+    $('#lightbox-img').alt = b.dataset.cap;
+    dlg.showModal();
+  }));
+  const nav = $('.model-nav');
+  const after = nav && $('a[href="#downloads"]', nav);
+  for (const c of [...list].reverse()) {
+    if (!nav || $(`a[href="#${CSS.escape(c.anchor)}"]`, nav)) continue;
+    const a = document.createElement('a');
+    a.href = `#${c.anchor}`;
+    a.textContent = c.heading;
+    if (after) after.after(a); else nav.append(a);
+  }
+}
+
 // ---------- parts ----------
 
 function swatch(name, hex) {
@@ -747,6 +835,7 @@ async function main() {
   renderParts();
   renderGallery(d);
   renderPrice(d);
+  renderCompanions(d);
   // Keep section shortcuts in sync with the resources this model actually provides.
   const sectionNav = $('.model-nav');
   if (sectionNav) {

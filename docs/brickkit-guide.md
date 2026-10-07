@@ -25,6 +25,7 @@ The cache location can be overridden with `BRICKKIT_CACHE` (useful in git worktr
 | `brickkit booklet SLUG [--no-render]` | instruction booklet `out/booklet.pdf` (pictures in `out/booklet/`) |
 | `brickkit viewer SLUG` | export `site/models/SLUG/` (GLB + model.json + files) for the viewer site |
 | `brickkit turntable SLUG [--preview]` | `out/turntable.mp4`: a 12 s photoreal (Cycles) orbit with the mechanism and lights working, muted and seamless; the site plays it where WebGL is missing (`meta["turntable"]`: `program` tap/swing/lights, `cycles`, `taps`) |
+| `brickkit quick SLUG [--preview] [--set PRESET\|random] [--surface S] [--room R] [--light L] [--seed N] [--seconds S] [--stills F,F] [--layout\|--no-layout] [--remix]` | `out/SLUG-1080x1920.mp4` (+ `quick_poster.jpg`): Quick Bricks, a 14 s vertical (1080×1920, 60 fps) photoreal build video of a small model for TikTok and Instagram, made to loop (config `[quick]`; see Video) |
 | `brickkit sizzle [SLUG ...] [--stills F,F] [--preview]` | `showreel/sizzle.mp4`: one quick brand reel of several models cut on the music's beats, from their showreels' footage (config `showreel/sizzle.toml`; see Video) |
 | `python tools/hero.py SLUG` | hero stills: `out/hero/`, `out/hero_lit/` (lights), `out/hero_open/` (pose 1) |
 | `brickkit find "words" [--color C]` | search real LEGO parts by name, ranked by how many sets used them in that colour |
@@ -62,6 +63,7 @@ intro = "A paragraph for 'Before you start' and 'About this model'"
 you_will_need = ["Things besides the bricks, e.g. batteries"]
 notes = ["Extra tips"]
 works = [{ title = "Fangs that bite", text = "...", image = "hero_open/hero.png" }]  # under out/
+page = "other_slug/#section"   # its web page, when it lives on another model's page
 
 [checks]
 enabled = ["real_elements", "connections", "collisions", "buildability", "stability",
@@ -309,6 +311,10 @@ swivel (2429 + 2430) folds one way only; locking hinge plates and bar-and-clip s
 to 0.5 LDU). A connector sitting exactly on a bucket boundary, as feet can in frames made of
 several 45- or 30-degree turns, goes in both buckets, so float noise can't split a pair.
 
+The overlay `50747.dat` (Windscreen 6 x 6 x 3 Canopy Half Sphere with Dual 2 Fingers) gives
+the canopy's two pairs of fingers the `lckHng` group LDCad's file leaves out, so it clicks onto
+single-finger click hinges (44567b, 44301b, 30383) as the real part does.
+
 The overlays `43722a/43723a/43722b/43723b.dat` (Wedge Plate 3 x 2) give those wedge plates the
 stud holes LDCad's library lacks. The technique check finds gaps like that one: it warns when a
 part with studs on top but nothing that connects through its underside sits on another part's
@@ -327,7 +333,8 @@ about the pivot. The parts list counts each 2429 as one 73983 and leaves 2430 ou
 5. Record decisions and any deviations in `models/SLUG/NOTES.md`. Commit.
 
 ## Video
-`brickkit video SLUG` makes `out/video.mp4`: a square 1080×1080, 30 fps showreel of the model
+`brickkit video SLUG` makes `out/SLUG-1080x1080.mp4` (every finished video is named for its model
+and its size, so no two share a name): a square 1080×1080, 30 fps showreel of the model
 (H.264 + AAC, under 40 MB) and `out/video_poster.jpg`. Everything on screen comes from the
 model: the parts list, `out/report.json`, the booklet, the poses, lights and colourways.
 It needs Blender, ffmpeg and Playwright's Chromium (`.venv/bin/python -m playwright install
@@ -359,7 +366,9 @@ chromium`). A full render takes roughly an hour of GPU time per model; iterate w
 | lift | 6 | everything but `exclude_tag` rises and hovers | `[video] lift` |
 | colourways | 4 per colourway | wipes between colourways that share the parts, with swatches | variants |
 | booklet | 12 | the printed booklet: its real cover opens, a thumb-flip through the step pages (motion-blurred) lands on a step spread, then loose step sheets are dealt into a fan (from every colourway's booklet if there are any) | `out/booklet.pdf` |
+| companions | 10 each | a smaller build featured with the model (e.g. a kids' version): its eyebrow and heading, its turntable loop on a card, chips (pieces, steps, about what it costs on Pick a Brick), then to scale: the model's cut-out with the companion dropping in beside it, each height measured | `[[companions]]` with `video = true` |
 | outro | 8 | logo, `bricks.superfun.games/m/SLUG`, the small print and the model's notice | always |
+| coda | seconds | the last moments: the model in the dark sea and a giant squid about its size coming out of the murk at it, fading to black as it closes in | `[video.coda]` |
 
 **Config** in model.toml (all optional; `model.meta["video"]` from design.py wins key by key):
 ```toml
@@ -378,6 +387,8 @@ lift_label = "Lifts off its stand"
 lights_label = "Nuclei light up"
 lights_tap = true               # the mechanism presses as the lights switch on (a tap lamp)
 lights_off = true               # a second tap switches them off again (lights_off_label)
+outro_small_print = false       # the outro without its small print (the disclaimer and the
+                                # model's notice); the URL stays
 drop = 24                       # LDU a part falls as it lands
 [video.theme_overrides]         # any theme token, e.g. accent = "#FF3EA5"
 
@@ -397,6 +408,35 @@ hide_tags = ["stand"]           # parts left out (added to performance_info's)
 # (x the LEDs' own power), spill_strength = 2.2 (W), spill_color = "#FF7040"
 # underwater: scene = "deep_sea" (motion "glide" and hiding the "stand" parts by default);
 # optional forward = [-1, 0, 0] (else along the longest horizontal extent), glide_lengths = 1.6
+# or through the model's room: motion = "flythrough" (about 15 s), its points (LDU, the model's
+# frame; meta["flythrough"], this table over it):
+# [video.cold_open.flythrough]
+# origin = [0, -552, 0]           # added to every point (e.g. where a sub-assembly sits)
+# enter = [-60, -12, -200]        # where the camera goes in through the hull (a window)...
+# exit = [-60, -12, 200]          # ...and out again
+# path = [[-60, -15, -125], ...]  # waypoints round the room
+# look = [[-60, -30, 40], ...]    # what it looks at from each (else straight ahead)
+# slow = [1.3, 1.8, ...]          # optional: time weights per waypoint (1 = its distance)
+# interior = { bounds = [[-280, -152, -140], [180, 64, 140]], tags = ["salon_interior"] }
+
+[[companions]]                  # (the site's companion section, model.toml's top level)
+slug = "caldwell_mini"          # another model, with its out/turntable.mp4 (brickkit turntable)
+eyebrow = "Kids' build"         # over the heading (else "Also")
+heading = "The mini courthouse" # (else the companion's name)
+price = { pick_a_brick = 9.87 } # its chip: "~$10 Pick a Brick"
+video = true                    # feature it in the showreel (the companions segment)
+# optional: video_chips = ["pieces", "steps", "price"]; [video] companions = false turns
+# the segment off
+
+[video.coda]                    # opt-in: the last image, after the outro
+scene = "deep_sea"              # the cold open's sea, gone dark (the only set with a creature)
+creature = "squid"              # a giant squid (the only creature so far)
+seconds = 7                     # rounded to beats; no black after it
+# optional: model = false (leave the model out), murk = 0.85 (0..1, how dark the sea is),
+# exposure = -0.4 (EV, on the set's), size = 0.34 (the squid's mantle, in the model's lengths:
+# mantle to tentacle tips about the model's length), roll = 25 (degrees it is turned from side
+# on), glide_lengths = 0.25 (how far the model cruises over the shot), fade = 1.2 (s of fading
+# to black at the end)
 
 [[video.callouts]]              # mechanism callouts; without any, one per moving group
 label = "Dust door"
@@ -470,6 +510,62 @@ the start and after each cut, bubbles on the cuts and as the bow passes, the hul
 once, the propeller churning louder as the stern nears the camera. About 0.4 s a frame at
 preview size and 1.6 s at full.
 
+A **flythrough** (`motion = "flythrough"`, in `scene = "deep_sea"`) glides the model the same
+way (1.3 of its lengths) and takes the camera through its room. Two shots outside: still under
+its bow as it passes overhead (20 mm), and wide from below and to the side, the whole model dark
+against the bright water (32 mm); then one take: along the hull to the lit window at `enter`
+(24 mm), through it, round the room along `path` looking at each `look` in turn (18 mm; turns
+take their time and `slow` stretches a waypoint), out through the far wall at `exit`, swinging
+back to the model and away from it into the deep (30 mm). Hull parts near the camera are hidden
+while it passes (never the room's own, `interior.tags`); the water stops at the room's bounds and
+in the walls the camera goes through, three warm lamps light the room (light-linked to it; the
+sun and the sea's fill are kept out), the windows glow out into the water and the picture warms
+inside. Past the far wall the sea goes dark: the surface's light, the shafts and the caustics
+die and the water thickens to near black as the model's lit windows recede, and below and beyond
+it something huge rises, its arms reaching up (a squid's dark bulk, faintly rim-lit, one eye
+catching the light). The sound: the deep (hushed in the room), pings at the start and on the
+wide shot, the hull groaning; a pipe organ, synthesised (`audio.SFX.fx_organ`: the opening of
+Bach's Toccata in D minor on a full organ in a hall), heard faintly through the hull from the
+wide shot on, swelling as the camera nears the window, open in the room (its second statement
+starts on the window, the pedal and the diminished seventh over it build past the organ), muffled
+again outside and dying away; bubbles bursting going in and out; then the dread (`fx_dread`: a
+low drone a minor second wide, a sub swelling, dark water), a far ping with no answer, the hull
+groaning behind and something huge moaning in the dark. The set renders at half the job's
+samples (finer water while inside the room): about 1.2 s a frame at preview size and
+1.9 s at full for a model of 8,500 parts (14 minutes for the 15 s). With `organ` in
+`[video.audio]` a recording (e.g. ElevenLabs music, `[[music]]` in the model's `audio/sfx.toml`)
+plays instead of the synthesised organ, faint through the hull, open in the room, its
+`organ_in` seconds reaching the window.
+
+**Companions** (`video/companions.py`): each `[[companions]]` block with `video = true` gets
+10 beats between the booklet and the outro (`[video] beats = { companions = N }` for all of
+them). Nothing new is rendered in 3D but a transparent hero still of the companion (Cycles,
+cached in `video_frames/<q>/companions/<slug>/` like the title's): its turntable
+(`out/turntable.mp4`) is turned into frames as the sizzle reel does (`sizzle.turntable_frames`),
+and the scale beat stands the model's own hero cut-out and the companion's on one line, each
+as tall as the other's real height says (their solid pixels, not their shadows, measured; clean
+copies without the shadow catcher's faint veil), with its height in cm beside each. The sound:
+a whoosh as the heading rises, a pop for the card, blips for the chips, a snap as the
+companion lands, ticks as the measures draw; the music grooves on under it.
+
+A **coda** (`[video.coda]`, after the outro) is the video's last moments, in the same `deep_sea`
+set (`render/blender_cold_open.py`, plan "coda"; `timeline.coda_plan`): the sea gone dark (murk),
+the model cruising slowly with its lights on, seen from off its side and a little below, and
+its creature coming out of the murk at it. `creature = "squid"` is a procedural giant squid
+(`Squid`: a long mantle tapering to a point with a heart-shaped pair of fins at its tip, the head
+and two great eyes, eight thick arms and two long tentacles ending in clubs) about the model's
+size, the two of them in one frame: it comes from beyond the model, low on the right, arms
+first, and closes on it - arms writhing and curling, mantle breathing, fins rippling, its
+tentacles uncoiling and reaching for the model - its back and edges catching a light from above
+and behind it (light-linked to it alone, coming up as it leaves the murk), its eyes catching
+the light. One take at 28 mm, pushing in a little, letterboxed like the cold open; the theme's
+wipe into it from the outro (the abyss porthole opens on it); the picture fades to black over
+its last `fade` seconds as the squid closes in. The sound: no music (a recorded score's tail
+dies away in it), the deep fading in, a lone sonar ping and a fainter one later, the dread
+swelling, the creature moaning as its eye catches the light (the set's recorded `creature`),
+all fading out with the picture. The cold open's flythrough ends on the same squid, barely seen
+far off in the dark.
+
 **Recorded sounds** (optional). The music and effects are synthesised unless the model has
 `[video.audio]`: sound files in the model's `audio/` (committed, so the video rebuilds offline)
 by role. `tools/elevenlabs_sfx.py SLUG` generates them from `audio/sfx.toml` (`[[sfx]]` name,
@@ -502,7 +598,21 @@ pings = ["..."]                   # sonar pings: at the start and after each cut
 bubbles = ["..."]                 # on the cuts and as the bow passes
 groan = "..."                     # the hull, once
 churn = "..."                     # the propeller, looped, louder as the stern nears
+                                  # (a flythrough uses the same roles; its dread is
+                                  # synthesised, its organ too unless:)
+organ = "organ_1.mp3"             # a flythrough's organ music, recorded: shaped like the
+organ_in = 4.25                   # synthesised one; this many s of it reach the window
+creature = "..."                  # the coda's creature moaning (the set's own by default)
+# any model, a recorded score instead of the synthesised music:
+music = "score_2.mp3"             # from the cut out of the cold open to the end (the synth
+music_offset = 0.5                # silenced), this many s into it on that cut; into a coda
+music_tail = 3.0                  # for this many s, fading out there
 ```
+A score is ElevenLabs music like the sizzle's: a `[[music]]` composition plan in the model's
+`audio/sfx.toml` whose sections are held to the reel's segments (their lengths in `ms`, at the
+theme's tempo), e.g. a hit on the open, the theme on the title, a long crescendo through the
+build, its peak on the mechanism, resolving on the outro (models/nautilus/audio/sfx.toml). It
+is balanced to the same music level and ducked under the big sound effects like the synth.
 Everything in the cold open stops dead at its cut; the synthesised music bed stays (ducked under
 the stings) and the mix is mastered to the same -16 LUFS / -1.5 dBTP. Without the table a model
 sounds exactly as before.
@@ -645,6 +755,126 @@ phrases but no breakdown, hence the filter break under the ferret). To choose a 
 `at`, look through the plates (for example the frame a lamp snaps on or a door lands; a
 mechanism's timing comes from its program, so it survives the model being rebuilt) and
 preview with `--stills`.
+
+### Quick Bricks
+
+`brickkit quick SLUG` turns a finished small model (a sub-$20 set) into a short vertical build
+video for TikTok and Instagram: `out/SLUG-1080x1920.mp4`, 1080×1920 at 60 fps (the top rate Reels and
+TikTok take), H.264 High profile (CRF 18, capped at 20 Mbit/s) + AAC 48 kHz, 14 s, under 50 MB,
+made to loop, and `out/quick_poster.jpg` (the finished model in its hero spin). The motion blur
+is a 180° shutter (1/120 s). Every timing is in seconds, so a 30 or 15 fps run lands, cuts and
+clicks at the same moments. `--preview` makes `out/quick_preview.mp4` (540×960, 15 fps, 16
+samples) to iterate on;
+`--stills 0,150` renders just those frames (into `out/quick_frames/<q>/`); `--set`,
+`--surface`, `--room`, `--light`, `--seed` and `--seconds` try another workshop or length for
+one run. Plain and clean, like the "LEGO assembly
+animation" reels it follows: just the render, no titles, cards, counters or graphics.
+
+It is all photoreal (Cycles, `render/blender_quick.py`; the parts' plastic from
+`blender_scene`), very shallow depth of field (a macro's: f/2.8-6.3, the set melting away), in
+a little workshop at the model's real size built from three layers, any with any
+(`render/quick_sets.py`):
+
+| Layer | Options |
+|---|---|
+| surface (what it stands on) | `blue_mat` (blue self-healing cutting mat, fine cyan centimetre grid, on oak), `green_mat` (the classic green mat, pale grid and diagonals, on walnut), `kraft` (tan linen with a big printed ring), `oak` (a bare light-oak desktop), `baseplate` (a light grey 48×48 LEGO baseplate, studs and all) |
+| room (always soft behind) | `workbench` (plank walls, pegboards of colourful tools, a desk lamp, a red toolbox), `studio` (bright white walls, low white shelves, plants, pastel books), `window` (big windows of daylight, bushes and sky outside, a sill of succulents), `night` (dark walls, strings of warm lights, a glowing desk lamp), `bookshelf` (shelves packed with colourful books) |
+| light | `morning` (warm low sun from the side, a cool fill), `day` (bright soft neutral daylight from high up), `evening` (a warm lamp-like key, a dark room) |
+
+The camera is low, so a room is what shows in the bottom 30 cm of its walls and on the desk:
+big shapes and colour, cheap to render. The walls stand back past the camera's whole path (the
+plan's `reach`, its farthest from the model) and every prop on the desk - lamps, a toolbox, a
+mug, a plant - stands out past it too, so the camera never passes through one; before encoding,
+any frame that is nearly one flat colour (the camera inside something) is listed as a warning. Presets (`set`) name a combo: `cutting_mat` (blue_mat,
+workbench, morning), `linen` (kraft, window, day), `studio` (green_mat, studio, day),
+`night_shift` (oak, night, evening), `reading_nook` (baseplate, bookshelf, morning); any layer
+given beside it wins; `set = "random"` picks one of each by `seed` (else by the model), so a
+series of videos varies by itself.
+
+The build (`video/quick.py`, no Blender: `plan`): it opens on the empty set; the parts come in
+instruction order (`build_sequence`), each flying in from just off the frame - out to the side
+it faces, or the camera's left or right of it, and up - on a short cubic arc whose last stretch
+runs along its insertion axis (its `insert=` hint, else its own top: down onto its studs, or
+sideways for a part on side studs) so nothing passes through what is built, slowing as it
+lands, tumbling a little and straightening, then a tiny bounce back off its studs. The pace
+ramps up (the last parts land about 3× as often as the first, several a second), a beat before
+the last piece. The camera circles the model low by the table (11-20°) in one smooth orbit
+that only ever goes one way (`orbit`): it starts on the front's three-quarter view (the front
+is -Z, or the model's `azimuth_offset`), goes slowly at first and faster as the build speeds
+up, passes the back faster than the front, and ends on the front again. It frames what is
+built so far, tight on the base at first, rising and pulling back as the build grows, and
+moves in to a macro close-up (a longer lens, the part about a third of the frame wide) on up to
+three landings - per `highlight` group the part facing the camera best as it lands. The orbit
+is timed to be on the side each close-up's part faces when it lands (a part that goes on
+sideways, like an eye or a clock, is seen face on; one that goes on from above from between
+its side of the model and the front), so the close-up is a push in along the orbit, not a
+swing across it; the build gives each one room. Then out, a slow drift across the front, and
+a hard cut to the empty set, whose camera runs on into the first frame: the loop. The sound:
+a crisp click on every landing (six ElevenLabs takes in turn, a little louder or softer), a
+deeper snap on the last piece and a soft swish into each close-up - just those by default;
+`music = true` adds a light, loopable lo-fi music bed under them
+(`brickkit/data/audio/quick/`, made by `tools/elevenlabs_sfx.py brickkit/data/audio/quick`),
+and `ending` plays a sound of the model's own after the last piece (Dracula's laugh, from
+`tools/elevenlabs_sfx.py dracula`); `[[quick.sound]]` plays others at moments of the build
+(the mini courthouse's bell tolls as its tower goes up). The sound is mixed apart from the
+picture, so changing
+it needs no new frames: the next `brickkit quick SLUG` only mixes and encodes again - or
+`brickkit quick SLUG --remix`, which never renders: it takes the frames there are (and the
+plan they were made from, even if the planner or the render scripts have changed since) and
+mixes the sound from `[quick]` as it is now.
+The mix is mastered for phones (-14 LUFS with the music) and checked for AAC clicks.
+
+**Laid out** (`layout`; by default for a model of under 25 pieces, `--layout` / `--no-layout`
+on the command line): the video opens on every part knolled on the table - a tidy grid
+behind the build's place, each part lying as a loose one would (`resting`: studs up if that
+is stable, else on its broadest stable side), long side along the rows. The grid is the model
+taken apart (`lay_out`): its rows are the build's steps in order, the first furthest back and
+the last nearest the build, so from the front it reads from the top down like a list and
+empties towards the build; no row is wider than the build, so the grid stands tall in the
+upright frame; in a row the same parts sit together and the row mirrors the model, each part
+on the side it will be on. After 1.2 s to take it in, the parts lift one at a time, turn the
+way they will sit, float over what is built and press on (`floats`; slower than the fly-ins).
+The camera starts high (55°) in front, square on to the grid, and frames the build's place
+and whatever still lies behind it, so it closes in and comes down as the grid empties; it only
+drifts across the front until the table is all but clear, then makes its whole turn round the
+finished model before the cut (a longer hero, 3.2 s). Close-ups are only on parts that land
+once half the grid has gone. After the cut the parts are laid out again: the loop.
+
+```toml
+[quick]
+set = "cutting_mat"                 # a preset (above) or "random"
+surface = "green_mat"               # optional: any layer over the preset's
+room = "bookshelf"
+light = "evening"
+seed = 3                            # for set = "random" (else the model's name)
+seconds = 14                        # the whole loop
+highlight = ["14769p0m", "3688"]    # parts (numbers or tags) for the close-ups, by preference
+                                    # (else printed parts, then the last two parts)
+close_ups = 2                       # 0..3
+layout = "auto"                     # true: the parts start laid out in a grid and float in;
+                                    # false: they fly in; "auto": laid out under 25 pieces
+music = false                       # true: a light music bed under the clicks
+ending = "audio/laugh_1.mp3"        # the model's own sound after the last piece (a path in
+                                    # its folder), with ending_level (-3 dBFS) and ending_at
+                                    # (0.25 s after the last landing)
+
+[[quick.sound]]                     # more sounds of the model's own, at moments of the build
+file = "audio/bell_1.mp3"
+on = ["The clock tower", "14769p0m", "last"]   # a step's caption (its first piece landing), a
+                                    # part number or tag (the one in a close-up, else the
+                                    # first), "first", "last", or a time in seconds
+level = -11.0                       # peak dBFS in the mix (a click: -9); at = s after each
+exposure = -1.0                     # EV, for a brighter or darker set
+view = "filmic"                     # the film response: "filmic" (the parts' colours true) or
+                                    # "agx" (softer; a bright yellow goes pale orange)
+watermark = false                   # true: the Bricks logo, small and faint, top centre
+```
+Frames render under the GPU lock, 40 to a Blender process (Cycles, 32 samples, denoised: about
+13 s a frame at 1080×1920 on this Mac, so a 60 fps final of 840 frames takes about three hours;
+a preview about ten minutes), and are kept between runs until the plan, the samples or the
+scripts change. The next one: add `[quick]` to the model's model.toml
+(or nothing: the defaults work) and run `brickkit quick SLUG --preview`, then `brickkit quick
+SLUG`.
 
 ## Shape helpers
 `brickkit.shapes.rings`: `ring_cells(r_out, r_in)`, `pack_cells(cells, lengths, offset, mode)`

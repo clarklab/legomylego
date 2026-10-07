@@ -1,0 +1,74 @@
+# Music for the Nautilus showreel's cold open, generated with ElevenLabs' music API (Creator
+# plan: commercial use allowed) by tools/elevenlabs_sfx.py nautilus. Each [[music]] makes
+# NAME_1.mp3 .. NAME_<variants>.mp3 here; sfx_generated.json records the prompt and settings
+# behind every file. The files are committed: the video rebuilds without calling the API, and a
+# rerun of the tool only makes files that are missing. [video.audio] in model.toml picks the one
+# used. (The deep sea's own sounds are shared: brickkit/data/audio/deep_sea.)
+
+[[music]]
+name = "organ"
+seconds = 16
+variants = 2
+instrumental = true
+prompt = """Solo pipe organ in a vast, reverberant iron chamber, a short eerie baroque toccata \
+phrase in D minor: a dramatic opening flourish with a mordent and a fast \
+descending run in octaves, answered an octave lower, then a thundering low pedal note under a \
+dark diminished chord that swells and rings out. Ominous, gothic, played by a lone organist \
+deep under the sea. Organ only: no drums, no orchestra, no choir, no vocals."""
+
+# The showreel's score: everything after the cold open, a composition plan held to the reel's
+# segments at its tempo (106 BPM: 17 frames a beat at 30 fps) - a hit on the cut into the open,
+# the theme on the title, building through the build, darker under the checks, its peak on the
+# mechanism, wonder on the lights, straight into the outro (no colourways: the model is the
+# film's brown only), then a low, ominous swell that dies away under the coda (the squid).
+# (Two longer scores, made for earlier cuts of the reel, were dropped.)
+[[music]]
+name = "score_cut"
+variants = 2
+bpm = 106
+styles = ["epic cinematic orchestral adventure film score", "a 1950s Hollywood sea adventure",
+          "an iron Victorian submarine voyaging under the sea", "big brass and soaring strings",
+          "deep timpani", "a heroic main theme with a dark, mysterious undertow",
+          "a touch of pipe organ", "106 BPM, 4/4, steady tempo",
+          "full symphony orchestra in a rich concert hall"]
+avoid = ["vocals", "choir", "electronic beats", "synthesizers", "drum kit", "guitar",
+         "tempo changes", "pop", "rock"]
+[[music.section]]
+name = "Hit"
+ms = 3400
+styles = ["a huge orchestral hit with timpani and brass on the very first beat",
+          "then a short rising string figure"]
+[[music.section]]
+name = "Theme"
+ms = 4533
+styles = ["the heroic main theme stated by horns over pulsing strings and timpani"]
+[[music.section]]
+name = "Build"
+ms = 13033
+styles = ["a driving string ostinato and timpani, building fast",
+          "the theme passed between brass and strings, growing bigger",
+          "one strong crescendo across the whole section"]
+[[music.section]]
+name = "Mystery"
+ms = 5667
+styles = ["darker and mysterious: low strings and pipe organ under the pulse",
+          "tension, the dark undertow of the deep sea"]
+[[music.section]]
+name = "Peak"
+ms = 4533
+styles = ["the full orchestra at its peak: the heroic theme on trumpets and horns",
+          "crashing cymbals, rolling timpani"]
+[[music.section]]
+name = "Wonder"
+ms = 3400
+styles = ["a moment of wonder: shimmering strings, harp and a soft pipe organ chord",
+          "swelling into the finale"]
+[[music.section]]
+name = "Finale"
+ms = 3400
+styles = ["a grand final cadence resolving on a big sustained chord with timpani"]
+[[music.section]]
+name = "Abyss"
+ms = 3967
+styles = ["the chord sinks into a low, ominous swell: contrabasses, low brass and a pipe organ pedal",
+          "dark and menacing, fading away into silence"]

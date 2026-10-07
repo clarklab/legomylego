@@ -4,7 +4,8 @@ cold_open_plan): the model performing in a set of its own before the reel proper
     Blender -b --factory-startup -P blender_cold_open.py -- job.json
 
 job.json as for blender_animate.py: {"timeline", "frames": [[frame, "out.png"], ...], "size",
-"samples", "engine", "device"}. The parts, their materials and the engine settings are the
+"samples", "engine", "device"}, and "plan": "coda" for the video's coda (timeline.py's
+coda_plan: the same fields, in the deep_sea set, with its creature) instead. The parts, their materials and the engine settings are the
 animator's (blender_scene.SceneBuilder, blender_animate's settings); the set is built here:
 
     sunset_road   a worn two-lane blacktop running dead straight into a huge low sun, the figure
@@ -1445,6 +1446,281 @@ def night_desk(sc, co, eevee):
     return NightDesk(sc, co, eevee)
 
 
+# ---------------------------------------------------------------------------- the squid
+def _bend_curve(p0, T0, R0, length, n, k1, k2):
+    """A curve of n points from p0, `length` long, setting off along T0: at each step its
+    tangent turns by k1[i] radians towards R (its own frame's second axis, R0 to start) and by
+    k2[i] about it (sideways). Returns (n, 3)."""
+    ds = length / (n - 1)
+    T, R = np.asarray(T0, float), np.asarray(R0, float)
+    Q = np.cross(T, R)
+    P = np.empty((n, 3))
+    P[0] = p0
+    for i in range(1, n):
+        c, s = math.cos(k1[i]), math.sin(k1[i])
+        T, R = T * c + R * s, R * c - T * s
+        c, s = math.cos(k2[i]), math.sin(k2[i])
+        T, Q = T * c + Q * s, Q * c - T * s
+        P[i] = P[i - 1] + T * ds
+    return P
+
+
+def _tube_rings(P, r, a0, sides):
+    """Rings of `sides` vertices round the polyline P (n, 3), radius r (n,) (or (n, 2): across
+    and along a0, an ellipse), carried along it by parallel transport from a0 (so a moving
+    curve's rings never twist). Returns (n * sides, 3)."""
+    n = len(P)
+    T = np.gradient(P, axis=0)
+    T /= np.linalg.norm(T, axis=1, keepdims=True) + 1e-12
+    A = np.empty((n, 3))
+    a = np.asarray(a0, float) - T[0] * float(np.dot(a0, T[0]))
+    a /= np.linalg.norm(a) + 1e-12
+    A[0] = a
+    for i in range(1, n):
+        v = np.cross(T[i - 1], T[i])
+        s = np.linalg.norm(v)
+        if s > 1e-9:
+            k = v / s
+            ang = math.atan2(s, float(np.dot(T[i - 1], T[i])))
+            a = a * math.cos(ang) + np.cross(k, a) * math.sin(ang) + k * np.dot(k, a) * (1 - math.cos(ang))
+        a = a - T[i] * float(np.dot(a, T[i]))
+        a /= np.linalg.norm(a) + 1e-12
+        A[i] = a
+    B = np.cross(T, A)
+    r = np.asarray(r, float)
+    ra, rb = (r[:, 0], r[:, 1]) if r.ndim == 2 else (r, r)
+    th = np.linspace(0, 2 * np.pi, sides, endpoint=False)
+    ring = (np.cos(th)[None, :, None] * A[:, None] * ra[:, None, None]
+            + np.sin(th)[None, :, None] * B[:, None] * rb[:, None, None])
+    return (P[:, None] + ring).reshape(-1, 3)
+
+
+def _tube_faces(n, sides, base=0, tip=None):
+    """Triangles joining n rings of `sides` vertices (from vertex `base`), closed at the end
+    with the vertex `tip` if given."""
+    i = np.arange(n - 1)[:, None] * sides
+    j = np.arange(sides)[None, :]
+    a0, a1 = i + j, i + (j + 1) % sides
+    F = [np.stack([a0, a1, a1 + sides], -1).reshape(-1, 3),
+         np.stack([a0, a1 + sides, a0 + sides], -1).reshape(-1, 3)]
+    if tip is not None:
+        top = (n - 1) * sides
+        F.append(np.stack([top + np.arange(sides), np.full(sides, tip - base),
+                           top + (np.arange(sides) + 1) % sides], -1))
+    return np.concatenate(F) + base
+
+
+class Squid:
+    """A giant squid, built procedurally and posed every frame: a long mantle tapering to a
+    point with a pair of fins at its tip, the head with two great eyes, eight thick arms and
+    two long feeding tentacles ending in clubs. Its own frame, in mantle lengths: the arms point
+    down -Y from the head (y -0.17..0), the mantle runs up to its tip at y = 1, its back
+    (dorsal) is +Z. `pose(t, reach, writhe)`: the arms writhe and curl (more with `writhe`),
+    the tentacles uncoil from curled (reach 0) to reaching straight out ahead (1), the fins
+    ripple and the mantle breathes. Dark red-brown skin; its edges catch the light from above
+    (`rim`, emission, 0..), its eyes a dull gold glint (`glint`)."""
+
+    BODY = ((-0.19, 0.06), (-0.175, 0.08), (-0.15, 0.092), (-0.1, 0.106), (-0.05, 0.1),
+            (-0.008, 0.11), (0.03, 0.15), (0.1, 0.158), (0.25, 0.158), (0.45, 0.142),
+            (0.62, 0.112), (0.78, 0.078), (0.88, 0.048), (0.95, 0.022), (0.985, 0.007))
+    ARM_N, TENT_N, SIDES = 30, 52, 10
+
+    def __init__(self, name="squid", seed=7, eyes=True):
+        self.rng = np.random.default_rng(seed)
+        rng = self.rng
+        ys = np.linspace(-0.19, 0.985, 46)
+        tab = np.array(self.BODY)
+        self.body_r = np.interp(ys, tab[:, 0], tab[:, 1])
+        self.body_P = np.stack([np.zeros_like(ys), ys, np.zeros_like(ys)], 1)
+        # arms round the head's front, the tentacles' bases between the ventral pairs (-Z)
+        self.arms = []
+        for i in range(8):
+            phi = 2 * math.pi * i / 8 + math.pi / 8
+            rho = np.array([math.cos(phi), 0.0, math.sin(phi)])
+            ventral = -math.sin(phi)                         # 1 underneath, -1 on its back
+            self.arms.append(dict(rho=rho, length=0.92 + 0.12 * ventral + rng.uniform(-0.05, 0.05),
+                                  r0=0.044 + 0.006 * ventral, phase=rng.uniform(0, 2 * math.pi),
+                                  rate=rng.uniform(0.75, 1.15), side=rng.choice([-1.0, 1.0]),
+                                  n=self.ARM_N, tent=False))
+        for sgn in (-1.0, 1.0):
+            phi = -math.pi / 2 + sgn * 0.42
+            rho = np.array([math.cos(phi), 0.0, math.sin(phi)])
+            self.arms.append(dict(rho=rho, length=2.3 + rng.uniform(-0.08, 0.08), r0=0.02,
+                                  phase=rng.uniform(0, 2 * math.pi), rate=rng.uniform(0.8, 1.1),
+                                  side=sgn, n=self.TENT_N, tent=True))
+        # the fins: a heart-shaped pair across the mantle's tip, a grid ny x nx
+        self.fin_y = np.linspace(0.6, 1.06, 18)
+        u = (self.fin_y - 0.6) / 0.46
+        self.fin_w = 0.32 * np.sin(np.pi * np.clip(u, 0, 1) ** 0.85) ** 0.75 * (1.0 - 0.25 * u) + 0.004
+        self.fin_x = np.linspace(-1.0, 1.0, 11)
+        # topology: body, fins, arms, tentacles
+        S = self.SIDES
+        F, base = [], 0
+        self.slices = {}
+        nb = len(ys)
+        F.append(_tube_faces(nb, 16, base, tip=base + nb * 16))
+        self.slices["body"] = (base, base + nb * 16 + 1)
+        base += nb * 16 + 1
+        ny, nx = len(self.fin_y), len(self.fin_x)
+        g = np.arange(ny - 1)[:, None] * nx + np.arange(nx - 1)[None, :]
+        F.append((np.concatenate([np.stack([g, g + 1, g + nx + 1], -1).reshape(-1, 3),
+                                  np.stack([g, g + nx + 1, g + nx], -1).reshape(-1, 3)]) + base))
+        self.slices["fins"] = (base, base + ny * nx)
+        base += ny * nx
+        for k, a in enumerate(self.arms):
+            F.append(_tube_faces(a["n"], S, base, tip=base + a["n"] * S))
+            self.slices[k] = (base, base + a["n"] * S + 1)
+            base += a["n"] * S + 1
+        self.nv = base
+        F = np.concatenate(F).astype(np.int32)
+        me = bpy.data.meshes.new(name)
+        me.vertices.add(self.nv)
+        me.loops.add(F.size)
+        me.loops.foreach_set("vertex_index", F.ravel())
+        me.polygons.add(len(F))
+        me.polygons.foreach_set("loop_start", np.arange(0, F.size, 3, dtype=np.int32))
+        me.polygons.foreach_set("use_smooth", np.ones(len(F), bool))
+        self.mesh = me
+        self.V = np.zeros((self.nv, 3))
+        self.pose(0.0)
+        me.update(calc_edges=True)
+        self.rim = []
+        me.materials.append(self._skin(name))
+        me.materials.append(self._skin(name + "_fin", rim=0.15, spec=0.25))
+        fa, fb = self.slices["fins"]
+        tri = F.reshape(-1, 3)
+        fin = (tri[:, 0] >= fa) & (tri[:, 0] < fb)
+        me.polygons.foreach_set("material_index", fin.astype(np.int32))
+        self.ob = bpy.data.objects.new(name, me)
+        bpy.context.scene.collection.objects.link(self.ob)
+        ba._try(self.ob, "visible_shadow", False)
+        self.eyes = []
+        if eyes:
+            self._eyes(name)
+
+    def _skin(self, name, rim=1.0, spec=0.7):
+        """Dark red-brown, mottled, a little glossy (`spec`); its edges lit from above (`rim`,
+        this much of it)."""
+        m = bpy.data.materials.new(name + "_skin")
+        nb = NB(m.node_tree)
+        out = nb.clear("OUTPUT_MATERIAL")
+        geo = nb.node("ShaderNodeNewGeometry")
+        mott = nb.noise(nb.node("ShaderNodeTexCoord").outputs["Object"], 18.0, 3.0, 0.6)
+        col = nb.mix(nb.smooth(mott, 0.35, 0.7), (0.05, 0.012, 0.01), (0.12, 0.03, 0.02))
+        b = nb.node("ShaderNodeBsdfPrincipled", Roughness=0.32)
+        nb.set(b.inputs["Base Color"], col)
+        ba._try(b.inputs["Specular IOR Level"], "default_value", spec)
+        lw = nb.node("ShaderNodeLayerWeight", Blend=0.3)
+        up = nb.smooth(nb.xyz(geo.outputs["Normal"])[2], -0.35, 0.8)
+        edge = nb.math("POWER", lw.outputs["Facing"], 3.2)
+        v = nb.node("ShaderNodeValue")
+        v.outputs[0].default_value = 0.0
+        self.rim.append((v, rim))
+        em = nb.node("ShaderNodeEmission")
+        nb.set(em.inputs["Color"], (0.32, 0.62, 0.8))
+        nb.set(em.inputs["Strength"], nb.mul(nb.mul(edge, nb.add(0.15, up)), v.outputs[0]))
+        add = nb.node("ShaderNodeAddShader")
+        nb.nt.links.new(b.outputs[0], add.inputs[0])
+        nb.nt.links.new(em.outputs[0], add.inputs[1])
+        nb.nt.links.new(add.outputs[0], out.inputs["Surface"])
+        return m
+
+    def _eyes(self, name):
+        """Two great eyes on the sides of the head: a black glossy globe, a dull gold iris that
+        glints (`glint`)."""
+        import bmesh
+        m = bpy.data.materials.new(name + "_eye")
+        nb = NB(m.node_tree)
+        out = nb.clear("OUTPUT_MATERIAL")
+        b = nb.node("ShaderNodeBsdfPrincipled", Roughness=0.06)
+        nb.set(b.inputs["Base Color"], (0.004, 0.003, 0.003))
+        lw = nb.node("ShaderNodeLayerWeight", Blend=0.5)
+        self.glint = nb.node("ShaderNodeValue")
+        self.glint.outputs[0].default_value = 0.0
+        f = lw.outputs["Facing"]                    # a dim gold iris round the black pupil
+        iris = nb.mul(nb.add(0.25, nb.mul(0.75, nb.smooth(f, 0.04, 0.16))), nb.smooth(f, 0.55, 0.25))
+        em = nb.node("ShaderNodeEmission")
+        nb.set(em.inputs["Color"], (0.85, 0.5, 0.16))
+        nb.set(em.inputs["Strength"], nb.mul(iris, self.glint.outputs[0]))
+        add = nb.node("ShaderNodeAddShader")
+        nb.nt.links.new(b.outputs[0], add.inputs[0])
+        nb.nt.links.new(em.outputs[0], add.inputs[1])
+        nb.nt.links.new(add.outputs[0], out.inputs["Surface"])
+        for sx in (-1.0, 1.0):
+            me = bpy.data.meshes.new(name + "_eye")
+            bm = bmesh.new()
+            bmesh.ops.create_uvsphere(bm, u_segments=24, v_segments=14, radius=0.055)
+            bm.to_mesh(me)
+            bm.free()
+            for p in me.polygons:
+                p.use_smooth = True
+            me.materials.append(m)
+            eo = bpy.data.objects.new(name + "_eye", me)
+            bpy.context.scene.collection.objects.link(eo)
+            eo.parent = self.ob
+            eo.location = (sx * 0.084, -0.1, 0.014)
+            ba._try(eo, "visible_shadow", False)
+            self.eyes.append(eo)
+
+    def lit(self, rim, glint):
+        """How much its edges (`rim`) and eyes (`glint`) catch the light."""
+        for v, k in self.rim:
+            v.outputs[0].default_value = float(rim) * k
+        self.glint.outputs[0].default_value = float(glint)
+
+    def pose(self, t, reach=0.5, writhe=1.0):
+        """The squid at time t (s): arms writhing, tentacles reaching (0 coiled .. 1 straight
+        out ahead), fins rippling, the mantle breathing."""
+        S = self.SIDES
+        V = self.V
+        breath = 1.0 + 0.035 * math.sin(2 * math.pi * t / 2.9)
+        r = self.body_r * np.where(self.body_P[:, 1] > 0.02, breath, 1.0)
+        a, b = self.slices["body"]
+        V[a:b - 1] = _tube_rings(self.body_P, r, (1.0, 0.0, 0.0), 16)
+        V[b - 1] = (0.0, 1.0, 0.0)
+        # fins: rippling, a wave running back along them
+        a, b = self.slices["fins"]
+        X = self.fin_x[None, :] * self.fin_w[:, None]
+        Y = np.broadcast_to(self.fin_y[:, None], X.shape)
+        wave = np.sin(2 * math.pi * t / 1.7 - 7.0 * self.fin_y)[:, None]
+        Z = 0.045 * (np.abs(self.fin_x[None, :]) ** 1.6) * wave - 0.012 * self.fin_x[None, :] ** 2
+        V[a:b] = np.stack([X, Y, Z], -1).reshape(-1, 3)
+        # arms and tentacles
+        for k, arm in enumerate(self.arms):
+            n = arm["n"]
+            s = np.linspace(0.0, 1.0, n)
+            rho = arm["rho"]
+            ph = arm["phase"] + arm["rate"] * t * 1.3
+            if arm["tent"]:
+                splay = 0.12 + 0.1 * (1 - reach)
+                coil = (1.0 - reach) * (0.4 + 5.5 * s ** 2.0)              # rad per unit
+                k1 = (coil + 0.35 * writhe * np.sin(ph - 4.0 * s)) * arm["length"] / (n - 1)
+                k2 = (0.5 * writhe * np.sin(0.7 * ph + 2.5 * s) * (0.3 + s)
+                      + (1 - reach) * 1.2 * arm["side"] * s) * arm["length"] / (n - 1)
+                rad = arm["r0"] * (1.0 - 0.5 * s) + 0.003
+                club = np.clip((s - 0.78) / 0.22, 0.0, 1.0)
+                rad = rad + 0.03 * np.sin(np.pi * club) ** 0.6
+                rr = np.stack([rad, rad * (1.0 - 0.45 * np.sin(np.pi * club))], 1)
+            else:
+                splay = 0.42
+                curl = writhe * (0.9 + 0.8 * math.sin(ph)) * 4.6 * s ** 1.5
+                k1 = (curl + writhe * 1.8 * np.sin(ph * 1.4 - 6.0 * s) * (0.25 + s)) \
+                    * arm["length"] / (n - 1)
+                k2 = (writhe * 1.1 * np.sin(ph * 0.8 + 1.3 + 4.5 * s) * (0.2 + s) * arm["side"]) \
+                    * arm["length"] / (n - 1)
+                rr = arm["r0"] * (1.0 - s) ** 0.85 + 0.0025
+            T0 = np.array([0.0, -1.0, 0.0]) * math.cos(splay) + rho * math.sin(splay)
+            R0 = rho - T0 * float(rho @ T0)
+            R0 /= np.linalg.norm(R0)
+            p0 = np.array([0.0, -0.17, 0.0]) + rho * (0.055 if not arm["tent"] else 0.035)
+            P = _bend_curve(p0, T0, R0, arm["length"], n, k1, k2)
+            a, b = self.slices[k]
+            V[a:b - 1] = _tube_rings(P, rr, R0, S)
+            V[b - 1] = P[-1]
+        self.mesh.vertices.foreach_set("co", V.astype(np.float32).ravel())
+        self.mesh.update()
+
+
 # ---------------------------------------------------------------------------- deep_sea
 SEA_LOOK = {"exposure": 0.5,         # EV
             "sun_strength": 8.0, "sun_color": "#C8EEFF",     # the light from the surface
@@ -1452,6 +1728,13 @@ SEA_LOOK = {"exposure": 0.5,         # EV
             "visibility": 1.5,       # model lengths: the water takes 63 % of the light this far
             "shafts": 16.0,          # how much denser the water is in the light's shafts
             "lamp_gain": 6.0,        # the model's LEDs (their own power) x this
+            "room_light": 0.03,      # W: each of the warm lights in a flythrough's room
+            "room_lamp_gain": 0.02,  # its LEDs' gain in there (lamp_gain is for seeing them out)
+            "window_glow": 0.6,      # W: the room's light out through its windows into the water
+            "squid_light": 3.0,      # a coda's squid: its own light from above and behind it...
+            "squid_color": "#9CC8FF",
+            "squid_rim": 1.0,        # ...its edges' glow (x the plan's rim)...
+            "squid_glint": 0.3,      # ...and its eyes' (x the plan's glint)
             "look": "AgX - Medium High Contrast"}
 
 
@@ -1463,7 +1746,8 @@ class DeepSea:
     as it goes; its LEDs glow in the water. Scaled to the model: S Blender units is its length
     (the plan's glide length); the world's axes: x, y as Blender's, z up."""
 
-    BLUR = {"approach": 0.02, "side": 0.022, "bow": 0.03}
+    BLUR = {"approach": 0.02, "side": 0.022, "bow": 0.03, "under": 0.02, "silhouette": 0.012,
+            "flythrough": 0.008, "coda": 0.014}
     TRIM = {}
     KEY_CAMERA = True                       # the camera tracks: blur with it, not against it
 
@@ -1484,12 +1768,32 @@ class DeepSea:
         self.floor = mid.z - 2.0 * self.S                 # the seabed
         self.rng = np.random.default_rng(20000)
         self.sun_down = (Vector((0, 0, -1)) - 0.3 * self.N - 0.15 * self.F).normalized()
+        self.fly = co.get("flythrough")
+        self.hull = None
+        if self.fly:                          # the model's own frame, carried with it (tick)
+            if "lamp_gain" not in (co.get("look") or {}):
+                self.look["lamp_gain"] = self.look["room_lamp_gain"]
+            self.hull = bpy.data.objects.new("hull_frame", None)
+            sc.collection.objects.link(self.hull)
+            self.SAMPLES = 0.5                # a long take of a big model: half the samples
+        self.coda = co.get("coda")            # the coda: the dark sea and what's out there
+        self.squid = None
+        if self.coda:
+            self.SAMPLES = 0.5
         self.world()
         self.surface()
-        self.seabed()
+        self.caustics = []
+        if not self.coda:                     # the coda's abyss has no bottom in sight
+            self.seabed()
         self.snow()
         self.bubbles_setup()
         self.lights()
+        if self.fly:
+            self.room_lights()
+            if self.fly.get("lurk"):
+                self.lurker()
+        if self.coda and self.coda.get("squid"):
+            self.monster(self.coda["squid"])
         self.compositor()
         ee = sc.eevee
         ba._try(ee, "bokeh_threshold", 1e5)
@@ -1500,6 +1804,10 @@ class DeepSea:
         ba._try(ee, "volumetric_shadow_samples", 8)
         ba._try(ee, "volumetric_start", 0.02 * self.S)
         ba._try(ee, "volumetric_end", 12.0 * self.S)
+        if self.fly:                          # cheaper water: coarser, fewer slices, no shadows
+            ba._try(ee, "volumetric_tile_size", "16")
+            ba._try(ee, "volumetric_samples", 16)
+            ba._try(ee, "use_volumetric_shadows", False)
         sc.view_settings.view_transform = "AgX"
         ba._try(sc.view_settings, "look", self.look["look"])
         sc.view_settings.exposure = 0.0
@@ -1537,6 +1845,7 @@ class DeepSea:
         nb.set(bg.inputs["Color"], col)
         w.node_tree.links.new(bg.outputs[0], out.inputs["Surface"])
         ba._try(w, "sun_threshold", 1e6)
+        self.bg = bg
         # the water: a volume filling the sea from the seabed to the surface (a world volume
         # would put out the sun: EEVEE takes the sun's light through all of it)
         S, c = self.S, self.mid
@@ -1565,10 +1874,32 @@ class DeepSea:
         shafts = vb.smooth(n1.outputs["Fac"], 0.57, 0.64)
         depth = vb.math("EXPONENT", vb.math("DIVIDE", vb.sub(vb.xyz(pos)[2], (self.top - c.z) / S), 1.8))
         dens = vb.mul(vb.add(1.0, vb.mul(vb.mul(shafts, depth), float(self.look["shafts"]))), 1.0 / vis)
+        self.murk_dens = vb.node("ShaderNodeValue")          # thicker in the dark (murk)
+        self.murk_dens.outputs[0].default_value = 1.0
+        dens = vb.mul(dens, self.murk_dens.outputs[0])
+        if self.fly:                          # no water inside the model's room, nor in its
+            tc = vb.node("ShaderNodeTexCoord")  # walls where the camera goes through them
+            tc.object = self.hull
+            lo, hi = (np.asarray(v, float) for v in self.fly["bounds"])
+
+            def outside(lo, hi):
+                cen, half = (lo + hi) / 2, (hi - lo) / 2
+                d = vb.vec("SUBTRACT", vb.vec("ABSOLUTE", vb.vec("SUBTRACT", tc.outputs["Object"],
+                                                                 tuple(cen))), tuple(half))
+                dx, dy, dz = vb.xyz(d)
+                return vb.smooth(vb.math("MAXIMUM", vb.math("MAXIMUM", dx, dy), dz), -4.0, 4.0)
+            dens = vb.mul(dens, outside(lo - 12.0, hi + 12.0))
+            for P in self.fly.get("at", {}).values():         # the room out to each window
+                P = np.asarray(P, float)
+                dens = vb.mul(dens, outside(np.minimum(lo, P) - 4.0, np.maximum(hi, P) + 4.0))
         vb.set(vol.inputs["Density"], dens)
         # the water's own colour: paler and greener under the surface, deep blue below
         wc = bs.hex_to_linear(self.look["water_color"])
-        vb.set(vol.inputs["Color"], vb.mix(depth, [x * 0.35 for x in wc], [min(1.0, x * 2.2) for x in wc]))
+        self.murk_col = vb.node("ShaderNodeValue")           # darker in the dark
+        self.murk_col.outputs[0].default_value = 1.0
+        vb.set(vol.inputs["Color"], vb.vec("SCALE", vb.mix(depth, [x * 0.35 for x in wc],
+                                                           [min(1.0, x * 2.2) for x in wc]),
+                                           self.murk_col.outputs[0]))
         vb.set(vol.inputs["Absorption Color"], (0.08, 0.42, 0.8))
         m.node_tree.links.new(vol.outputs[0], vout.inputs["Volume"])
         ob.data.materials.append(m)
@@ -1595,6 +1926,7 @@ class DeepSea:
                          (0.08, 0.36, 0.5), (0.65, 0.95, 1.05))
             em = nb.node("ShaderNodeEmission", Strength=1.0)
             nb.set(em.inputs["Color"], nb.vec("SCALE", col, nb.add(0.4, nb.mul(up, 2.6))))
+            self.surface_em = em
             return em.outputs[0]
         ob = self._ob(m, "sea_surface", self._mat("sea_surface", build), shadow=False)
         ba._try(ob, "visible_volume_scatter", False)
@@ -1645,6 +1977,7 @@ class DeepSea:
             b = nb.node("ShaderNodeBsdfPrincipled", Roughness=0.95)
             nb.set(b.inputs["Base Color"], col)
             em = nb.node("ShaderNodeEmission", Strength=0.35)          # the surface's caustics
+            self.caustics = getattr(self, "caustics", []) + [em]
             nb.set(em.inputs["Color"], nb.vec("SCALE", nb.comb(0.4, 0.8, 0.9), self._caustic(nb, p, 2.0)))
             add = nb.node("ShaderNodeAddShader")
             nb.nt.links.new(b.outputs[0], add.inputs[0])
@@ -1688,10 +2021,17 @@ class DeepSea:
     def snow(self):
         """Marine snow: specks hanging in the water round the model's path, sinking slowly."""
         S, rng = self.S, self.rng
-        n = 9000
+        n = 14000 if self.coda else 9000
         P = np.array(self.path)
+        if self.coda:                         # all the way out to the camera
+            P = np.vstack([P, [TO_B @ Vector(c) for c in self.co["camera"]["pos"][::10]]])
         lo, hi = P.min(0) - 1.6 * S, P.max(0) + 1.6 * S
         C = rng.uniform(lo, hi, (n, 3))
+        if self.coda:                         # none right at the lens (a blot of bokeh)
+            cams = np.array([TO_B @ Vector(c) for c in self.co["camera"]["pos"]])
+            near = np.min(np.linalg.norm(C[:, None, :] - cams[None, ::4, :], axis=2), axis=1)
+            C = C[near > 0.3 * S]
+            n = len(C)
         size = S * 0.0022 * rng.uniform(0.5, 1.6, n)[:, None]
         d = rng.normal(size=(n, 3, 3))
         V = (C[:, None, :] + d * size[:, None, :]).reshape(-1, 3)
@@ -1742,9 +2082,57 @@ class DeepSea:
         self.bubble_ob.data.polygons.foreach_set("use_smooth", np.ones(len(F), bool))
 
     def tick(self, k, fps=30.0):
-        """The water at plan frame k: ripples drift, snow sinks, bubbles rise."""
+        """The water at plan frame k: ripples drift, snow sinks, bubbles rise; in a flythrough
+        the room's frame follows the model, nothing floats in the room while the camera is in
+        it, and something stirs in the dark; the sea darkens with the plan's murk (a
+        flythrough's, a coda's); a coda's creature moves (monster_tick)."""
         S = self.S
         t = k / fps
+        if self.fly:
+            spin = self.co["spin"][min(k, len(self.co["spin"]) - 1)]
+            self.hull.matrix_world = ba.to_blender(ba.ld_matrix(spin)) @ TO_B
+            self.in_room = float(self.fly["room"][min(k, len(self.fly["room"]) - 1)])
+            # in the room the water is only past its walls: finer slices, nearer, so none of
+            # it bleeds in over the floor
+            ee = bpy.context.scene.eevee
+            fine = self.in_room > 0.02
+            ba._try(ee, "volumetric_tile_size", "8" if fine else "16")
+            ba._try(ee, "volumetric_samples", 64 if fine else 16)
+            ba._try(ee, "volumetric_end", (5.0 if fine else 12.0) * self.S)
+        murk = (self.fly or self.coda or {}).get("murk")
+        if murk:
+            mk = float(murk[min(k, len(murk) - 1)])
+            room = getattr(self, "in_room", 0.0)
+            for data, e in self.levels.items():
+                data.energy = e * (1.0 - 0.94 * mk)
+            self.bg.inputs["Strength"].default_value = 3.5 * (1.0 - 0.9 * mk) * (1.0 - 0.75 * room)
+            for em in self.caustics:
+                em.inputs["Strength"].default_value = 0.35 * (1.0 - mk)
+            self.surface_em.inputs["Strength"].default_value = 1.0 - 0.95 * mk
+            self.murk_dens.outputs[0].default_value = 1.0 + 1.2 * mk
+            self.murk_col.outputs[0].default_value = 1.0 - 0.85 * mk
+        if self.fly:
+            a, b = self.fly["inside"]
+            inside = a - self.co["start"] <= k < b - self.co["start"]
+            self.snow_ob.hide_render = inside
+            self.bubble_ob.hide_render = inside
+            if getattr(self, "lurk", None) is not None:
+                L = self.fly["lurk"]
+                sq = self.lurk
+                sq.ob.hide_render = k < L["from"]
+                for eo in sq.eyes:
+                    eo.hide_render = k < L["from"]
+                e = max(0.0, (k - L["from"]) / fps)       # it rises, turning slowly
+                rise = min(1.0, e / 1.5)
+                rise = rise * rise * (3 - 2 * rise) * mk    # out of the murk
+                sq.lit(0.9 * rise, 0.8 * rise)
+                sq.ob.matrix_world = Matrix.Translation((0, 0, 0.05 * self.lurk_S * e)) @ \
+                    self.lurk_base @ Matrix.Rotation(0.05 * e, 4, "X") @ Matrix.Scale(self.lurk_S, 4)
+                sq.pose(t, reach=0.25 + 0.5 * min(1.0, e / 2.5), writhe=0.8)
+        if self.squid is not None:
+            self.monster_tick(k, fps)
+        if self.coda:                         # the vents' columns would rise past the lens
+            self.bubble_ob.hide_render = True
         for w in self.waves:
             w.outputs[0].default_value = 0.35 * t
         self.snow_ob.location = (0.01 * S * t, 0.004 * S * t, -0.02 * S * t)
@@ -1787,6 +2175,9 @@ class DeepSea:
         so = bpy.data.objects.new("sea_sun", sd)
         self.sc.collection.objects.link(so)
         so.rotation_euler = self.sun_down.to_track_quat("-Z", "Y").to_euler()
+        self.sun = so
+        if self.fly:                          # it can't reach the room (link_room), so: no shadows
+            ba._try(sd, "use_shadow", False)
         fd = bpy.data.lights.new("sea_fill", "SUN")
         fd.color = (0.1, 0.35, 0.6)
         fd.energy = 1.2
@@ -1796,6 +2187,164 @@ class DeepSea:
         fo = bpy.data.objects.new("sea_fill", fd)
         self.sc.collection.objects.link(fo)
         fo.rotation_euler = Vector((0.2, 0.1, 1.0)).normalized().to_track_quat("-Z", "Y").to_euler()
+        self.fill = fo
+        self.levels = {so.data: so.data.energy, fd: fd.energy}
+
+    # -- a flythrough's room ------------------------------------------------------------------
+    def room_lights(self):
+        """Warm lamplight in the model's room (lights riding on its frame, lighting only the
+        room: link_room), and the glow of it out through the windows the camera passes, into
+        the water."""
+        b = self.fly["bounds"]
+        lo, hi = Vector(b[0]), Vector(b[1])
+        c = (lo + hi) / 2
+        self.room = []
+        for fx in (0.22, 0.5, 0.78):
+            p = Vector((lo.x + (hi.x - lo.x) * fx, lo.y + (hi.y - lo.y) * 0.22, c.z))
+            ld = bpy.data.lights.new("room_light", "POINT")
+            ld.color = tuple(bs.hex_to_linear("#FFB565"))
+            ld.energy = float(self.look["room_light"])
+            ld.shadow_soft_size = 0.01
+            ba._try(ld, "use_shadow", False)
+            lo_ = bpy.data.objects.new("room_light", ld)
+            self.sc.collection.objects.link(lo_)
+            lo_.parent = self.hull
+            lo_.matrix_parent_inverse = Matrix.Identity(4)
+            lo_.matrix_basis = Matrix.Translation(p) @ Matrix.Scale(1 / LDU, 4)
+            self.room.append(lo_)
+        self.glows = []
+        cl = Vector(c)
+        for key in ("enter", "exit"):
+            w = Vector(self.fly["at"][key])
+            out = (w - cl)
+            out.y = 0.0
+            out.normalize()
+            ld = bpy.data.lights.new("window_glow", "SPOT")
+            ld.color = tuple(bs.hex_to_linear("#FFB060"))
+            ld.energy = float(self.look["window_glow"])
+            ld.spot_size = math.radians(80)
+            ld.spot_blend = 0.8
+            ld.shadow_soft_size = 0.02
+            ba._try(ld, "use_shadow", False)
+            ob = bpy.data.objects.new("window_glow", ld)
+            self.sc.collection.objects.link(ob)
+            ob.parent = self.hull
+            ob.matrix_parent_inverse = Matrix.Identity(4)
+            q = (-out).to_track_quat("Z", "Y")                    # its -Z (the beam) outward
+            ob.matrix_basis = Matrix.Translation(w - out * 30.0) @ q.to_matrix().to_4x4() @ \
+                Matrix.Scale(1 / LDU, 4)
+            self.glows.append(ob)
+
+    def link_room(self, parts, keep):
+        """Light linking for the room: the sun and the fill never reach it (no shadows needed to
+        keep them out), its own lights reach nothing else, the windows' glow only the water.
+        `parts` the model's objects (the rig at rest), `keep` the room's own instances."""
+        if not self.fly:
+            return
+        bpy.context.view_layer.update()
+        b = self.fly["bounds"]
+        corners = [TO_B @ Vector((x, y, z)) for x in (b[0][0], b[1][0]) for y in (b[0][1], b[1][1])
+                   for z in (b[0][2], b[1][2])]
+        lo = Vector([min(c[i] for c in corners) for i in range(3)]) - Vector((1, 1, 1)) * 16 * LDU
+        hi = Vector([max(c[i] for c in corners) for i in range(3)]) + Vector((1, 1, 1)) * 16 * LDU
+        room = bpy.data.collections.new("room")
+        n = 0
+        for i, ob in enumerate(parts):
+            if ob is None or ob.hide_render:
+                continue
+            bb = [ob.matrix_world @ Vector(v) for v in ob.bound_box]
+            blo = Vector([min(v[a] for v in bb) for a in range(3)])
+            bhi = Vector([max(v[a] for v in bb) for a in range(3)])
+            if all(blo[a] <= hi[a] and bhi[a] >= lo[a] for a in range(3)):
+                room.objects.link(ob)
+                n += 1
+        if not n:
+            return
+        for light in (self.sun, self.fill):
+            col = bpy.data.collections.new("not_room")
+            col.children.link(room)
+            col.collection_children[0].light_linking.link_state = "EXCLUDE"
+            light.light_linking.receiver_collection = col
+        only = bpy.data.collections.new("room_only")
+        only.children.link(room)
+        for lt in self.room:
+            lt.light_linking.receiver_collection = only
+        water = bpy.data.collections.new("water_only")
+        water.objects.link(bpy.data.objects["water"])
+        for lt in self.glows:
+            lt.light_linking.receiver_collection = water
+
+    def lurker(self):
+        """Something huge in the dark beyond the model: a giant squid (Squid), barely there,
+        rising out of the murk as the camera pulls away, its arms reaching up (tick)."""
+        L = self.fly["lurk"]
+        self.lurk_S = 0.4 * float(L["size"]) * LDU          # its mantle's length
+        sq = self.lurk = Squid("lurker", seed=7)
+        sq.ob.hide_render = True
+        for eo in sq.eyes:
+            eo.hide_render = True
+        p = TO_B @ Vector(L["pos"])
+        f = (TO_B.to_3x3() @ Vector(L["facing"])).normalized()      # where its arms reach
+        self.lurk_base = Matrix.Translation(p) @ (-f).to_track_quat("Y", "Z").to_matrix().to_4x4()
+        sq.ob.matrix_world = self.lurk_base @ Matrix.Scale(self.lurk_S, 4)
+
+    # -- a coda's creature ---------------------------------------------------------------------
+    def monster(self, sq):
+        """The coda's giant squid (Squid), moved along the plan's path (monster_tick), with a
+        light of its own from above and behind it (light-linked to it alone) so its back and
+        edges catch the light while the rest of it stays dark against the water."""
+        self.squid = Squid("squid", seed=int(sq.get("seed", 7)))
+        self.squid_plan = sq
+        ld = bpy.data.lights.new("squid_light", "SUN")
+        ld.color = tuple(bs.hex_to_linear(self.look["squid_color"]))
+        ld.energy = float(self.look["squid_light"])
+        ba._try(ld, "angle", math.radians(6.0))
+        ba._try(ld, "use_shadow", False)
+        lo = bpy.data.objects.new("squid_light", ld)
+        self.sc.collection.objects.link(lo)
+        d = (TO_B.to_3x3() @ Vector(sq["light"])).normalized()     # the way its light travels
+        lo.rotation_euler = d.to_track_quat("-Z", "Y").to_euler()
+        only = bpy.data.collections.new("squid_only")
+        for ob in [self.squid.ob] + self.squid.eyes:
+            only.objects.link(ob)
+        lo.light_linking.receiver_collection = only
+        self.squid_light = lo
+
+    def _monster_matrix(self, i):
+        sq = self.squid_plan
+        i = min(max(i, 0), len(sq["pos"]) - 1)
+        R3 = TO_B.to_3x3()
+        ax = (R3 @ Vector(sq["axis"][i])).normalized()             # where its arms point
+        back = R3 @ Vector(sq["back"][i])
+        back = (back - ax * back.dot(ax)).normalized()
+        y, z = -ax, back
+        M = Matrix((y.cross(z), y, z)).transposed().to_4x4()
+        M.translation = TO_B @ Vector(sq["pos"][i])
+        return M @ Matrix.Scale(float(sq["size"]) * LDU, 4)
+
+    def monster_tick(self, k, fps):
+        """The squid at plan frame k: where the plan puts it (keyed either side of the frame,
+        so it blurs with its own motion), arms writhing, tentacles reaching (`reach`), its
+        edges (`rim`) and eyes (`glint`) lit as the plan says, its own light coming up with its
+        edges (out of the murk)."""
+        sq = self.squid_plan
+        i = min(k, len(sq["pos"]) - 1)
+        ob = self.squid.ob
+        ob.animation_data_clear()
+        ob.rotation_mode = "QUATERNION"
+        T = ColdOpen.BLUR_AT
+        at = {dk: self._monster_matrix(k + dk).decompose() for dk in (-1, 1, 0)}
+        for dk in (-1, 1, 0):                     # this frame's last: it stays set
+            loc, rot, scl = at[dk]
+            if rot.dot(at[0][1]) < 0:
+                rot.negate()
+            ob.location, ob.rotation_quaternion, ob.scale = loc, rot, scl
+            for path in ("location", "rotation_quaternion", "scale"):
+                ob.keyframe_insert(path, frame=T + dk)
+        self.squid.pose(k / fps, reach=float(sq["reach"][i]), writhe=float(sq.get("writhe", 1.0)))
+        self.squid.lit(float(sq["rim"][i]) * float(self.look["squid_rim"]),
+                       float(sq["glint"][i]) * float(self.look["squid_glint"]))
+        self.squid_light.data.energy = float(self.look["squid_light"]) * (0.25 + 0.75 * float(sq["rim"][i]))
 
     def compositor(self):
         sc = self.sc
@@ -1818,9 +2367,11 @@ class DeepSea:
 
     def frame(self, cam, shot, ev, focus):
         g = 2.0 ** (ev + self.TRIM.get(shot, 0.0))
+        w = getattr(self, "in_room", 0.0)           # lamplight: warm, the sea's blue held back
+        col = (g * (1.0 + 0.35 * w), g * (1.0 + 0.02 * w), g * (1.0 - 0.4 * w), 1.0)
         sock = self.gain.inputs[7]
-        if abs(sock.default_value[0] - g) > 1e-6:
-            sock.default_value = (g, g, g, 1.0)
+        if any(abs(a - b) > 1e-6 for a, b in zip(sock.default_value, col)):
+            sock.default_value = col
         cd = cam.data
         mw = cam.matrix_world
         s = max(0.05, (focus - mw.translation).dot(-(mw.to_3x3() @ Vector((0, 0, 1)))))
@@ -1850,7 +2401,7 @@ class ColdOpen:
 
     def __init__(self, tl, job):
         self.tl = tl
-        co = self.co = tl["cold_open"]
+        co = self.co = tl[job.get("plan", "cold_open")]      # the cold open, or the coda
         scene = dict(tl["scene"])
         scene.update(engine=job.get("engine", "eevee"), size=job["size"],
                      samples=int(job["samples"]), lights=[], ground=False)
@@ -1879,6 +2430,11 @@ class ColdOpen:
         self.disc = bpy.data.objects.get("sun_disc")
         self.sun_dir = sun_direction(co["sun"])
         self._rig()
+        fly = co.get("flythrough") or {}
+        if hasattr(self.set, "link_room"):
+            self.set.link_room(self.b.objects, set(fly.get("keep", [])))
+        self.fly_hide = fly.get("hide") or {}          # parts out of the camera's way, per frame
+        self.hidden_now = set()
         cd = bpy.data.cameras.new("cold_cam")
         cd.sensor_width = 36
         U = co["height"] * LDU
@@ -2017,6 +2573,12 @@ class ColdOpen:
     def apply(self, f):
         co = self.co
         k = min(max(f - co["start"], 0), len(co["spin"]) - 1)
+        if self.fly_hide or self.hidden_now:
+            want = set(self.fly_hide.get(str(k), []))
+            for i in self.hidden_now ^ want:
+                if self.b.objects[i] is not None:
+                    self.b.objects[i].hide_render = i in want
+            self.hidden_now = want
         if hasattr(self.set, "tick"):
             self.set.tick(k, float(self.tl.get("fps", 30)))
         if self.blur:

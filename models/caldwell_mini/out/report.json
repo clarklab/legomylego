@@ -1,0 +1,95 @@
+{
+  "title": "Caldwell County Courthouse Mini",
+  "status": "pass",
+  "checks": [
+    {
+      "name": "real_elements",
+      "status": "pass",
+      "summary": "23 part/colour combinations: 0 not real, 0 rare; 3 minifig component(s)",
+      "items": [],
+      "stats": {
+        "combinations": 23,
+        "not_real": 0,
+        "rare": 0,
+        "hardware": 0,
+        "minifig_components": 3,
+        "stand_ins": 0,
+        "approximate": 0
+      }
+    },
+    {
+      "name": "connections",
+      "status": "pass",
+      "summary": "201 connections (179 stud, 7 pin, 6 kit, 5 axle, 4 bar); 2 separate piece(s)",
+      "items": [],
+      "stats": {
+        "connections": 201,
+        "by_kind": {
+          "stud": 179,
+          "axle": 5,
+          "bar": 4,
+          "pin": 7,
+          "kit": 6
+        },
+        "pieces": 2
+      }
+    },
+    {
+      "name": "collisions",
+      "status": "pass",
+      "summary": "0 overlapping pair(s) among 70 parts",
+      "items": [],
+      "stats": {
+        "pairs": 0
+      }
+    },
+    {
+      "name": "buildability",
+      "status": "pass",
+      "summary": "62 insertions tried across 4 submodel(s); 0 problem(s)",
+      "items": [],
+      "stats": {
+        "insertions": 62
+      }
+    },
+    {
+      "name": "stability",
+      "status": "pass",
+      "summary": "about 70 g; centre of mass inside the base (122% margin); tips at 47.7 deg",
+      "items": [],
+      "stats": {
+        "mass_g": 70.28103533763378,
+        "com": [
+          6.291413376141415,
+          -62.173621872128706,
+          -2.877845786718307
+        ],
+        "approx_parts": 0,
+        "margin": 1.218038760936273,
+        "tip_angle_deg": 47.70086934160022,
+        "com_height_ldu": 70.1736218721287
+      }
+    },
+    {
+      "name": "mechanism",
+      "status": "pass",
+      "summary": "no moving parts defined",
+      "items": [],
+      "stats": {}
+    },
+    {
+      "name": "electrics",
+      "status": "pass",
+      "summary": "no electrics in this model",
+      "items": [],
+      "stats": {}
+    },
+    {
+      "name": "technique",
+      "status": "pass",
+      "summary": "0 note(s)",
+      "items": [],
+      "stats": {}
+    }
+  ]
+}

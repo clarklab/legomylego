@@ -5,8 +5,25 @@
     {
       "name": "real_elements",
       "status": "warn",
-      "summary": "128 part/colour combinations: 0 not real, 1 rare",
+      "summary": "407 part/colour combinations: 0 not real, 7 rare; 15 minifig component(s), 2 drawn as stand-ins; 1 with an approximate 3D model",
       "items": [
+        {
+          "part": "10165c01",
+          "name": "Helmet Underwater Deep Diver with Trans-Clear Glass",
+          "colour": "Pearl Gold",
+          "severity": "info",
+          "problem": "LDraw has no model of this part: its 3D shape is brickkit's approximation (data/approximate.json)"
+        },
+        {
+          "part": "10165c01",
+          "name": "Helmet Underwater Deep Diver with Trans-Clear Glass",
+          "colour": "Pearl Gold",
+          "severity": "warn",
+          "problem": "rare: in 1 set(s), last seen 2012",
+          "element_ids": [
+            "6018281"
+          ]
+        },
         {
           "part": "64228",
           "name": "Battery Box, Power Functions, with Dark Bluish Gray Bottom [Non-Rechargeable]",
@@ -19,32 +36,108 @@
             "6116239",
             "6197414"
           ]
+        },
+        {
+          "part": "67361",
+          "name": "Animal / Creature Body Part, Tail / Claw / Horn / Branch / Tentacle, End Section, Large",
+          "colour": "Red",
+          "severity": "warn",
+          "problem": "rare: in 2 set(s), last seen 2026",
+          "element_ids": [
+            "6545627"
+          ]
+        },
+        {
+          "part": "3626bpr0251",
+          "name": "Minifig Head, Beard with Gray Hair, Moustache, and Angry Eyebrows Print",
+          "colour": "Yellow",
+          "minifig": "head",
+          "bricklink": "3626px132",
+          "severity": "warn",
+          "problem": "rare: in 11 set(s), last seen 2009",
+          "element_ids": [
+            "4187305"
+          ]
+        },
+        {
+          "part": "970c23pr0378",
+          "name": "Hips and Medium Nougat Legs with Reddish Brown Kneepads Print",
+          "colour": "Dark Bluish Gray",
+          "minifig": "legs",
+          "bricklink": "970c150pb02",
+          "severity": "warn",
+          "problem": "rare: in 1 set(s), last seen 2012",
+          "element_ids": [
+            "6007953"
+          ]
+        },
+        {
+          "part": "970c23pr0378",
+          "name": "Hips and Medium Nougat Legs with Reddish Brown Kneepads Print",
+          "colour": "Dark Bluish Gray",
+          "minifig": "legs",
+          "bricklink": "970c150pb02",
+          "severity": "info",
+          "problem": "LDraw has no model of this print: drawn plain in its colours (the parts lists name the printed part)"
+        },
+        {
+          "part": "973c03h01pr0049",
+          "name": "Torso Boat Captain, Suit Double Breasted and Gold Anchor Logo Print, Black Arms, Yellow Hands",
+          "colour": "Black",
+          "minifig": "torso",
+          "bricklink": "973pb0049c01",
+          "severity": "warn",
+          "problem": "rare: in 5 set(s), last seen 1991",
+          "element_ids": []
+        },
+        {
+          "part": "973c23h12pr2119",
+          "name": "Torso Diving Suit with Crossed Belts and Weight Belt Print, Medium Nougat Arms, Dark Bluish Gray Hands",
+          "colour": "Medium Nougat",
+          "minifig": "torso",
+          "bricklink": "973pb1240c01",
+          "severity": "warn",
+          "problem": "rare: in 1 set(s), last seen 2012",
+          "element_ids": [
+            "6008374"
+          ]
+        },
+        {
+          "part": "973c23h12pr2119",
+          "name": "Torso Diving Suit with Crossed Belts and Weight Belt Print, Medium Nougat Arms, Dark Bluish Gray Hands",
+          "colour": "Medium Nougat",
+          "minifig": "torso",
+          "bricklink": "973pb1240c01",
+          "severity": "info",
+          "problem": "LDraw has no model of this print: drawn plain in its colours (the parts lists name the printed part)"
         }
       ],
       "stats": {
-        "combinations": 128,
+        "combinations": 407,
         "not_real": 0,
-        "rare": 1,
+        "rare": 7,
         "hardware": 0,
-        "minifig_components": 0,
-        "stand_ins": 0,
-        "approximate": 0
+        "minifig_components": 15,
+        "stand_ins": 2,
+        "approximate": 1
       }
     },
     {
       "name": "connections",
       "status": "pass",
-      "summary": "5446 connections (5400 stud, 28 pin, 11 press, 4 bar, 2 clip, 1 axle); 1 separate piece(s)",
+      "summary": "27819 connections (27318 stud, 217 clip, 131 pin, 98 bar, 28 kit, 17 press, 6 axle, 4 hinge); 1 separate piece(s)",
       "items": [],
       "stats": {
-        "connections": 5446,
+        "connections": 27819,
         "by_kind": {
-          "stud": 5400,
-          "pin": 28,
-          "bar": 4,
-          "axle": 1,
-          "clip": 2,
-          "press": 11
+          "stud": 27318,
+          "pin": 131,
+          "bar": 98,
+          "hinge": 4,
+          "clip": 217,
+          "axle": 6,
+          "press": 17,
+          "kit": 28
         },
         "pieces": 1
       }
@@ -52,7 +145,7 @@
     {
       "name": "collisions",
       "status": "pass",
-      "summary": "0 overlapping pair(s) among 1215 parts",
+      "summary": "0 overlapping pair(s) among 7154 parts",
       "items": [],
       "stats": {
         "pairs": 0
@@ -61,34 +154,34 @@
     {
       "name": "buildability",
       "status": "pass",
-      "summary": "1153 insertions tried across 26 submodel(s); 0 problem(s)",
+      "summary": "6623 insertions tried across 115 submodel(s); 0 problem(s)",
       "items": [],
       "stats": {
-        "insertions": 1153
+        "insertions": 6623
       }
     },
     {
       "name": "stability",
       "status": "pass",
-      "summary": "about 1454 g; centre of mass inside the base (100% margin); tips at 36.0 deg",
+      "summary": "about 7873 g; centre of mass inside the base (99% margin); tips at 41.5 deg",
       "items": [],
       "stats": {
-        "mass_g": 1454.4652442263603,
+        "mass_g": 7873.327304335554,
         "com": [
-          -3.409612326628427,
-          -192.07261431865624,
-          0.5601217201120705
+          -79.0143099654725,
+          -378.3129000585201,
+          5.035238442296242
         ],
         "approx_parts": 0,
-        "margin": 0.995999130570628,
-        "tip_angle_deg": 35.97870422582338,
-        "com_height_ldu": 192.07261431865624
+        "margin": 0.9949448363100111,
+        "tip_angle_deg": 41.522231701437335,
+        "com_height_ldu": 378.3129000585201
       }
     },
     {
       "name": "mechanism",
       "status": "pass",
-      "summary": "24 poses swept for 2 moving group(s); 0 gear pair(s); 0 problem(s)",
+      "summary": "24 poses swept for 3 moving group(s); 0 gear pair(s); 0 problem(s)",
       "items": [],
       "stats": {
         "poses": 24
@@ -97,19 +190,19 @@
     {
       "name": "electrics",
       "status": "pass",
-      "summary": "2 light(s), 2 cable run(s); longest lead needs 19 of 40 cm; 0 problem(s)",
+      "summary": "2 light(s), 2 cable run(s); longest lead needs 78 of 90 cm; 0 problem(s)",
       "items": [],
       "stats": {
         "runs": [
           {
-            "cable": "salon_port_lead",
-            "need_cm": 19.2,
-            "length_cm": 40.0
+            "cable": "lead_port",
+            "need_cm": 77.8,
+            "length_cm": 90.0
           },
           {
-            "cable": "salon_stbd_lead",
-            "need_cm": 18.5,
-            "length_cm": 40.0
+            "cable": "lead_stbd",
+            "need_cm": 77.8,
+            "length_cm": 90.0
           }
         ]
       }

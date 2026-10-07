@@ -2534,6 +2534,7 @@
 0 STEP
 1 16 250 0 -510 1 0 0 0 1 0 0 0 1 flagpole.ldr
 1 272 250 -146 -510 0 0 1 0 1 0 -1 0 0 4495b.dat
+1 16 -100 0 -510 1 0 0 0 1 0 0 0 1 clockmaster.ldr
 0 STEP
 0 NOFILE
 
@@ -5473,6 +5474,49 @@
 0 STEP
 0 // A white bar for the pole
 1 15 0 -52 0 1 0 0 0 1 0 0 0 1 63965.dat
+0 STEP
+0 NOFILE
+
+0 FILE clockmaster.ldr
+0 The clockmaster
+0 Name: clockmaster.ldr
+0 Author: brickkit
+
+0 // Legs
+1 16 0 0 0 1 0 0 0 1 0 0 0 1 clockmaster_legs.ldr
+0 STEP
+0 // Torso
+1 16 0 0 0 1 0 0 0 1 0 0 0 1 clockmaster_torso.ldr
+0 STEP
+0 // Head
+1 14 0 -96 1.2 1 0 0 0 1 0 0 0 1 3626cp7e.dat
+0 STEP
+0 // Hat
+1 0 0 -96 1.2 1 0 0 0 1 0 0 0 1 3878.dat
+0 STEP
+0 NOFILE
+
+0 FILE clockmaster_legs.ldr
+0 Legs 970c00
+0 Name: clockmaster_legs.ldr
+0 Author: brickkit
+
+1 308 0 -40 1.2 1 0 0 0 1 0 0 0 1 3815b.dat
+1 308 0 -28 1.2 1 0 0 0 1 0 0 0 1 3816c.dat
+1 308 0 -28 1.2 1 0 0 0 1 0 0 0 1 3817c.dat
+0 STEP
+0 NOFILE
+
+0 FILE clockmaster_torso.ldr
+0 Torso 973pb3159c01
+0 Name: clockmaster_torso.ldr
+0 Author: brickkit
+
+1 0 0 -72 1.2 1 0 0 0 1 0 0 0 1 973puc.dat
+1 15 -15.552 -63 1.2 0.985431 -0.170074 0 0.170074 0.985431 0 0 0 1 3818.dat
+1 15 15.552 -63 1.2 0.985431 0.170074 0 -0.170074 0.985431 0 0 0 1 3819.dat
+1 14 -23.690824 -45.241587 -8.6839 0.985431 -0.120261 0.120261 0.170074 0.696805 -0.696805 0 0.707107 0.707107 3820.dat
+1 14 23.690824 -45.241587 -8.6839 0.985431 0.120261 -0.120261 -0.170074 0.696805 -0.696805 0 0.707107 0.707107 3820.dat
 0 STEP
 0 NOFILE
 

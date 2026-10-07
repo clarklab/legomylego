@@ -1,0 +1,49 @@
+[model]
+name = "Caldwell County Courthouse Mini"
+design = "design.py"
+description = "A small, quick kids' build of the 1894 courthouse in Lockhart, Texas: buff stone walls with a red band, slate roofs on the four corner pavilions, and the clock tower with a clock on each side under a steep slate spire and a red finial. It comes with the clockmaster, a minifigure in a top hat. The big display version is The Caldwell County Courthouse."
+palette_title = "Dark red trim"
+collection = "quick_bricks"   # a little Quick Bricks model (also a section of the big courthouse's page)
+
+[palette]
+lawn = "Green"
+walk = "Light Bluish Gray"
+wall = "Tan"                  # the buff stone
+trim = "Dark Red"             # the red band, the cornice, the clocks' mounts, the finial
+roof = "Black"                # dark slate
+door = "Reddish Brown"        # the front doors
+clock = "White"               # the printed clock faces
+
+[variants.brownstone]
+title = "Reddish brown trim"
+trim = "Reddish Brown"
+
+[variants.budget]             # not a colourway: the cheaper build (design.py)
+title = "Budget build"
+
+[booklet]
+page = "caldwell_courthouse/#mini"   # the mini is a section of the big courthouse's page
+subtitle = "A small, quick build of the 1894 courthouse in Lockhart, Texas, with a clock on every side of its tower."
+intro = "The Caldwell County Courthouse in Lockhart, Texas, small enough to build in a few minutes: the stone walls with their red band, the corner pavilions with their slate roofs, and the clock tower in the middle, a clock on each of its four sides."
+
+[checks]
+enabled = ["real_elements", "connections", "collisions", "buildability", "stability",
+           "mechanism", "electrics", "technique"]
+[checks.connections]
+allow_separate_tags = ["clockmaster"]   # he stands beside the lawn, not clicked onto it
+
+# Quick Bricks (brickkit quick caldwell_mini): the short vertical build video for TikTok and
+# Instagram - on the blue cutting mat at the workbench in the morning light (the cutting_mat
+# preset), macro close-ups as a clock and the spire land
+[quick]
+set = "cutting_mat"
+seconds = 14
+highlight = ["14769p0m", "3688"]
+close_ups = 2
+music = false                 # just the clicks
+view = "agx"                  # the film response its video was made (and approved) with
+
+[[quick.sound]]               # the clock tower's bell (audio/sfx.toml) tolls three times as the
+file = "audio/bell_2.mp3"     # tower goes up: as its first brick lands, as the clock in the
+on = ["The clock tower", "14769p0m", "last"]   # close-up snaps on, and on the last piece
+level = -11.0

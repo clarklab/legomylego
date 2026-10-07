@@ -1,0 +1,94 @@
+{
+  "title": "Mini T. rex",
+  "status": "pass",
+  "checks": [
+    {
+      "name": "real_elements",
+      "status": "pass",
+      "summary": "23 part/colour combinations: 0 not real, 0 rare",
+      "items": [],
+      "stats": {
+        "combinations": 23,
+        "not_real": 0,
+        "rare": 0,
+        "hardware": 0,
+        "minifig_components": 0,
+        "stand_ins": 0,
+        "approximate": 0
+      }
+    },
+    {
+      "name": "connections",
+      "status": "pass",
+      "summary": "70 connections (60 stud, 4 bar, 4 pin, 2 clip); 1 separate piece(s)",
+      "items": [],
+      "stats": {
+        "connections": 70,
+        "by_kind": {
+          "stud": 60,
+          "bar": 4,
+          "pin": 4,
+          "clip": 2
+        },
+        "pieces": 1
+      }
+    },
+    {
+      "name": "collisions",
+      "status": "pass",
+      "summary": "0 overlapping pair(s) among 42 parts",
+      "items": [],
+      "stats": {
+        "pairs": 0
+      }
+    },
+    {
+      "name": "buildability",
+      "status": "pass",
+      "summary": "40 insertions tried across 5 submodel(s); 0 problem(s)",
+      "items": [],
+      "stats": {
+        "insertions": 40
+      }
+    },
+    {
+      "name": "stability",
+      "status": "pass",
+      "summary": "about 22 g; centre of mass inside the base (54% margin); tips at 11.1 deg",
+      "items": [],
+      "stats": {
+        "mass_g": 21.873824047301984,
+        "com": [
+          -5.4646687234109386e-06,
+          -79.3053072400272,
+          0.32049561130671356
+        ],
+        "approx_parts": 0,
+        "margin": 0.5440165203768905,
+        "tip_angle_deg": 11.08453085414434,
+        "com_height_ldu": 83.3053072400272
+      }
+    },
+    {
+      "name": "mechanism",
+      "status": "pass",
+      "summary": "no moving parts defined",
+      "items": [],
+      "stats": {}
+    },
+    {
+      "name": "electrics",
+      "status": "pass",
+      "summary": "no electrics in this model",
+      "items": [],
+      "stats": {}
+    },
+    {
+      "name": "technique",
+      "status": "pass",
+      "summary": "0 note(s)",
+      "items": [],
+      "stats": {}
+    }
+  ]
+}

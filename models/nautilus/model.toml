@@ -1,66 +1,52 @@
 [model]
 name = "Nautilus"
 design = "design.py"
-description = "Captain Nemo's Nautilus from Walt Disney's 20,000 Leagues Under the Sea (1954), 46 cm long in real LEGO: an iron fish of a submarine with its toothed crest arch, ram, saw keel, shark's dorsal fin and swept fish tail, held over a sea of rolling waves on two clear posts. The salon windows light up, the propeller spins and the rudder swings."
+description = "Captain Nemo's Nautilus from Walt Disney's 20,000 Leagues Under the Sea (1954) at minifigure scale, 106 cm long: its salon windows are LEGO's biggest clear bubbles. Big tiled side panels on hinges, the toothed crest arch over an alligator-head wheelhouse with bubble eyes, the saw keel, the shark's dorsal fin and the fish tail with its propeller and rudder; the port side of the salon swings up like a gull wing on Captain Nemo's salon - his pipe organ, library, aquarium and crew - and the whole ship rides a breaking sea on two clear posts. The salon lights up, the propeller spins and the rudder swings."
 notice = "The Nautilus design is from Walt Disney's 20,000 Leagues Under the Sea (1954). Unofficial fan model, not affiliated with or endorsed by Disney."
 palette_title = "Rusty iron"
 
-# Roles -> real colours. The hull is one colour, Reddish Brown; Dark Brown (`frame`) is kept
-# for a few deliberate accents (the hatch's rim, the skiff).
+# Roles -> real colours. The hull is Reddish Brown, weathered (naut_weather.py) in patches of
+# dark iron, rust and worn bare metal; Dark Brown (`frame`) is kept for accents. The stand's and the salon's colours are named in
+# naut_stand_big.py and naut_salon.py. One colourway: the film's rusty brown (no steel).
 [palette]
-hull = "Reddish Brown"         # the iron hull: panels, side keels, deck, fins, wheelhouse
-core = "Reddish Brown"         # the core: hull-coloured where it shows (the saw keel's blade)
-spine = "Reddish Brown"        # the teeth along the crest, keels and fin
-ram = "Reddish Brown"
-frame = "Dark Brown"           # accents: the hatch's rim, the skiff
+hull = "Reddish Brown"         # the iron hull: panels, shells, side keels, deck, fins, wheelhouse
+hull_dark = "Dark Brown"       # weathering (naut_weather.py): dark iron, lower down and in blotches
+hull_rust = "Dark Orange"      # rust streaks running down the sides
+hull_iron = "Dark Bluish Gray" # worn bare metal on the deck's walkway
+grille = "Dark Bluish Gray"    # the vents' grilles in the deck
+frame_iron = "Dark Bluish Gray" # the iron frame: the side keels' edges, the deck walkway, the keel
+hull_lower = "Dark Brown"      # the hull under the side keels
+core = "Reddish Brown"         # the core and the Technic bricks inside the hull
+spine = "Reddish Brown"        # the teeth: the crest's spikes, the saw keel, the ram's point
+frame = "Dark Brown"           # accents
 trim = "Pearl Gold"            # brass: the salon windows' rings
-glass = "Trans-Clear"          # the windows' domes and the wheelhouse's eyes
-lights = "Trans-Yellow"        # the eight small lights round each salon window
-lamp_base = "Yellow"           # under each of those lights, so they read yellow by day
-lamp = "Trans-Yellow"          # the wheelhouse's searchlight eyes
+hinge = "Black"                # the click hinges that hold the salon windows' bubbles
+glass = "Trans-Clear"          # the windows' bubbles and the wheelhouse's eyes
+lights = "Yellow"              # the eight lights round each salon window
+lamp_base = "Yellow"           # under them, and under the wheelhouse's searchlight
+lamp = "Trans-Yellow"          # the wheelhouse's searchlight
 propeller = "Pearl Gold"
-shaft = "Light Bluish Gray"    # the propeller's smooth pin (inside the tail)
+shaft = "Light Bluish Gray"    # the propeller's smooth pin
 led = "Black"                  # Power Functions light heads
-battery = "Light Bluish Gray"  # Power Functions AAA battery box
-post = "Trans-Clear"           # the two posts
-sea_floor = "Black"
-sea_wall = "Dark Blue"         # the deep water: the base's edge
-sea_wall_top = "Dark Azure"
-sea_deck = "Medium Azure"
-sea_dark = "Dark Azure"        # the calm sea's tiles, in three blues
-sea_light = "Medium Azure"
-sea_glint = "Trans-Light Blue"
-wave = "Medium Azure"          # the waves' curved fronts
-wave_crest = "Dark Azure"
-wave_back = "Dark Azure"
-foam = "White"
-nameplate = "Black"
-
-[variants.steel]
-title = "Steel"
-hull = "Dark Bluish Gray"
-core = "Dark Bluish Gray"
-frame = "Black"
-spine = "Black"
-ram = "Dark Bluish Gray"
 
 [booklet]
-subtitle = "Captain Nemo's submarine from Walt Disney's 20,000 Leagues Under the Sea (1954): 46 cm of iron over a sea of rolling waves. Its salon windows light up, its propeller spins and its rudder swings."
-intro = "The hull starts from its side keels: a pointed lens of plates two layers thick at the waterline, wedge plates making the taper. A core two studs wide stands on them up to the deck and hangs under them down to the keel, with a course of bricks with side studs above and below; the hull's sides are built flat, layer on layer of plates as deep as the hull is wide at each stud row, and pushed onto those side studs. Cheese slopes join the rows into smooth sides, all one Reddish Brown. On top: a low wheelhouse like an alligator's head with two round eye windows, the toothed crest arching from its brow down to the ram, a shark's dorsal fin, a hatch and the skiff. Underneath: the saw keel along the bow, two keel fins, teeth along the side keels. At the stern a swept fish tail, the propeller in a window with its guard, and the rudder hinged on the guard's post. Each salon window is a clear dome in a brass ring with eight small yellow lights round it, a Power Functions light glowing inside; the battery box hides in the sea base."
+subtitle = "Captain Nemo's submarine from Walt Disney's 20,000 Leagues Under the Sea (1954) at minifigure scale, 106 cm long, over a breaking sea. Open the salon's side to find Nemo at his organ; the salon lights up, the propeller spins and the rudder swings."
+intro = "The scale comes from the salon windows: each is LEGO's biggest clear bubble, a 6 x 6 half sphere, so the Nautilus is about 1:52 and its salon fits the crew. The hull starts from its side keels, two plates thick at the waterline, wedge plates making the taper; a core two studs wide stands on them up to the deck and hangs under them down to the keel. Along the midbody each side is four big tiled panels on clip-and-bar hinges, set at the hull's own angles so that seen head-on it is a lens; toward the bow and stern the hull is shells of plates built flat and pushed onto the core's side studs, each row capped with a chain of curved slopes, and inverted tiles smooth the belly. On the port side the salon's panels are one piece hinged at the deck's edge: lift it like a gull wing and Nemo's salon is there, with his pipe organ, the library, the aquarium, the table and the crew. Each window is the bubble in a brass ring in a raised boss with eight yellow lights round it. On top: the wheelhouse like an alligator's head with its bubble eyes and searchlight, the toothed crest arching from its peak down to the deck, the shark's dorsal fin, the raised after deck and a hatch, where Conseil and the diver stand. Underneath: the saw keel along the bow and two keel fins on the stand's clear posts. At the stern the fish tail's two swept lobes, the propeller turning in a brass guard ring and the rudder clipped to its post."
 you_will_need = [
-  "1x LEGO Power Functions LED light unit (8870): one lamp goes behind each salon window.",
-  "6 AAA batteries for the Power Functions AAA battery box (set 88000, listed in the parts as 64228), which stands inside the sea base.",
+  "1x LEGO Power Functions LED light unit (8870): its two lamps hang under the salon's ceiling, one by each window.",
+  "1x LEGO Power Functions extension wire (8871, 50 cm): from the light unit's plug down the front post to the battery box.",
+  "6 AAA batteries for the Power Functions AAA battery box (set 88000, listed in the parts as 64228), which lies inside the sea base.",
 ]
 notes = [
-  "Each lamp's lead goes in behind its window: from the lamp up into the open cell beside it, in to the core and down the shaft left in the core (just aft of the window's middle), out under the hull behind the forward keel fin. Thread it before you press the window's frame on, and leave a little slack.",
-  "From the hull the leads run down beside the front post and through the hole in the sea next to it to the battery box, which stands on its back in the base with its on/off button behind the slot in the back wall. Plug them onto it before you set the sea's top on the base.",
-  "To change the batteries or lift the Nautilus off its stand, lift the sea's top off the base (the Nautilus lifts off its posts too; unplug the leads first).",
-  "The propeller sits on a smooth pin: spin it with a finger. The rudder is clipped to the guard's post and swings on it.",
-  "Power Functions was discontinued in 2018: the light unit and the battery box are easy to find used on BrickLink.",
+  "The lamps' leads run out along the salon's ceiling, down the hull's side past the salon floor, forward along the bottom of the hull to the shaft in the core over the front post, and down it. Lay them in before you close the salon and clip the lower panels on, and leave a little slack.",
+  "Plug the light unit onto the extension wire, run the wire down the front post's clear tube and through the base to the battery box; set the Nautilus on its posts last.",
+  "The salon's gull wing clips onto the bars on the side keels along its lower edge: lift that edge and swing it up over the deck to open the salon. The other side panels stay on.",
+  "The propeller sits on a smooth pin: spin it with a finger. The rudder is clipped to its post and swings on it.",
+  "Power Functions was discontinued in 2018: the light unit, the extension wire and the battery box are easy to find used on BrickLink.",
 ]
 works = [
-  { title = "Lights in the salon", text = "A Power Functions lamp pushed into the centre of each window's round brass ring shines through a clear jumper, a clear round plate and a clear dome; the battery box's button switches them on and off.", image = "hero_lit/hero.png" },
-  { title = "Propeller and rudder", text = "The propeller spins on a smooth Technic pin in the tail stock, and the rudder swings on the propeller guard's post.", image = "hero_open/hero.png" },
+  { title = "The salon opens", text = "The port side of the salon is one big panel hinged on bars along the deck's edge: it swings up like a gull wing on Captain Nemo's salon, the organ, the library and the crew.", image = "hero_open/hero.png" },
+  { title = "Lights in the salon", text = "Two Power Functions lamps under the salon's ceiling light the room, and it glows through both bubbles; the battery box in the sea switches them on and off.", image = "hero_lit/hero.png" },
 ]
 
 [checks]
@@ -72,16 +58,52 @@ min_tilt_deg = 10
 
 [video]
 theme = "abyss"
-facts = ["46 cm long", "Lights"]
+facts = ["106 cm long", "Opening salon", "Lights"]
 lights_label = "Salon lights"
 lift_label = "Lifts off its stand"
 lift = { exclude_tag = "stand", height = 80 }
+# under a minute: the build and the checks punchy, the features quick, no lift, colourways or
+# booklet; no small print in the outro (the URL stays)
+beats = { build = 23, scan = 10, mechanism = 8, lights = 6, outro = 6 }
+skip = ["lift", "colourways", "booklet"]
+outro_small_print = false
 
 # the cold open: the Nautilus cruising through deep water (the stand hidden), its propeller,
-# rudder running (design.performance)
+# rudder running (design.performance); two angles outside, then the camera in through the port
+# window between Ned Land and Aronnax, round the salon past the library to Nemo at his organ,
+# out through the starboard window and away into the dark (points in the hull frame: origin is
+# Y_HULL; Nemo stands at x 50, z -40, the organ's console at x 100..180)
 [video.cold_open]
 scene = "deep_sea"
-seconds = 7
+motion = "flythrough"
+seconds = 13.6
+[video.cold_open.flythrough]
+origin = [0, -552, 0]
+enter = [-60, -12, -200]
+exit = [-60, -12, 200]
+path = [[-60, -15, -125], [-60, -75, -40], [-20, -60, 10], [10, -75, 25], [-50, -80, 95]]
+look = [[-60, -30, 40], [-200, -60, 60], [70, -35, -35], [100, -40, -25], [-60, -12, 200]]
+slow = [1.3, 1.8, 2.2, 2.0, 1.0]
+interior = { bounds = [[-280, -152, -140], [180, 64, 140]], tags = ["salon_interior"] }
+
+# after the outro: the Nautilus in the dark sea, its salon lit, and a giant squid about its
+# size coming out of the murk at it; the picture fades to black as it closes in
+[video.coda]
+scene = "deep_sea"
+creature = "squid"
+seconds = 4
+
+# recorded sound (ElevenLabs music, Creator plan; prompts and plans in audio/sfx.toml, settings
+# in audio/sfx_generated.json): the organ in Nemo's salon, and the reel's score - an epic
+# orchestral adventure held to the reel's segments, from the cut out of the cold open (its
+# opening hit as the open's brick lands) to an ominous swell dying away as the squid comes.
+# The deep's own sounds are the deep_sea set's (brickkit/data/audio/deep_sea).
+[video.audio]
+dir = "audio"
+organ = "organ_1.mp3"
+music = "score_cut_2.mp3"
+music_offset = 0.25
+music_tail = 1.5
 
 [[video.callouts]]
 label = "Propeller"
@@ -91,9 +113,14 @@ sub = "spins on a smooth pin"
 [[video.callouts]]
 label = "Rudder"
 tag = "rudder"
-sub = "swings on the guard's post"
+sub = "swings on its post"
 
 [[video.callouts]]
 label = "Salon window"
 tag = "salon_port"
-sub = "a Power Functions lamp inside"
+sub = "LEGO's biggest bubble"
+
+[[video.callouts]]
+label = "Gull-wing salon"
+tag = "salon_panel"
+sub = "swings up on Nemo's salon"

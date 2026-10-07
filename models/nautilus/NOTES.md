@@ -1,196 +1,260 @@
 # Nautilus: design notes
 
 Captain Nemo's Nautilus as Harper Goff designed it for Walt Disney's *20,000 Leagues Under the
-Sea* (1954): an iron fish of a submarine with a ram at the bow, a toothed crest arching
-from the wheelhouse down to the bow, a saw keel, a shark's dorsal fin, the big salon window on
-each side ringed with lights, and a swept fish tail with a propeller and rudder. It floats on two
-clear posts over a low block of sea with rolling waves. The salon windows light up (Power
-Functions); the propeller spins and the rudder swings. Two colourways: **rusty iron** (default)
-and **steel**.
+Sea* (1954), at minifigure scale: an iron fish of a submarine with a ram, a toothed crest arching
+from an alligator-head wheelhouse, a saw keel, a shark's dorsal fin, the big salon window on each
+side ringed with lights, and a swept fish tail with a propeller and rudder. The port side of the
+salon swings up like a gull wing on Nemo's salon and its crew; the salon lights up (Power
+Functions), the propeller spins and the rudder swings. It rides a breaking sea on two clear posts.
+One colourway, the film's: **rusty iron** (Reddish Brown plating on a Dark Bluish Gray iron
+frame). (A steel one, Dark Bluish Gray on Black, was dropped: the model stays movie-accurate.)
 
-- **1,214 LEGO pieces** in 128 part/colour lines (1,215 placed: the two lamp heads count as one
-  8870 light unit), 331 instruction steps, about 1.45 kg (estimated).
-- **Price**: roughly $57-$176 for the parts (price bands, `out/price_estimate.md`); the light
-  unit and battery box are bought used (Power Functions was discontinued in 2018).
-- Every check passes (`out/report.html`); the one warning is that the Power Functions battery
-  box was last in a set in 2015 (as for the Baby Metroid Lamp).
+- **7,126 LEGO pieces** in 408 part/colour lines (7,154 placed with the minifigures' parts and the
+  two lamp heads), 1,492 instruction steps, about 7.9 kg with its stand (estimated).
+- **Price**: roughly $284-$973 for the parts (price bands, `out/price_estimate.md`); the
+  Power Functions light unit, extension wire and battery box are bought used.
+- Every check passes (`out/report.html`); the warnings are rare parts: the
+  battery box, the diver's helmet and some crew heads and torsos, and the squid's Red tentacle.
 
-## Size (1 LDU = 0.4 mm)
+## Scale and size (1 LDU = 0.4 mm)
 
-| | model | from the profile photo |
-|---|---|---|
-| Length, tail tip to the ram's point | 1,156 LDU = **46.2 cm** (18.2 in) | 1,140 LDU target |
-| Hull, deck to keel amidships | 160 LDU = 6.4 cm | 150 |
-| Crest top to the keel fins | 275 LDU = 11.0 cm | 241 |
-| Beam over the side keels | 200 LDU = **8 cm** (8.3 cm over the windows' domes) | judged from the 3/4 photos |
-| On the stand: overall height | 19.0 cm; the keel fins 3.8 cm above the sea's deck | |
-| Stand | 44 x 14 studs = 35.2 x 11.2 cm, 4.5 cm deep plus waves up to 1.3 cm | |
+The scale comes from the salon window: in the profile photo of a finished display model its glass
+is 80 px across, and here it is LEGO's biggest clear bubble (50747, a 6 x 6 half sphere, 120
+LDU), so 1 px = 1.5 LDU: about **1:52**, and a minifigure stands at the window at eye height.
 
-The side profile was traced from the profile photo of a finished display model
-(`naut_shape.py`: deck line, belly line, chine, tail lobes, crest arch, dorsal fin, keel fins,
-saw keel, wheelhouse and window positions in photo pixels, at 1,140 LDU for the photo's
-1,775 px), and the build was checked against it by overlaying an orthographic render on the
-photo's silhouette in model units: the hull, the crest, the fins, the saw keel and the tail
-lobes sit within about a stud of the traced lines.
+| | model |
+|---|---|
+| Length, tail tips to the ram's point | 2,660 LDU = **106 cm** (42 in) |
+| Beam over the side keels | 480 LDU = 19 cm (20 cm over the windows' bubbles) |
+| Hull, deck to keel strip amidships | 344 LDU = 14 cm |
+| On its stand: overall height | 36 cm; the side keels 22 cm over the table |
+| Stand (the sea) | an oval about 94 x 27 cm, 4 cm deep plus its waves |
+
+The shape is traced from the profile photo (`naut_shape.py`: deck and belly lines, chine, tail
+lobes, crest arch, dorsal fin, keel fins, saw keel, wheelhouse, window and the stand's posts, in
+photo pixels).
 
 ## Structure (booklet order)
 
-The hull frame has the side keels (the chine) at y = 0, the bow toward -X and the port side
-toward the front (-Z); on the stand the side keels are 12.5 cm above the table
-(`design.Y_HULL`, set by the posts' height).
+The hull frame: the side keels (the chine) centred on y = 0, the bow toward -X, the port side
+toward the front (-Z). Cells are studs: column i is x in [20 i, 20 i + 20].
 
-1. **Side keels** (`naut_frame.build_frame`): the hull's base, a flange two plates thick at the
-   waterline, a pointed lens in plan: ten studs across amidships, tapering 1:6 (12 x 3 wedge
-   plates) then 1:4 (4 x 2 wedge plates) to two studs at the bow tip and the tail stock. The
-   lower layer is narrower, so the edge reads as a thin keel line. Its layout is searched until
-   it holds together as one piece (plates across every join between the stretches, then a
-   repair pass that merges plates across any join still open).
-2. **Core** (`naut_relief.core_batch`): plates two studs wide standing on the side keels up to
-   the deck and pushed up under them down to the keel, in steps from the side keels outward;
-   a course of bricks with side studs on the side keels and one under them; 18-degree slopes
-   carry the bow's ridge up to the deck; under the bow the core runs on down as the saw keel's
-   blade, stepping up toward the ram, an inverted 4 x 1 curved slope under each step. A Technic
-   brick at the tail stock's end is the propeller's bearing.
-3. **Hull sides** (`naut_relief`), four sub-assemblies (upper and lower, each side), each built
-   flat and pushed onto the core's side studs: rows of plates turned studs-out, as many layers
-   deep as the hull is wide at that stud row (a lens from the side keels to the deck's edge and
-   to the keel) and shortening with the side keels' taper toward the bow and stern. Every row's
-   outer layer is capped: cheese slopes rise to the row nearer the side keels (the rows join
-   into one smooth side) or along the taper; elsewhere tiles. Grille tiles along the lower
-   hull are the vents. No rivets: at this scale 1 x 1 round tiles read as dots, so the plating
-   is left smooth and one colour.
-4. **Deck strip**, the **ram** (a jumper, an open-stud round plate, a 3L bar and a cone on the
-   bow's tip brick), the **wheelhouse** (an alligator's head: low, its sides sloping in, an
-   18-degree slope up to the brow, two clear dish eyes on round plates on its front brick's
-   side studs).
-5. **Crest arch** (`naut_details.crest_arch`), built flat and pushed onto a side stud at the
-   wheelhouse's brow and one at the bow: five plates standing on edge in two layers, each
-   turned on the single studs it shares with its neighbours (solved so the chain follows the
-   traced crest), tiles along its studs, and tooth plates raking back. The searchlight eyes go
-   on the wheelhouse after it.
-6. **Salon windows** (one per side, `naut_details.salon_window`): the hull side is raised to a
-   flat boss six studs square with cut corners, ramped into the hull with cheese slopes and
-   tiled smooth, centred on a stud-grid corner so the ring's anti-studs land on the hull's stud
-   rows above and below the side keels, which are cut back under it and run into it. On the
-   boss: a round 4 x 4 plate with a pin hole (Pearl Gold: the slim brass ring), a Power
-   Functions lamp pushed into its centre hole from behind, a clear jumper, a clear round plate
-   and a clear 3 x 3 dish (the dome, three quarters of the ring's width); round it eight
-   small Trans-Yellow round tiles on Yellow round plates, as on the photo model: two over, one
-   each side, four in a row under it.
-7. **Dorsal fin** (plate levels stepping up aft, a cheese slope on each step's front so the
-   leading edge is a row of teeth, a tooth plate raking aft at the top), the round **hatch**
-   and the **skiff** on the after deck.
-8. **Tail**: the lower lobe pushed up under the stock (inverted curved slopes under its steps),
-   the propeller (Pearl Gold, on a smooth Technic pin) pushed into the bearing from astern, the
-   **guard's post** behind it (a bar in a round brick on a jumper), the **rudder** clipped to
-   the post by two vertical clips, then the upper lobe on the stock (cheese slopes up its
-   leading edge). Both lobes sweep back past the rudder to pointed tips.
-9. **Keel fins** (two, built upside down and pushed up under the core: the forward one's tip
-    hooked back), the **saw teeth** (tooth plates in the deep ends of the keel's curved slopes
-    and under the side keels' tip, curving down and out) and **teeth along the side keels'**
-    forward third (in free anti-studs under their edge).
-10. **Tiles** over every stud left bare (the side keels, the deck, the tail), plain and long
-    where they can be.
-11. **Stand** (`naut_stand.py`): the **sea base** (a floor of plates, open where the battery
-    box stands on the table; walls three bricks tall in Dark Blue lightening to Dark Azure, a
-    slot in the back wall at the box's button), the **sea's top** (built flat: two crossed
-    layers of Medium Azure plates; long rolling waves - a 3 x 1 or 2 x 1 curved front rising
-    to a crest of plates with white round-plate foam, a curved back - ripples round the posts,
-    the calm sea in tiles of Dark Azure, Medium Azure and Trans-Light Blue, a hole by the front
-    post for the leads, a blank black 2 x 6 nameplate at the front left) and **two clear
-    posts** of round 2 x 2 bricks, plugged into the keel fins.
+1. **Side keels** (`naut_frame`): the waterline flange, two plates, 24 studs across amidships and
+   tapering 1:6, 1:4 and 1:3 (wedge plates) to the ram and the tail stock; two sub-assemblies
+   (the salon's windows cut it in two), each laid out until it holds together.
+2. **Salon windows** (`naut_window`): on bricks with side studs on the side keels, a raised boss
+   built flat (a rectangle filling the gap in the side panels), the bubble on two click hinges,
+   a brass ring of four macaroni tiles, eight yellow lights; open behind the bubble, so the salon
+   shows through it.
+3. **Core** (`naut_relief.core_batch`): a wall two studs wide on the side keels up to the deck and
+   hanging under them down to the keel, with courses of bricks with side studs the hull sides hang
+   on; a Technic brick at the tail stock's end is the propeller's bearing.
+4. **Bars** for the side panels on the side keels, and **a rail** of plates and tiles along the
+   midbody's chine (hiding the slot under the upper panels' lower edges).
+5. **Hull sides of the tapers** (`naut_relief`), built flat and pushed onto the core's side studs:
+   rows of studs-out plates (rows 20 LDU, layers 8 LDU) as deep as the hull is wide there. The
+   section blends from the midbody's lens to a rounded superellipse toward the ends, so the
+   hull narrows to its top and bottom like a cone. Each row is laid out as a **chain of curved
+   slopes** along the hull (`fit_chain`: a dynamic programme choosing tiles, cheese slopes, 2 x 1
+   and 3 x 1 curved slopes so every step toward the ends is under a curve); between rows, cheese
+   and curved slopes. Plates over the hollow inside are pushed up from below; where one would be
+   held by nothing but its caps, the shell is thickened there.
+6. **Keel strip, salon floor, Nemo's salon** (`naut_salon`: the organ, the library, the aquarium,
+   the table, the settee, lamps, the crew at the window and the organ), the **deck strip** over it
+   with the bars the upper panels clip onto, the salon's two lamps under the deck.
+7. **Teeth** along the side keels' forward edges; the deck's planking and grilles (tiles).
+8. **Side panels** (`naut_panels`): over the midbody, each side four big tiled panels on clip and
+   bar hinges, a chain in the hull's cross-section closed by its geometry (side keels' bar, facet
+   A, seam, facet B, deck's bar; and under the side keels C and D to the keel strip): seen
+   head-on the hull is a lens, the upper facets at 72 and 31 degrees, the lower at 71 and 30.
+   Each panel has a one-stud lip over its hinge lines; over a hinge the lip is just tiles
+   bridging from either side (on the seam, a 2 x 2 tile put on after the next panel clips on).
+   On the port side the salon's upper panels are one hinged piece, the **gull wing**.
+9. **On deck**: the wheelhouse (an alligator's head of bricks and slopes, curved slopes sweeping
+   down its back, two bubble eyes on side studs, the searchlight), the **crest arch** (a band of
+   plates one stud wide hung between the wheelhouse's peak and the deck, a chain of curved and
+   cheese slopes along its top following the photo's arch, two big spikes and two small raked
+   ones), the **dorsal fin** (built sideways, below), the raised after deck, the hatch; the
+   **bow's ridge** (a spine with a chain of curved slopes and spikes down to the ram) and the
+   **stern's ridge**.
+10. **Under the hull**: the **saw keel** (a blade under the core, its underside a chain of
+    inverted curved slopes and steps, a tooth at every fourth pair of columns), the stern's keel,
+    the two **keel fins** (built sideways, below; each hangs from plates 1 x 2 in the keel strip's
+    underside, their pins in jumpers' open studs, and ends in a keel of jumpers the after post
+    plugs into), and **inverted 2 x 2 tiles** under the keel strip, the fins' keels, the keels'
+    flats and the side keels' edges, so the underside is smooth.
+11. **Tail** (`naut_tail_new`): the stock (the bow's cone turned round, to x 1000: the narrow
+    wrist between the afterbody's pillows and the fin, its top tiles and a curved slope 4 x 2) and the
+    **fish tail**, a fin built sideways in two halves over and under the side keels' strip (the
+    shaft line, running on to the window): the upper lobe's leading edge 1:2 in wedge plates
+    2 x 2, its trailing edge 1:6; the lower lobe's leading edge 1:3, 1:2, 1:4, its trailing edge
+    1:4. In the window between them a brass **guard ring** hangs on an axle from a round brick
+    under the upper half, the propeller turns on an axle in a Technic brick in the lower half's
+    core, and the rudder swings on a bar post on the window's floor.
 
-The Nautilus lifts off the posts; unplug the lights' leads at the battery box first.
+**Fins built sideways** (`naut_fin`: the dorsal fin, the keel fins, the fish tail), as LEGO's
+sets build fins: a core one stud thick (bricks with studs on both sides, 47905, every other row
+of side studs, bonded by plates), on each side a face of plates and **wedge plates** on those
+studs (their diagonals make the swept edges: 1:2, 1:3, 1:4, 1:6 and 45 degrees), tiles over
+them; a part on a row without core studs is held by the tile over it and its neighbour. The fins
+are 52 LDU thick. Along a swept edge the core's top is capped with cheese slopes or tiles just
+under the faces' diagonal; the dorsal fin has three claws up its leading edge for spikes.
+12. The last tiles; Conseil and the diver on the after deck; the **stand** (`naut_stand_big`).
 
-## Techniques
+## The bow and tail modules
 
-- **A sideways relief on a lens of side keels.** The hull's sides are heightfields of plates on
-  the core's side studs, the same idea as a sculpted terrain turned on its side: rows (20 LDU)
-  up and down, columns (20 LDU) along, layers (8 LDU) out. Each side is packed so it holds
-  together by itself, trying layouts until it does.
-- **A step planner** (`naut_kit.Batch.emit`) orders every sub-assembly's parts so each one
-  can really go in: parts standing on the table or on parts already built go in first,
-  nothing goes in between parts already built above and below it, and hanging parts (the core
-  under the side keels, the tail's lower lobe) are built top down, each pushed up under what is
-  already there. Sub-assemblies built flat (the hull sides, the crest) have their own frames.
-- **Placing by free connections** (`naut_kit.exposed_studs`, `free_sockets`): the bare studs
-  to tile and the free anti-studs under the side keels' edge for the teeth are found from the
-  built model's own connectors.
-- **Colour**: the hull is one colour, Reddish Brown, like an official set's, with Dark Brown
-  only for a few deliberate accents (the hatch's rim, the skiff), Pearl Gold for the windows'
-  rings and propeller, and the yellow lights. The steel colourway is Dark Bluish Gray with
-  Black accents and spines.
-- **Colours checked for every colourway**: the packers only use plate/tile/slope sizes that
-  exist in every colour their role takes (`naut_kit.Avail`).
+Forward of x = -800 (`naut_shape.BOW_STATION`) and aft of x = +880 (`TAIL_STATION`) the hull can
+be replaced by separate modules, `naut_bow.build_bow(model, parent)` and
+`naut_tail_new.build_tail(model, parent)`, each one sub-assembly in the hull frame pushed on
+along X. When a module's file defines its build function, the hull built here stops at the
+station plane (the bulkheads' solid walls there are its end faces) and the core's last column
+carries the joint: in each brick course a 1 x 2 brick with two side studs (11211) facing out of
+the station at z = -10 and +10 (`JOIN_STUD_Y`: 12 studs at the bow, 10 at the tail). The
+section the hull ends with is `naut_relief.station_section("bow" | "tail")`. The tail module
+tags its propeller "prop" and its rudder "rudder" and gives `PROP_AXIS` and `RUDDER_AXIS`; the
+mechanism uses them. Without the modules the hull runs on to the ram and the tail as described
+above, so the model always builds.
+
+## The quarters module
+
+Between the midbody's panels and the stations - the forebody x -800 .. -480 and the afterbody
+360 .. 880 (`naut_shape.QUARTERS`) - the hull's skin can come from a module too,
+`naut_quarters.build_quarters(model, parent)`. When its file defines that function the stepped
+shells there are left out; the core gets 1 x 4 / 1 x 2 / 1 x 1 bricks with side studs in every
+brick course of every column along both faces there (studs at z = -20 and +20, facing out), and
+the side keels' studs there are left bare for the skins (the last tiles cover what they leave).
+The deck, side keels, keel strip, saw and stern keels, wheelhouse, crest, dorsal fin and after
+deck stay here. `naut_relief.quarter_interface()` lists it all: the studs, the core's and
+deck's extents, the side keels' widths, the keel line, and the panels' end section.
+
+- **Afterbody, over the side keels: the pillows** (`naut_quarters.PILLOWS["p"]`). Each side is
+  one rounded body tapering from the midbody (x 360) to a point by the after deck's end: a rigid
+  panel ten rows wide on clips on the side keels' studs (on two spacer plates) along a line
+  converging 1:4 on the tail, parallel to the side keels' edge, leaning in at 60 degrees until
+  its top row rests on the deck strip. The deck strip narrows under it from x 360 to 600, from
+  eight studs to two (its upper layer's edge 1:4 in wedge plates 4 x 2, 41769 / 41770, each on a
+  plate under its row and the next, a plate 2 x 4 across the middle at each segment's start
+  bonding the strip: `naut_shape.AFT_DECK_EDGE`, `naut_frame.aft_deck_wedges`), and the raised
+  after deck is two studs wide between the pillows' top edges. The panel's section is an arch: on its carrier,
+  curved slopes 4 x 2 (93606) along both edges, their high ends inward, and two plates and tiles
+  over the middle rows at their height. Its end is a lens: two big curved wedges (41749 /
+  41750, 8 x 3 x 2 open) on rows 3 and 4 (their roots three rows each), tall edges together,
+  closing it 48 LDU over eight studs to tips at x ~780, clear of the core; a curved slope 2 x 2
+  falls aft beside their roots from the top band's end. From above the two pillows close in on
+  the after deck like a fish's body on its tail; from astern they are round shoulders over the
+  side keels. (`AFT_UPPER = "ab"` brings back the pass-1 faceted a and b panels with the stern's
+  sweeps.)
+- **Afterbody, under the side keels**: the midbody's lower facets run on as long thin panels (a
+  carrier layer, tiles on it) on clips: c under the side keels along a 1:4 line, d on the
+  core's side studs along a keel line rising 2:9, d lapping over c along a straight 1:4 edge (a
+  run of wedge plates on top, flush with the tiles, their studs a row of rivets), its free
+  edges fitted by a dynamic programme (`fit_edge`). Each c panel ends at the station in a
+  curved wedge 6 x 2 (41747 / 41748) sweeping in under the side keels toward the lower lobe.
+  Aft of the after deck the stern's top is two studs wide on the core between the lenses: tiles
+  at y -144, a curved slope 2 x 2 rolling down to the stock, whose top (tiles, then a curved
+  slope 4 x 2) runs down to the fin's top edge.
+- **A lower pillow** (`PILLOWS["q"]`, `AFT_LOWER = "q"` in place of c and d) was tried: ten rows
+  hung under the side keels converging 1:6, its far edge tucked over the keel strip. It rounds
+  the belly's forward half, but being rigid and level it cannot follow the belly rising to the
+  tail (it must end by x 480, leaving the core's striped sides bare aft of it), and it needs the
+  keel strip narrowed under its far edge; c and d stay.
+- **Forebody**: the bow's E and C carry a lip, a row of tiles past their crease over A's and
+  c's stepped edges (A's and c's studs under it stay bare: `naut_bow.GRID_LIP`).
+- **Joints**: where panels on different grids meet (x -640, -480 and 360) the converging
+  panels' first or last column leaves a tapering slot; a rib on the straight panel's end
+  (plates in its tiles' layer, tiles two studs wide reaching a stud over the other panel, a
+  plate proud) covers it (`naut_panels.build_panel` `ribs`; the ribs' tiles go on last).
+- Plates under the deck's port edge along the gull wing, low walls on the side keels inside
+  the salon's side panels and the chine rail along the salon keep the lit salon's light in;
+  tiles cover the core's bare side studs where they show by the stern.
+
+## Colours
+
+The hull is built in one role, `hull`; `naut_weather.py` recolours its outside once it is built
+(`design.build`, before the stand), so the colours follow the shape whatever the modules build:
+
+- **The iron frame** (`frame_iron`, Dark Bluish Gray / Black): the side keels' edges and their
+  teeth, the deck's walkway from the wheelhouse aft, the keel strip and the saw keel - long
+  lines that pick out the hull's structure, as a LEGO set would block it.
+- **No darker plates**: Dark Brown plates were tried as single parts in patches (dots), as
+  bands along a panel (stripes, where a panel's tiles run across the bands) and as whole panels
+  (patchy: the tiles over the hinges belong to the hull, and wedge plates and inverted tiles
+  aren't made in Dark Brown, so they stay Reddish Brown). `naut_weather` still has the strake
+  machinery (`hull_dark`), unused by "iron_frame".
+- The superstructure, the fins, the tail and the window bosses stay plain; the deck's vent
+  grilles are `grille` (Dark Bluish Gray / Black).
+- A part takes a colour only if it is made in it in both colourways (`naut_kit.AV`).
+- Chosen from three looks rendered side by side: "weathered" (no frame; mottled dark, rust and
+  bare-metal plates, read as camouflage), "two_tone" (the frame and a Dark Brown lower hull:
+  patchy, as many curved and wedge parts aren't made in Dark Brown) and "iron_frame". They're
+  still in `naut_weather.SCHEMES`; `NAUT_SCHEME=weathered` builds another for a test.
 
 ## Mechanism
 
-- `prop`: the propeller turns about its shaft; it sits on a smooth pin, so a flick spins it.
-- `rudder`: swings about the guard's post (its clips turn on the bar), 22 degrees each way.
-- `pose(t)` turns the propeller once and puts the rudder hard over; the mechanism check sweeps
-  24 poses with no collisions and nothing coming apart.
-- For the showreel's cold open (`[video.cold_open]`: the deep sea, a glide),
-  `meta["performance"]` spins the propeller (three turns a loop) and eases the rudder to and
-  fro; `meta["performance_info"]` hides the stand (tag `stand`),
-  gives the bow direction (-X), the keel fins' height and a 4 s loop.
+- `salon`: the gull wing turns about the deck's bars on the port side, 105 degrees open.
+- `prop`: the propeller turns on its smooth pin; `rudder`: swings about its post, 22 degrees.
+- `pose(t)` opens the salon, turns the propeller once and puts the rudder over; the mechanism
+  check sweeps 24 poses with nothing colliding or coming apart. `meta["performance"]` spins the
+  propeller and eases the rudder for the video's cold open.
 
 ## Lights and wiring
 
-- One Power Functions light unit (8870): one lamp behind each salon window, pushed into the
-  brass ring's centre pin hole from behind; it shines through a clear jumper, a clear round
-  plate and the clear dome. The lights round the window glow in lit renders only (they are not lit).
-- Each lead goes up from its lamp into the open cell beside it under the frame, in to the core
-  and down a shaft left in the core just aft of the window's middle (the side keels hold
-  together round it), out under the hull behind the forward keel fin, down beside the front
-  post, through the hole in the sea and to the battery box's plug. The electrics check's
-  longest run needs 19 cm of the 40 cm budgeted per lamp (as for the Baby Metroid Lamp, the
-  8870's 50 cm lead is budgeted at 40 cm per lamp, since where it splits could not be
-  confirmed).
-- The battery box (Power Functions AAA, set 88000) stands on its back on the table inside the
-  base, boxed in by the floor's opening and the walls; its green button is behind a slot in
-  the back wall. It switches itself off after two hours unless held for three seconds when
-  switched on. To change the batteries, lift the sea's top off.
-- The wheelhouse's eyes and searchlights are not lit: there was no clean way to put a light
-  behind a side stud without a transparent side-stud brick, which LEGO doesn't make.
+- One Power Functions light unit (8870): a lamp under the salon's ceiling by each window, its nub
+  in a Technic brick hanging from the deck strip. The leads run along the ceiling, down the
+  hull's side past the salon floor, forward along the bottom of the hull to a shaft in the core
+  over the front post, and down the post's clear tube to the battery box in the sea; an 8871
+  extension wire (50 cm) joins the unit's plug to the box. The longest run needs 78 of the
+  90 cm budgeted.
+- The lights round the windows (Trans-Yellow) glow in lit renders only.
 
 ## Checks
 
-`brickkit all nautilus`: real elements (one warning, the battery box), connections (one
-piece; the battery box is a press fit), collisions, buildability (1,153 insertions, every step
-of every sub-assembly), stability (100 % margin, tips at 36 degrees), mechanism (24 poses, two
-moving groups), electrics and technique all pass; the steel colourway passes real elements
-and technique with the same warning.
+`brickkit all nautilus`: real elements (warnings for rare parts only), connections (one piece),
+collisions, buildability (8,193 insertions, every step of every sub-assembly), stability
+(100 % margin, tips at 40 degrees), mechanism (24 poses, three moving groups), electrics and
+technique all pass.
 
 ## Known limits
 
-- Not built in real bricks. The checks cover part existence, connections, collisions, every
-  insertion, balance, the mechanism sweep and lead lengths; they cannot judge clutch, the
-  posts' stiffness or how much the hull sides flex. The posts are round 2 x 2 bricks: firm in
-  compression, but nudge the Nautilus gently.
-- The hull is still a LEGO relief: seen head-on its taper shows as small slopes and steps.
-- The photo model's rivets and plate seams are left out (1 x 1 round tiles read as dots at
-  this scale); the side keels' edges show the wedge plates' stud notches.
-- The salon window's boss is a square with cut corners, not the photo's flared lozenge; the
-  clear jumper under the dome is square, and the dome is a little smaller than the photo's
-  glass (a 4 x 4 dish would hide the ring: LEGO makes no larger Pearl Gold ring in enough
-  sets).
-- The forward keel fin's hooked tip ends a stud short of the photo's (the lights' shaft comes
-  out just behind it). The skiff sits on the after deck rather than in a recess. The guard is
-  a single post behind the propeller, without the photo model's hoop and struts.
-- Power Functions is discontinued; the Powered Up light and hub have different plugs and a
-  different box size and have not been checked in this design.
+- Not built in real bricks: the checks cover part existence, connections, collisions, every
+  insertion, balance, the mechanism sweep and lead lengths, not clutch or how much the long
+  panels and shells flex.
+- The tapers are still a LEGO relief: rows of plates whose steps are capped by curved slopes,
+  not a smooth cone; the bow and tail modules replace them forward and aft of their stations.
+- Along the gull wing's hinge on the deck's edge there is a slot (the wing can't carry a lip
+  over its own hinge): plates under the deck's edge close the view into the salon except at
+  the wing's hinge plates and the lamp under it, where a little light still shows.
+- The bow's panels' wedge-plate edges step in their tiles' layer (the edge is straight a
+  plate down, the tiles over it a staircase); the afterbody's are straight but show a row of
+  studs. The quarters' joints with
+  the midbody are covered by raised ribs, not flush; the bow's ridge and keel edges still
+  show stepped V's head-on.
+- The afterbody's top and sides are one rounded pillow a side, but it is a rigid panel: its
+  arch keeps one section from x 360 to its lens, so the taper is in plan (1:4) and in the lens,
+  not in height; its front is a rounded end face proud of the midbody's flat panels at x 360.
+  Aft of the lenses (x ~780 .. 880) the core's sides over the side keels show courses of side
+  tiles and bare brick (stripes) and a row of Technic holes over the side keels. Under the side
+  keels the afterbody is still the faceted c and d (d's riveted edge to x 840).
+- The photo model's rivets and plate seams are left out.
+- Power Functions is discontinued; Powered Up has different plugs and has not been checked.
 
 ## Files
 
-- `design.py`: assembly order, the hull's height on the stand, mechanism, video hooks,
-  electrics.
-- `naut_shape.py`: the shape traced from the profile photo (photo pixels to LDU), the side
-  keels' plan and the salon windows' layout.
-- `naut_frame.py`: the side keels and the deck strip.
-- `naut_relief.py`: the core and the hull sides (rows, layers, caps, vents, the windows'
-  bosses).
-- `naut_details.py`: wheelhouse, crest arch, ram, tail (lobes, propeller, guard, rudder), keel
-  fins, saw teeth, dorsal fin, hatch, skiff, salon windows.
-- `naut_stand.py`: the sea base, the sea's top with its waves, the posts.
-- `naut_kit.py`: part tables, availability per colour role, orientation helpers, packing, the
-  step planner, finding free studs and anti-studs.
+- `design.py`: assembly order, the hull's height on the stand, the modules' hooks, the deck's and
+  belly's tiles, mechanism, video hooks, electrics.
+- `naut_shape.py`: the shape traced from the photo, the side keels' plan, the panel chains, the
+  salon, and the bow and tail modules' stations and joint.
+- `naut_frame.py`: side keels, chine rail, panel bars, deck and keel strips.
+- `naut_relief.py`: the core, the tapers' shells (section, fit_chain), the stations' sections.
+- `naut_panels.py`: the midbody's panel chains and panels.
+- `naut_window.py`: the salon windows. `naut_salon.py`: Nemo's salon.
+- `naut_body.py`: the wheelhouse, the crest arch, the dorsal fin, the bow's ridge, bands capped
+  with chains of slopes (`chain_band`, `keel_band`).
+- `naut_keel.py`: keel fins, saw keel, stern ridge and keel, after deck, hatch.
+- `naut_fin.py`: fins built sideways (core, faces of plates and wedge plates, tiles).
+- `naut_tail_new.py`: the tail module (stock, fish tail, guard ring, propeller, rudder);
+  `naut_tail.py` the older tail the hull falls back on without it.
+- `naut_stand_big.py`: the sea stand and its posts.
+- `naut_kit.py`: part tables, availability per colour role, packing, the step planner, free studs
+  and anti-studs.
+- `naut_weather.py`: the colours on the hull's outside (the iron frame, the darker plates).

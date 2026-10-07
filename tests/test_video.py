@@ -62,7 +62,8 @@ def test_segments_follow_the_model(sample):
 def test_segments_with_everything(engine):
     model = _rigged(engine)
     segs = T.plan_segments(model, booklet=True, beat=16, variants=["a", "b"])
-    assert [s["name"] for s in segs] == [n for n in T.ORDER if n != "cold_open"]   # opt-in
+    assert [s["name"] for s in segs] == [n for n in T.ORDER                    # opt-in
+                                         if n not in ("cold_open", "coda", "companions")]
     _contiguous(segs)
     cw = next(s for s in segs if s["name"] == "colourways")
     assert cw["beats"] == T.BEATS["colourway"] * 3
@@ -702,8 +703,8 @@ def test_cold_open_tap_reel_and_cues(engine, tmp_path):
     assert cues["events"] != rp["cues"]["events"]
 
 
-def _glide_timeline(engine, **cold):
-    model = _rigged(engine)
+def _glide_timeline(engine, model=None, **cold):
+    model = model or _rigged(engine)
     model.meta["video"] = {"cold_open": dict({"scene": "deep_sea", "seconds": 5}, **cold)}
     theme = themes.theme_for({"theme": "scan"})
     segs = T.plan_segments(model, booklet=False, beat=theme["beat"])
@@ -786,6 +787,404 @@ def test_cold_open_glide_reel_and_cues(engine, tmp_path):
     assert R.audio_assets(SimpleNamespace(dir=tmp_path), {}, "sunset_road") is None
     assert R.audio_assets(SimpleNamespace(dir=tmp_path), {}) is None
 
+
+# a flythrough of the sample tower: in at its back (-Z) through its left half, out at its front
+FLY = {"enter": [-20, -38, -40], "exit": [-20, -38, 40], "path": [[-20, -40, 0]],
+       "look": [[30, -40, 10]], "interior": {"bounds": [[-40, -52, -20], [40, -24, 20]],
+                                             "tags": ["right"]}}
+
+
+def _fly_timeline(engine, meta=FLY, **cold):
+    model = _rigged(engine)
+    if meta is not None:
+        model.meta["flythrough"] = meta
+    return _glide_timeline(engine, model=model, motion="flythrough", seconds=6, **cold)
+
+
+def test_cold_open_flythrough(engine):
+    """A flythrough (deep_sea): the model carried along as in a glide, the stand hidden; two
+    shots outside, then one take that pushes in at its `enter`, through its room and out at its
+    `exit` into the dark (murk) and away; the hull parts near the camera hidden while it passes
+    (never the room's own, `interior.tags`); something huge waiting out there (lurk)."""
+    model, theme, segs, tl = _fly_timeline(engine)
+    co = tl["cold_open"]
+    a, m = co["start"], co["cut"] - co["start"]
+    fl = co["flythrough"]
+    assert co["motion"] == "flythrough" and co["scene"] == "deep_sea"
+    assert [n for _, n in co["shots"]] == ["under", "silhouette", "flythrough"]
+    take = co["shots"][2][0]
+    k_in, k_out = fl["enter"] - a, fl["exit"] - a
+    assert fl["inside"] == [fl["enter"], fl["exit"]] and take < k_in < k_out < m
+    c = co["camera"]
+    length = co["glide"]["length"]
+
+    def in_model(k):                                # the camera in the model's own frame
+        M = np.array(co["spin"][k]).reshape(4, 4)
+        return np.linalg.solve(M[:3, :3], np.array(c["pos"][k]) - M[:3, 3])
+    assert np.linalg.norm(in_model(k_in) - FLY["enter"]) < 0.15 * length
+    assert np.linalg.norm(in_model(k_out) - FLY["exit"]) < 0.15 * length
+    lo, hi = np.array(FLY["interior"]["bounds"])
+    for k in range(k_in + 3, k_out - 3):            # in the room between the crossings
+        p = in_model(k)
+        assert np.all(p[[0, 1]] > lo[[0, 1]] - 1) and np.all(p[[0, 1]] < hi[[0, 1]] + 1)
+    for k in range(0, m, 3):                        # the camera looks ahead, never at itself
+        assert np.linalg.norm(np.array(c["target"][k]) - c["pos"][k]) > 1.0
+    # hidden near the camera: the left half it flies through, never the room's own (right)
+    right = {p.index for p in model.flatten() if "right" in p.tags}
+    hide = {int(k): v for k, v in fl["hide"].items()}
+    assert hide and all(take <= k < m for k in hide)
+    assert all(not right & set(v) for v in hide.values())
+    assert any({1, 2} & set(v) for k, v in hide.items() if k_in - 15 <= k <= k_out + 15)
+    assert set(fl["keep"]) >= right
+    # in the room's lamplight between the crossings, then the dark after the far wall
+    room, murk = np.array(fl["room"]), np.array(fl["murk"])
+    assert len(room) == len(murk) == m
+    assert room[(k_in + k_out) // 2] > 0.99 and room[0] == 0 and room[-1] < 0.01
+    assert murk[k_in] == 0 and murk[-1] > 0.99 and np.all(np.diff(murk) >= -1e-9)
+    assert fl["lurk"]["from"] == k_out and 0.5 * length < fl["lurk"]["size"] < 1.2 * length
+    centre = np.array(co["glide"]["path"][-1])
+    assert np.linalg.norm(np.array(fl["lurk"]["pos"]) - centre) > 0.8 * length
+    json.dumps(co)
+
+
+def test_cold_open_flythrough_config(engine):
+    """The flythrough's points come from the model's meta, the cold open's config over it (in
+    the model's frame, plus `origin`); without them it's an error."""
+    model = _rigged(engine)
+    model.meta["flythrough"] = dict(FLY, origin=[0, 10, 0])
+    f = T.flythrough_config(model, {"flythrough": {"exit": [20, -38, 40], "slow": [2.0]}})
+    assert np.allclose(f["enter"], [-20, -28, -40]) and np.allclose(f["exit"], [20, -28, 40])
+    assert np.allclose(f["bounds"], [[-40, -42, -20], [40, -14, 20]]) and f["tags"] == {"right"}
+    assert len(f["look"]) == len(f["path"]) == 1 and f["slow"][0] == 2.0
+    with pytest.raises(SystemExit):
+        _fly_timeline(engine, meta=None)
+
+
+def test_cold_open_flythrough_cues(engine, tmp_path):
+    """The flythrough's sound: the deep (hushed in the room), pings at the start, on the wide
+    shot and once far off in the dark; bubbles through the hull going in and out; the organ
+    from the wide shot to the cut, muffled outside and open in the room; the dread out in the
+    dark with a moan in it."""
+    model, theme, segs, tl = _fly_timeline(engine)
+    rp = R.plan_reel(engine, Project("_sample"), model, tl, theme, tmp_path, tmp_path,
+                     log=lambda m: None)
+    co = tl["cold_open"]
+    a, cut = co["start"], co["cut"]
+    fl = co["flythrough"]
+    k_in, k_out = fl["enter"], fl["exit"]
+    shots = [a + f for f, _ in co["shots"]]
+    ev = [e for e in rp["cues"]["events"] if e["frame"] < cut]
+    smp = [e for e in ev if e["type"] == "sample"]
+    roles = R.SCENE_SOUNDS["deep_sea"]
+    pings = sorted(e["frame"] for e in smp if e["file"] in roles["pings"])
+    assert len(pings) == 3 and pings[0] < shots[1] < pings[1] < shots[2] and pings[2] > k_out
+    bub = {e["frame"] for e in smp if e["file"] in roles["bubbles"]}
+    assert bub >= {k_in - 4, k_out - 2}
+    amb = [e for e in smp if e["file"] == roles["ambience"]][0]["gain_curve"]
+    assert amb[(k_in + k_out) // 2 - a] < 0.5 * amb[0]
+    assert all(e["until"] == cut for e in smp)
+    organ = [e for e in ev if e["type"] == "organ"]
+    assert len(organ) == 1
+    o = organ[0]
+    f0 = int(o["frame"])
+    assert shots[1] <= f0 < k_in and len(o["curve"]) == len(o["muffle"]) == o["dur"] == cut - f0
+    mu = np.array(o["muffle"])
+    assert mu[0] > 0.99 and mu[(k_in + k_out) // 2 - f0] < 0.01 and mu[-1] > 0.99
+    g = np.array(o["curve"])
+    assert g[0] < 0.3 and g[(k_in + k_out) // 2 - f0] == pytest.approx(1.0, abs=0.01)
+    assert o["offset"] == pytest.approx(R.FLY_ORGAN_IN - (k_in - f0) / tl["fps"])
+    dread = [e for e in ev if e["type"] == "dread"]
+    assert len(dread) == 1 and k_in < dread[0]["frame"] < k_out and dread[0]["call"] > 0
+    assert dread[0]["frame"] + dread[0]["call"] > k_out and len(dread[0]["curve"]) == cut - dread[0]["frame"]
+
+
+def test_flythrough_recorded_organ(engine, tmp_path):
+    """[video.audio] organ: a recording plays in the synthesised organ's place, from the same
+    frame and shaped the same (faint through the hull, open in the room: gain_curve and muffle),
+    `organ_in` s of it reaching the window, stopped at the cut."""
+    from types import SimpleNamespace
+
+    from brickkit.video import audio as A
+    model, theme, segs, tl = _fly_timeline(engine)
+    rp = R.plan_reel(engine, Project("_sample"), model, tl, theme, tmp_path, tmp_path,
+                     log=lambda m: None)
+    A.write_wav(tmp_path / "audio" / "organ.wav", np.full((48000 * 12, 2), 0.1), 48000)
+    assets = R.audio_assets(SimpleNamespace(dir=tmp_path),
+                            {"audio": {"organ": "organ.wav", "organ_in": 1.5}}, ["deep_sea"])
+    assert assets["roles"]["organ"] == ["organ.wav"] and assets["organ_in"] == 1.5
+    assert assets["roles"]["pings"] == R.SCENE_SOUNDS["deep_sea"]["pings"]   # the set's own
+    cues = R.cue_sheet(rp, tl, theme, assets)
+    co = tl["cold_open"]
+    cut = co["cut"]
+    synth = [e for e in rp["cues"]["events"] if e["type"] == "organ"][0]
+    assert not [e for e in cues["events"] if e["type"] == "organ"]
+    rec = [e for e in cues["events"] if e.get("file") == "organ.wav"]
+    assert len(rec) == 1
+    o = rec[0]
+    assert o["frame"] == synth["frame"] and o["dur"] == synth["dur"] and o["until"] == cut
+    assert o["gain_curve"] == synth["curve"] and o["muffle"] == synth["muffle"]
+    k_in = co["flythrough"]["enter"]
+    assert o["offset"] == pytest.approx(max(0.0, 1.5 - (k_in - o["frame"]) / tl["fps"]))
+    assert o["level"] == R.SAMPLE_LEVEL["organ"]
+
+
+def test_recorded_score(engine, tmp_path):
+    """[video.audio] music: a recorded score instead of the synthesised music (every section
+    cold, so the synth is silent), from the cut out of the cold open (`music_offset` s into
+    it) into the coda for `music_tail` s, fading out there."""
+    from types import SimpleNamespace
+
+    from brickkit.video import audio as A
+    model = _rigged(engine)
+    model.meta["flythrough"] = FLY
+    model.meta["video"] = {"cold_open": {"scene": "deep_sea", "motion": "flythrough", "seconds": 6},
+                           "coda": {"seconds": 4}}
+    theme = themes.theme_for({"theme": "abyss"})
+    segs = T.plan_segments(model, booklet=False, beat=theme["beat"])
+    tl = T.build_timeline(engine, model, segs, beat=theme["beat"], backdrop=theme["backdrop"])
+    rp = R.plan_reel(engine, Project("_sample"), model, tl, theme, tmp_path, tmp_path,
+                     log=lambda m: None)
+    assert "track" not in rp["cues"]
+    A.write_wav(tmp_path / "audio" / "score.wav", np.full((48000 * 30, 2), 0.1), 48000)
+    assets = R.audio_assets(SimpleNamespace(dir=tmp_path), {"audio": {
+        "music": "score.wav", "music_offset": 0.5, "music_tail": 2.0}}, ["deep_sea"])
+    cues = R.cue_sheet(rp, tl, theme, assets)
+    seg = {s["name"]: s for s in segs}
+    tr = cues["track"]
+    assert tr["path"] == str(tmp_path / "audio" / "score.wav") and tr["offset"] == 0.5
+    assert tr["at"] == seg["open"]["start"] == seg["cold_open"]["end"]
+    assert tr["until"] == seg["coda"]["start"] + 2 * tl["fps"] and tr["fade_out"] == pytest.approx(1.6)
+    assert all(s["mood"] == "cold" for s in cues["sections"])
+    assert [e for e in cues["events"] if e["type"] == "organ"]       # the cold open's own sound
+    assert {e["type"] for e in cues["events"]} == {e["type"] for e in rp["cues"]["events"]}
+
+
+# ---------------------------------------------------------------------------- companions
+SAMPLE_COMPANION = {"slug": "_sample", "eyebrow": "Kids' build", "heading": "The mini tower",
+                    "price": {"pick_a_brick": 9.87}, "video": True}
+
+
+def test_companions_config(sample):
+    """[[companions]] with video = true are the video's companions (configure), unless [video]
+    says companions = false; a companion segment of COMPANION_BEATS beats each goes after the
+    booklet and before the outro."""
+    from types import SimpleNamespace
+    proj = SimpleNamespace(config={"companions": [dict(SAMPLE_COMPANION), {"slug": "other"}],
+                                   "video": {}})
+    cfg = R.configure(proj, sample)
+    assert [c["slug"] for c in cfg["companions"]] == ["_sample"]
+    off = R.configure(SimpleNamespace(config=dict(proj.config, video={"companions": False})), sample)
+    assert off["companions"] is False
+    sample.meta.pop("_video_toml", None)
+    segs = T.plan_segments(sample, booklet=True, beat=BEAT, cfg=cfg)
+    names = [s["name"] for s in segs]
+    assert names[-3:] == ["booklet", "companions", "outro"]
+    c = segs[-2]
+    assert c["kind"] == "gfx" and c["beats"] == T.BEATS["companion"] == 10
+    _contiguous(segs)
+    two = T.plan_segments(sample, booklet=False, beat=BEAT,
+                          cfg=dict(cfg, companions=[SAMPLE_COMPANION] * 2))
+    assert next(s for s in two if s["name"] == "companions")["beats"] == 20
+    assert "companions" not in [s["name"] for s in T.plan_segments(
+        sample, booklet=False, beat=BEAT, cfg=dict(cfg, companions=False))]
+
+
+def test_companion_reel_and_cues(engine, tmp_path):
+    """The companion segment in the reel: the companion's heading, chips (its pieces, steps and
+    about what it costs on Pick a Brick), the scale beat's heights (the model's and its own,
+    labelled), marks inside the segment in order, and its sounds (whoosh, pop, blips, a snap
+    as it lands) on them; the music grooves under it."""
+    from brickkit.video import companions as Cmp
+    model = _rigged(engine)
+    model.meta["video"] = {"companions": [SAMPLE_COMPANION]}
+    theme = themes.theme_for({"theme": "brand"})
+    segs = T.plan_segments(model, booklet=False, beat=theme["beat"])
+    tl = T.build_timeline(engine, model, segs, beat=theme["beat"], backdrop=theme["backdrop"])
+    rp = R.plan_reel(engine, Project("_sample"), model, tl, theme, tmp_path, tmp_path,
+                     log=lambda m: None)
+    seg = next(s for s in segs if s["name"] == "companions")
+    (c,) = rp["companions"]
+    sample = Project("_sample").build(engine.catalog)
+    pieces = sum(line.qty for line in __import__("brickkit.bom.bom", fromlist=["x"]).build_bom(
+        sample.flatten(), engine.catalog, getattr(sample, "extras", ())))
+    assert c["heading"] == "The mini tower" and c["eyebrow"] == "Kids' build"
+    assert c["chips"] == [{"value": f"{pieces:,}", "label": "pieces"},
+                          {"value": f"{len(sample.instruction_order())}", "label": "steps"},
+                          {"value": "~$10", "label": "Pick a Brick"}]
+    sc = c["scale"]
+    assert sc["big_mm"] == rp["model"]["dims_mm"][2] and 0 < sc["small_mm"]
+    assert sc["big"] == Cmp.size_label(sc["big_mm"]) and sc["small"].endswith(("cm", "mm"))
+    m = rp["marks"]["companions"]["items"][0]
+    assert m["start"] == seg["start"] and m["end"] == seg["end"]
+    order = [m["head"], m["card"], *m["chips"], m["scale"], m["drop"], m["measure"]]
+    assert order == sorted(order) and seg["start"] < order[0] and order[-1] + 15 < seg["end"]
+    ev = [e for e in rp["cues"]["events"] if seg["start"] <= e["frame"] < seg["end"]]
+    assert {"pop", "blip", "snap", "tick"} <= {e["type"] for e in ev}
+    assert any(e["type"] == "snap" and e["frame"] == m["drop"] + 6 for e in ev)
+    assert {"name": "companions", "start": seg["start"], "end": seg["end"],
+            "mood": "groove"} in rp["cues"]["sections"]
+    assert [t for t in rp["transitions"] if t["from"] == "companions"][0]["to"] == "outro"
+
+
+def test_companion_footage_helpers(tmp_path):
+    """A cut-out's solid box (not its shadow); its clean copy (the shadow catcher's faint veil
+    and the picture's edges gone, the model kept); the labels; a turntable loop as frames at
+    the video's rate (made again only when it changes)."""
+    import shutil
+    import subprocess
+
+    from PIL import Image
+
+    from brickkit.video import companions as Cmp
+    from brickkit.video.sizzle import turntable_frames
+    a = np.zeros((100, 100, 4), np.uint8)
+    a[:, :, 3] = 6                                    # the veil over the whole picture
+    a[60:90, 10:90, 3] = 40                           # the shadow
+    a[20:80, 30:70] = (200, 30, 30, 255)              # the model
+    Image.fromarray(a, "RGBA").save(tmp_path / "cut.png")
+    assert Cmp.solid_box(tmp_path / "cut.png") == [0.3, 0.2, 0.7, 0.8]
+    b = np.asarray(Image.open(Cmp.clean_cutout(tmp_path / "cut.png", tmp_path / "clean.png")))
+    assert b[5, 5, 3] == 0 and b[50, 50, 3] == 255 and 0 < b[85, 50, 3] < 40
+    assert Cmp.size_label(654.2) == "65 cm" and Cmp.size_label(64.0) == "6.4 cm"
+    assert Cmp.size_label(104) == "10 cm" and Cmp.size_label(8) == "8 mm"
+    assert Cmp.price_label(9.87) == "$10" and Cmp.price_label(4.5) == "$4.50"
+    if not shutil.which("ffmpeg"):
+        return
+    tt = tmp_path / "tt.mp4"
+    subprocess.run(["ffmpeg", "-v", "error", "-y", "-f", "lavfi", "-i",
+                    "testsrc=size=64x64:rate=24:duration=1", "-pix_fmt", "yuv420p", str(tt)],
+                   check=True)
+    d = tmp_path / "frames"
+    assert turntable_frames(tt, d, 32) == 30           # 24 fps -> 30
+    assert Image.open(d / "00000.jpg").size == (32, 32)
+    stamp = (d / ".source").read_text()
+    assert turntable_frames(tt, d, 32) == 30 and (d / ".source").read_text() == stamp
+
+
+# ---------------------------------------------------------------------------- the coda
+def _coda_timeline(engine, **coda):
+    model = _rigged(engine)
+    model.meta["video"] = {"coda": dict({"seconds": 4}, **coda)}
+    theme = themes.theme_for({"theme": "abyss"})
+    segs = T.plan_segments(model, booklet=False, beat=theme["beat"])
+    return model, theme, segs, T.build_timeline(engine, model, segs, beat=theme["beat"],
+                                                backdrop=theme["backdrop"])
+
+
+def test_coda(engine):
+    """[video.coda]: the last segment, after the outro, in a set of its own like a cold open
+    (kind "cold") but with no black cut: the model cruising slowly (a stand hidden), one shot
+    from off its side; the squid about the model's size, coming out of the murk beyond it, low
+    on the right, and closing on it - both in frame at the end, its arms pointing at the model,
+    its tentacles reaching out, its edges and eyes lighting up; the sea dark (murk); the last
+    `fade` s fade to black (the compositor's). model = false hides the model; an unknown scene
+    or creature is an error."""
+    model, theme, segs, tl = _coda_timeline(engine)
+    assert [s["name"] for s in segs][-2:] == ["outro", "coda"]
+    s = segs[-1]
+    assert s["kind"] == "cold" and s["beats"] == round(4 * 30 / theme["beat"])
+    _contiguous(segs)
+    co = tl["coda"]
+    m = s["end"] - s["start"]
+    assert co["start"] == s["start"] and co["cut"] == co["end"] == s["end"]
+    assert co["scene"] == "deep_sea" and co["shots"] == [[0, "coda"]] and co["motion"] == "glide"
+    g = co["glide"]
+    path, F = np.array(g["path"]), np.array(g["forward"])
+    assert len(path) == len(co["spin"]) == len(co["camera"]["pos"]) == len(co["camera"]["focus"]) == m
+    assert np.dot(path[-1] - path[0], F) == pytest.approx(T.CODA["glide_lengths"] * g["length"],
+                                                          rel=0.02)
+    sq = co["coda"]["squid"]
+    assert co["coda"]["creature"] == "squid"
+    assert sq["size"] == pytest.approx(T.CODA["size"] * g["length"])
+    assert all(len(sq[k]) == m for k in ("pos", "axis", "back", "reach", "rim", "glint"))
+    c = co["camera"]
+
+    def screen(p, k):
+        return T.project(np.asarray(p, float)[None], c["pos"][k], c["target"][k], c["lens"][k], 1.0)[0]
+    L_ = g["length"]
+    ends = [path[-1] + F * g["extent"]["ahead"], path[-1] - F * g["extent"]["behind"]]
+    for p in ends:                                   # the whole model in frame, at the end
+        x, y, _ = screen(p, m - 1)
+        assert 0.05 < x < 0.95 and 0.2 < y < 0.8
+    x, y, z = screen(path[-1], m - 1)
+    h0, h1 = screen(sq["pos"][0], 0), screen(sq["pos"][-1], m - 1)
+    assert h0[0] > 0.9 and h0[2] > z                         # out of the murk beyond it...
+    assert 0.5 < h1[0] < 0.8 and y < h1[1] < 0.75            # ...closing on it, low and right
+    assert abs(h1[2] - z) < 0.3 * L_                          # at about its distance: its size
+    assert 3.5 * sq["size"] == pytest.approx(T.CODA["size"] * 3.5 * L_) and \
+        0.7 * L_ < 3.5 * sq["size"] < 1.4 * L_               # mantle to tentacle tips ~ the model
+    assert co["coda"]["fade"] == round(T.CODA["fade"] * 30) < m / 2
+    aim = path[-1] - np.array(sq["pos"][-1])
+    assert np.dot(aim / np.linalg.norm(aim), sq["axis"][-1]) > 0.7     # its arms at the model
+    assert abs(np.dot(sq["axis"][-1], sq["back"][-1])) < 1e-3
+    reach, rim, glint = (np.array(sq[k]) for k in ("reach", "rim", "glint"))
+    assert reach[0] < 0.2 and reach[-1] > 0.99 and np.all(np.diff(reach) >= -1e-9)
+    assert rim[0] == 0 and rim[-1] == pytest.approx(1.0) and glint[0] == 0 and glint.max() > 0.5
+    murk = np.array(co["coda"]["murk"])
+    assert len(murk) == m and np.allclose(murk, T.CODA["murk"])
+    assert co["leds"] and not co["hidden"]
+    json.dumps(co)
+    _, _, _, tl2 = _coda_timeline(engine, model=False)
+    assert len(tl2["coda"]["hidden"]) == len(model.flatten()) and tl2["coda"]["leds"] == []
+    for bad in ({"creature": "kraken"}, {"scene": "sunset_road"}):
+        with pytest.raises(SystemExit):
+            T.coda_config(model, {"coda": bad})
+    assert T.coda_config(model, {}) is None
+    assert T.coda_config(model, {"coda": True})["creature"] == "squid"
+
+
+def test_coda_reel_and_cues(engine, tmp_path):
+    """The coda in the reel: its frames and letterbox for the compositor, the theme's wipe into
+    it from the outro, no music under it (mood cold); its sound the deep_sea set's: the deep, a
+    ping and a fainter one later, the dread swelling, the creature moaning as its eye catches
+    the light (its loudest on that frame), everything faded away by the last frame."""
+    model, theme, segs, tl = _coda_timeline(engine)
+    rp = R.plan_reel(engine, Project("_sample"), model, tl, theme, tmp_path, tmp_path,
+                     log=lambda m: None)
+    s = segs[-1]
+    assert rp["coda"] == {"start": s["start"], "end": s["end"], "letterbox": tl["coda"]["letterbox"],
+                          "scene": "deep_sea", "creature": "squid", "fade": tl["coda"]["coda"]["fade"]}
+    cues = rp["cues"]
+    assert cues["sections"][-1] == {"name": "coda", "start": s["start"], "end": s["end"],
+                                    "mood": "cold"}
+    wipe = [t for t in rp["transitions"] if t["to"] == "coda"]
+    assert len(wipe) == 1 and wipe[0]["type"] == theme["transition"] == "porthole"
+    assert wipe[0]["frame"] == s["start"] and wipe[0]["from"] == "outro"
+    ev = [e for e in cues["events"] if e["frame"] >= s["start"]]
+    roles = R.SCENE_SOUNDS["deep_sea"]
+    smp = [e for e in ev if e["type"] == "sample"]
+    assert smp and all(e["until"] == s["end"] for e in smp)
+    assert all(e["gain_curve"][-1] < 0.05 for e in smp)          # faded away by the end
+    fade0 = s["end"] - tl["coda"]["coda"]["fade"]                 # with the picture
+    amb = [e for e in smp if e["file"] == R.SCENE_SOUNDS["deep_sea"]["ambience"]][0]["gain_curve"]
+    assert amb[fade0 - s["start"] - 2] > 0.95 > amb[fade0 - s["start"] + 10]
+    glint = rp["marks"]["coda"]["glint"]
+    assert glint == s["start"] + R.coda_glint(tl["coda"]) and s["start"] < glint < s["end"]
+    moan = [e for e in smp if e["file"] == roles["creature"]]
+    assert len(moan) == 1 and moan[0]["frame"] == glint and moan[0]["align"] == "peak"
+    assert len([e for e in smp if e["file"] in roles["pings"]]) == 2
+    assert len([e for e in smp if e["file"] == roles["ambience"]]) == 1
+    dread = [e for e in ev if e["type"] == "dread"]
+    assert len(dread) == 1 and dread[0]["dur"] == s["end"] - s["start"]
+    assert dread[0]["curve"][-1] < 0.05 and "call" not in dread[0]   # the recorded moan instead
+    assert set(cues["samples"]) >= {e["file"] for e in smp}
+
+
+
+def test_outro_small_print(engine, sample, tmp_path):
+    """[video] outro_small_print = false: the outro without its small print (the disclaimer and
+    the model's notice; the compositor checks reel["outro"]); on by default. The model's own
+    notice stays in the plan (the sizzle reel reads it)."""
+    theme = themes.theme_for({"theme": "brand"})
+    for cfg, want in (({}, True), ({"outro_small_print": False}, False)):
+        sample.meta["video"] = dict(cfg)
+        segs = T.plan_segments(sample, booklet=False, beat=theme["beat"])
+        tl = T.build_timeline(engine, sample, segs, beat=theme["beat"], backdrop=theme["backdrop"])
+        rp = R.plan_reel(engine, Project("_sample"), sample, tl, theme, tmp_path, tmp_path,
+                         log=lambda m: None)
+        assert rp["outro"] == {"small_print": want}
+        assert rp["model"]["disclaimer"] == R.DISCLAIMER
+    sample.meta.pop("video", None)
 
 # ---------------------------------------------------------------------------- recorded sounds
 def test_rev_peaks():

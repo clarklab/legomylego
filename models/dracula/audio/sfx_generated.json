@@ -1,0 +1,20 @@
+{
+ "count_carter_1.mp3": {
+  "bytes": 65245,
+  "generated": "2026-10-06",
+  "loop": false,
+  "model_id": "eleven_v3",
+  "name": "count_carter",
+  "output_format": "mp3_44100_192",
+  "prompt": "[slow, deep, sinister evil laugh] Mwah... ha... ha... ha... haaaa.",
+  "prompt_influence": 0.0,
+  "seconds": 0.0,
+  "settings": {
+   "stability": 0.0
+  },
+  "sha1": "2545d77ef31616660b24ba5eb1ee2d7c26c43c82",
+  "source": "ElevenLabs text-to-speech API (Creator plan)",
+  "voice": "qNkzaJoHLLdpvgh5tISm",
+  "voice_name": "Carter the Mountain King"
+ }
+}

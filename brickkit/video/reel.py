@@ -40,13 +40,15 @@ from pathlib import Path
 
 import numpy as np
 
+from . import companions as Cmp
 from . import timeline as T
 
 URL = "bricks.superfun.games"
 DISCLAIMER = "Unofficial fan model · computer-checked, not yet built with real bricks"
 MOODS = {"cold_open": "cold", "open": "intro", "title": "rise", "build": "groove",
          "scan": "breakdown", "mechanism": "halftime", "lights": "feature", "lift": "feature",
-         "colourways": "groove", "booklet": "groove_light", "outro": "end"}
+         "colourways": "groove", "booklet": "groove_light", "outro": "end", "coda": "cold",
+         "companions": "groove"}
 CHECK_TITLES = {"real_elements": "Real parts", "connections": "Connections",
                 "collisions": "Collisions", "buildability": "Buildable",
                 "stability": "Stable", "mechanism": "Mechanism", "electrics": "Electrics",
@@ -58,20 +60,26 @@ SAMPLE_LEVEL = {"pull_start": -9.0, "idle": -17.5, "scream": -8.5, "burst": -11.
                 "sting": -11.0, "hit": -11.5, "boom": -11.0, "band": -12.0,
                 "click": -12.0, "snap_on": -11.0, "snap_off": -15.0, "room": -30.0,
                 "ambience": -20.0, "ping": -15.0, "bubbles": -17.0, "groan": -13.0,
-                "churn": -16.0}
+                "churn": -16.0, "organ": -10.0, "creature": -9.0}
 # a cold-open set's own sounds (shared, in brickkit/data/audio/<set>/, made by
 # tools/elevenlabs_sfx.py from the sfx.toml there): used for the roles a model's [video.audio]
 # doesn't give
 SCENE_SOUNDS = {"deep_sea": {"ambience": "ambience_2.mp3", "pings": ["ping_1.mp3", "ping_2.mp3"],
                              "bubbles": ["bubbles_2.mp3", "bubbles_3.mp3"],
-                             "groan": "groan_1.mp3", "churn": "churn_2.mp3"}}
+                             "groan": "groan_1.mp3", "churn": "churn_2.mp3",
+                             "creature": "creature_1.mp3"}}
 SCREAM_GAP = 1.4         # s: at least this between the cold open's screams
 
 
 # ---------------------------------------------------------------------------- config
 def configure(proj, model) -> dict:
-    """Merge model.toml [video] into the model (under design.py's meta["video"])."""
+    """Merge model.toml [video] into the model (under design.py's meta["video"]), with the
+    [[companions]] featured in the video (video = true) as `companions` unless [video] sets
+    companions itself (false: none)."""
     model.meta["_video_toml"] = dict(proj.config.get("video", {}) or {})
+    featured = Cmp.video_companions(proj.config)
+    if featured and "companions" not in model.meta["_video_toml"]:
+        model.meta["_video_toml"]["companions"] = featured
     return T.video_config(model)
 
 
@@ -504,6 +512,10 @@ def marks(tl, extras: dict) -> dict:
                          "chips": [min(s["end"] - B, settle + k * B // 3) for k in range(3)]}
         elif name == "outro":
             out[name] = {"logo": a + B // 2, "url": a + 3 * B // 2, "fine": a + 5 * B // 2}
+        elif name == "coda":
+            out[name] = {"glint": a + coda_glint(tl["coda"])}
+        elif name == "companions":
+            out[name] = Cmp.marks(s, max(1, extras.get("companions", 1)), B)
     return out
 
 
@@ -535,7 +547,9 @@ def transitions(tl, theme) -> list[dict]:
 # ---------------------------------------------------------------------------- the plan
 def plan_reel(engine, proj, model, tl, theme, out_dir: Path, work: Path, *,
               booklet_plan=None, booklet_steps=None, hero_file: Path | None = None,
-              log=print) -> dict:
+              companions: list | None = None, log=print) -> dict:
+    """The reel's plan for the compositor and the sound. `companions`: the featured companions
+    with their footage (companions.prepare; else prepared here without rendering)."""
     cfg = T.video_config(model)
     placed = model.flatten()
     C = T.corners(engine, placed)
@@ -654,13 +668,27 @@ def plan_reel(engine, proj, model, tl, theme, out_dir: Path, work: Path, *,
                                      if (out_dir / f).exists()]}
     if tl.get("cold_open"):
         reel["cold_open"] = cold_open_graphics(tl)
+    if tl.get("coda"):
+        c = tl["coda"]
+        reel["coda"] = {"start": c["start"], "end": c["end"], "letterbox": c["letterbox"],
+                        "scene": c["scene"], "creature": c["coda"]["creature"],
+                        "fade": int(c["coda"].get("fade", 0))}
+    # the outro's small print (the disclaimer and the model's notice): [video]
+    # outro_small_print = false leaves it out
+    reel["outro"] = {"small_print": bool(cfg.get("outro_small_print", True))}
+    if "companions" in seg:
+        items = companions if companions is not None else Cmp.prepare(
+            engine, proj, cfg.get("companions") or [], work, 1080, False, log)
+        reel["companions"] = Cmp.graphics(items, stats, hero_file if reel["hero"] and
+                                          reel["hero"]["cutout"] else None, work)
     extras = {"chips": len(reel["chips"]), "checks": len(chk["rows"]),
               "callouts": len(reel.get("mechanism", {}).get("callouts", [])),
-              "booklet": reel.get("booklet")}
+              "booklet": reel.get("booklet"), "companions": len(reel.get("companions") or [])}
     reel["marks"] = marks(tl, extras)
     reel["transitions"] = transitions(tl, theme)
     reel["cues"] = cue_sheet(reel, tl, theme,
-                             audio_assets(proj, cfg, (tl.get("cold_open") or {}).get("scene")))
+                             audio_assets(proj, cfg, [x["scene"] for x in (tl.get("cold_open"),
+                                                                          tl.get("coda")) if x]))
     return reel
 
 
@@ -722,7 +750,7 @@ def colourway_items(engine, proj, model, placed, tl, cfg) -> dict:
 
 
 # ---------------------------------------------------------------------------- sound cues
-def audio_assets(proj, cfg, scene: str | None = None) -> dict | None:
+def audio_assets(proj, cfg, scene: str | list | None = None) -> dict | None:
     """[video.audio]: the model's recorded sounds (files in its `dir`, default "audio/"):
 
         pull_start = "pull_start_1.mp3"   the cold open's pull-start; `catch` = s into it where
@@ -740,20 +768,34 @@ def audio_assets(proj, cfg, scene: str | None = None) -> dict | None:
         snaps_on = [...]                  a pop as the light comes on (in turn)...
         snaps_off = [...]                 ...and a softer one as it goes off
         room = "crickets_2.mp3"           the night outside, looped under it
-    and for a glide (deep_sea; the set's own SCENE_SOUNDS fill in what isn't given):
+    and for a glide or a flythrough (deep_sea; the set's own SCENE_SOUNDS fill in what isn't
+    given; a flythrough's dread is synthesised) and a coda (deep_sea):
         ambience = "..."                  the deep, looped under it
         pings = [...]                     sonar pings, at the start and after each cut
         bubbles = [...]                   bursts of bubbles on the cuts and as the bow passes
         groan = "..."                     the hull groaning, once
         churn = "..."                     the propeller, looped, louder as the stern nears
+        organ = "organ_1.mp3"             a flythrough's organ music (else synthesised): heard
+        organ_in = 4.25                   through the hull, open in the room; this many s into
+                                          it reach the window (default FLY_ORGAN_IN)
+        creature = "..."                  the coda's creature, moaning as its eye catches the light
+    and for any model:
+        music = "score_2.mp3"             a recorded score instead of the synthesised music (the
+        music_offset = 0.5                synth silenced): from the cut out of the cold open, this
+        music_tail = 3.0                  many s into it there, to the end (or this many s into a
+                                          coda, fading out); ducked under the big sound effects
 
-    `scene`: the cold open's set (its own sounds). Returns {"samples": {name: {path, sha1}},
-    "roles": {role: [names]}, "catch", "levels"} or None without the table or set sounds."""
+    `scene`: the cold open's and the coda's sets (their own sounds). Returns {"samples": {name:
+    {path, sha1}}, "roles": {role: [names]}, "catch", "organ_in", "music_offset", "music_tail",
+    "levels"} or None without the table or set sounds."""
     import hashlib
 
     from ..paths import DATA_DIR
     a = dict(cfg.get("audio") or {})
-    shared = SCENE_SOUNDS.get(scene or "")
+    shared = {}                                   # role: (set, files), the first set's that has it
+    for sc in ([scene] if isinstance(scene, str) or scene is None else scene):
+        for role, v in (SCENE_SOUNDS.get(sc or "") or {}).items():
+            shared.setdefault(role, (sc, v))
     if not a and not shared:
         return None
     d = proj.dir / str(a.get("dir", "audio"))
@@ -765,7 +807,8 @@ def audio_assets(proj, cfg, scene: str | None = None) -> dict | None:
             raise SystemExit(f"[video.audio]: {p} is missing (tools/elevenlabs_sfx.py makes it)")
         samples[str(name)] = {"path": str(p), "sha1": hashlib.sha1(p.read_bytes()).hexdigest()}
         return str(name)
-    singles = ("pull_start", "idle", "burst", "room", "ambience", "groan", "churn")
+    singles = ("pull_start", "idle", "burst", "room", "ambience", "groan", "churn", "organ",
+               "creature", "music")
     lists = ("screams", "stings", "hits", "booms", "clicks", "snaps_on", "snaps_off", "pings",
              "bubbles")
     for role in singles:
@@ -775,11 +818,14 @@ def audio_assets(proj, cfg, scene: str | None = None) -> dict | None:
         if a.get(role):
             v = a[role]
             roles[role] = [use(x) for x in ([v] if isinstance(v, str) else v)]
-    for role, v in (shared or {}).items():
+    for role, (sc, v) in shared.items():
         if role not in roles:
-            where = DATA_DIR / "audio" / scene
+            where = DATA_DIR / "audio" / sc
             roles[role] = [use(x, where) for x in ([v] if isinstance(v, str) else v)]
     return {"samples": samples, "roles": roles, "catch": float(a.get("catch", 0.5)),
+            "organ_in": float(a.get("organ_in", FLY_ORGAN_IN)),
+            "music_offset": float(a.get("music_offset", 0.0)),
+            "music_tail": float(a.get("music_tail", 3.0)),
             "levels": {**SAMPLE_LEVEL, **(a.get("levels") or {})}}
 
 
@@ -874,6 +920,124 @@ def glide_cues(cut: int, co: dict, roles: dict, add, play, fps: float) -> None:
              offset=1.5, gain_curve=np.round(gc, 3).tolist())
 
 
+FLY_ORGAN_IN = 4.25       # s into audio.SFX.ORGAN_SCORE (its second statement) on the window
+
+
+def flythrough_cues(cut: int, co: dict, roles: dict, add, play, fps: float,
+                    organ_in: float = FLY_ORGAN_IN) -> None:
+    """A flythrough's sound (deep_sea): the deep's rumble (hushed in the room), sonar pings at
+    the start and on the wide shot, the hull groaning; the propeller nearer and further; the
+    organ in the room heard faintly through the hull from the wide shot on, swelling as the
+    camera nears the window, open in the room, muffled again out in the dark and dying away
+    (the recorded `organ` if there is one, `organ_in` s of it played by the window; else
+    synthesised); bubbles bursting through the hull going in and out; then out there the
+    dread, a far ping with no answer, the hull groaning behind, something huge moaning in the
+    dark."""
+    a = co["start"]
+    n = cut - a
+    fl = co["flythrough"]
+    k_in, k_out = fl["enter"] - a, fl["exit"] - a
+    k = np.arange(n, dtype=float)
+    room = np.interp(k, np.arange(len(fl["room"])), fl["room"])
+    murk = np.interp(k, np.arange(len(fl["murk"])), fl["murk"])
+    shots = [f for f, _ in co["shots"]]
+    if roles.get("ambience"):
+        amb = np.clip((1.0 - 0.8 * room) * (0.8 + 0.2 * murk), 0.0, 1.0)
+        play(a, roles["ambience"][0], "ambience", loop=True, dur=n, until=cut, fade_in=0.6,
+             gain_curve=np.round(amb, 3).tolist())
+    else:
+        add(a, "wind", dur=n, gain=0.6)
+    pings = [(a + int(0.25 * fps), 1.0)] + [(a + f + int(0.4 * fps), 1.0) for f in shots[1:2]] \
+        + [(a + k_out + int(0.9 * fps), 0.55)]
+    for i, (f, g) in enumerate(p for p in pings if p[0] < cut - int(0.3 * fps)):
+        if roles.get("pings"):
+            play(f, roles["pings"][i % len(roles["pings"])], "ping", until=cut, fade_out=0.3, gain=g)
+        else:
+            add(f, "blip", pitch=-6, gain=0.6 * g)
+    if roles.get("bubbles"):
+        b = roles["bubbles"]
+        for i, f in enumerate([a + f for f in shots[1:]] + [a + k_in - 4, a + k_out - 2]):
+            if a <= f < cut:
+                play(f, b[i % len(b)], "bubbles", until=cut, fade_out=0.2)
+    if roles.get("groan"):
+        if len(shots) > 1:
+            play(a + shots[1] + int(0.5 * fps), roles["groan"][0], "groan", until=cut, fade_out=0.4)
+        if k_out + int(0.5 * fps) < n:
+            play(a + k_out + int(0.5 * fps), roles["groan"][0], "groan", until=cut, fade_out=0.6,
+                 offset=0.6)
+    if roles.get("churn"):
+        g = co["glide"]
+        F = np.asarray(g["forward"], float)
+        stern = np.asarray(g["path"], float)[:n] - F * float(g["extent"]["behind"])
+        d = np.linalg.norm(np.asarray(co["camera"]["pos"], float)[:n] - stern, axis=1)
+        near = (float(g["length"]) * 0.6 / np.maximum(d, 1e-6)) ** 1.5
+        gc = np.clip(0.25 + near, 0.0, 1.0) * (1.0 - 0.85 * room)
+        play(a, roles["churn"][0], "churn", loop=True, dur=n, until=cut, fade_in=0.4,
+             offset=1.5, gain_curve=np.round(gc, 3).tolist())
+    # the organ: from the wide shot (or the start) to the cut
+    f0 = max(0, k_in - int(round(FLY_ORGAN_IN * fps)), shots[1] if len(shots) > 1 else 0)
+    if f0 < n:
+        kk = k[f0:]
+        near = np.clip((kk - f0) / max(1, k_in - f0), 0.0, 1.0) ** 2
+        g = 0.18 + 0.4 * near
+        g = g + (1.0 - g) * room[f0:]
+        g *= np.where(kk > k_out, np.clip(1.0 - (kk - k_out) / (2.8 * fps), 0.0, 1.0) ** 1.3, 1.0)
+        muffle = np.round(1.0 - room[f0:], 3).tolist()
+        if roles.get("organ"):
+            play(a + f0, roles["organ"][0], "organ", offset=max(0.0, organ_in - (k_in - f0) / fps),
+                 dur=n - f0, until=cut, gain_curve=np.round(g, 3).tolist(), muffle=muffle)
+        else:
+            add(a + f0, "organ", dur=n - f0, offset=organ_in - (k_in - f0) / fps,
+                curve=np.round(g, 3).tolist(), muffle=muffle)
+    # the dread, out in the dark
+    f1 = max(0, k_out - int(0.5 * fps))
+    if f1 < n - int(0.5 * fps):
+        up = np.clip((k[f1:] - f1) / (1.5 * fps), 0.0, 1.0)
+        add(a + f1, "dread", dur=n - f1, curve=np.round(up * up * (3 - 2 * up), 3).tolist(),
+            call=k_out + int(1.5 * fps) - f1)
+
+
+def coda_glint(co: dict) -> int:
+    """The frame (from the coda's start) its creature's eye first catches the light."""
+    g = np.asarray(co["coda"]["squid"]["glint"], float)
+    return int(np.argmax(g > 0.5)) if (g > 0.5).any() else len(g) // 2
+
+
+def coda_cues(co: dict, roles: dict, add, play, fps: float) -> None:
+    """The coda's sound (deep_sea), no music: the deep's rumble fading in, a lone sonar ping
+    and a fainter one later with no answer, the dread swelling (a low drone, a sub, dark
+    water), bubbles as the creature sweeps past, and as its eye catches the light its moan
+    (recorded `creature`, else the dread's own); everything fading away with the picture."""
+    a, end = co["start"], co["end"]
+    n = end - a
+    glint = coda_glint(co)
+    fall = max(int(co["coda"].get("fade", 0)), int(0.5 * fps))   # silent as the picture goes black
+
+    def tail(f, g=1.0):                           # a sound's gain from frame f (absolute) on
+        k = np.arange(max(1, end - f), dtype=float) + (f - a)
+        return np.round(g * (1.0 - T.smootherstep((k - (n - fall)) / fall)), 3).tolist()
+    if roles.get("ambience"):
+        play(a, roles["ambience"][0], "ambience", loop=True, dur=n, until=end, fade_in=0.8,
+             gain_curve=tail(a))
+    else:
+        add(a, "wind", dur=n, gain=0.6)
+    for i, (f, g) in enumerate(((a + int(0.35 * fps), 1.0), (a + int(0.62 * n), 0.45))):
+        if roles.get("pings"):
+            play(f, roles["pings"][i % len(roles["pings"])], "ping", until=end, gain_curve=tail(f, g))
+        else:
+            add(f, "blip", pitch=-6, gain=0.6 * g)
+    if roles.get("bubbles"):
+        f = a + int(0.22 * n)
+        play(f, roles["bubbles"][0], "bubbles", until=end, fade_out=0.3, gain_curve=tail(f))
+    k = np.arange(n, dtype=float)
+    swell = (0.35 + 0.65 * T.smootherstep(k / (0.5 * n))) * np.asarray(tail(a))
+    add(a, "dread", dur=n, curve=np.round(swell, 3).tolist(),
+        **({} if roles.get("creature") else {"call": glint}))
+    if roles.get("creature"):
+        f = a + glint
+        play(f, roles["creature"][0], "creature", align="peak", until=end, gain_curve=tail(f))
+
+
 def cue_sheet(reel, tl, theme, assets: dict | None = None) -> dict:
     """The audio.py cue sheet: sections with moods, and every SFX on the frame it belongs.
     With `assets` (audio_assets) recorded sounds take over the chainsaw and add horror stings."""
@@ -896,6 +1060,9 @@ def cue_sheet(reel, tl, theme, assets: dict | None = None) -> dict:
     cold = tl.get("cold_open") or {}
     if "cold_open" in mk and cold.get("taps") is not None:
         tap_cues(mk["cold_open"]["cut"], cold, roles, add, play)
+    elif "cold_open" in mk and cold.get("flythrough") is not None:
+        flythrough_cues(mk["cold_open"]["cut"], cold, roles, add, play, fps,
+                        float((assets or {}).get("organ_in", FLY_ORGAN_IN)))
     elif "cold_open" in mk and cold.get("glide") is not None:
         glide_cues(mk["cold_open"]["cut"], cold, roles, add, play, fps)
     elif "cold_open" in mk and "idle" in roles:   # the real chainsaw: pulled, running, screaming
@@ -925,6 +1092,10 @@ def cue_sheet(reel, tl, theme, assets: dict | None = None) -> dict:
         add(co["start"], "chainsaw_bed", dur=n, curve=co["rev"][:n],
             catch=m["catch"] - co["start"], gain=1.0)
         add(co["start"], "wind", dur=n, gain=0.8)
+    if "coda" in mk:                              # (before `lv` is reused for the booklet)
+        coda_cues(tl["coda"], roles, add, play, fps)
+    if "companions" in mk:
+        Cmp.cues(mk["companions"], add)
     # the big cuts' stings in turn: metal hit, boom, string stab, ...
     cut_stings = []
     for i in range(max(len(roles.get(r, [])) for r in ("hits", "booms", "stings"))):
@@ -1082,4 +1253,25 @@ def cue_sheet(reel, tl, theme, assets: dict | None = None) -> dict:
            "events": sorted(ev, key=lambda e: e["frame"])}
     if assets:
         out["samples"] = assets["samples"]
+    if roles.get("music"):                        # a recorded score instead of the synthesised
+        out["track"] = score_track(tl, assets)    # music: no synth under any section
+        for sec in sections:
+            sec["mood"] = "cold"
     return out
+
+
+def score_track(tl, assets: dict) -> dict:
+    """audio.py's `track` for a model's recorded score ([video.audio] music): from the first
+    frame after the cold open (`music_offset` s into it there, so its first hit lands on the
+    cut), on to the end, or into a coda for `music_tail` s, fading out there."""
+    name = assets["roles"]["music"][0]
+    segs = tl["segments"]
+    a = next((s["start"] for s in segs if s["kind"] != "cold"), 0)
+    tr = {"path": assets["samples"][name]["path"], "at": a,
+          "offset": float(assets.get("music_offset", 0.0)), "fade_out": 0.4}
+    coda = next((s for s in segs if s["name"] == "coda"), None)
+    if coda is not None:
+        tail = float(assets.get("music_tail", 3.0))
+        tr.update(until=min(coda["end"], coda["start"] + int(round(tail * tl["fps"]))),
+                  fade_out=max(0.4, 0.8 * tail))
+    return tr

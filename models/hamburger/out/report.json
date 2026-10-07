@@ -1,0 +1,95 @@
+{
+  "title": "Hamburger",
+  "status": "pass",
+  "checks": [
+    {
+      "name": "real_elements",
+      "status": "pass",
+      "summary": "98 part/colour combinations: 0 not real, 0 rare",
+      "items": [],
+      "stats": {
+        "combinations": 98,
+        "not_real": 0,
+        "rare": 0,
+        "hardware": 0,
+        "minifig_components": 0,
+        "stand_ins": 0,
+        "approximate": 0
+      }
+    },
+    {
+      "name": "connections",
+      "status": "pass",
+      "summary": "1942 connections (1918 stud, 16 pin, 8 clip); 1 separate piece(s)",
+      "items": [],
+      "stats": {
+        "connections": 1942,
+        "by_kind": {
+          "stud": 1918,
+          "pin": 16,
+          "clip": 8
+        },
+        "pieces": 1
+      }
+    },
+    {
+      "name": "collisions",
+      "status": "pass",
+      "summary": "0 overlapping pair(s) among 590 parts",
+      "items": [],
+      "stats": {
+        "pairs": 0
+      }
+    },
+    {
+      "name": "buildability",
+      "status": "pass",
+      "summary": "521 insertions tried across 8 submodel(s); 0 problem(s)",
+      "items": [],
+      "stats": {
+        "insertions": 521
+      }
+    },
+    {
+      "name": "stability",
+      "status": "pass",
+      "summary": "about 533 g; centre of mass inside the base (100% margin); tips at 47.6 deg",
+      "items": [],
+      "stats": {
+        "mass_g": 533.45624183209,
+        "com": [
+          0.09409926807066543,
+          -103.12787500361382,
+          0.11062459936299095
+        ],
+        "approx_parts": 0,
+        "margin": 0.9987204758285396,
+        "tip_angle_deg": 47.61335711096558,
+        "com_height_ldu": 103.12787500361382
+      }
+    },
+    {
+      "name": "mechanism",
+      "status": "pass",
+      "summary": "24 poses swept for 5 moving group(s); 0 gear pair(s); 0 problem(s)",
+      "items": [],
+      "stats": {
+        "poses": 24
+      }
+    },
+    {
+      "name": "electrics",
+      "status": "pass",
+      "summary": "no electrics in this model",
+      "items": [],
+      "stats": {}
+    },
+    {
+      "name": "technique",
+      "status": "pass",
+      "summary": "0 note(s)",
+      "items": [],
+      "stats": {}
+    }
+  ]
+}

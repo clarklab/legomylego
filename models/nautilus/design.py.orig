@@ -1,0 +1,592 @@
+"""Nautilus (Walt Disney's 20,000 Leagues Under the Sea, 1954, Harper Goff's design) at
+minifigure scale: its salon windows are LEGO's biggest clear bubbles. Bow toward -X, port side
+toward the front (-Z); see naut_shape.py."""
+import importlib
+import math
+
+import numpy as np
+
+import naut_body as nb
+import naut_frame as frame
+import naut_keel as keel
+import naut_panels as pn
+import naut_relief as rel
+import naut_salon
+import naut_shape as shp
+import naut_stand_big as stand
+import naut_tail as tail
+import naut_weather
+import naut_window as win
+from brickkit.ldraw.matrix import rot, transform
+from naut_kit import S, Batch, about, use_M
+
+Y_HULL = -552            # the side keels' height above the table (LDU, -Y up): on the posts
+LEAD = 1000.0            # each lamp's share of the 8870's lead (LDU; 40 cm of its 50)
+EXTENSION = 1250.0       # a Power Functions extension wire (8871, 50 cm) between it and the box
+OPEN_DEG = 105.0         # the salon's gull wing, open
+
+
+def _module(name: str, present: bool):
+    """The bow or tail module (naut_shape.BOW_STATION), if its file is there."""
+    return importlib.import_module(name) if present else None
+
+
+BOW = _module("naut_bow", shp.BOW_MODULE)
+TAIL = _module("naut_tail_new", shp.TAIL_MODULE)
+QUARTERS = _module("naut_quarters", shp.QUARTERS_MODULE)
+
+
+def build(model):
+    main = model.main
+    hs = model.submodel("hull", "Hull")
+    up, lo = rel.Relief("up"), rel.Relief("lo")
+    for keels in frame.build_frame(model):
+        hs.use(keels)
+    _windows(model, hs)               # their bosses join the side keels' two halves
+    core = rel.core_batch(up, lo, gap=() if TAIL else (tail.BEARING_I,), shaft=lead_shaft())
+    if not TAIL:                                  # the propeller's bearing, in the tail stock
+        core.add("3700", "core", transform((S * tail.BEARING_I + S / 2, shp.FL_A - 24, 0),
+                                           rot(y=90)), "core")
+    core.emit(hs, phases=rel.CORE_PHASES, captions=rel.CORE_CAPTIONS, per_step=12, reach=300,
+              hanging=rel.CORE_HANGING)
+    frame.chain_bars().emit(hs, phases=[["bars"], ["bars_lo"]], hanging=("bars_lo",),
+                            captions={"bars": "Bars on the side keels for the side panels"},
+                            per_step=12, reach=300)
+    frame.chine_rail().emit(hs, phases=[["rail"]],
+                            captions={"rail": "A rail along the side keels' edges"},
+                            per_step=12, reach=400)
+    _hull_sides(model, hs, up, lo)
+    keel_cells = {(i, k) for i in range(int(-520 // S), int(520 // S))
+                  for k in frame.rows_within(shp.KEEL_HW)
+                  if rel.core_bot(S * i + 10) >= shp.KEEL_TOP
+                  and not (i in lead_shaft() and k in (-1, 0))}
+    ks = model.submodel("keel_strip", "The keel strip")
+    frame.keel_batch(keel_cells, standing=True).emit(
+        ks, phases=[["keel_strip"]], captions={"keel_strip": "The keel strip"}, per_step=12,
+        reach=300)
+    hs.step("The keel strip, pushed up under the core")
+    hs.use(ks, insert=(0, 1, 0))
+    hs.step("The salon's floor")
+    hs.use(_salon_floor(model), insert=(0, -1, 0))
+    hs.step("Captain Nemo's salon, lowered onto its floor")
+    salon = naut_salon.build_salon(model, hs)
+    _crew(model, salon, None)
+    ds = model.submodel("deck_strip", "The deck strip")
+    frame.deck_batch().emit(ds, phases=[["deck"]], captions={"deck": "The deck strip"},
+                            per_step=12, reach=300)
+    hs.step("The deck strip, over the salon")
+    hs.use(ds, insert=(0, -1, 0))
+    _salon_lamps(hs)
+    if not BOW:
+        _ram(hs)
+    _keel_teeth(hs, up)
+    # the things on the deck, built now so the deck's planking can go round them
+    on_deck = [(nb.wheelhouse(model), (0, -1, 0)), (nb.crest(model), (0, -1, 0)),
+               (nb.dorsal_fin(model), (0, -1, 0)), (keel.aft_house(model), (0, -1, 0)),
+               (keel.hatch(model), (0, -1, 0))]
+    _tiles(hs, up, skip=_footprint([sub for sub, _ in on_deck]) | DECK_SPOTS
+           | (set() if BOW else nb.ridge_cells()) | keel.stern_ridge_cells(), early=True,
+           caption="The deck's planking and the side keels' edges: tiles",
+           hold=lambda x, y, z: shp.in_quarter(x) and (
+               abs(y - shp.FL_A) < 0.5 or (x < shp.QUARTER_DECK_FWD and
+                                            abs(y - (shp.DECK_STRIP - 8)) < 0.5)))
+    _panels(model, hs)
+    if QUARTERS:
+        hs.step("The quarters' skins, on the core's side studs")
+        QUARTERS.build_quarters(model, hs)
+    for sub, ins in on_deck:
+        hs.step()
+        hs.use(sub, insert=ins)
+    if not BOW:
+        nb.bow_ridge().emit(hs, phases=[["ridge"], ["ridge_top"]], captions=nb.RIDGE_CAPTIONS,
+                            per_step=12, reach=400)
+    if not getattr(QUARTERS, "STERN_TOP", False):     # else the quarters build the stern's top
+        keel.stern_ridge().emit(hs, phases=[["stern_ridge"], ["stern_ridge_top"]],
+                                captions={"stern_ridge": "The stern's ridge: plates on the "
+                                                         "core's top, down to the tail",
+                                          "stern_ridge_top": "Curved slopes and tiles on it"},
+                                per_step=12, reach=400)
+    keel.saw_keel().emit(hs, phases=[["blade"], ["blade_under"], ["teeth"]],
+                         hanging=("blade", "blade_under", "teeth"), captions=keel.SAW_CAPTIONS,
+                         per_step=12, reach=400)
+    keel.stern_keel().emit(hs, phases=[["stern_keel"], ["stern_keel_under"]],
+                           hanging=("stern_keel", "stern_keel_under"),
+                           captions={"stern_keel": "The stern's keel: plates pushed up under "
+                                                   "the core, up to the tail",
+                                     "stern_keel_under": "Curved slopes under its steps"},
+                           per_step=12, reach=400)
+    if BOW:
+        hs.step("The bow, pushed onto the hull's forward end")
+        BOW.build_bow(model, hs)
+    if TAIL:
+        hs.step("The tail, pushed onto the hull's after end")
+        TAIL.build_tail(model, hs)
+    else:
+        _tail(model, hs)
+    for which in ("fwd", "rear"):
+        hs.step("The keel fins" if which == "fwd" else "")
+        hs.use(keel.keel_fin(model, which), insert=(0, 1, 0))
+    _belly_tiles(hs)
+    _tiles(hs, up, skip=DECK_SPOTS, caption="Tiles on the last bare studs")
+    _crew_on_deck(model, hs)
+    model.meta["weathering"] = naut_weather.weather(
+        model, hs, skip=lambda n: _not_hull(n) or n.startswith(CLEAN))
+    info = stand.build_stand(model, keel.post_tops(), hull_y=Y_HULL, lead_post=0)
+    main.step("Set the Nautilus on its posts: thread the lights' lead down the front post first")
+    main.use(hs, (0, Y_HULL, 0), tag="sub", insert=(0, -1, 0))
+    _mechanism(model)
+    _electrics(model, info)
+
+
+CLEAN = ("crest", "wheelhouse", "dorsal_fin", "aft_house", "hatch", "keel_fin", "tail_",
+         "window")                  # not weathered: the superstructure, the fins, the tail and
+                                    # the salon windows' bosses
+
+
+def _not_hull(name: str) -> bool:
+    """Sub-assemblies inside the hull that aren't its iron: the salon's furniture and floor,
+    the crew, the propeller's hidden axle."""
+    return (name.startswith(("salon_", "nemo_salon", "tail_propeller")) and name != "salon_panel"
+            or name.startswith(tuple(CREW)))
+
+
+def _hull_sides(model, hs, up, lo):
+    """The stepped shells of the bow and stern and the bulkheads' walls, each built flat and
+    pushed onto the core's side studs."""
+    spans = [((-1e9, shp.WIDE[0]), "bow"), ((-330.0, -270.0), "wall_fwd"),
+             ((170.0, 230.0), "wall_aft"), ((shp.WIDE[1], 1e9), "stern")]
+    first = True
+    for r in (up, lo):
+        where = "upper" if r.kind == "up" else "lower"
+        for side in (-1, 1):
+            sname = "port" if side < 0 else "stbd"
+            for xr, part in spans:
+                if not any(xr[0] <= rel.xc(i) < xr[1] for i, _ in r.L):
+                    continue
+                hs.step("A hull side, built flat, pushed onto the core's side studs"
+                        if first else "")
+                first = False
+                use_M(hs, rel.build_relief(model, r, side, xr, f"{where}_{sname}_{part}",
+                                           f"Hull side, {where}, {sname}, {part}"),
+                      rel.relief_frame(side), insert=(0, 0, side))
+
+
+FLOOR_HW = 140          # the salon's floor: 14 studs wide, inside the panels' hinges
+
+
+def _salon_floor(model):
+    """The salon's floor: two layers of plates across the bay (studs on top for the furniture),
+    on three pillars of bricks standing on the keel strip."""
+    from naut_kit import AV, PLATE, ids_of, pack, rect_part
+    sub = model.submodel("salon_floor", "The salon's floor")
+    bt = Batch()
+    x0, x1 = shp.SALON_BAY
+    for x in (x0 + 40, (x0 + x1) / 2, x1 - 40):
+        xi = S * round(x / S)
+        for n in range(3):          # three bricks up to the floor's underside
+            bt.add("3003", "hull", transform((xi, shp.KEEL_TOP - 24 * (n + 1), 0)),
+                   "pillars", insert=(0, 1, 0))
+    sizes = [s for s in AV.sizes(PLATE, "hull") if s[1] <= 12]
+    n_k = FLOOR_HW // S
+    cells = {(i, k) for i in range(int(x0 // S), int(x1 // S)) for k in range(-n_k, n_k)}
+    r1 = pack(cells, sizes, prefer="x")
+    for n, rects in enumerate((r1, pack(cells, sizes, ids_of(r1), prefer="z", shift=3))):
+        for i0, i1, k0, k1 in rects:
+            part, R = rect_part(PLATE, i1 - i0 + 1, k1 - k0 + 1)
+            bt.add(part, "hull", transform((S * (i0 + i1 + 1) / 2, shp.SALON_FLOOR + 8 - 8 * n,
+                                            S * (k0 + k1 + 1) / 2), R), "floor",
+                   insert=(0, -1, 0))
+    bt.emit(sub, phases=[["floor"], ["pillars"]], hanging=("pillars",),
+            captions={"floor": "The salon's floor", "pillars": "Its pillars, under it"},
+            per_step=10, reach=300)
+    return sub
+
+
+# the crew (models/nautilus_crew's figures): three in the salon, two out on the after deck
+CREW = {
+    "captain_nemo": dict(spot="by_the_organ", head=("3626bpr0251", "Yellow"),
+                         torso=("973c03h01pr0049", "Black"), legs=("970c03", "Black"),
+                         hair=("92081", "Dark Bluish Gray"), pose=dict(arm_r=20, arm_l=35)),
+    "aronnax": dict(spot="window_aft", head=("3626cpr2522", "Yellow"),
+                    torso=("973c14h01pr6850", "Light Bluish Gray"),
+                    legs=("970c14", "Light Bluish Gray"), hair=("21268", "Light Bluish Gray"),
+                    accessory=dict(part="10830p01", color="Black", hand="right", spin=-60),
+                    pose=dict(arm_r=12, arm_l=8, head=-10)),
+    "ned_land": dict(spot="window_fore", head=("3626cpr0754", "Yellow"),
+                     torso=("973c01h01pr9741", "White"), legs=("970c05", "Dark Blue"),
+                     hair=("62810", "Reddish Brown"), pose=dict(arm_r=10, arm_l=-10, head=-12)),
+    "conseil": dict(deck=(440.0, -30.0), head=("3626cpr2224", "Yellow"),
+                    torso=("973c27h01pr4203", "Black"), legs=("41879a", "Dark Bluish Gray"),
+                    hat=("95674", "Black"),
+                    accessory=dict(part="95228", color="Trans-Clear", hand="right"),
+                    pose=dict(arm_r=62, arm_l=0, head=25)),
+    "diver": dict(deck=(500.0, 30.0), head=("3626cpr0933", "Yellow"),
+                  torso=("973c23h12pr2119", "Medium Nougat"), legs=("970c23pr0378",
+                                                                   "Dark Bluish Gray"),
+                  hat=("10165c01", "Pearl Gold"),
+                  accessory=dict(part="30088", color="Black", hand="left", bar=1, spin=180),
+                  pose=dict(arm_l=-20, arm_r=10, head=-20)),
+}
+DECK_SPOTS = {(int(x // S) + d, int(z // S)) for c in CREW.values() if "deck" in c
+              for x, z in [c["deck"]] for d in (-1, 0)}     # their studs stay bare
+
+
+def _crew_on_deck(model, hs):
+    _crew(model, None, hs, deck=True)
+
+
+def _crew(model, salon, hs, deck=False):
+    spots = naut_salon.crew_spots()
+    for name, c in CREW.items():
+        if ("deck" in c) != deck:
+            continue
+        kw = {k: c[k] for k in ("hair", "hat", "accessory") if k in c}
+        if "deck" in c:                  # out on the after deck, looking out to port
+            x, z = c["deck"]
+            model.minifig(name, (x, shp.DECK_STRIP - 8, z), None, head=c["head"],
+                          torso=c["torso"], legs=c["legs"], pose=c.get("pose"), parent=hs, **kw)
+            continue
+        sp = spots[c["spot"]]
+        pose = dict(sp["pose"])
+        pose.update(c.get("pose", {}))
+        model.minifig(name, sp["at"], sp["rot"], head=c["head"], torso=c["torso"],
+                      legs=c["legs"], pose=pose, parent=salon, **kw)
+
+
+LAMP_Y = shp.DECK_STRIP + 8          # the deck strip's underside: the salon's ceiling
+LAMP_W = 60                          # each lamp's nub faces a window from here (|z|)
+
+
+def _salon_lamps(hs):
+    """The salon's lamps: a Power Functions light under the ceiling by each window, its nub in a
+    Technic brick hanging from the deck strip, shining out at the window."""
+    cx = shp.SALON_C[0]
+    hs.step("The salon's lamps: Technic bricks under the deck, a light in each")
+    for side in (-1, 1):
+        sname = "port" if side < 0 else "stbd"
+        hs.place("3700", "core", (cx, LAMP_Y, side * (LAMP_W + 10)), insert=(0, 0, side))
+        R = np.eye(3) if side < 0 else rot(y=180)
+        p = hs.place("62498c01", "led", (0, 0, 0), tag=f"lamp_{sname}", insert=(0, 0, -side))
+        p.M = transform((cx, LAMP_Y + 10, side * LAMP_W), R)
+
+
+def _windows(model, hs):
+    """The salon windows: bricks with side studs on the side keels' ring, the bosses on them."""
+    bt = Batch()
+    for side in (-1, 1):
+        for part, M, hang in win.bricks(side):
+            bt.add(part, "hull", M, "boss_lo" if hang else "boss",
+                   insert=(0, 1, 0) if hang else None)
+    bt.emit(hs, phases=[["boss"], ["boss_lo"]], hanging=("boss_lo",),
+            captions={"boss": "Bricks with side studs for the salon windows"}, per_step=12,
+            reach=400)
+    for side in (-1, 1):
+        sname = "port" if side < 0 else "stbd"
+        hs.step("The salon window: its lamp's lead goes in first" if side < 0 else "")
+        sub, M = win.build_window(model, side)
+        use_M(hs, sub, M, tag=f"salon_{sname}", insert=(0, 0, side))
+
+
+def _panels(model, hs):
+    """The midbody's tiled side panels, clipped on hinge by hinge: the lower ones first, then
+    the upper; on the port side the salon's upper panels are one hinged piece (the gull wing)."""
+    gull = model.submodel("salon_panel", "The salon's gull-wing panel")
+    gull_parts, gull_late = [], []
+    for side in (-1, 1):
+        sname = "port" if side < 0 else "stbd"
+        late = []
+        for key in "cdab":
+            f = pn.FACETS[key]
+            for x0, x1 in pn.pieces(key):
+                in_bay = pn.BAY[0] <= x0 < pn.BAY[1]
+                ext = None
+                if key in "bd" and in_bay:     # reaching on past the seam over the window's boss
+                    ext = (shp.BOSS_X[0], shp.BOSS_X[1], 1)
+                name = f"panel_{key}_{sname}_{int(x0)}"
+                title = f"Side panel {key.upper()}, {sname}, x {int(x0)} to {int(x1)}"
+                lips = {"a": (True, True), "b": (False, True), "c": (True, True),
+                        "d": (False, True)}[key]
+                if side < 0 and key == "b" and in_bay:
+                    lips = (False, False)        # the gull wing turns on this edge
+                sub, M, tl = pn.build_panel(model, name, title, f, side, x0, x1, ext=ext,
+                                            lips=lips)
+                nrm = tuple(np.round(pn.vec3(f.nrm, side), 6))
+                if side < 0 and key in "ab" and in_bay:
+                    gull_parts.append((key, sub, M))
+                    gull_late += [(p, Mt, nrm) for p, Mt in tl]
+                    continue
+                hs.step()
+                use_M(hs, sub, M, insert=nrm)
+                late += [(p, Mt, nrm) for p, Mt in tl]
+            if key in "bd" and late:          # tiles over the seam's hinges, b and d clipped on
+                hs.step("Tiles over the hinges along the seam")
+                for p, Mt, nrm in late:
+                    hs.place(p, "hull", (0, 0, 0), insert=nrm).M = Mt
+                late = []
+    # the gull wing: the long upper panel, then the short ones clipped under its seam
+    gull_parts.sort(key=lambda t: t[0] != "b")
+    for key, sub, M in gull_parts:
+        gull.step()
+        use_M(gull, sub, M, insert=tuple(np.round(pn.vec3(pn.FACETS[key].nrm, -1), 6)))
+    if gull_late:
+        gull.step("Tiles over the hinges along the seam")
+        for p, Mt, nrm in gull_late:
+            gull.place(p, "hull", (0, 0, 0), insert=nrm).M = Mt
+    hs.step("The salon's gull-wing panel: it clips on along the deck's edge")
+    hs.use(gull, tag="salon_panel", insert=tuple(np.round(pn.vec3(pn.FACETS["b"].nrm, -1), 6)))
+
+
+def lead_shaft() -> tuple:
+    """Columns of the shaft through the core and keel strip over the front post: the lights'
+    lead goes down it."""
+    x = keel.post_tops()[0][0]
+    return (int(x // S) - 1, int(x // S))
+
+
+def _keel_teeth(hs, up):
+    """Teeth along the side keels' edges toward the bow, as the photo's: a plate with a tooth
+    on the outermost stud of every third column, its tooth outward."""
+    from naut_kit import exposed_studs
+    flat = [(p, M) for p, _, M in hs.flatten_local()]
+    outer = {}
+    for x, y, z in exposed_studs(flat):
+        if abs(y - shp.FL_A) > 0.5 or not (-1100 < x < -540) or not shp.in_hull(x) \
+                or shp.in_quarter(x):
+            continue
+        key = (int(x // S), z > 0)
+        if key not in outer or abs(z) > abs(outer[key][2]):
+            outer[key] = (x, y, z)
+    hs.step("Teeth along the side keels' edges")
+    for (i, starboard), (x, y, z) in sorted(outer.items()):
+        if i % 3 or ((i, 0) in up.L and abs(z) < up.face(i, 0)):
+            continue
+        hs.place("49668", "spine", (x, y - 8, z), None if z < 0 else rot(y=180),
+                 insert=(0, -1, 0))
+
+
+def _ram(hs):
+    """The ram's point: two plates with teeth at the tip of the side keels' spike."""
+    hs.step("The ram's point")
+    x = frame.RAM_TIP + 10
+    for z in (-10, 10):
+        hs.place("49668", "spine", (x, shp.FL_A - 8, z), rot(y=90), insert=(0, -1, 0))
+
+
+def _tail(model, hs):
+    """The fish tail: the lower lobe pushed up under the stock, the guard ring on the stock's
+    end, the propeller through it on its pin, the rudder's post and the rudder on it, then the
+    upper lobe on the stock."""
+    hs.step("The tail's lower lobe")
+    hs.use(tail.lower_lobe(model), insert=(0, 1, 0))
+    hs.step("The propeller's guard ring, on the stock's end")
+    hs.use(tail.guard_ring(model), insert=(0, -1, 0))
+    hs.step("The propeller, through the ring onto its pin")
+    hs.use(tail.propeller(model), insert=(1, 0, 0))
+    hs.step("The rudder's post")
+    hs.use(tail.post(model), insert=(0, -1, 0))
+    hs.step("The rudder, clipped onto the post")
+    hs.use(tail.rudder(model), tag="rudder", insert=(1, 0, 0))
+    hs.step("The tail's upper lobe")
+    hs.use(tail.upper_lobe(model), insert=(0, -1, 0))
+
+
+# ------------------------------------------------------------------ the last tiles
+DECK_GRILLES = ((-440, -360), (240, 320))     # vents in the deck's planking (x ranges)
+
+
+def _hidden(x: float, y: float, z: float, up) -> bool:
+    """Is a stud on top at (x, y, z) shut inside the hull (no tile needed), or not the hull's
+    (the salon's furniture, the saw keel's teeth)?"""
+    if shp.SALON_BAY[0] <= x < shp.SALON_BAY[1] and abs(z) < 140 and \
+            shp.DECK_STRIP < y < shp.SALON_FLOOR:
+        return True
+    if y > shp.FL_B and x < shp.WIDE[0]:
+        return True
+    if abs(y - shp.FL_A) < 0.5 and 180 < abs(z) < 200 and \
+            any(abs(x - xs) < 11 for xs in pn.frame_stations("a")):
+        return True                                 # under the side panels' bars
+    if shp.SALON_BAY[0] <= x < shp.SALON_BAY[1]:
+        return False                                # the salon: seen through its open side
+    if shp.WIDE[0] <= x < shp.WIDE[1]:
+        return shp.DECK_STRIP - 8 < y < shp.KEEL_TOP and abs(z) < 186
+    if abs(y - shp.FL_A) < 0.5:                     # the side keels, inside the hull's shells
+        i = int(x // S)
+        return (i, 0) in up.L and abs(z) < up.face(i, 0) - 4
+    return False
+
+
+def _footprint(subs) -> set:
+    """Stud cells (i, k) under sub-assemblies to come (placed at the hull frame's origin): the
+    studs there are left for them."""
+    from naut_kit import bbox
+    out = set()
+    deck = shp.DECK_STRIP - 8
+    for sub in subs:
+        for p, _, M in sub.flatten_local():
+            lo, hi = bbox(p)
+            pts = np.array([[x, y, z] for x in (lo[0], hi[0]) for y in (lo[1], hi[1])
+                            for z in (lo[2], hi[2])]) @ M[:3, :3].T + M[:3, 3]
+            a, b = pts.min(0), pts.max(0)
+            if b[1] < deck - 12:          # not down on the deck (an arch over it)
+                continue
+            for i in range(int(np.floor((a[0] + 1) / S)), int(np.ceil((b[0] - 1) / S))):
+                for k in range(int(np.floor((a[2] + 1) / S)), int(np.ceil((b[2] - 1) / S))):
+                    out.add((i, k))
+    return out
+
+
+def _tiles(hs, up, skip=(), caption="Tiles", early=False, hold=None):
+    """Tiles on every stud left on top that shows (not those at `skip` (x, z), nor those `hold`
+    (x, y, z) keeps bare for later): on the deck its planking (long tiles along the hull,
+    grilles over the vents), elsewhere plain tiles."""
+    from naut_kit import AV, TILE, exposed_studs, pack, rect_part
+    flat = [(p, M) for p, _, M in hs.flatten_local()]
+    studs = [st for st in exposed_studs(flat) if not _hidden(*st, up) and st[1] < shp.KEEL_TOP
+             and (int(np.floor(st[0] / S)), int(np.floor(st[2] / S))) not in skip
+             and not (early and st[0] > shp.STERN_X) and not (hold and hold(*st))]
+    if not studs:
+        return
+    deck_y = shp.DECK_STRIP - 8
+    bt = Batch()
+    by_y = {}
+    for x, y, z in studs:
+        by_y.setdefault(y, set()).add((int(np.floor(x / S)), int(np.floor(z / S))))
+    planks = [s for s in AV.sizes(TILE, "hull") if s[0] == 1]
+    for y, cells in sorted(by_y.items()):
+        grid = {c for c in cells if abs(y - deck_y) < 0.5
+                and any(a <= S * c[0] + 10 < b for a, b in DECK_GRILLES) and abs(c[1] + 0.5) > 1}
+        for (i0, i1, k0, k1), gr in ([(r, False) for r in pack(cells - grid, planks, prefer="x")]
+                                     + [(r, True) for r in pack(grid, [(1, 2), (1, 1)],
+                                                                 prefer="x")]):
+            w, d = i1 - i0 + 1, k1 - k0 + 1
+            part, R = ("2412b", np.eye(3)) if gr and w == 2 else rect_part(TILE, w, d)
+            bt.add(part, "grille" if gr else "hull", transform((S * (i0 + i1 + 1) / 2, y - 8,
+                                            S * (k0 + k1 + 1) / 2), R), "tiles",
+                   insert=(0, -1, 0))
+    bt.emit(hs, phases=[["tiles"]], captions={"tiles": caption}, per_step=16, reach=400)
+
+
+def _belly_tiles(hs):
+    """Inverted 2 x 2 tiles under the keel line - the keel strip, the keel fins, the saw keel's
+    and the stern keel's flats - and under the side keels' edges, wherever four anti-studs side
+    by side are free (not over the stand's posts' tops, nor at the bow and tail modules'
+    joints), so the underside is smooth."""
+    from naut_kit import free_sockets
+    flat = [(p, M) for p, _, M in hs.flatten_local()]
+    posts = [(x, z) for x, z, _ in keel.post_tops()]
+
+    def keep(x, y, z):
+        under_keels = abs(y - (shp.FL_B + 8)) < 0.5         # the side keels' underside
+        if not under_keels and (y < shp.FL_B + 16 or abs(z) > shp.KEEL_HW):
+            return False
+        if any(abs(x - px) < 50 and abs(z - pz) < 50 for px, pz in posts):
+            return False
+        return shp.in_hull(x - 40) and shp.in_hull(x + 40)
+    ys = {(int(np.floor(x / S)), int(np.floor(z / S))): y
+          for x, y, z in free_sockets(flat, keep, room=((-10.5, 0.5, -10.5), (10.5, 34.0, 10.5)))}
+    free = set(ys)
+    bt = Batch()
+    for i, k in sorted(free):
+        block = {(i, k), (i + 1, k), (i, k + 1), (i + 1, k + 1)}
+        if block <= free and len({ys[c] for c in block}) == 1:
+            free -= block
+            bt.add("11203", "hull", transform((S * i + S, ys[(i, k)], S * k + S)), "belly",
+                   insert=(0, 1, 0))
+    bt.emit(hs, phases=[["belly"]], hanging=("belly",),
+            captions={"belly": "Inverted tiles under the keel strip: a smooth belly"},
+            per_step=16, reach=400)
+
+
+# ------------------------------------------------------------------ electrics
+def _electrics(model, info):
+    """One Power Functions light unit (8870): a lamp under the salon's ceiling by each window.
+    Each lead runs out along the ceiling, down the hull's side past the salon floor, forward
+    along the bottom of the hull to the shaft over the front post, down it and the post's tube
+    to the battery box in the sea; a Power Functions extension wire (8871) joins the unit's
+    plug to the box."""
+    cx = shp.SALON_C[0]
+    x_post = keel.post_tops()[0][0]
+    for side in (-1, 1):
+        sname = "port" if side < 0 else "stbd"
+        name = f"lamp_{sname}"
+        model.light(f"salon_{sname}", name, color="#FFC46A", power=1.6, offset=(0, 0, -20))
+        hull = [(cx, LAMP_Y + 10, side * 40), (cx, LAMP_Y + 10, side * 115),
+                (cx - 80, 100, side * 145), (shp.SALON_BAY[0], 120, side * 140),
+                (shp.WIDE[0] + 120, 140, side * 60), (x_post, 140, side * 10),
+                (x_post, shp.KEEL_TOP + 16, 0)]
+        route = [(x, Y_HULL + y, z) for x, y, z in hull] + [tuple(p) for p in info.lead_route]
+        model.cable(f"lead_{sname}", name, info.battery_tag, LEAD + EXTENSION, route)
+    model.glow("lights", 2.5)
+    model.glow("searchlight", 2.5)
+    model.glow("salon_lamp", 2.0)
+    model.glow("salon_candle", 2.0)
+    model.extra("62501c01", "led", 1, "Power Functions LED light unit 8870: its two lamps "
+                "light the salon (placed as the lamp heads)")
+    model.extra("58118", "Dark Bluish Gray", 1, "Power Functions extension wire 8871 (50 cm): "
+                "from the light unit's plug, down the front post, to the battery box")
+
+
+# ------------------------------------------------------------------ mechanism and video
+RUDDER_SWING = 22.0                    # degrees each way
+
+
+def salon_axis() -> tuple:
+    """The gull wing's hinge line (world): the deck's bars on the port side."""
+    T = pn.FACETS["b"].Q
+    return (0.0, Y_HULL + T[1], -T[0])
+
+
+def _axis(which: str) -> tuple:
+    """(point (world), unit direction): the propeller's shaft or the rudder's post, from the
+    tail module (its PROP_AXIS / RUDDER_AXIS, in the hull frame) or naut_tail."""
+    if TAIL:
+        p, d = TAIL.PROP_AXIS if which == "prop" else TAIL.RUDDER_AXIS
+    elif which == "prop":
+        p, d = (0.0, tail.PROP_Y, 0.0), (1.0, 0.0, 0.0)
+    else:
+        p, d = (tail.POST_X + 10, 0.0, 0.0), (0.0, 1.0, 0.0)
+    d = np.asarray(d, float)
+    return (p[0], Y_HULL + p[1], p[2]), d / np.linalg.norm(d)
+
+
+def _turn(d, deg: float) -> np.ndarray:
+    """Rotation by deg about the unit axis d (right hand, as rot(x=...) about +X)."""
+    a = math.radians(deg)
+    x, y, z = d
+    K = np.array([[0, -z, y], [z, 0, -x], [-y, x, 0]])
+    return np.eye(3) + math.sin(a) * K + (1 - math.cos(a)) * K @ K
+
+
+def _spin(which: str, deg: float) -> np.ndarray:
+    p, d = _axis(which)
+    return about(p, _turn(d, deg))
+
+
+def pose(t: float) -> dict:
+    """t 0..1: the salon's gull wing swings up and over from the deck's edge, the propeller
+    turns once and the rudder swings hard over."""
+    return {"salon": about(salon_axis(), rot(x=-OPEN_DEG * t)),
+            "prop": _spin("prop", 360.0 * t),
+            "rudder": _spin("rudder", RUDDER_SWING * t)}
+
+
+def performance(u: float) -> dict:
+    """The video's loop (u 0..1): three turns of the propeller, the rudder easing to and fro;
+    the salon stays shut."""
+    return {"salon": np.eye(4),
+            "prop": _spin("prop", 360.0 * 3 * u),
+            "rudder": _spin("rudder", RUDDER_SWING * math.sin(2 * math.pi * u))}
+
+
+def _mechanism(model):
+    model.moving_group("salon", "salon_panel")
+    model.moving_group("prop", "prop")
+    model.moving_group("rudder", "rudder")
+    model.pose = pose
+    model.meta["mechanism_name"] = "Salon, propeller and rudder"
+    model.meta["mechanism_labels"] = ["closed", "salon open, propeller turned, rudder over"]
+    model.meta["hero_open_elevation"] = 32          # from over the open salon
+    model.meta["performance"] = performance
+    model.meta["performance_info"] = {"hide_tags": ["stand"], "ground_y": Y_HULL + 264.0,
+                                      "pivot": [0.0, 0.0], "cycle_s": 4.0,
+                                      "forward": [-1.0, 0.0, 0.0], "rev_tag": "prop"}

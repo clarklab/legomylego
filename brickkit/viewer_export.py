@@ -143,14 +143,7 @@ def model_json(engine, proj, model, placed, *, files: dict, variants: list[tuple
         nodes.append({"part": part_id(p.part), "name": engine.catalog.part_name(p.part),
                       "join": p.build_order, "sub": p.owner, "local_step": p.local_step,
                       "group": model.group_of(p)})
-    # geometry extents in mm
-    lo, hi = np.full(3, np.inf), np.full(3, -np.inf)
-    for p in placed:
-        a, b = engine.geom.mesh(p.part).bbox
-        corners = np.array([[x, y, z] for x in (a[0], b[0]) for y in (a[1], b[1]) for z in (a[2], b[2])])
-        w = corners @ p.M[:3, :3].T + p.M[:3, 3]
-        lo, hi = np.minimum(lo, w.min(0)), np.maximum(hi, w.max(0))
-    dims = ((hi - lo) * 0.4).round(1).tolist()
+    dims = _dims_mm(engine, placed)
     mech = None
     if model.pose is not None:
         samples = [round(float(t), 4) for t in np.linspace(0, 1, 25)]
@@ -202,6 +195,81 @@ def model_json(engine, proj, model, placed, *, files: dict, variants: list[tuple
     }
 
 
+def _dims_mm(engine, placed) -> list:
+    """The model's extents (x, y, z) in mm."""
+    lo, hi = np.full(3, np.inf), np.full(3, -np.inf)
+    for p in placed:
+        a, b = engine.geom.mesh(p.part).bbox
+        corners = np.array([[x, y, z] for x in (a[0], b[0]) for y in (a[1], b[1]) for z in (a[2], b[2])])
+        w = corners @ p.M[:3, :3].T + p.M[:3, 3]
+        lo, hi = np.minimum(lo, w.min(0)), np.maximum(hi, w.max(0))
+    return ((hi - lo) * 0.4).round(1).tolist()
+
+
+def _status(report: Path) -> str:
+    if not report.exists():
+        return "unknown"
+    statuses = {c["status"] for c in json.loads(report.read_text())["checks"]}
+    return "fail" if "fail" in statuses else "warn" if "warn" in statuses else "pass"
+
+
+# a companion's files, copied when its `brickkit all` / `brickkit booklet` made them
+COMPANION_FILES = (("booklet", "booklet.pdf"), ("parts_csv", "parts.csv"),
+                   ("pick_a_brick_csv", "pick_a_brick.csv"),
+                   ("pick_a_brick_x5_csv", "pick_a_brick_x5.csv"),
+                   ("bricklink_xml", "bricklink_wanted.xml"),
+                   ("bricklink_x5_xml", "bricklink_wanted_x5.xml"))
+
+
+def export_companions(engine, proj, dst: Path) -> list[dict]:
+    """Smaller builds shown in their own section of this model's page (`[[companions]]` in its
+    model.toml, each naming another model's slug). Each one's booklet, shopping lists and
+    renders are copied to companions/<slug>/ under this model's site folder; its pieces, size,
+    steps and checks are summarised, with the hand-checked price and text from the config.
+    A companion's `variants` (e.g. a cheaper build) get their own shopping lists."""
+    from .project import Project
+    root = dst / "companions"
+    shutil.rmtree(root, ignore_errors=True)
+    out = []
+    for c in proj.config.get("companions", []):
+        cp = Project(c["slug"], proj.dir.parent)
+        model = cp.build(engine.catalog)
+        placed = model.flatten()
+        cdst = root / cp.slug
+        cdst.mkdir(parents=True)
+
+        def copy(src_dir: Path, prefix: str = "") -> dict:
+            files = {}
+            for key, name in COMPANION_FILES:
+                if (src_dir / name).exists():
+                    shutil.copy2(src_dir / name, cdst / f"{prefix}{name}")
+                    files[key] = f"companions/{cp.slug}/{prefix}{name}"
+            return files
+
+        renders = []
+        for d in ("hero", "renders"):
+            for png in sorted((cp.out / d).glob("*.png")) if (cp.out / d).exists() else []:
+                shutil.copy2(png, cdst / f"{d}_{png.name}")
+                renders.append(f"companions/{cp.slug}/{d}_{png.name}")
+        variants = []
+        for v in c.get("variants", []):
+            vm = cp.build(engine.catalog, v["name"])
+            variants.append({"name": v["name"], "title": v.get("title") or cp.variant_title(v["name"]),
+                             "note": v.get("note", ""), "price": v.get("price", {}),
+                             "pieces": sum(r["qty"] for r in _bom_rows(engine, vm.flatten(), vm.extras)),
+                             "files": copy(cp.out / "variants" / v["name"], f"{v['name']}_")})
+        cfg = cp.config.get("model", {})
+        out.append({
+            "slug": cp.slug, "name": model.name, "anchor": c.get("anchor", cp.slug),
+            "eyebrow": c.get("eyebrow", ""), "heading": c.get("heading", model.name),
+            "text": c.get("text") or cfg.get("description", ""),
+            "pieces": sum(r["qty"] for r in _bom_rows(engine, placed, model.extras)),
+            "steps": len(model.instruction_order()), "dims_mm": _dims_mm(engine, placed),
+            "price": c.get("price", {}), "status": _status(cp.out / "report.json"),
+            "files": copy(cp.out), "renders": renders, "variants": variants})
+    return out
+
+
 def _item_text(item) -> str:
     """One line for a check item: its part/colour and problem, else its values."""
     if not isinstance(item, dict):
@@ -249,7 +317,8 @@ def export_model(engine, proj, model, site_dir: Path | None = None) -> Path:
     export_glb(engine, placed, dst / "model.glb")
     files = {"glb": "model.glb"}
     for name, src in [("mpd", proj.out / f"{proj.slug}.mpd"), ("booklet", proj.out / "booklet.pdf"),
-                      ("video", proj.out / "video.mp4"), ("parts_csv", proj.out / "parts.csv"),
+                      ("video", proj.out / paths.video_name(proj.slug, 1080, 1080)),
+                      ("parts_csv", proj.out / "parts.csv"),
                       ("bricklink_xml", proj.out / "bricklink_wanted.xml"),
                       ("pick_a_brick_csv", proj.out / "pick_a_brick.csv"),
                       ("price_estimate", proj.out / "price_estimate.md"),
@@ -271,6 +340,7 @@ def export_model(engine, proj, model, site_dir: Path | None = None) -> Path:
     for name in proj.variants():
         variants.append((name, proj.variant_title(name), proj.build(engine.catalog, name)))
     data = model_json(engine, proj, model, placed, files=files, variants=variants)
+    data["companions"] = export_companions(engine, proj, dst)
     for v in data["variants"][1:]:                    # a colourway's own booklet, if made
         src = proj.out / "variants" / v["name"] / "booklet.pdf"
         if src.exists():

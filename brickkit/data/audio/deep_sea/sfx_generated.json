@@ -90,6 +90,32 @@
   "sha1": "ce3662ba0fcc9431e268f3f7fddab353fcc1239c",
   "source": "ElevenLabs sound generation API (Creator plan)"
  },
+ "creature_1.mp3": {
+  "bytes": 145493,
+  "generated": "2026-10-03",
+  "loop": false,
+  "model_id": "eleven_text_to_sound_v2",
+  "name": "creature",
+  "output_format": "mp3_44100_192",
+  "prompt": "A colossal sea monster's slow, deep, menacing moan heard underwater in the dark: a huge living creature's low, throaty groan rising and falling, wet and resonant, with a long echoing tail, like a whale's call warped into something monstrous. No music, no voices.",
+  "prompt_influence": 0.6,
+  "seconds": 6.0,
+  "sha1": "830aaa3e09ecfd1ecba1dc9fa81e7c9eaeb2a33d",
+  "source": "ElevenLabs sound generation API (Creator plan)"
+ },
+ "creature_2.mp3": {
+  "bytes": 145493,
+  "generated": "2026-10-03",
+  "loop": false,
+  "model_id": "eleven_text_to_sound_v2",
+  "name": "creature",
+  "output_format": "mp3_44100_192",
+  "prompt": "A colossal sea monster's slow, deep, menacing moan heard underwater in the dark: a huge living creature's low, throaty groan rising and falling, wet and resonant, with a long echoing tail, like a whale's call warped into something monstrous. No music, no voices.",
+  "prompt_influence": 0.6,
+  "seconds": 6.0,
+  "sha1": "c4cf00d357391ba9cad1cde164e96f337cb10fe2",
+  "source": "ElevenLabs sound generation API (Creator plan)"
+ },
  "groan_1.mp3": {
   "bytes": 97846,
   "generated": "2026-09-30",

@@ -1,0 +1,17 @@
+# Dracula's own sound for his Quick Bricks video (brickkit quick dracula): his laugh as the
+# last piece goes on. Generated with ElevenLabs (Creator plan: commercial use allowed) by
+# tools/elevenlabs_sfx.py dracula; sfx_generated.json records the text and settings behind the
+# file. model.toml's [quick] ending plays it.
+#
+# What was tried first: the sound-effects model (prompts for a vampire's "mwah-ha-ha", then a
+# slow, sinister one). It always laughs at a chuckle's pace, about four "ha"s a second, however
+# it is asked - too quick and light. A voice reading the laugh out is half that pace and far
+# deeper: slow, drawn out and sure of itself. Of three voices, Carter's was picked.
+
+[[speech]]
+name = "count_carter"
+voice = "qNkzaJoHLLdpvgh5tISm"
+voice_name = "Carter the Mountain King"
+stability = 0.0
+variants = 1
+text = "[slow, deep, sinister evil laugh] Mwah... ha... ha... ha... haaaa."

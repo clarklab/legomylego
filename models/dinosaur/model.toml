@@ -1,0 +1,23 @@
+[model]
+name = "Mini T. rex"
+design = "design.py"
+description = "A tiny red-and-orange dinosaur with an open toothy mouth, black eyes, clip-on red arms, dark-tan feet, downward-curving white claws, and a tapering tail. Reconstructed from a single reference image."
+collection = "quick_bricks"
+
+[palette]
+red = "Red"
+body = "Orange"
+leg = "Dark Tan"
+pin_leg = "Tan"
+tooth = "White"
+eye = "Black"
+
+[checks]
+enabled = ["real_elements", "connections", "collisions", "buildability", "stability", "mechanism", "electrics", "technique"]
+
+[quick]
+set = "night_shift"
+seconds = 14
+highlight = ["arms", "eyes", "teeth"]
+close_ups = 3
+music = false

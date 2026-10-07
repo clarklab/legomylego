@@ -40,6 +40,9 @@ from kit import use_M  # noqa: E402
 
 LIFT = 200.0
 STAGE_M = translate(0, tower.YC, 0)
+CLOCKMASTER = (-100, 0, -510)    # between the two lawn studs his feet go on
+CLOCKMASTER_FIG = dict(head=("3626cpr3067", "Yellow"), torso=("973c27h01pr4203", "Black"),
+                       legs=("970c07", "Dark Brown"), hat=("3878", "Black"))
 
 
 def _roof(model):
@@ -126,6 +129,11 @@ def build(model):
         main.use(pole, (x, 0, z), insert=(0, -1, 0))
         main.place("4495b", colour, (x, base.FLAG_Y, z), rot(y=90), tag=tag,
                    insert=(0, -1, 0))
+
+    # the clockmaster, on the front lawn left of the walk, across from the flags (the same
+    # figure as the mini courthouse's): glasses and grey stubble, a black vest and blue tie, a
+    # top hat
+    model.minifig("clockmaster", CLOCKMASTER, None, title="The clockmaster", **CLOCKMASTER_FIG)
 
     model.moving_group("top", "tower_top", lifts_off=True)
     for f in clock.FACES:

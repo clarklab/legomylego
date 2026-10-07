@@ -176,7 +176,8 @@ class Batch:
             lo, hi = bbox(it[0])
             corners = np.array([[x, y, z] for x in (lo[0], hi[0]) for y in (lo[1], hi[1])
                                 for z in (lo[2], hi[2])]) @ it[2][:3, :3].T + it[2][:3, 3]
-            low_of[j] = round(self.lows.get(j, corners[:, 1].max()) / 4)   # lowest point, 4 LDU bands
+            # its lowest point, in 4 LDU bands
+            low_of[j] = round(self.lows.get(j, corners[:, 1].max()) / 4)
             box[j] = (corners.min(0) + 0.6, corners.max(0) - 0.6)
         placed: list[int] = []
 
@@ -209,7 +210,7 @@ class Batch:
             todo = [j for j, it in enumerate(self.items) if it[3] in cats]
             if set(cats) & set(hanging):
                 self._hang(sub, todo, adj, n0, built, placed, placed_set, box, pos, captions,
-                           told, per_step, reach)
+                           told, per_step, reach, under)
                 continue
             key = order or (lambda j: (-low_of[j], pos[j][0], pos[j][2]))
             todo.sort(key=key)
@@ -274,15 +275,20 @@ class Batch:
         self.lows = {}
 
     def _hang(self, sub, todo, adj, n0, built, placed, placed_set, box, pos, captions, told,
-              per_step, reach):
+              per_step, reach, under=None):
         """Build hanging parts top down: each step takes parts that join what is built,
-        highest first, near the step's first part."""
+        highest first, near the step's first part; a part waits for the hanging parts over it
+        (it is pushed up under them)."""
         top_of = {j: round(box[j][0][1] / 4) for j in todo}
         todo = sorted(todo, key=lambda j: (top_of[j], pos[j][0], pos[j][2]))
+        group = set(todo)
+        over = {j: {k for k in group if under is not None and j in under[k]} for j in todo}
         while todo:
             step, anchor = [], None
             while todo and len(step) < per_step:
-                ready = [j for j in todo if adj[n0 + j] & built] or todo[:1]
+                joined = [j for j in todo if adj[n0 + j] & built]
+                ready = ([j for j in joined if over[j] <= placed_set and not over[j] & set(step)]
+                         or joined or todo[:1])
                 hi = min(top_of[j] for j in ready)
                 ready = [j for j in ready if top_of[j] == hi]
                 if step and hi < max(top_of[k] for k in step):
@@ -315,10 +321,11 @@ def use_M(sub, child, M, tag="", insert=None):
 
 
 # ------------------------------------------------------------------ packing
-def pack(cells, sizes, below=None, prefer="x", shift=0, above=None) -> list[tuple]:
+def pack(cells, sizes, below=None, prefer="x", shift=0, above=None, bridge=False) -> list[tuple]:
     """Cover cells with rectangles (both orientations); with `below` ({cell: group}) each
     rectangle is chosen to join as many still separate groups as it can, then (with `above`,
-    the cells of the layer to come) to reach under that layer, then by area.
+    the cells of the layer to come) to reach under that layer, then by area. `bridge`: first
+    lay the rectangles that join groups (wherever they are), then cover the rest.
     Returns (i0, i1, j0, j1)."""
     parent: dict = {}
 
@@ -340,6 +347,8 @@ def pack(cells, sizes, below=None, prefer="x", shift=0, above=None) -> list[tupl
     if above:       # cells nothing will cover first, while their neighbours are still free
         seq = [c for c in seq if c not in above] + [c for c in seq if c in above]
     out = []
+    if bridge and below:
+        seq = _bridges(seq, free, cand, below, root, parent, out, prefer) + seq
     for c in seq:
         if c not in free:
             continue
@@ -365,6 +374,40 @@ def pack(cells, sizes, below=None, prefer="x", shift=0, above=None) -> list[tupl
             for a in ids[1:]:
                 parent[root(a)] = root(ids[0])
     return out
+
+
+def _bridges(seq, free, cand, below, root, parent, out, prefer) -> list:
+    """pack's first pass: across each seam between two groups not yet joined, the biggest
+    rectangle that straddles it."""
+    for c in list(seq):
+        for dc in ((1, 0), (0, 1)):
+            n = (c[0] + dc[0], c[1] + dc[1])
+            if c not in free or n not in free or c not in below or n not in below:
+                continue
+            if root(below[c]) == root(below[n]):
+                continue
+            best = None
+            for w, d in cand:
+                for oa in range(w):
+                    for ob in range(d):
+                        i0, j0 = c[0] - oa, c[1] - ob
+                        if not (i0 <= n[0] < i0 + w and j0 <= n[1] < j0 + d):
+                            continue
+                        box = {(i0 + a, j0 + b) for a in range(w) for b in range(d)}
+                        if not box <= free:
+                            continue
+                        groups = {root(below[x]) for x in box if x in below}
+                        score = (len(groups), w * d)
+                        if best is None or score > best[0]:
+                            best = (score, box, (i0, i0 + w - 1, j0, j0 + d - 1))
+            if best is None:
+                continue
+            free -= best[1]
+            out.append(best[2])
+            ids = [root(below[x]) for x in best[1] if x in below]
+            for a in ids[1:]:
+                parent[root(a)] = root(ids[0])
+    return []
 
 
 def cells_of(r) -> set:

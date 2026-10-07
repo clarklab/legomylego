@@ -24,7 +24,7 @@ function card(m, media) {
     <div class="frame"><video controls playsinline preload="none" ${posterUrl ? `poster="${posterUrl}"` : ''} aria-label="${esc(m.name)} build video">
       <source src="${media.url(m.video)}" type="video/mp4"></video></div>
     <div class="body"><h2>${esc(m.name)}</h2>${m.description ? `<p class="desc">${esc(m.description)}</p>` : ''}
-      <div class="meta">${meta}<a class="chip" href="${media.url(m.video)}" download="${esc(m.slug)}.mp4">${icon('download')}MP4${size ? ` · ${fmtBytes(size)}` : ''}</a>
+      <div class="meta">${meta}<a class="chip" href="${media.url(m.video)}" download="${esc(m.video.split('/').pop())}">${icon('download')}MP4${size ? ` · ${fmtBytes(size)}` : ''}</a>
         <a class="more" href="${modelUrl(m.slug)}">Open the model ${icon('arrowRight')}</a></div></div>
   </article>`;
 }

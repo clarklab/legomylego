@@ -1,0 +1,7 @@
+0 brickkit overlay for "Windscreen 6 x 6 x 3 Canopy Half Sphere with Dual 2 Fingers" (50747)
+0 // The LDCad shadow file gives the canopy's two pairs of fingers no group, so they never meet
+0 // the click hinges they lock with (44567, 44301, 30383: group lckHng). They are LEGO's
+0 // locking two-finger hinge (44302's sequence, 4 8 4): add the grouped snaps at the same
+0 // places (overlays add to the library's snaps).
+0 !LDCAD SNAP_FGR [group=lckHng] [genderOfs=M] [seq=4 8 4] [pos=-20 0 0] [ori=0 1 0 -1 0 0 0 0 1]
+0 !LDCAD SNAP_FGR [group=lckHng] [genderOfs=M] [seq=4 8 4] [pos=20 0 0] [ori=0 1 0 -1 0 0 0 0 1]

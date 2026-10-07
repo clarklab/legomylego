@@ -1,0 +1,35 @@
+[model]
+name = "Hamburger"
+design = "design.py"
+description = "A life-size LEGO cheeseburger, 125 mm (4.9 in) across and 96 mm tall: a sesame bun whose top is a rounded dome 42 mm high with white seeds scattered over it, a seared patty, a slice of cheese with its four corners hanging down, ruffled lettuce and two tomato slices. Each layer is built on its own and clicks onto the next on one shared 4 x 4 stud plate, so the fillings stack in any order between the buns and the burger comes apart again."
+
+[palette]
+crust = "Medium Nougat"        # the golden crust of both buns
+crumb = "Tan"                  # the cut faces of the buns
+seed = "White"                 # sesame seeds (1 x 1 tiles: quarter-round, half-round, round)
+patty = "Reddish Brown"        # the meat
+char = "Dark Brown"            # seared edges and grill marks
+cheese = "Bright Light Orange" # the cheese slice
+lettuce = "Bright Green"       # the leaf
+leaf = "Bright Green"          # the ruffled rosettes round its edge
+tomato = "Red"                 # tomato skin and flesh
+pulp = "Coral"                 # the paler middle of each tomato slice
+
+[booklet]
+subtitle = "A life-size cheeseburger in six layers. Build each one, then stack them up: every layer clicks onto the next."
+intro = "A cheeseburger as big as the real thing, about 12.5 cm (5 inches) across and nearly 10 cm tall. You build it the way it is put together: the bottom bun, the patty, the cheese, the lettuce, the tomato and the sesame top bun, each one on its own. Every layer under the top bun has the same 4 x 4 square of studs in the middle of its top, and every layer above the bottom bun has open anti-studs under its middle, so the fillings click on in any order and pull apart again. The buns and the patty are octagons 14 studs across; their four corners are small walls turned to the diagonals, each held by a single stud and wedged between its neighbours. The top bun is a dome: its edge turns over in a quarter-round brick, then leans in through a slope and a ring of curved slopes to a crown of curved slopes with rounded corners. Its sesame seeds are small white tiles in three shapes, closest together on the crown and fewer toward the edge."
+notes = [
+  "The four turned corners of the buns and the patty each sit on one stud over smooth tiles. Press them down gently and line them up with their neighbours before you add anything on top. The top bun has four more, smaller ones in the ring of curved slopes round its crown.",
+  "A curved slope stands on two levels: its low end on one plate, its high end on a plate one higher. In the top bun's ring and crown, put the upper plate on first and press the slope down at both ends.",
+  "The two sesame seeds on the crown's jumper plates each sit on a single stud, so they turn freely. Turn them different ways: seeds on a real bun never line up.",
+  "The cheese's four tips hang on clips, so you can swing them up or down. They hang best over the patty, which dips under each tip; on other layers they rest a little higher.",
+  "To take the burger apart, lift each layer straight up, starting with the top bun. Hold a layer by its middle when you pull it off.",
+]
+works = [
+  { title = "Stack it any way", text = "Every layer under the top bun has the same 4 x 4 studs in the middle of its top, and every layer above the bottom bun has open anti-studs under its middle, so the fillings go on in any order. At least sixteen studs hold every joint, so the whole burger can be picked up by its top bun.", image = "hero/hero.png" },
+  { title = "Take it apart", text = "Lift the layers off one by one: sesame bun, tomato, lettuce, cheese, patty and bottom bun.", image = "hero_open/hero.png" },
+]
+
+[checks]
+enabled = ["real_elements", "connections", "collisions", "buildability", "stability",
+           "mechanism", "electrics", "technique"]

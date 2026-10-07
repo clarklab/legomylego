@@ -1,4 +1,4 @@
-"""Build video: `brickkit video SLUG` -> models/SLUG/out/video.mp4 (1080x1080 H.264 + AAC, 30 fps).
+"""Build video: `brickkit video SLUG` -> models/SLUG/out/SLUG-1080x1080.mp4 (H.264 + AAC, 30 fps).
 
 A showreel of the model, cut to a beat and driven by the model's own data:
 
@@ -12,15 +12,18 @@ A showreel of the model, cut to a beat and driven by the model's own data:
     lift        it lifts off its stand                                          ([video] lift)
     colourways  wipes between the colourways                                    (variants)
     booklet     the instruction booklet's pages turn                            (booklet.pdf)
+    companions  smaller builds featured with it: turntable, chips, to scale   ([[companions]] video)
     outro       logo, the site's URL, the small print
+    coda        (opt-in) the last image: the model far off in the dark sea, a giant squid rising
+                out of the murk between it and the camera                      ([video.coda])
 
 Pipeline:
   1. timeline.py plans the 3D shots frame by frame; reel.py plans the graphics and the sound
      from the model's data (themes.py skins it: model.toml [video] theme = ...);
   2. the model-scene plates render in Blender EEVEE (render/blender_animate.py), colourways
      once per colour scheme, the booklet flip in its own scene (booklet_flip.py) - always under
-     render/scene.py's blender_slot, one chunk of frames per Blender process; a cold open in
-     its own set (render/blender_cold_open.py);
+     render/scene.py's blender_slot, one chunk of frames per Blender process; a cold open and
+     a coda in their own set (render/blender_cold_open.py);
   3. the compositor (web/, driven by compose.py in headless Chromium) draws every frame:
      plates, type, HUD, data graphics, wipes, grading;
   4. audio.py synthesises the music and effects from the cue sheet; ffmpeg encodes.
@@ -173,7 +176,7 @@ def segment_digest(tl: dict, seg: dict, q: dict, extra=None, variant: str | None
         base.update(code=_file_hash(FLIP, SCENE_SCRIPT))
         return _digest(base)
     if seg["kind"] == "cold":                 # its own set: the plan, the parts, the scripts
-        co = {k: v for k, v in tl["cold_open"].items() if k not in ("start", "end", "cut", "catch", "rev")}
+        co = {k: v for k, v in tl[seg["name"]].items() if k not in ("start", "end", "cut", "catch", "rev")}
         base.update(cold=_digest(co), code=_file_hash(COLD, ANIMATE, SCENE_SCRIPT),
                     scene=_digest({k: v for k, v in tl["scene"].items()
                                    if k not in ("backdrop", "ground_color")}))
@@ -369,9 +372,9 @@ def make_video(engine, proj, model, out_dir: Path, *, preview: bool = False,
     segs = T.plan_segments(model, booklet=pdf is not None, beat=beat, variants=list(variants),
                            cfg=cfg)
     plan = None
-    if pdf is not None:
+    bseg = next((s for s in segs if s["name"] == "booklet"), None)   # (none when skipped)
+    if pdf is not None and bseg is not None:
         from .booklet_flip import prepare
-        bseg = next(s for s in segs if s["name"] == "booklet")
         vpdfs = {v: out_dir / "variants" / v / "booklet.pdf" for v in variants}
         plan = prepare(pdf, base / "video_frames" / "pages", bseg["end"] - bseg["start"],
                        T.FPS, q["page_px"], beat,
@@ -390,10 +393,16 @@ def make_video(engine, proj, model, out_dir: Path, *, preview: bool = False,
     (work / "timeline.json").write_text(json.dumps(tl))
     bplan = out_dir / "booklet" / "plan.json"
     bsteps = len(json.loads(bplan.read_text())["steps"]) if bplan.exists() else None
+    want = lambda name: not segments or name in segments                 # noqa: E731
     cut = hero_cutout(engine, model, out_dir, tl["model"]["shape"],       # the title's still
-                      render and (not segments or "title" in segments), log, dest=base)
+                      render and (want("title") or want("companions")), log, dest=base)
+    comps = None
+    if any(s["name"] == "companions" for s in tl["segments"]):           # their own footage
+        from .companions import prepare
+        comps = prepare(engine, proj, cfg.get("companions") or [], work, size,
+                        render and want("companions"), log)
     reel = R.plan_reel(engine, proj, model, tl, theme, out_dir, work, booklet_plan=plan,
-                       booklet_steps=bsteps, hero_file=cut, log=log)
+                       booklet_steps=bsteps, hero_file=cut, companions=comps, log=log)
 
     names = [s["name"] for s in tl["segments"]]
     if segments:
@@ -423,17 +432,17 @@ def make_video(engine, proj, model, out_dir: Path, *, preview: bool = False,
     plates = {"step": step}
     jobs: dict[str | None, list] = collections.OrderedDict()
     book_job, book_merge = None, []
-    cold_job = []
+    cold_jobs = {}
     for seg in chosen:
         if seg["kind"] == "gfx":
             continue
-        if seg["kind"] == "cold":                 # its own set; black after the cut
-            d = work / "cold_open"
+        if seg["kind"] == "cold":                 # its own set (a cold open: black after the cut)
+            d = work / seg["name"]
             if not borrow:
                 _prepare_dir(d, segment_digest(tl, seg, render_q), force)
-            plates["cold_open"] = ("work" if plates_at != work else "frames") + "/cold_open"
-            cold_job = [[f, str(d / f"{f - seg['start']:05d}.png")]
-                        for f in frames_of(seg, seg["start"], tl["cold_open"]["cut"])]
+            plates[seg["name"]] = ("work" if plates_at != work else "frames") + "/" + seg["name"]
+            cold_jobs[seg["name"]] = [[f, str(d / f"{f - seg['start']:05d}.png")]
+                                      for f in frames_of(seg, seg["start"], tl[seg["name"]]["cut"])]
             continue
         if seg["kind"] == "booklet":
             d = plates_at / "booklet"
@@ -478,12 +487,12 @@ def make_video(engine, proj, model, out_dir: Path, *, preview: bool = False,
             timings[f"scene{'@' + v if v else ''}"] = _run_blender(
                 ANIMATE, job, work / "scene_job.json", f"model scene{' (' + v + ')' if v else ''}",
                 log)
-        if cold_job:
-            job = {"timeline": str(work / "timeline.json"), "frames": cold_job,
+        for name, fr in cold_jobs.items():        # the cold open, the coda: their own sets
+            job = {"timeline": str(work / "timeline.json"), "frames": fr,
                    "size": [size, size], "samples": samples, "engine": render_engine,
-                   "device": device}
-            timings["cold_open"] = _run_blender(COLD, job, work / "cold_job.json", "cold open",
-                                                log)
+                   "device": device, "plan": name}
+            timings[name] = _run_blender(COLD, job, work / f"{name}_job.json",
+                                         name.replace("_", " "), log)
         if book_job:
             job = {"plan": plan, "frames": book_job, "size": [size, size], "samples": samples,
                    "engine": render_engine, "device": device}
@@ -531,6 +540,8 @@ def make_video(engine, proj, model, out_dir: Path, *, preview: bool = False,
     if tag:
         name = f"_{tag}{name}"
     out = base / f"video{name}{'_preview' if preview else ''}.mp4"
+    if not name and not preview:                       # the finished showreel: model-size.mp4
+        out = base / paths.video_name(proj.slug, size, size)
     enc = Encoder(out, T.FPS / step, size, q, wav, offset)
     thumbs = []
     every = int(T.FPS)

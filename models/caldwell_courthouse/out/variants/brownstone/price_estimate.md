@@ -1,6 +1,6 @@
 # The Caldwell County Courthouse: price estimate
 
-**Roughly $254 - $848** for 6,659 pieces in 160 lines, new parts on BrickLink, before shipping.
+**Roughly $257 - $861** for 6,663 pieces in 164 lines, 1 minifigure among them, new parts on BrickLink, before shipping.
 
 This is a rough range from typical per-piece prices by part type (see `brickkit/data/price_bands.json`), scaled up for transparent colours and for part/colour combinations that appeared in few sets. It is not live market data: set up BrickLink API credentials (see `brickkit/bom/live_price.py`) for dated prices.
 
@@ -45,6 +45,7 @@ For a real quote, upload `bricklink_wanted.xml` as a BrickLink Wanted List and u
 | 35 | 3666 Plate 1 x 6 | Reddish Brown | 0.05-0.15 | 1.75-5.25 | 1 x 6 |
 | 48 | 68568 Plate Round Corner 3 x 3 with 2 x 2 Round Cutout | Reddish Brown | 0.03-0.11 | 1.34-5.38 | plate, in 29 set(s) |
 | 32 | 3040b Brick Sloped 45° 2 x 1 with Bottom Pin | Reddish Brown | 0.05-0.15 | 1.60-4.80 | slope |
+| 1 | 973pb3159c01 Torso Vest with White Shirt and Blue Tie, Buttons Print, White Arms, Yellow Hands | Black | 1.25-5.00 | 1.25-5.00 | minifig torso |
 | 48 | 25269 Tile Round 1 x 1 Quarter | Black | 0.03-0.10 | 1.44-4.80 | tile |
 | 48 | 27925 Tile 2 x 2 Curved, Macaroni | Black | 0.03-0.10 | 1.44-4.80 | tile |
 | 20 | 2423 Plant, Leaves 4 x 3 | Green | 0.05-0.25 | 1.00-5.00 | other |
@@ -55,24 +56,26 @@ For a real quote, upload `bricklink_wanted.xml` as a BrickLink Wanted List and u
 | 54 | 3460 Plate 1 x 8 | Tan | 0.02-0.08 | 1.08-4.32 | plate |
 | 32 | 87087 Brick Special 1 x 1 with Stud on 1 Side | Light Bluish Gray | 0.04-0.12 | 1.28-3.84 | brick |
 | 16 | 4083 Bar 1 x 4 x 2 with Studs | Black | 0.05-0.25 | 0.80-4.00 | other |
-| 16 | 59900 Cone 1 x 1 [Top Groove] | Black | 0.05-0.25 | 0.80-4.00 | other |
+| 16 | 4589b Cone 1 x 1 [Top Groove] | Black | 0.05-0.25 | 0.80-4.00 | other |
 | 46 | 3023 Plate 1 x 2 | Tan | 0.02-0.08 | 0.92-3.68 | plate |
 | 28 | 3004 Brick 1 x 2 | Black | 0.04-0.12 | 1.12-3.36 | brick |
 | 16 | 3685 Brick Sloped 75° 2 x 2 x 3 Double Convex | Black | 0.07-0.21 | 1.12-3.36 | slope, in 22 set(s) |
 | 44 | 3623 Plate 1 x 3 | Tan | 0.02-0.08 | 0.88-3.52 | plate |
 | 22 | 3666 Plate 1 x 6 | Tan | 0.05-0.15 | 1.10-3.30 | 1 x 6 |
 | 33 | 2431 Tile 1 x 4 with Groove | Reddish Brown | 0.03-0.10 | 0.99-3.30 | tile |
+| 1 | 3626pb2534 Minifig Head Wheeler, Glasses, Gray Eyebrows and Stubble, Medium Nougat Cheek Lines and Chin Dimple Print | Yellow | 0.70-3.50 | 0.70-3.50 | minifig head, in 18 set(s) |
 | 32 | 25269 Tile Round 1 x 1 Quarter | Tan | 0.03-0.10 | 0.96-3.20 | tile |
 | 20 | 6636 Tile 1 x 6 with Groove | Reddish Brown | 0.05-0.15 | 1.00-3.00 | 1 x 6 |
 | 30 | 63864 Tile 1 x 3 | Reddish Brown | 0.03-0.10 | 0.90-3.00 | tile |
 | 24 | 3062b Brick Round 1 x 1 Open Stud | Black | 0.04-0.12 | 0.96-2.88 | brick |
 | 24 | 30414 Brick Special 1 x 4 with 4 Studs on One Side | Tan | 0.04-0.12 | 0.96-2.88 | brick |
+| 1 | 970c00 Hips and Dark Brown Legs | Dark Brown | 0.75-3.00 | 0.75-3.00 | minifig legs |
 | 37 | 3623 Plate 1 x 3 | Light Bluish Gray | 0.02-0.08 | 0.74-2.96 | plate |
 | 16 | 4032a Plate Round 2 x 2 with Axle Hole Type 1 (+ Opening) | Reddish Brown | 0.03-0.20 | 0.48-3.20 | axle |
-| 28 | 3069b Tile 1 x 2 with Groove | Black | 0.03-0.10 | 0.84-2.80 | tile |
+| 28 | 3069 Tile 1 x 2 with Groove | Black | 0.03-0.10 | 0.84-2.80 | tile |
 | 12 | 30046 Window 1 x 2 x 2 2/3 Pane Lattice Diamond with Rounded Top | Black | 0.05-0.25 | 0.60-3.00 | other |
 | 12 | 30044 Window 1 x 2 x 2 2/3 with Rounded Top | White | 0.05-0.25 | 0.60-3.00 | other |
-| 27 | 3069b Tile 1 x 2 with Groove | Reddish Brown | 0.03-0.10 | 0.81-2.70 | tile |
+| 27 | 3069 Tile 1 x 2 with Groove | Reddish Brown | 0.03-0.10 | 0.81-2.70 | tile |
 | 4 | 3958 Plate 6 x 6 | Black | 0.20-0.60 | 0.80-2.40 | 6 x 6 |
 | 32 | 3710 Plate 1 x 4 | Green | 0.02-0.08 | 0.64-2.56 | plate |
 | 20 | 26604 Brick Special 1 x 1 with Studs on 2 Adjacent Sides | Light Bluish Gray | 0.04-0.12 | 0.80-2.40 | brick |
@@ -82,9 +85,9 @@ For a real quote, upload `bricklink_wanted.xml` as a BrickLink Wanted List and u
 | 4 | 4740 Dish 2 x 2 Inverted [Radar] | Tan | 0.15-0.60 | 0.60-2.40 | dish |
 | 23 | 3068b Tile 2 x 2 with Groove | Black | 0.03-0.10 | 0.69-2.30 | tile |
 | 29 | 3710 Plate 1 x 4 | Dark Bluish Gray | 0.02-0.08 | 0.58-2.32 | plate |
-| 22 | 3069b Tile 1 x 2 with Groove | Light Bluish Gray | 0.03-0.10 | 0.66-2.20 | tile |
+| 22 | 3069 Tile 1 x 2 with Groove | Light Bluish Gray | 0.03-0.10 | 0.66-2.20 | tile |
 | 28 | 3460 Plate 1 x 8 | Reddish Brown | 0.02-0.08 | 0.56-2.24 | plate |
-| 9 | 59900 Cone 1 x 1 [Top Groove] | Reddish Brown | 0.05-0.25 | 0.45-2.25 | other |
+| 9 | 4589b Cone 1 x 1 [Top Groove] | Reddish Brown | 0.05-0.25 | 0.45-2.25 | other |
 | 26 | 60479 Plate 1 x 12 | Tan | 0.02-0.08 | 0.52-2.08 | plate |
 | 24 | 3023 Plate 1 x 2 | Black | 0.02-0.08 | 0.48-1.92 | plate |
 | 8 | 60593 Window 1 x 2 x 3 Flat Front | Reddish Brown | 0.05-0.25 | 0.40-2.00 | other |
@@ -93,6 +96,7 @@ For a real quote, upload `bricklink_wanted.xml` as a BrickLink Wanted List and u
 | 5 | 3688 Brick Sloped 75° 2 x 2 x 2 Quadruple Convex | Black | 0.10-0.30 | 0.50-1.50 | slope, in 10 set(s) |
 | 4 | 11609 Tile, Star with Stud Holder, Pin Hole | Red | 0.08-0.40 | 0.32-1.60 | pin, in 3 set(s) |
 | 12 | 3062b Brick Round 1 x 1 Open Stud | Reddish Brown | 0.04-0.12 | 0.48-1.44 | brick |
+| 1 | 3878 Top Hat | Black | 0.30-1.50 | 0.30-1.50 | hat |
 | 18 | 3035 Plate 4 x 8 | Green | 0.02-0.08 | 0.36-1.44 | plate |
 | 18 | 3035 Plate 4 x 8 | Light Bluish Gray | 0.02-0.08 | 0.36-1.44 | plate |
 | 18 | 3460 Plate 1 x 8 | Light Bluish Gray | 0.02-0.08 | 0.36-1.44 | plate |
@@ -171,7 +175,7 @@ For a real quote, upload `bricklink_wanted.xml` as a BrickLink Wanted List and u
 
 ## Not LEGO: buy separately
 
-**Roughly $20 - $60** for 4 item(s), not included above (not on BrickLink; see `hardware.csv`). With them the model comes to roughly $274 - $908.
+**Roughly $20 - $60** for 4 item(s), not included above (not on BrickLink; see `hardware.csv`). With them the model comes to roughly $277 - $921.
 
 | Qty | Item | Each (USD) | Line (USD) | Where to buy |
 |---:|---|---:|---:|---|

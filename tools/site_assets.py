@@ -351,13 +351,16 @@ def model_media(slug: str, data: dict, slug_dir: Path) -> dict:
     images = {}
     out_dir = SITE / "assets" / "img" / slug
     wanted = set()
-    for r in data.get("files", {}).get("renders") or []:
+    renders = list(data.get("files", {}).get("renders") or [])
+    renders += [r for c in data.get("companions") or [] for r in c.get("renders") or []]
+    for r in renders:
         src = slug_dir / r
         if not src.exists():
             continue
         im = Image.open(src)
         im = im.convert("RGBA") if im.mode in ("RGBA", "LA", "P") else im.convert("RGB")
-        stem = Path(r).stem
+        # a companion's renders (companions/<slug>/...) keep their folder in the name
+        stem = Path(r).stem if r.startswith("renders/") else r.rsplit(".", 1)[0].replace("/", "_")
         lg, sm = out_dir / f"{stem}.webp", out_dir / f"{stem}-480.webp"
         out_dir.mkdir(parents=True, exist_ok=True)
         key = files.get(r, {}).get("v", "")

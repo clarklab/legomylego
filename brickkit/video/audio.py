@@ -28,10 +28,13 @@ Cue sheet (the video's edit plan produces it):
                     recorded sound, see SFX.fx_sample); `duck` [dB, release s] ducks the music
     samples         optional {name: {path, sha1}}: recorded sounds the "sample" events play
                     (WAV, or anything ffmpeg decodes)
-    track           optional {path, offset?, fade_out?, breaks?}: a recorded music bed (balanced
-                    to the music level, ducked like the synth; a "cold" section then leaves it
-                    alone); breaks [{start, end, hz?, rise?, to?, gain?}] (frames): filter
-                    breaks, see filter_break
+    track           optional {path, offset?, fade_out?, breaks?, at?, until?, gain?}: a recorded
+                    music bed (balanced to the music level, `gain` dB on that, ducked like the
+                    synth; a "cold" section
+                    then leaves it alone), starting at frame `at` (default 0) `offset` s into
+                    the file, faded out by frame `until` if given (else at the end); breaks
+                    [{start, end, hz?, rise?, to?, gain?}] (frames): filter breaks, see
+                    filter_break
 
 Layout: utilities - loudness and mastering - instruments (Voices) - SFX - arrangement (STYLES,
 Arranger) - render_audio - demo:  python -m brickkit.video.audio playful out.wav [seconds]
@@ -965,6 +968,17 @@ class Voices:
 
 
 # ================================================================================ SFX
+def _muffle(y, mu, sr):
+    """y (n, 2) heard through a hull under water as mu (per sample, 0..1) goes to 1: its highs
+    gone (two low-passes sweeping from 16 kHz down to 320 Hz) and a little quieter."""
+    mu = np.clip(np.asarray(mu, float), 0.0, 1.0)
+    if mu.max() <= 0:
+        return y
+    fc = np.exp(np.log(16000.0) * (1 - mu) + np.log(320.0) * mu)
+    y = tv_filter(tv_filter(y, "lp", fc, sr, q=0.6, block=256), "lp", fc, sr, q=0.6, block=256)
+    return y * (1.0 - 0.3 * mu)[:, None]
+
+
 class SFX:
     """Sound effects for cue-sheet events. Each `fx_<type>(ev, rng)` returns a buffer that starts
     exactly at the event's frame (transients at sample 0; whoosh/riser build towards frame + dur).
@@ -975,7 +989,8 @@ class SFX:
              "power": -11.0, "motor": -19.0, "glitch": -17.0, "boing": -16.0, "page": -16.0,
              "type": -21.0, "pop": -17.0, "riffle": -17.0, "flick": -19.0, "slap": -12.0,
              "power_off": -13.0, "chainsaw": -6.0, "burn": -14.0, "typewriter": -18.0,
-             "chainsaw_bed": -5.5, "wind": -30.0, "sample": 0.0, "hum": -36.0}
+             "chainsaw_bed": -5.5, "wind": -30.0, "sample": 0.0, "hum": -36.0, "organ": -4.0,
+             "dread": -15.0}
     DUR = {"whoosh": 8, "riser": 30, "scan": 30, "power": 36, "motor": 30, "glitch": 6,
            "riffle": 60, "chainsaw": 54, "burn": 10}
     DUCK = {"hit": (7.0, 0.7), "power": (5.0, 0.9), "snap": (4.0, 0.35),     # dB, release s
@@ -1305,9 +1320,10 @@ class SFX:
     def fx_sample(self, ev, rng):
         """A recorded sound, cues["samples"][`file`]: its peak set to `level` dBFS, played from
         `offset` s in, looped (crossfaded) to `dur` frames with `loop`, faded (`fade_in`,
-        `fade_out` s), shaped by `gain_curve` (per frame from the event's), stopped dead at
-        frame `until`. `align` "peak": its loudest moment lands on the event's frame (so it
-        starts earlier). Returns (buffer, samples before the frame)."""
+        `fade_out` s), shaped by `gain_curve` (per frame from the event's) and `muffle` (0..1
+        per frame: 1 is heard through a hull under water, _muffle), stopped dead at frame
+        `until`. `align` "peak": its loudest moment lands on the event's frame (so it starts
+        earlier). Returns (buffer, samples before the frame)."""
         sr, fps = self.sr, self.fps
         info = self.samples.get(ev.get("file"))
         if info is None:
@@ -1336,6 +1352,9 @@ class SFX:
             g = np.asarray(ev["gain_curve"], float)
             fr = (np.arange(len(x)) - lead) / sr * fps
             x = x * np.interp(fr, np.arange(len(g)), g)[:, None]
+        if ev.get("muffle"):
+            mu = np.asarray(ev["muffle"], float)
+            x = _muffle(x, np.interp((np.arange(len(x)) - lead) / sr * fps, np.arange(len(mu)), mu), sr)
         if ev.get("until") is not None:                   # stopped dead at the cut
             at = int(round(float(ev["frame"]) / fps * sr))
             x = x[:max(0, int(round(float(ev["until"]) / fps * sr)) - (at - lead))]
@@ -1446,6 +1465,111 @@ class SFX:
         c = np.asarray(ev.get("curve") or [1.0], float)
         g = np.interp(t * self.fps, np.arange(len(c)), c)
         return _norm(y) * g
+
+    # the opening of Bach's Toccata in D minor (BWV 565), as (start s, length s, MIDI notes):
+    # the mordent and the falling run in octaves, again an octave lower, then the pedal's low D
+    # and a diminished seventh piled up over it from the bottom, held
+    ORGAN_SCORE = (
+        [(0.0, 0.11, 81), (0.11, 0.11, 79), (0.22, 1.25, 81), (1.75, 0.1, 79), (1.85, 0.1, 77),
+         (1.95, 0.1, 76), (2.05, 0.1, 74), (2.15, 0.95, 73), (3.1, 0.9, 74)]
+        + [(4.25, 0.1, 69), (4.35, 0.1, 67), (4.45, 0.85, 69), (5.45, 0.09, 67), (5.54, 0.09, 65),
+           (5.63, 0.09, 64), (5.72, 0.09, 62), (5.81, 0.6, 61), (6.41, 0.5, 62)]
+        + [(6.95, 3.65, 38)]
+        + [(7.15 + 0.12 * i, 3.45 - 0.12 * i, m) for i, m in enumerate((49, 52, 55, 58, 61, 64, 67, 70, 73))])
+    ORGAN_OCTAVES = 6.95          # the manuals play in octaves until here
+    # stops drawn (pitch multiple, level, partials' roll-off, highest partial): the manuals'
+    # principals 8' 4' 2 2/3' 2', a mixture and a trumpet; the pedal's 16' and 8' and a trombone
+    ORGAN_MANUAL = ((1, 1.0, 1.4, 12), (2, 0.55, 1.6, 8), (3, 0.2, 1.8, 6), (4, 0.3, 1.8, 6),
+                    (6, 0.14, 2.0, 4), (8, 0.11, 2.0, 4), (1, 0.4, 0.75, 30))
+    ORGAN_PEDAL = ((0.5, 1.0, 1.2, 16), (1, 0.7, 1.4, 12), (2, 0.3, 1.6, 8), (0.5, 0.35, 0.8, 40))
+
+    def _pipes(self, midi, dur, rng):
+        """One note on the full organ (mono): every drawn stop's pipe from a wavetable (its
+        partials), speaking with a chiff, a breath of wind, the bass pipes slower."""
+        sr = self.sr
+        pedal = midi < 45
+        base = float(mtof(midi)) * (0.5 if pedal else 1.0)
+        L = 2048
+        ph = np.arange(L) / L
+        table = np.zeros(L)
+        for mult, amp, roll, top in (self.ORGAN_PEDAL if pedal else self.ORGAN_MANUAL):
+            m = mult / (0.5 if pedal else 1.0)            # in partials of the base
+            for h in range(1, top + 1):
+                if base * m * h > min(10000.0, 0.45 * sr):
+                    break
+                table += amp * h ** -roll * np.sin(2 * np.pi * m * h * ph + rng.uniform(0, 6.3))
+        table = np.r_[table, table[0]]
+        rel = 0.09
+        n, t = self._t(dur + rel)
+        wob = 1.0 + 0.0004 * np.sin(2 * np.pi * rng.uniform(4.0, 6.0) * t + rng.uniform(0, 6.3))
+        cyc = np.cumsum(base * wob / sr) + rng.random()
+        y = np.interp((cyc % 1.0) * L, np.arange(L + 1), table)
+        att = 0.025 + 0.06 * float(np.clip((62 - midi) / 30.0, 0.0, 1.0))
+        y *= env_adsr(n, sr, att, 0.1, 1.0, rel, dur)
+        chiff = filt(rng.standard_normal(n), "bp", min(4.0 * base * (2 if pedal else 1), 9000.0), sr, 2.5)
+        y += 0.12 * _norm(chiff) * np.exp(-t / 0.03) * np.abs(y).max()
+        wind = bw(rng.standard_normal(n), "band", (1800.0, 5000.0), sr)
+        y += 0.006 * _norm(wind) * env_adsr(n, sr, att, 0.1, 1.0, rel, dur) * np.abs(y).max()
+        return y
+
+    def fx_organ(self, ev, rng):
+        """A pipe organ in a hall playing ORGAN_SCORE (from `offset` s into it) for `dur`
+        frames: shaped by `curve` (gain, 0..1 per frame from the event's) and `muffle` (0..1 per
+        frame: 1 is heard through a hull under water, its highs gone)."""
+        sr, fps = self.sr, self.fps
+        n, t = self._t(self._dur(ev))
+        off = float(ev.get("offset", 0.0))
+        y = np.zeros((n, 2))
+        for k, (at, d, m) in enumerate(self.ORGAN_SCORE):
+            i = int(round((at - off) * sr))
+            if i >= n or i + int((d + 0.1) * sr) <= 0:
+                continue
+            nr = np.random.default_rng([self.seed, 565, k])
+            octaves = at < self.ORGAN_OCTAVES
+            notes = [m, m - 12] if octaves and m >= 45 else [m]
+            for mm in notes:                  # the chord's many pipes each a little softer
+                x = self._pipes(mm, d, nr) * (1.0 if octaves else 0.8 if mm < 45 else 0.5)
+                add(y, x[:, None] * pan_gains(float(np.clip((mm - 62) / 40.0, -0.5, 0.5)))[None, :], i)
+        y = _norm(y) + 0.6 * _norm(convolve(y, reverb_ir(sr, 3.2, pre=0.03, damp=0.55, seed=65), n))
+        mu = np.asarray(ev.get("muffle") or [0.0], float)
+        y = _muffle(y, np.interp(t * fps, np.arange(len(mu)), mu), sr)
+        c = np.asarray(ev.get("curve") or [1.0], float)
+        g = np.interp(t * fps, np.arange(len(c)), c)
+        return _fade(y / (np.abs(y).max() + _TINY), sr, 0.0, 0.3) * g[:, None]
+
+    def fx_dread(self, ev, rng):
+        """The deep's dread for `dur` frames, following `curve` (0..1 per frame): a low drone a
+        minor second wide, beating slowly, a sub swelling, dark water rolling; with `call` (a
+        frame from the event's) something huge moaning far off."""
+        sr, fps = self.sr, self.fps
+        n, t = self._t(self._dur(ev))
+        f = 36.71                                         # a low D
+        drone = (osc_saw(f * 2 ** (4 / 1200), n, sr, rng.random())
+                 + osc_saw(f * 2 ** (1 / 12), n, sr, rng.random()))
+        fc = 160.0 * 2.0 ** (0.8 * np.sin(2 * np.pi * 0.06 * t + rng.uniform(0, 6.3)))
+        drone = tv_filter(drone, "lp", fc, sr, q=1.6, block=512)
+        sub = osc_sine(f, n, sr) * (0.6 + 0.4 * np.sin(2 * np.pi * 0.11 * t))
+        water = tv_filter(pink(rng, (n, 2)), "lp", 220.0 * 2.0 ** np.sin(2 * np.pi * 0.08 * t), sr, block=512)
+        y = 0.8 * _norm(drone)[:, None] + 0.7 * sub[:, None] + 0.6 * _norm(water)
+        if ev.get("call") is not None:                    # a long, falling moan, far off
+            i = int(round(float(ev["call"]) / fps * sr))
+            m = min(int(3.2 * sr), n - i)
+            if m > sr // 4:
+                tt = np.arange(m) / sr
+                u = tt / tt[-1]
+                fm = (72.0 - 26.0 * u ** 1.3) * (1.0 + 0.012 * np.sin(2 * np.pi * 3.1 * tt))
+                v = osc_saw(fm, m, sr)
+                vow = tv_filter(v, "bp", 260.0 + 380.0 * np.sin(np.pi * u), sr, q=3.0, block=256)
+                vow += 0.5 * tv_filter(v, "bp", 700.0 + 300.0 * u, sr, q=4.0, block=256)
+                vow = bw(vow, "low", 1100.0, sr) * np.sin(np.pi * np.clip(u * 1.6, 0, 1) / 2) ** 2 \
+                    * (1 - u) ** 0.7
+                moan = np.zeros(n)
+                moan[i:i + m] = _norm(vow)
+                wet = convolve(moan, reverb_ir(sr, 4.0, pre=0.06, damp=0.7, seed=33))
+                y += 0.8 * moan[:, None] * pan_gains(-0.3)[None, :] + 1.1 * _norm(wet)
+        c = np.asarray(ev.get("curve") or [1.0], float)
+        g = np.interp(t * fps, np.arange(len(c)), c)
+        return _fade(_norm(y), sr, 0.8, 0.4) * g[:, None]
 
     def fx_burn(self, ev, rng):
         """Film burning in the gate: crackle thickening into a flaring rush that peaks at
@@ -2236,16 +2360,23 @@ def render_stems(cues: dict, sr: int = 48000) -> dict:
     A = Arranger(cues, sr)
     music = A.render()
     tr = cues.get("track")
-    if tr:                                               # a recorded music bed (the sizzle reel)
-        y = load_sample(tr["path"], sr)[int(round(float(tr.get("offset", 0.0)) * sr)):][:A.n]
-        y = np.pad(y, ((0, A.n - len(y)), (0, 0)))
+    if tr:                                               # a recorded music bed (the sizzle reel,
+        at = min(A.n, A.f2s(tr.get("at", 0)))             # a model's score from frame `at`)
+        end = A.n if tr.get("until") is None else min(A.n, max(at, A.f2s(tr["until"])))
+        y = load_sample(tr["path"], sr)[int(round(float(tr.get("offset", 0.0)) * sr)):][:end - at]
+        y = np.pad(y, ((at, A.n - at - len(y)), (0, 0)))
         for b in tr.get("breaks") or []:
             y = filter_break(y, sr, A.f2s(b["start"]), A.f2s(b["end"]), float(b.get("hz", 320.0)),
                              A.f2s(b.get("rise", 0)), float(b.get("to", 1200.0)),
                              float(b.get("gain", 0.0)))
-        y = _fade(y.copy(), sr, 0.0, float(tr.get("fade_out", 0.05)))
+        if tr.get("until") is None:
+            y = _fade(y.copy(), sr, 0.0, float(tr.get("fade_out", 0.05)))
+        else:                                            # faded out by `until`, silent after
+            k = min(end - at, int(float(tr.get("fade_out", 0.05)) * sr))
+            y[end - k:end] *= (0.5 + 0.5 * np.cos(np.pi * np.arange(k) / max(1, k)))[:, None]
         lv = measure_lufs(y, sr)
-        music = music + (y * db2amp(MUSIC_REF - lv) if np.isfinite(lv) else y)
+        g = db2amp(float(tr.get("gain", 0.0)))           # under (or over) the usual level
+        music = music + (y * db2amp(MUSIC_REF - lv) * g if np.isfinite(lv) else y * g)
     sfx, duck = SFX(sr, A.fps, A.seed, cues.get("samples")).render(cues.get("events") or [], A.n)
     return {"music": music * db2amp(-duck)[:, None], "sfx": sfx, "duck_db": duck, "arranger": A}
 

@@ -434,6 +434,22 @@ def cue_sheet(reel: dict, g: dict, cfg: dict) -> dict:
 
 
 # ---------------------------------------------------------------------------- footage
+def turntable_frames(tt: Path, d: Path, size: int, fps: int = FPS) -> int:
+    """A model's turntable loop as d/00000.jpg ... at `fps`, size x size (made again only when
+    the video or the size changes). Returns how many frames there are."""
+    d.mkdir(parents=True, exist_ok=True)
+    stamp = d / ".source"
+    sig = f"{tt.stat().st_size}-{tt.stat().st_mtime_ns}-{size}-{fps}"
+    if not stamp.exists() or stamp.read_text() != sig:
+        for f in d.glob("*.jpg"):
+            f.unlink()
+        subprocess.run(["ffmpeg", "-v", "error", "-y", "-i", str(tt), "-vf",
+                        f"fps={fps},scale={size}:{size}:flags=lanczos", "-q:v", "3",
+                        "-start_number", "0", str(d / "%05d.jpg")], check=True)
+        stamp.write_text(sig)
+    return len(list(d.glob("*.jpg")))
+
+
 def footage(reel: dict, infos: dict, work: Path, size: int, log=print) -> None:
     """Copy the frames the reel shows into work/footage/<slug>/<source>/<k>.jpg (and each
     model's turntable at 30 fps, its hero cut-out), rewriting the plan's shots to the URLs."""
@@ -466,16 +482,7 @@ def footage(reel: dict, infos: dict, work: Path, size: int, log=print) -> None:
                 n_new += 1
             continue
         if src == "turntable":
-            stamp = d / ".source"
-            tt = Path(info["turntable"])
-            sig = f"{tt.stat().st_size}-{tt.stat().st_mtime_ns}-{size}"
-            if not stamp.exists() or stamp.read_text() != sig:
-                for f in d.glob("*.jpg"):
-                    f.unlink()
-                subprocess.run(["ffmpeg", "-v", "error", "-y", "-i", str(tt), "-vf",
-                                f"fps={FPS},scale={size}:{size}:flags=lanczos", "-q:v", "3",
-                                "-start_number", "0", str(d / "%05d.jpg")], check=True)
-                stamp.write_text(sig)
+            turntable_frames(Path(info["turntable"]), d, size)
             continue
         for k in sorted(ks):
             dst = d / f"{k:05d}.jpg"

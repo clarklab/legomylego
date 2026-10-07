@@ -1,0 +1,31 @@
+[model]
+name = "Bat"
+design = "design.py"
+description = "A tiny bat in 22 pieces, 8 cm across its wings: angry yellow eyes, two white fangs, pointed ears and little clip feet."
+collection = "quick_bricks"   # a little Quick Bricks model (its own section on the site, soon)
+
+[palette]
+body = "Black"
+fang = "White"                # the fangs (1 x 1 plates with a tooth)
+eye = "Yellow"                # half-round tiles
+
+[booklet]
+subtitle = "A tiny bat with angry eyes, fangs and pointed ears, in 22 pieces."
+intro = "A bat small enough to perch on a finger: build up from its clip feet through the chin and the fangs to the head, press on the wings, then give it its angry eyes and its ears."
+
+# (no stability check: it stands on two 1 x 1 clip plates, one stud deep - it is made to hang
+# by its clips from a bar, upside down like a bat, not to stand)
+[checks]
+enabled = ["real_elements", "connections", "collisions", "buildability",
+           "mechanism", "electrics", "technique"]
+
+# Quick Bricks (brickkit quick bat): the short vertical build video for TikTok and Instagram.
+# Under 25 pieces, so it starts with every piece laid out round the build (layout: see the
+# guide); close-ups as a fang and an eye land
+[quick]
+surface = "green_mat"
+room = "night"
+light = "evening"
+seconds = 14
+highlight = ["15070", "1748"]
+close_ups = 2

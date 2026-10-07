@@ -48,6 +48,18 @@ works = [
   { title = "A lift-off dome", text = "The cornice, the dome and the weather vane lift off in one piece. Underneath, the backs of the four inserts face the open middle of the tower, so you can set the clocks and change their batteries.", image = "hero_open/hero.png" },
 ]
 
+# A smaller build shown in its own section of this model's page (brickkit viewer copies its
+# booklet, shopping lists and renders). Prices were checked by hand on LEGO Pick a Brick.
+[[companions]]
+slug = "caldwell_mini"
+anchor = "mini"
+eyebrow = "Kids' build"
+heading = "The mini courthouse"
+video = true                 # featured in the showreel too: its turntable, chips and to scale
+text = "A small, quick build of the courthouse for kids: 60 pieces in 11 steps, and the clockmaster, a minifigure in a top hat, to stand beside it. Stone walls with two red bands, slate roofs and red finials on the four corner pavilions, and the clock tower with a clock on every side under a steep slate spire."
+price = { pick_a_brick = 12.17, checked = "2026-10-05", note = "The building is $9.87: every part of it is a Pick a Brick bestseller, shipping in about 5 business days. The clockmaster's four parts add $2.30 to $2.55 in the same order. Five sets come to $60.85 to $62.10." }
+variants = [{ name = "budget", title = "Budget build", price = { pick_a_brick = 11.65 }, note = "56 pieces and a little cheaper: the clocks press straight onto the studs on the tower's sides (no jumper plates), and one curved slope replaces each sloped roof and its tile between the pavilions. Follow the same instructions and make those two swaps." }]
+
 [checks]
 enabled = ["real_elements", "connections", "collisions", "buildability", "stability",
            "mechanism", "electrics", "technique"]

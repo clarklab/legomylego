@@ -138,11 +138,30 @@ def main(argv=None) -> int:
     p.add_argument("--size", type=int, default=720)
     p.add_argument("--samples", type=int, default=48)
     p.add_argument("--preview", action="store_true")
+    p = sub.add_parser("quick", help="Quick Bricks: a short vertical build video for TikTok and "
+                                      "Instagram (out/SLUG-1080x1920.mp4)")
+    p.add_argument("slug")
+    p.add_argument("--preview", action="store_true", help="540x960, 15 fps, low samples")
+    p.add_argument("--set", help="a preset workshop or random (else [quick] set)")
+    p.add_argument("--surface", help="the surface layer (blue_mat, green_mat, kraft, oak, baseplate)")
+    p.add_argument("--room", help="the room layer (workbench, studio, window, night, bookshelf)")
+    p.add_argument("--light", help="the light layer (morning, day, evening)")
+    p.add_argument("--seed", type=int, help="for --set random")
+    p.add_argument("--seconds", type=float, help="the loop's length (else [quick] seconds)")
+    p.add_argument("--stills", help="comma list of frames: render just those, no video")
+    p.add_argument("--force", action="store_true", help="render every frame again")
+    p.add_argument("--remix", action="store_true",
+                   help="no rendering: the frames there are, with the sound mixed again")
+    p.add_argument("--layout", action=argparse.BooleanOptionalAction, default=None,
+                   help="start with the parts laid out in a grid (else [quick] layout: under "
+                        "25 pieces)")
+    p.add_argument("--no-audio", action="store_true")
+    p.add_argument("--device", choices=("gpu", "cpu"), default="gpu")
     p = sub.add_parser("booklet", help="instruction booklet PDF")
     p.add_argument("slug")
     p.add_argument("--variant")
     p.add_argument("--no-render", action="store_true", help="reuse existing pictures")
-    p = sub.add_parser("video", help="build video (out/video.mp4) rendered with Blender")
+    p = sub.add_parser("video", help="build video (out/SLUG-1080x1080.mp4) rendered with Blender")
     p.add_argument("slug")
     p.add_argument("--variant")
     p.add_argument("--preview", action="store_true", help="540x540, low samples, every 2nd frame")
@@ -248,6 +267,16 @@ def main(argv=None) -> int:
         from .render.turntable import make_turntable
         make_turntable(engine, model, _out(proj, model.variant), seconds=args.seconds,
                        fps=args.fps, size=args.size, samples=args.samples, preview=args.preview)
+        return 0
+    if args.cmd == "quick":
+        from .video.quick import make_quick
+        stills = [int(x) for x in args.stills.split(",") if x.strip()] if args.stills else None
+        out = make_quick(engine, proj, model, preview=args.preview, set_name=args.set,
+                         seconds=args.seconds, audio=not args.no_audio, force=args.force,
+                         stills=stills, device=args.device, remix=args.remix,
+                         layers={"surface": args.surface, "room": args.room, "light": args.light,
+                                 "seed": args.seed, "layout": args.layout})
+        print(f"quick -> {out}")
         return 0
     if args.cmd == "booklet":
         from .booklet.booklet import make_booklet

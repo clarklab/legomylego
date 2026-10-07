@@ -16,6 +16,12 @@ SLUG is a model (models/SLUG/audio/) or a folder holding an sfx.toml (showreel/a
                                 name, bars (at bpm) or ms, styles, avoid - the sections are
                                 held to their lengths, so a reel's cuts can be planned on them
 
+    [[speech]]                  name, text, voice (a voice id; voice_name for the record),
+                                variants, model_id (default eleven_v3, which acts on tags in
+                                the text such as [evil laugh]), stability (v3: 0, 0.5 or 1),
+                                style, speed: a voice from POST /v1/text-to-speech/VOICE (a
+                                laugh, a line), each variant with its own seed
+
 and writes models/SLUG/audio/NAME_K.mp3 for K = 1..variants, with sfx_generated.json beside
 them recording the prompt and settings that made each file. Files that exist are skipped, so a
 rerun only fills gaps (delete a file to make it again); at most MAX_FILES files in all. The
@@ -54,6 +60,7 @@ ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 
 API = "https://api.elevenlabs.io/v1/sound-generation"
+SPEECH_API = "https://api.elevenlabs.io/v1/text-to-speech"
 MUSIC_API = "https://api.elevenlabs.io/v1/music"
 KEY_FILE = Path.home() / ".config" / "brickkit" / "elevenlabs.env"
 MAX_FILES = 25
@@ -81,6 +88,16 @@ def manifest(slug: str) -> tuple[Path, list[dict]]:
                   "output_format": "mp3_48000_192"}
             if plan:
                 it["plan"] = plan
+            out.append(it)
+    for s in cfg.get("speech", []):
+        for k in range(1, int(s.get("variants", 1)) + 1):
+            it = {"file": f"{s['name']}_{k}.mp3", "name": s["name"], "k": k, "kind": "speech",
+                  "prompt": " ".join(str(s["text"]).split()), "seconds": 0.0, "loop": False,
+                  "prompt_influence": 0.0, "voice": str(s["voice"]),
+                  "voice_name": str(s.get("voice_name", "")),
+                  "model_id": s.get("model_id", "eleven_v3"), "output_format": "mp3_44100_192",
+                  "settings": {key: float(s[key]) for key in ("stability", "similarity_boost",
+                                                              "style", "speed") if key in s}}
             out.append(it)
     for s in cfg.get("sfx", []):
         for k in range(1, int(s.get("variants", 1)) + 1):
@@ -138,6 +155,11 @@ def generate(item: dict, key: str, tries: int = 3) -> bytes:
         body = {"prompt": item["prompt"], "music_length_ms": int(item["seconds"] * 1000),
                 "model_id": item["model_id"], "force_instrumental": item["instrumental"]}
         url = f"{MUSIC_API}?output_format={item['output_format']}"
+    elif item.get("kind") == "speech":
+        body = {"text": item["prompt"], "model_id": item["model_id"], "seed": 1000 + item["k"]}
+        if item["settings"]:
+            body["voice_settings"] = item["settings"]
+        url = f"{SPEECH_API}/{item['voice']}?output_format={item['output_format']}"
     else:
         body = {"text": item["prompt"], "duration_seconds": item["seconds"],
                 "prompt_influence": item["prompt_influence"], "model_id": item["model_id"]}
@@ -185,8 +207,10 @@ def make(slug: str, dry: bool = False) -> None:
         (d / it["file"]).write_bytes(data)
         record[it["file"]] = {k: it[k] for k in ("name", "prompt", "seconds", "loop",
                                                 "prompt_influence", "model_id", "output_format",
-                                                "plan") if k in it}
-        api = "music API" if it.get("kind") == "music" else "sound generation API"
+                                                "plan", "voice", "voice_name", "settings")
+                              if k in it}
+        api = {"music": "music API", "speech": "text-to-speech API"}.get(it.get("kind"),
+                                                                      "sound generation API")
         record[it["file"]].update(generated=date.today().isoformat(), bytes=len(data),
                                   sha1=hashlib.sha1(data).hexdigest(),
                                   source=f"ElevenLabs {api} (Creator plan)")

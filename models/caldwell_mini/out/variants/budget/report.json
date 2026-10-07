@@ -1,0 +1,28 @@
+{
+  "title": "Caldwell County Courthouse Mini (budget)",
+  "status": "pass",
+  "checks": [
+    {
+      "name": "real_elements",
+      "status": "pass",
+      "summary": "21 part/colour combinations: 0 not real, 0 rare; 3 minifig component(s)",
+      "items": [],
+      "stats": {
+        "combinations": 21,
+        "not_real": 0,
+        "rare": 0,
+        "hardware": 0,
+        "minifig_components": 3,
+        "stand_ins": 0,
+        "approximate": 0
+      }
+    },
+    {
+      "name": "technique",
+      "status": "pass",
+      "summary": "0 note(s)",
+      "items": [],
+      "stats": {}
+    }
+  ]
+}

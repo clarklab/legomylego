@@ -1,0 +1,1705 @@
+{
+  "schema": "brickkit.agent-build.v2",
+  "model": "Mini T. rex",
+  "revision": 3,
+  "source_sha256": "bb20ff352958a478d17885c571912bc795ca9e3a2784b2057d2c935fc7b8c4d2",
+  "part_count": 42,
+  "dimensions_mm": {
+    "width": 32.0,
+    "height": 68.0,
+    "depth": 56.0
+  },
+  "coordinate_system": "LDraw: -Y up, -Z front; 20 LDU/stud, 8 LDU/plate, 24 LDU/brick; 0.4 mm/LDU",
+  "transform": "world_point = rotation_matrix @ local_point + position_ldu",
+  "assembly_note": "Build child assemblies in the listed order, then attach them at attach_assemblies steps. Part positions are final world coordinates; all assembly transforms in this revision are identity.",
+  "steps": [
+    {
+      "step": 1,
+      "assembly": "left_leg",
+      "local_step": 1,
+      "instruction": "Pin-bearing leg on its side, with dark-tan face over the two front studs",
+      "attach_assemblies": [],
+      "parts": [
+        {
+          "instance": 0,
+          "part": "2458.dat",
+          "color": "Tan",
+          "ldraw_color": 19,
+          "position_ldu": [
+            -30.0,
+            -36.0,
+            0.0
+          ],
+          "rotation_matrix": [
+            [
+              0.0,
+              0.0,
+              -1.0
+            ],
+            [
+              -1.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              1.0,
+              0.0
+            ]
+          ],
+          "tags": [
+            "left_leg",
+            "pinned_legs"
+          ]
+        },
+        {
+          "instance": 1,
+          "part": "3023b.dat",
+          "color": "Dark Tan",
+          "ldraw_color": 28,
+          "position_ldu": [
+            -30.0,
+            -36.0,
+            -8.0
+          ],
+          "rotation_matrix": [
+            [
+              0.0,
+              0.0,
+              -1.0
+            ],
+            [
+              -1.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              1.0,
+              0.0
+            ]
+          ],
+          "tags": [
+            "left_leg",
+            "leg_faces"
+          ]
+        }
+      ]
+    },
+    {
+      "step": 2,
+      "assembly": "left_leg",
+      "local_step": 2,
+      "instruction": "White hollow round socket on the lower stud, with the claw curving downward",
+      "attach_assemblies": [],
+      "parts": [
+        {
+          "instance": 2,
+          "part": "85861.dat",
+          "color": "White",
+          "ldraw_color": 15,
+          "position_ldu": [
+            -30.0,
+            -26.0,
+            -16.0
+          ],
+          "rotation_matrix": [
+            [
+              1.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              -1.0
+            ],
+            [
+              0.0,
+              1.0,
+              0.0
+            ]
+          ],
+          "tags": [
+            "left_leg",
+            "claw_sockets"
+          ]
+        },
+        {
+          "instance": 3,
+          "part": "53451.dat",
+          "color": "White",
+          "ldraw_color": 15,
+          "position_ldu": [
+            -30.0,
+            -26.0,
+            -20.0
+          ],
+          "rotation_matrix": [
+            [
+              1.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              -1.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              -1.0
+            ]
+          ],
+          "tags": [
+            "left_leg",
+            "claws"
+          ]
+        }
+      ]
+    },
+    {
+      "step": 3,
+      "assembly": "left_leg",
+      "local_step": 3,
+      "instruction": "Attach the orange ankle behind the lower leg socket",
+      "attach_assemblies": [],
+      "parts": [
+        {
+          "instance": 4,
+          "part": "87087.dat",
+          "color": "Orange",
+          "ldraw_color": 25,
+          "position_ldu": [
+            -30.0,
+            -36.0,
+            34.0
+          ],
+          "rotation_matrix": [
+            [
+              1.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              1.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              1.0
+            ]
+          ],
+          "tags": [
+            "left_leg",
+            "ankles"
+          ]
+        }
+      ]
+    },
+    {
+      "step": 4,
+      "assembly": "left_foot",
+      "local_step": 1,
+      "instruction": "Dark-tan foot sole",
+      "attach_assemblies": [],
+      "parts": [
+        {
+          "instance": 5,
+          "part": "3623.dat",
+          "color": "Dark Tan",
+          "ldraw_color": 28,
+          "position_ldu": [
+            -30.0,
+            -4.0,
+            14.0
+          ],
+          "rotation_matrix": [
+            [
+              0.0,
+              0.0,
+              1.0
+            ],
+            [
+              0.0,
+              1.0,
+              0.0
+            ],
+            [
+              -1.0,
+              0.0,
+              0.0
+            ]
+          ],
+          "tags": [
+            "left_leg",
+            "foot",
+            "feet"
+          ]
+        }
+      ]
+    },
+    {
+      "step": 5,
+      "assembly": "left_foot",
+      "local_step": 2,
+      "instruction": "Orange ankle pad at the rear and smooth orange toe at the front",
+      "attach_assemblies": [],
+      "parts": [
+        {
+          "instance": 6,
+          "part": "3024.dat",
+          "color": "Orange",
+          "ldraw_color": 25,
+          "position_ldu": [
+            -30.0,
+            -12.0,
+            34.0
+          ],
+          "rotation_matrix": [
+            [
+              1.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              1.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              1.0
+            ]
+          ],
+          "tags": [
+            "left_leg",
+            "foot",
+            "feet"
+          ]
+        },
+        {
+          "instance": 7,
+          "part": "3070b.dat",
+          "color": "Orange",
+          "ldraw_color": 25,
+          "position_ldu": [
+            -30.0,
+            -12.0,
+            -6.0
+          ],
+          "rotation_matrix": [
+            [
+              1.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              1.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              1.0
+            ]
+          ],
+          "tags": [
+            "left_leg",
+            "foot",
+            "toes"
+          ]
+        }
+      ]
+    },
+    {
+      "step": 6,
+      "assembly": "left_leg",
+      "local_step": 4,
+      "instruction": "Press the completed foot onto the ankle from underneath",
+      "attach_assemblies": [
+        {
+          "submodel": "left_foot",
+          "transform": [
+            [
+              1.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              1.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              1.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ]
+          ],
+          "insertion_hint": [
+            0,
+            1,
+            0
+          ]
+        }
+      ],
+      "parts": []
+    },
+    {
+      "step": 7,
+      "assembly": "left_leg",
+      "local_step": 5,
+      "instruction": "Slide the orange Technic hip onto the inward-facing integral leg pin",
+      "attach_assemblies": [],
+      "parts": [
+        {
+          "instance": 8,
+          "part": "3700.dat",
+          "color": "Orange",
+          "ldraw_color": 25,
+          "position_ldu": [
+            -10.0,
+            -46.0,
+            10.0
+          ],
+          "rotation_matrix": [
+            [
+              0.0,
+              0.0,
+              1.0
+            ],
+            [
+              0.0,
+              1.0,
+              0.0
+            ],
+            [
+              -1.0,
+              0.0,
+              0.0
+            ]
+          ],
+          "tags": [
+            "left_leg",
+            "hip_sockets"
+          ]
+        }
+      ]
+    },
+    {
+      "step": 8,
+      "assembly": "dinosaur",
+      "local_step": 1,
+      "instruction": "Set the left completed leg upright on the table",
+      "attach_assemblies": [
+        {
+          "submodel": "left_leg",
+          "transform": [
+            [
+              1.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              1.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              1.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ]
+          ],
+          "insertion_hint": null
+        }
+      ],
+      "parts": []
+    },
+    {
+      "step": 9,
+      "assembly": "right_leg",
+      "local_step": 1,
+      "instruction": "Pin-bearing leg on its side, with dark-tan face over the two front studs",
+      "attach_assemblies": [],
+      "parts": [
+        {
+          "instance": 9,
+          "part": "2458.dat",
+          "color": "Tan",
+          "ldraw_color": 19,
+          "position_ldu": [
+            30.0,
+            -36.0,
+            0.0
+          ],
+          "rotation_matrix": [
+            [
+              0.0,
+              0.0,
+              1.0
+            ],
+            [
+              1.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              1.0,
+              0.0
+            ]
+          ],
+          "tags": [
+            "right_leg",
+            "pinned_legs"
+          ]
+        },
+        {
+          "instance": 10,
+          "part": "3023b.dat",
+          "color": "Dark Tan",
+          "ldraw_color": 28,
+          "position_ldu": [
+            30.0,
+            -36.0,
+            -8.0
+          ],
+          "rotation_matrix": [
+            [
+              0.0,
+              0.0,
+              1.0
+            ],
+            [
+              1.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              1.0,
+              0.0
+            ]
+          ],
+          "tags": [
+            "right_leg",
+            "leg_faces"
+          ]
+        }
+      ]
+    },
+    {
+      "step": 10,
+      "assembly": "right_leg",
+      "local_step": 2,
+      "instruction": "White hollow round socket on the lower stud, with the claw curving downward",
+      "attach_assemblies": [],
+      "parts": [
+        {
+          "instance": 11,
+          "part": "85861.dat",
+          "color": "White",
+          "ldraw_color": 15,
+          "position_ldu": [
+            30.0,
+            -26.0,
+            -16.0
+          ],
+          "rotation_matrix": [
+            [
+              1.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              -1.0
+            ],
+            [
+              0.0,
+              1.0,
+              0.0
+            ]
+          ],
+          "tags": [
+            "right_leg",
+            "claw_sockets"
+          ]
+        },
+        {
+          "instance": 12,
+          "part": "53451.dat",
+          "color": "White",
+          "ldraw_color": 15,
+          "position_ldu": [
+            30.0,
+            -26.0,
+            -20.0
+          ],
+          "rotation_matrix": [
+            [
+              1.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              -1.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              -1.0
+            ]
+          ],
+          "tags": [
+            "right_leg",
+            "claws"
+          ]
+        }
+      ]
+    },
+    {
+      "step": 11,
+      "assembly": "right_leg",
+      "local_step": 3,
+      "instruction": "Attach the orange ankle behind the lower leg socket",
+      "attach_assemblies": [],
+      "parts": [
+        {
+          "instance": 13,
+          "part": "87087.dat",
+          "color": "Orange",
+          "ldraw_color": 25,
+          "position_ldu": [
+            30.0,
+            -36.0,
+            34.0
+          ],
+          "rotation_matrix": [
+            [
+              1.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              1.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              1.0
+            ]
+          ],
+          "tags": [
+            "right_leg",
+            "ankles"
+          ]
+        }
+      ]
+    },
+    {
+      "step": 12,
+      "assembly": "right_foot",
+      "local_step": 1,
+      "instruction": "Dark-tan foot sole",
+      "attach_assemblies": [],
+      "parts": [
+        {
+          "instance": 14,
+          "part": "3623.dat",
+          "color": "Dark Tan",
+          "ldraw_color": 28,
+          "position_ldu": [
+            30.0,
+            -4.0,
+            14.0
+          ],
+          "rotation_matrix": [
+            [
+              0.0,
+              0.0,
+              1.0
+            ],
+            [
+              0.0,
+              1.0,
+              0.0
+            ],
+            [
+              -1.0,
+              0.0,
+              0.0
+            ]
+          ],
+          "tags": [
+            "right_leg",
+            "foot",
+            "feet"
+          ]
+        }
+      ]
+    },
+    {
+      "step": 13,
+      "assembly": "right_foot",
+      "local_step": 2,
+      "instruction": "Orange ankle pad at the rear and smooth orange toe at the front",
+      "attach_assemblies": [],
+      "parts": [
+        {
+          "instance": 15,
+          "part": "3024.dat",
+          "color": "Orange",
+          "ldraw_color": 25,
+          "position_ldu": [
+            30.0,
+            -12.0,
+            34.0
+          ],
+          "rotation_matrix": [
+            [
+              1.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              1.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              1.0
+            ]
+          ],
+          "tags": [
+            "right_leg",
+            "foot",
+            "feet"
+          ]
+        },
+        {
+          "instance": 16,
+          "part": "3070b.dat",
+          "color": "Orange",
+          "ldraw_color": 25,
+          "position_ldu": [
+            30.0,
+            -12.0,
+            -6.0
+          ],
+          "rotation_matrix": [
+            [
+              1.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              1.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              1.0
+            ]
+          ],
+          "tags": [
+            "right_leg",
+            "foot",
+            "toes"
+          ]
+        }
+      ]
+    },
+    {
+      "step": 14,
+      "assembly": "right_leg",
+      "local_step": 4,
+      "instruction": "Press the completed foot onto the ankle from underneath",
+      "attach_assemblies": [
+        {
+          "submodel": "right_foot",
+          "transform": [
+            [
+              1.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              1.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              1.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ]
+          ],
+          "insertion_hint": [
+            0,
+            1,
+            0
+          ]
+        }
+      ],
+      "parts": []
+    },
+    {
+      "step": 15,
+      "assembly": "right_leg",
+      "local_step": 5,
+      "instruction": "Slide the orange Technic hip onto the inward-facing integral leg pin",
+      "attach_assemblies": [],
+      "parts": [
+        {
+          "instance": 17,
+          "part": "3700.dat",
+          "color": "Orange",
+          "ldraw_color": 25,
+          "position_ldu": [
+            10.0,
+            -46.0,
+            10.0
+          ],
+          "rotation_matrix": [
+            [
+              0.0,
+              0.0,
+              1.0
+            ],
+            [
+              0.0,
+              1.0,
+              0.0
+            ],
+            [
+              -1.0,
+              0.0,
+              0.0
+            ]
+          ],
+          "tags": [
+            "right_leg",
+            "hip_sockets"
+          ]
+        }
+      ]
+    },
+    {
+      "step": 16,
+      "assembly": "dinosaur",
+      "local_step": 2,
+      "instruction": "Set the right completed leg upright on the table",
+      "attach_assemblies": [
+        {
+          "submodel": "right_leg",
+          "transform": [
+            [
+              1.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              1.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              1.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ]
+          ],
+          "insertion_hint": null
+        }
+      ],
+      "parts": []
+    },
+    {
+      "step": 17,
+      "assembly": "dinosaur",
+      "local_step": 3,
+      "instruction": "Lock the two hip halves together with an orange plate extending into the tail",
+      "attach_assemblies": [],
+      "parts": [
+        {
+          "instance": 18,
+          "part": "3020.dat",
+          "color": "Orange",
+          "ldraw_color": 25,
+          "position_ldu": [
+            0.0,
+            -54.0,
+            30.0
+          ],
+          "rotation_matrix": [
+            [
+              0.0,
+              0.0,
+              1.0
+            ],
+            [
+              0.0,
+              1.0,
+              0.0
+            ],
+            [
+              -1.0,
+              0.0,
+              0.0
+            ]
+          ],
+          "tags": [
+            "tail_base"
+          ]
+        }
+      ]
+    },
+    {
+      "step": 18,
+      "assembly": "dinosaur",
+      "local_step": 4,
+      "instruction": "The inverted orange belly widens toward the chest; red tail slopes taper backward",
+      "attach_assemblies": [],
+      "parts": [
+        {
+          "instance": 19,
+          "part": "3665b.dat",
+          "color": "Orange",
+          "ldraw_color": 25,
+          "position_ldu": [
+            -10.0,
+            -78.0,
+            20.0
+          ],
+          "rotation_matrix": [
+            [
+              1.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              1.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              1.0
+            ]
+          ],
+          "tags": [
+            "belly"
+          ]
+        },
+        {
+          "instance": 20,
+          "part": "3665b.dat",
+          "color": "Orange",
+          "ldraw_color": 25,
+          "position_ldu": [
+            10.0,
+            -78.0,
+            20.0
+          ],
+          "rotation_matrix": [
+            [
+              1.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              1.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              1.0
+            ]
+          ],
+          "tags": [
+            "belly"
+          ]
+        },
+        {
+          "instance": 21,
+          "part": "3040b.dat",
+          "color": "Red",
+          "ldraw_color": 4,
+          "position_ldu": [
+            -10.0,
+            -78.0,
+            40.0
+          ],
+          "rotation_matrix": [
+            [
+              -1.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              1.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              -1.0
+            ]
+          ],
+          "tags": [
+            "tail"
+          ]
+        },
+        {
+          "instance": 22,
+          "part": "3040b.dat",
+          "color": "Red",
+          "ldraw_color": 4,
+          "position_ldu": [
+            10.0,
+            -78.0,
+            40.0
+          ],
+          "rotation_matrix": [
+            [
+              -1.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              1.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              -1.0
+            ]
+          ],
+          "tags": [
+            "tail"
+          ]
+        }
+      ]
+    },
+    {
+      "step": 19,
+      "assembly": "dinosaur",
+      "local_step": 5,
+      "instruction": "A red shoulder handle with free outer ends, and a red rear plate",
+      "attach_assemblies": [],
+      "parts": [
+        {
+          "instance": 23,
+          "part": "2540.dat",
+          "color": "Red",
+          "ldraw_color": 4,
+          "position_ldu": [
+            0.0,
+            -86.0,
+            0.0
+          ],
+          "rotation_matrix": [
+            [
+              1.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              1.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              1.0
+            ]
+          ],
+          "tags": [
+            "shoulders"
+          ]
+        },
+        {
+          "instance": 24,
+          "part": "3023b.dat",
+          "color": "Red",
+          "ldraw_color": 4,
+          "position_ldu": [
+            0.0,
+            -86.0,
+            20.0
+          ],
+          "rotation_matrix": [
+            [
+              1.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              1.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              1.0
+            ]
+          ],
+          "tags": [
+            "shoulders"
+          ]
+        }
+      ]
+    },
+    {
+      "step": 20,
+      "assembly": "dinosaur",
+      "local_step": 6,
+      "instruction": "Clip the arms onto the outer shoulder-bar ends, hands curving forward",
+      "attach_assemblies": [],
+      "parts": [
+        {
+          "instance": 25,
+          "part": "30377.dat",
+          "color": "Red",
+          "ldraw_color": 4,
+          "position_ldu": [
+            -16.0,
+            -84.0,
+            -20.0
+          ],
+          "rotation_matrix": [
+            [
+              1.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              1.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              1.0
+            ]
+          ],
+          "tags": [
+            "arms"
+          ]
+        },
+        {
+          "instance": 26,
+          "part": "30377.dat",
+          "color": "Red",
+          "ldraw_color": 4,
+          "position_ldu": [
+            16.0,
+            -84.0,
+            -20.0
+          ],
+          "rotation_matrix": [
+            [
+              1.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              1.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              1.0
+            ]
+          ],
+          "tags": [
+            "arms"
+          ]
+        }
+      ]
+    },
+    {
+      "step": 21,
+      "assembly": "dinosaur",
+      "local_step": 7,
+      "instruction": "Orange neck above the front row of the body",
+      "attach_assemblies": [],
+      "parts": [
+        {
+          "instance": 27,
+          "part": "3004.dat",
+          "color": "Orange",
+          "ldraw_color": 25,
+          "position_ldu": [
+            0.0,
+            -110.0,
+            0.0
+          ],
+          "rotation_matrix": [
+            [
+              1.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              1.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              1.0
+            ]
+          ],
+          "tags": [
+            "neck"
+          ]
+        }
+      ]
+    },
+    {
+      "step": 22,
+      "assembly": "dinosaur",
+      "local_step": 8,
+      "instruction": "The flat red lower jaw extends forward from the neck",
+      "attach_assemblies": [],
+      "parts": [
+        {
+          "instance": 28,
+          "part": "3020.dat",
+          "color": "Red",
+          "ldraw_color": 4,
+          "position_ldu": [
+            0.0,
+            -118.0,
+            -30.0
+          ],
+          "rotation_matrix": [
+            [
+              0.0,
+              0.0,
+              1.0
+            ],
+            [
+              0.0,
+              1.0,
+              0.0
+            ],
+            [
+              -1.0,
+              0.0,
+              0.0
+            ]
+          ],
+          "tags": [
+            "lower_jaw"
+          ]
+        }
+      ]
+    },
+    {
+      "step": 23,
+      "assembly": "dinosaur",
+      "local_step": 9,
+      "instruction": "Only one white round plate per tooth; two orange plates form the rear mouth support",
+      "attach_assemblies": [],
+      "parts": [
+        {
+          "instance": 29,
+          "part": "6141.dat",
+          "color": "White",
+          "ldraw_color": 15,
+          "position_ldu": [
+            -10.0,
+            -126.0,
+            -60.0
+          ],
+          "rotation_matrix": [
+            [
+              1.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              1.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              1.0
+            ]
+          ],
+          "tags": [
+            "teeth"
+          ]
+        },
+        {
+          "instance": 30,
+          "part": "6141.dat",
+          "color": "White",
+          "ldraw_color": 15,
+          "position_ldu": [
+            10.0,
+            -126.0,
+            -60.0
+          ],
+          "rotation_matrix": [
+            [
+              1.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              1.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              1.0
+            ]
+          ],
+          "tags": [
+            "teeth"
+          ]
+        },
+        {
+          "instance": 31,
+          "part": "3023b.dat",
+          "color": "Orange",
+          "ldraw_color": 25,
+          "position_ldu": [
+            0.0,
+            -126.0,
+            0.0
+          ],
+          "rotation_matrix": [
+            [
+              1.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              1.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              1.0
+            ]
+          ],
+          "tags": [
+            "mouth_back"
+          ]
+        },
+        {
+          "instance": 32,
+          "part": "3023b.dat",
+          "color": "Orange",
+          "ldraw_color": 25,
+          "position_ldu": [
+            0.0,
+            -134.0,
+            0.0
+          ],
+          "rotation_matrix": [
+            [
+              1.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              1.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              1.0
+            ]
+          ],
+          "tags": [
+            "mouth_back"
+          ]
+        }
+      ]
+    },
+    {
+      "step": 24,
+      "assembly": "dinosaur",
+      "local_step": 10,
+      "instruction": "A thin red upper jaw spans the mouth",
+      "attach_assemblies": [],
+      "parts": [
+        {
+          "instance": 33,
+          "part": "3020.dat",
+          "color": "Red",
+          "ldraw_color": 4,
+          "position_ldu": [
+            0.0,
+            -142.0,
+            -30.0
+          ],
+          "rotation_matrix": [
+            [
+              0.0,
+              0.0,
+              1.0
+            ],
+            [
+              0.0,
+              1.0,
+              0.0
+            ],
+            [
+              -1.0,
+              0.0,
+              0.0
+            ]
+          ],
+          "tags": [
+            "upper_jaw"
+          ]
+        }
+      ]
+    },
+    {
+      "step": 25,
+      "assembly": "dinosaur",
+      "local_step": 11,
+      "instruction": "A one-plate-high skull row: red snout, black eyes, orange rear",
+      "attach_assemblies": [],
+      "parts": [
+        {
+          "instance": 34,
+          "part": "3022.dat",
+          "color": "Red",
+          "ldraw_color": 4,
+          "position_ldu": [
+            0.0,
+            -150.0,
+            -50.0
+          ],
+          "rotation_matrix": [
+            [
+              1.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              1.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              1.0
+            ]
+          ],
+          "tags": [
+            "snout"
+          ]
+        },
+        {
+          "instance": 35,
+          "part": "6141.dat",
+          "color": "Black",
+          "ldraw_color": 0,
+          "position_ldu": [
+            -10.0,
+            -150.0,
+            -20.0
+          ],
+          "rotation_matrix": [
+            [
+              1.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              1.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              1.0
+            ]
+          ],
+          "tags": [
+            "eyes"
+          ]
+        },
+        {
+          "instance": 36,
+          "part": "6141.dat",
+          "color": "Black",
+          "ldraw_color": 0,
+          "position_ldu": [
+            10.0,
+            -150.0,
+            -20.0
+          ],
+          "rotation_matrix": [
+            [
+              1.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              1.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              1.0
+            ]
+          ],
+          "tags": [
+            "eyes"
+          ]
+        },
+        {
+          "instance": 37,
+          "part": "3023b.dat",
+          "color": "Orange",
+          "ldraw_color": 25,
+          "position_ldu": [
+            0.0,
+            -150.0,
+            0.0
+          ],
+          "rotation_matrix": [
+            [
+              1.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              1.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              1.0
+            ]
+          ],
+          "tags": [
+            "skull"
+          ]
+        }
+      ]
+    },
+    {
+      "step": 26,
+      "assembly": "dinosaur",
+      "local_step": 12,
+      "instruction": "Support the curved forehead; finish with a low red crown",
+      "attach_assemblies": [],
+      "parts": [
+        {
+          "instance": 38,
+          "part": "3023b.dat",
+          "color": "Red",
+          "ldraw_color": 4,
+          "position_ldu": [
+            0.0,
+            -158.0,
+            -40.0
+          ],
+          "rotation_matrix": [
+            [
+              1.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              1.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              1.0
+            ]
+          ],
+          "tags": [
+            "forehead_support"
+          ]
+        },
+        {
+          "instance": 39,
+          "part": "15068.dat",
+          "color": "Red",
+          "ldraw_color": 4,
+          "position_ldu": [
+            0.0,
+            -150.0,
+            -50.0
+          ],
+          "rotation_matrix": [
+            [
+              1.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              1.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              1.0
+            ]
+          ],
+          "tags": [
+            "forehead"
+          ]
+        },
+        {
+          "instance": 40,
+          "part": "3022.dat",
+          "color": "Red",
+          "ldraw_color": 4,
+          "position_ldu": [
+            0.0,
+            -158.0,
+            -10.0
+          ],
+          "rotation_matrix": [
+            [
+              1.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              1.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              1.0
+            ]
+          ],
+          "tags": [
+            "crown"
+          ]
+        },
+        {
+          "instance": 41,
+          "part": "3068b.dat",
+          "color": "Red",
+          "ldraw_color": 4,
+          "position_ldu": [
+            0.0,
+            -166.0,
+            -10.0
+          ],
+          "rotation_matrix": [
+            [
+              1.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              1.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              1.0
+            ]
+          ],
+          "tags": [
+            "crown"
+          ]
+        }
+      ]
+    }
+  ]
+}

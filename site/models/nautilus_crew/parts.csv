@@ -1,0 +1,52 @@
+qty,part,name,colour,ldraw_colour,rebrickable_part,rebrickable_colour,bricklink_part,bricklink_colour,element_id,rare,note
+1,10830p01,"Equipment Magnifying Glass with Thick Frame, Solid Handle, Trans-Clear Lens Pattern",Black,0,10830pat0001,0,10830c01,11,6012466,0,
+1,30088,Weapon Spear Gun with Rounded Trigger and Thin Spear Base,Black,0,30088,0,30088,11,4287672,0,
+1,3815b,Hips and Black Legs,Black,0,970c03,0,970c00,11,4569093,0,minifig legs
+1,87079,Tile 2 x 4 with Groove,Black,0,87079,0,87079,11,4560182,0,
+1,92438,Plate 8 x 16,Black,0,92438,0,92438,11,6094066,0,
+1,95674,"Hat, Bowler",Black,0,95674,0,95674,11,6414524,0,
+1,973p05,"Torso Boat Captain, Suit Double Breasted and Gold Anchor Logo Print, Black Arms, Yellow Hands",Black,0,973c03h01pr0049,0,973pb0049c01,11,,1,minifig torso
+1,973puc,"Torso Vest with White Shirt and Blue Tie, Buttons Print, White Arms, Yellow Hands",Black,0,973c27h01pr4203,0,973pb3159c01,11,6219624,0,minifig torso
+1,3815b,Hips and Dark Blue Legs,Dark Blue,272,970c05,272,970c00,63,4569107,0,minifig legs
+1,3815b,Hips and Medium Nougat Legs with Reddish Brown Kneepads Print,Dark Bluish Gray,72,970c23pr0378,72,970c150pb02,85,6007953,1,minifig legs; stand-in render (LDraw has no model of the print)
+1,41879a,Legs Short,Dark Bluish Gray,72,41879a,72,41879,85,6233908,0,minifig legs
+1,92081,Hair Combed Back,Dark Bluish Gray,72,92081,72,92081,85,6359369,0,
+1,60474,Plate Round 4 x 4 with Pin Hole,Dark Brown,308,60474,308,60474,120,6005030,0,
+2,6636,Tile 1 x 6 with Groove,Dark Brown,308,6636,308,6636,120,6295366,0,
+1,18041,Weapon Harpoon [Smooth Shaft],Flat Silver,315,18041,179,18041,95,6162578,0,
+1,21268,Hair Short Swept Back with Sideburns and Widow's Peak,Light Bluish Gray,71,21268,71,21268,86,6123037,0,
+1,3815b,Hips and Light Bluish Gray Legs,Light Bluish Gray,71,970c14,71,970c00,86,6154364,0,minifig legs
+1,973pcc,"Torso Striped Suit Jacket, Dark Bluish Grey Vest, White Shirt, Sand Red Tie print, Light Bluish Gray Arms, Yellow Hands",Light Bluish Gray,71,973c14h01pr6850,71,973pb4899c02,86,6468371,0,minifig torso
+1,973,"Torso Diving Suit with Crossed Belts and Weight Belt Print, Medium Nougat Arms, Dark Bluish Gray Hands",Medium Nougat,84,973c23h12pr2119,84,973pb1240c01,150,6008374,1,minifig torso; stand-in render (LDraw has no model of the print)
+1,10165c01,Helmet Underwater Deep Diver with Trans-Clear Glass,Pearl Gold,297,10165c01,297,10165c01,115,6018281,1,approximate 3D model (LDraw has none)
+2,14769,Tile Round 2 x 2 with Bottom Stud Holder,Pearl Gold,297,14769,297,14769,115,6066345,0,
+6,3069b,Tile 1 x 2 with Groove,Pearl Gold,297,3069b,297,3069b,115,6107197,0,
+1,60474,Plate Round 4 x 4 with Pin Hole,Pearl Gold,297,60474,297,60474,115,6521234,0,
+1,64644,"Equipment Telescope / Torch / Spyglass, Support Round 1 x 1 x 1 2/3",Pearl Gold,297,64644,297,64644,115,4538126,0,
+3,15068,Brick Curved 2 x 2 x 2/3,Reddish Brown,70,15068,70,15068,88,6146858,0,
+2,2431,Tile 1 x 4 with Groove,Reddish Brown,70,2431,70,2431,88,4211194,0,
+2,3001,Brick 2 x 4,Reddish Brown,70,3001,70,3001,88,4211201,0,
+2,3003,Brick 2 x 2,Reddish Brown,70,3003,70,3003,88,4211210,0,
+6,3005,Brick 1 x 1,Reddish Brown,70,3005,70,3005,88,4211242,0,
+7,3009,Brick 1 x 6,Reddish Brown,70,3009,70,3009,88,4211193,0,
+1,3035,Plate 4 x 8,Reddish Brown,70,3035,70,3035,88,4211207,0,
+2,3036,Plate 6 x 8,Reddish Brown,70,3036,70,3036,88,4223729,0,
+3,30414,Brick Special 1 x 4 with 4 Studs on One Side,Reddish Brown,70,30414,70,30414,88,6153594,0,
+4,3068b,Tile 2 x 2 with Groove,Reddish Brown,70,3068b,70,3068b,88,4271949,0,
+11,3069b,Tile 1 x 2 with Groove,Reddish Brown,70,3069b,70,3069b,88,4211151,0,
+6,3070b,Tile 1 x 1 with Groove,Reddish Brown,70,3070b,70,3070b,88,4211288,0,
+4,3795,Plate 2 x 6,Reddish Brown,70,3795,70,3795,88,4211247,0,
+1,3941,Brick Round 2 x 2 with Axle Hole,Reddish Brown,70,3941,70,3941,88,4211166,0,
+1,3958,Plate 6 x 6,Reddish Brown,70,3958,70,3958,88,4217848,0,
+1,62810,"Hair Short, Tousled with Side Part",Reddish Brown,70,62810,70,62810,88,6227107,0,
+2,6636,Tile 1 x 6 with Groove,Reddish Brown,70,6636,70,6636,88,4211204,0,
+1,4740,Dish 2 x 2 Inverted [Radar],Trans-Clear,47,4740,47,4740,12,6514246,0,
+1,87580,Plate Special 2 x 2 with Groove and Center Stud (Jumper),Trans-Clear,47,87580,47,87580,12,6499361,0,
+1,95228,Equipment Bottle,Trans-Clear,47,95228,47,95228,12,6507876,0,
+8,98138,Tile Round 1 x 1,Trans-Yellow,46,98138,46,98138,19,6514193,0,
+1,973p3w,"Torso Tank Top with Blue and White Stripes, Belt Print, Yellow Arms and Hands",White,15,973c01h01pr9741,15,973pb3974c01,1,6316914,0,minifig torso
+1,3626bp0a,"Minifig Head, Beard with Gray Hair, Moustache, and Angry Eyebrows Print",Yellow,14,3626bpr0251,14,3626px132,3,4187305,1,minifig head
+1,3626cp72,"Minifig Head, Beard Stubble, Raised Eyebrow, White Pupils Print, Stubble Goatee [Hollow Stud]",Yellow,14,3626cpr0933,14,3626pb1965,3,6218310,0,minifig head
+1,3626cp74,"Minifig Head, Grey Beard, Moustache and Eyebrows",Yellow,14,3626cpr2522,14,3626pb2199,3,6218235,0,minifig head
+1,3626cp8w,"Minifig Head Chan Kong-Sang / Jia / Roby, Eyebrows, White Pupils, Scared / Lopside Smile Print",Yellow,14,3626cpr2224,14,3626pb1879,3,6662107,0,minifig head
+1,3626cpq0,"Minifig Head, Stubble, Brown Eyebrows, Crooked Smile and Scar Print [Hollow Stud]",Yellow,14,3626cpr0754,14,3626pb0495,3,,0,minifig head

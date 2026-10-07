@@ -1063,6 +1063,34 @@ table.parts .link { width: 1%; white-space: nowrap; text-align: right; }
   font-size: 12.5px;
   font-weight: 700;
 }
+/* companions: a smaller build of the same subject in its own section (the mini courthouse) */
+.companion-body {
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
+  gap: 28px;
+  align-items: start;
+}
+.companion-shots { display: grid; gap: 14px; }
+.companion-thumbs { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+.companion-thumbs:empty { display: none; }
+.companion-info { display: grid; gap: 18px; }
+.companion-info .price-card { margin-bottom: 0; }
+.companion-stats { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.companion-stats .stat .v { font-size: 24px; }
+.companion .downloads { grid-template-columns: repeat(auto-fill, minmax(min(100%, 250px), 1fr)); }
+.companion-variant {
+  margin-top: 28px;
+  padding: 22px;
+  border-radius: var(--radius-lg);
+  border: 1px dashed var(--line-2);
+}
+.companion-variant h3 { font-family: var(--font-display); font-size: 22px; font-weight: 600; }
+.companion-variant h3 span { font-size: 15px; font-weight: 600; color: var(--muted); margin-left: 8px; }
+.companion-variant p { color: var(--muted); margin: 8px 0 16px; max-width: 70ch; font-size: 15px; }
+@media (max-width: 860px) {
+  .companion-body { grid-template-columns: 1fr; }
+  .companion-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
 .video-wrap {
   margin-bottom: 18px;
   border-radius: var(--radius-lg);

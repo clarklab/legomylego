@@ -47,3 +47,12 @@ loop = true
 prompt = """A big ship's propeller churning underwater as it passes: a deep rhythmic thrumming \
 whoosh of turning blades and swirling water, heard underwater, continuous and even. No music, \
 no voices."""
+
+# the coda's monster (brickkit video's [video.coda] creature): what moves out there in the dark
+[[sfx]]
+name = "creature"
+seconds = 6.0
+variants = 2
+prompt = """A colossal sea monster's slow, deep, menacing moan heard underwater in the dark: a \
+huge living creature's low, throaty groan rising and falling, wet and resonant, with a long \
+echoing tail, like a whale's call warped into something monstrous. No music, no voices."""

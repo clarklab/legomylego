@@ -1909,6 +1909,131 @@ SEG.booklet = {
   },
 };
 
+// ------------------------------------------------------------------------------ companions
+// smaller builds featured with the model (reel.py / companions.py): per companion its eyebrow
+// and heading, its turntable loop on a card and its chips; then the scale beat - the model's
+// hero cut-out with the companion dropping in beside it at the same scale, each measured
+async function usedImg(u) { if (u) USED.add(u); return img(u); }
+function companionAt(f) {
+  const its = D.marks.companions.items;
+  let k = its.findIndex(it => f >= it.start && f < it.end);
+  if (k < 0) k = f < its[0].start ? 0 : its.length - 1;
+  return [D.companions[k], its[k]];
+}
+// a cut-out drawn so its model's solid box (`stand`, 0..1 of the image; else `box`) is h px
+// tall, centred on x, standing on y; returns that box [x0, y0, x1, y1]
+function standing(bm, box, x, y, h, alpha = 1) {
+  const [bx0, by0, bx1, by1] = box;
+  const sc = h / ((by1 - by0) * bm.height);
+  const w = (bx1 - bx0) * bm.width * sc;
+  const ix = x - ((bx0 + bx1) / 2) * bm.width * sc, iy = y - by1 * bm.height * sc;
+  CX.save(); CX.globalAlpha *= alpha;
+  CX.drawImage(bm, ix, iy, bm.width * sc, bm.height * sc);
+  CX.restore();
+  return [x - w / 2, y - h, x + w / 2, y];
+}
+function groundShadow(x, y, w, a) {
+  if (a <= 0) return;
+  CX.save(); CX.fillStyle = rgba('#000000', 0.16 * a); CX.filter = `blur(${12 * S}px)`;
+  CX.beginPath(); CX.ellipse(x, y - 4, w * 0.55, Math.max(6, w * 0.07), 0, 0, Math.PI * 2); CX.fill();
+  CX.filter = 'none'; CX.restore();
+}
+// a height, measured: a line up the side with end ticks, drawn up from the ground (p), its label
+function measureLine(x, y0, y1, p, lab, lx, ly, align, q) {
+  const col = TH.ink;
+  CX.save(); CX.strokeStyle = col; CX.lineWidth = 3; CX.lineCap = 'round';
+  const yt = lerp(y0, y1, E.outCubic(p));
+  CX.beginPath(); CX.moveTo(x, y0); CX.lineTo(x, yt); CX.stroke();
+  CX.beginPath(); CX.moveTo(x - 10, y0); CX.lineTo(x + 10, y0); CX.stroke();
+  if (p >= 1) { CX.beginPath(); CX.moveTo(x - 10, y1); CX.lineTo(x + 10, y1); CX.stroke(); }
+  CX.restore();
+  if (q > 0) {
+    const sc = E.outBack(clamp(q), 2.2);
+    CX.save(); CX.translate(lx, ly); CX.scale(sc, sc);
+    text(lab, 0, 0, { size: 46, color: col, align, alpha: clamp(q * 3) });
+    CX.restore();
+  }
+}
+SEG.companions = {
+  async prepare(f) {
+    const [c, m] = companionAt(f);
+    const k = Math.max(0, f - m.start);
+    const tt = c.turntable ? await usedImg(`${c.turntable.url}${pad(Math.min(k, c.turntable.n - 1))}.jpg`) : null;
+    const cut = c.cut ? await usedImg(c.cut.url) : null;
+    const big = c.big ? await usedImg(c.big.url) : null;
+    return { tt, cut, big };
+  },
+  shake(f) { const [, m] = companionAt(f); shakeAt(f, [m.drop + 6], 4, 7); },
+  draw(f, s, pre) {
+    const [c, m] = companionAt(f), b = B();
+    background(f);
+    // the eyebrow and heading (a masked rise, letter by letter), "to scale" once it is
+    const hp = tw(f, m.head, m.head + 12, E.outExpo);
+    label(c.eyebrow, M, 104, { color: TH.accent, alpha: hp });
+    const head = UP(c.heading);
+    const hs = Math.min(84, fitSize(head, 84, L - 2 * M, 700, null, -0.022));
+    CX.save(); CX.beginPath(); CX.rect(0, 186 - hs * 1.05, L, hs * 1.3); CX.clip();
+    kinetic(head, M - 3, 186, font(hs, 700), (i) => {
+      const q = clamp((f - m.head - i * 0.9) / 9);
+      return q <= 0 ? { alpha: 0 } : { dy: (1 - E.outBack(q, 1.9)) * hs * 1.1 };
+    }, { spacing: track(hs) });
+    CX.restore();
+    const big = pre && pre.big, mini = pre && pre.cut;
+    const scaleBeat = c.big && c.cut && c.cut.cutout && big && mini;
+    const out = scaleBeat ? tw(f, m.scale - 6, m.scale + 2, E.inCubic) : 0;
+    // the turntable on a card
+    const cp = ramp(f, m.card, m.card + 16);
+    const src = pre && (pre.tt || (!scaleBeat ? mini : null));
+    if (cp > 0 && out < 1 && src) {
+      const sz = 650, cx = L / 2, cy = 586;
+      const sc = E.spring(cp, 1.3, 5.5) * (1 - 0.12 * out);
+      CX.save(); CX.globalAlpha = clamp(cp * 3) * (1 - out);
+      CX.translate(cx, cy - 40 * out); CX.scale(sc, sc);
+      CX.fillStyle = rgba('#000000', 0.14); CX.filter = `blur(${18 * S}px)`;
+      rrect(-sz / 2 + 6, -sz / 2 + 16, sz, sz, 30); CX.fill(); CX.filter = 'none';
+      CX.save(); rrect(-sz / 2, -sz / 2, sz, sz, 30); CX.clip();
+      const iw = src.width, ih = src.height;     // the model fills it: the loop's middle
+      CX.drawImage(src, iw * 0.08, ih * 0.09, iw * 0.84, ih * 0.84, -sz / 2, -sz / 2, sz, sz);
+      CX.restore();
+      CX.strokeStyle = TH.name === 'brand' || TH.name === 'playful' ? TH.ink : rgba(TH.ink, 0.35);
+      CX.lineWidth = 3; rrect(-sz / 2, -sz / 2, sz, sz, 30); CX.stroke();
+      CX.restore();
+    }
+    // the scale beat: the model, and the companion beside it at the same scale
+    if (scaleBeat && f >= m.scale - 2) {
+      const yb = 870, hb = 590;
+      const hm = hb * c.scale.small_mm / c.scale.big_mm;
+      const bp = tw(f, m.scale + 1, m.scale + 13, E.outCubic);
+      const xb = 372;
+      groundShadow(xb, yb, hb * 0.9, bp);
+      CX.save(); CX.translate(0, (1 - bp) * 60);
+      const bb = standing(big, c.big.stand, xb, yb, hb, clamp(bp * 2));
+      CX.restore();
+      const xm = 878;
+      const dk = f - m.drop;
+      if (dk >= 0) {
+        const q = clamp(dk / 9);
+        const fall = q < 1 ? -340 * (1 - q * q) : 0;           // drops in, squashes and settles
+        const j = Math.max(0, dk - 9), w = q < 1 ? 0 : Math.exp(-j / 3.5) * Math.cos(j * 1.1);
+        groundShadow(xm, yb, Math.max(60, hm * 1.2), q);
+        CX.save(); CX.translate(xm, yb + fall); CX.scale(1 + 0.12 * w, 1 - 0.12 * w); CX.translate(-xm, -yb);
+        const mb = standing(mini, c.cut.stand || c.cut.box, xm, yb, hm);
+        CX.restore();
+        const mp = ramp(f, m.measure, m.measure + 10), lq = ramp(f, m.measure + 4, m.measure + 13);
+        measureLine(bb[2] + 34, yb, yb - hb, mp, c.scale.big, bb[2] + 58, yb - hb / 2 + 16, 'left', lq);
+        measureLine(mb[2] + 26, yb, yb - hm, mp, c.scale.small, xm, yb - hm - 30, 'center', lq);
+      }
+      label('to scale', L - M, 104, { color: TH.muted, align: 'right', alpha: ramp(f, m.measure, m.measure + 8) });
+    }
+    // the chips
+    let x = M;
+    c.chips.forEach((ch, k) => {
+      const t0 = m.chips[Math.min(k, m.chips.length - 1)] + Math.max(0, k - m.chips.length + 1) * 4;
+      x += chip(UP(ch.value), ch.label, x, L - M - 62, ramp(f, t0, t0 + 9), k) + 14;
+    });
+  },
+};
+
 // ------------------------------------------------------------------------------ outro
 SEG.outro = {
   shake(f) { shakeAt(f, [D.marks.outro.logo + 6], 6, 8); },
@@ -1944,11 +2069,35 @@ SEG.outro = {
       }
       CX.restore();
     }
+    if (D.outro && D.outro.small_print === false) return;     // [video] outro_small_print = false
     const fp = tw(f, m.fine, m.fine + 12);
     const fine = (str, sz, wt) => font(Math.min(sz, fitSize(str, sz, L - 2 * M, wt)), wt);   // a wide face shrinks
     text(D.model.disclaimer, L / 2, 930, { font: fine(D.model.disclaimer, 24, 500), color: K, align: 'center', alpha: fp * 0.85 });
     if (D.model.notice) text(D.model.notice, L / 2, 966, { font: fine(D.model.notice, 19, 400), color: K, align: 'center', alpha: fp * 0.6 });
   },
 };
+
+// ------------------------------------------------------------------------------ coda
+// the last moments, after the outro (render/blender_cold_open.py's set, plan "coda"): the dark
+// sea and the creature in it, full frame under the theme's look with the water's light
+// blooming, letterbox bars like the cold open's; fading to black over its last `fade` frames
+SEG.coda = {
+  async prepare(f) { return plate('coda', f); },
+  draw(f, s, bm) {
+    drawPlate(bm);
+    if (bm) sunBloom(bm, null, 0);
+    CX.setTransform(S, 0, 0, S, 0, 0);
+    const bar = (D.coda ? D.coda.letterbox : 0) * L;
+    CX.fillStyle = '#000000'; CX.fillRect(0, 0, L, bar); CX.fillRect(0, L - bar, L, bar);
+  },
+};
+function codaFade(f, s) {                        // after the grain: black is black
+  const n = D.coda && D.coda.fade;
+  if (!n) return;
+  const q = E.inOutCubic(ramp(f, s.end - 1 - n, s.end - 2));
+  if (q <= 0) return;
+  CX.setTransform(S, 0, 0, S, 0, 0);
+  CX.fillStyle = rgba('#000000', q); CX.fillRect(0, 0, L, L);
+}
 
 SEG.blank = { draw(f) { background(f); } };

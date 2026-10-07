@@ -142,7 +142,7 @@ def build_context(engine, proj, model, img_dir: Path) -> dict:
                         else f"{round(weight)} g" if weight else None),
         "connections": stats.get("connections", {}).get("connections"),
         "has_mechanism": model.pose is not None, "has_lights": bool(model.lights),
-        "cover": "cover.png", "logo": "logo.png", "url": f"{SITE_URL}/m/{proj.slug}",
+        "cover": "cover.png", "logo": "logo.png", "url": f"{SITE_URL}/m/{cfg.get('page') or proj.slug}",
         "site": SITE_URL, "date": dt.date.today().isoformat(),
         "variant": model.variant,
         "variant_title": (proj.variant_title(model.variant) if model.variant

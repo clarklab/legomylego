@@ -1,0 +1,43 @@
+# Shared sounds for Quick Bricks videos (brickkit quick SLUG: a short vertical build video),
+# generated with ElevenLabs' sound-generation and music APIs (Creator plan: commercial use
+# allowed) by tools/elevenlabs_sfx.py brickkit/data/audio/quick. Each [[sfx]] or [[music]]
+# makes NAME_1.mp3 .. NAME_<variants>.mp3 here; sfx_generated.json records the prompt and
+# settings behind every file. Committed with the code, so a video never calls the API.
+# brickkit/video/quick.py SOUNDS picks the ones used.
+
+[defaults]
+prompt_influence = 0.65
+model_id = "eleven_text_to_sound_v2"
+
+[[sfx]]
+name = "click"
+seconds = 0.6
+variants = 6
+prompt = """A single small LEGO brick pressed onto another LEGO brick: one crisp, short, \
+satisfying plastic click as the studs snap in, very close microphone, dry, ASMR, nothing else. \
+No music, no voices."""
+
+[[sfx]]
+name = "snap"
+seconds = 0.9
+variants = 2
+prompt = """The last LEGO piece pressed firmly into place on a finished model: a deeper, \
+satisfying plastic snap with a tiny rattle of the bricks, very close microphone, dry, ASMR. \
+No music, no voices."""
+
+[[sfx]]
+name = "swish"
+seconds = 0.7
+variants = 2
+prompt = """A soft, airy, quick swish, like a small object moving fast past a microphone, \
+gentle and light, for a camera move in a cute video. No music, no voices."""
+
+[[music]]
+name = "bed"
+seconds = 16
+variants = 2
+instrumental = true
+prompt = """A light, upbeat, playful lo-fi instrumental for a short satisfying LEGO build video: \
+soft plucky ukulele and marimba melody, gentle lo-fi drums with a little vinyl crackle, warm \
+and cheerful, steady 96 BPM, an even groove all the way through that loops seamlessly, no \
+intro and no ending, no vocals."""

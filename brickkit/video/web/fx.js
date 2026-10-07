@@ -697,7 +697,8 @@ function post(f, s) {
   if (t === 'tape') vhsLook(f, s);
   if (t === 'scan' && (isScene || s.name === 'title' || s.name === 'palette')) scanlines(f, 0.05, 3);
   if (t === 'grindhouse') filmLook(f, s);
-  else if (t === 'abyss' && !['open', 'outro', 'booklet', 'cold_open'].includes(s.name)) abyssLook(f, s);
+  else if (t === 'abyss' && !['open', 'outro', 'booklet', 'cold_open', 'coda'].includes(s.name)) abyssLook(f, s);
   else vignette(t === 'brand' ? 0.1 : t === 'playful' ? 0.08 : t === 'abyss' ? 0.12 : 0.3);
   grain(f, TH.grain || 0);
+  if (s.name === 'coda') codaFade(f, s);           // the coda fades to black at the end
 }

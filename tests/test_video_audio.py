@@ -336,6 +336,85 @@ def test_hum():
     assert np.array_equal(y, again)
 
 
+def _band(y, a, b, lo, hi):
+    """Energy of y's mono sum between a and b s, in lo..hi Hz."""
+    x = y[int(a * SR):int(b * SR)].mean(axis=1)
+    sp = np.abs(np.fft.rfft(x * np.hanning(len(x)))) ** 2
+    f = np.fft.rfftfreq(len(x), 1 / SR)
+    return float(sp[(f >= lo) & (f < hi)].sum())
+
+
+def test_organ():
+    """The organ plays its score: the toccata's first A in octaves (A4 and A5 the strongest
+    partials), the pedal's low D and the chord over it later; `muffle` takes the highs away,
+    `curve` the level; the same event gives the same samples."""
+    sfx = A.SFX(SR, FPS, seed=5)
+    ev = {"type": "organ", "dur": 330}
+    y = sfx.fx_organ(ev, np.random.default_rng(1))
+    assert y.shape == (round(11.0 * SR), 2) and np.abs(y).max() == pytest.approx(1.0)
+    x = y[int(0.4 * SR):int(1.4 * SR)].mean(axis=1)
+    sp = np.abs(np.fft.rfft(x * np.hanning(len(x))))
+    f = np.fft.rfftfreq(len(x), 1 / SR)
+    top = sorted(round(v) for v in f[np.argsort(sp)[-12:]])
+    assert any(abs(v - 440) < 3 for v in top) and any(abs(v - 880) < 3 for v in top)
+    assert _band(y, 8.0, 9.5, 30, 45) > 10 * _band(y, 0.4, 1.4, 30, 45)      # the pedal's D
+    muffled = sfx.fx_organ(dict(ev, muffle=[1.0]), np.random.default_rng(1))
+    assert _band(muffled, 0.4, 1.4, 1500, 8000) < 1e-3 * _band(y, 0.4, 1.4, 1500, 8000)
+    half = sfx.fx_organ(dict(ev, curve=[0.5]), np.random.default_rng(1))
+    assert np.allclose(half, 0.5 * y)
+    assert np.array_equal(y, sfx.fx_organ(ev, np.random.default_rng(1)))
+    late = sfx.fx_organ(dict(ev, offset=6.95), np.random.default_rng(1))     # from the pedal
+    assert _band(late, 0.2, 1.0, 30, 45) > 10 * _band(y, 0.2, 1.0, 30, 45)
+
+
+def test_dread():
+    """The dread: a low drone following its curve; with `call` a moan comes in there."""
+    sfx = A.SFX(SR, FPS, seed=5)
+    ev = {"type": "dread", "dur": 150, "curve": [0.0] * 20 + [1.0] * 130}
+    y = sfx.fx_dread(ev, np.random.default_rng(1))
+    assert len(y) == 5 * SR and np.abs(y[:int(0.6 * SR)]).max() == 0
+    assert _band(y, 1.5, 4.0, 20, 120) > 5 * _band(y, 1.5, 4.0, 400, 2000)
+    moan = sfx.fx_dread(dict(ev, call=60), np.random.default_rng(1))
+    assert _band(moan, 2.6, 4.0, 150, 900) > 2 * _band(y, 2.6, 4.0, 150, 900)
+    assert np.array_equal(moan, sfx.fx_dread(dict(ev, call=60), np.random.default_rng(1)))
+
+
+def test_track_placed(tmp_path):
+    """A recorded bed placed from frame `at` (`offset` s into its file) and faded out by frame
+    `until`: silent before and after, playing between, fading over `fade_out` s."""
+    t = np.arange(4 * SR) / SR
+    tone = 0.3 * np.sin(2 * np.pi * 220 * t)
+    A.write_wav(tmp_path / "bed.wav", np.stack([tone, tone], 1), SR)
+    cues = {"fps": FPS, "frames": 150, "beat_frames": 15, "style": "brand", "seed": 1,
+            "sections": [{"name": "a", "start": 0, "end": 150, "mood": "cold"}], "events": [],
+            "track": {"path": str(tmp_path / "bed.wav"), "at": 30, "until": 120, "offset": 1.0,
+                      "fade_out": 0.5}}
+    m = A.render_stems(cues, SR)["music"]
+    assert len(m) == 5 * SR
+    assert np.abs(m[:SR - 2]).max() == 0 and np.abs(m[4 * SR + 2:]).max() == 0
+    full = np.abs(m[int(1.5 * SR):int(3.0 * SR)]).max()
+    assert full > 0.01
+    assert np.abs(m[int(3.95 * SR):4 * SR]).max() < 0.05 * full       # faded by `until`
+    assert np.abs(m[int(3.5 * SR) - 100:int(3.5 * SR)]).max() > 0.6 * full
+    cues["track"]["gain"] = -6.0                                     # under the usual level
+    quiet = A.render_stems(cues, SR)["music"]
+    assert np.abs(quiet).max() == pytest.approx(np.abs(m).max() * 10 ** (-6 / 20), rel=1e-3)
+
+
+def test_sample_muffle(tmp_path):
+    """A recorded sound's `muffle` (0..1 per frame): heard through a hull under water where it
+    is 1 (its highs gone), all but as recorded where it is 0 (the filters wide open)."""
+    noise = 0.2 * np.random.default_rng(0).standard_normal((2 * SR, 2))
+    A.write_wav(tmp_path / "noise.wav", noise, SR)
+    sfx = A.SFX(SR, FPS, seed=1, samples={"noise.wav": {"path": str(tmp_path / "noise.wav")}})
+    ev = {"type": "sample", "file": "noise.wav", "level": -6.0}
+    y, _ = sfx.fx_sample(ev, np.random.default_rng(1))
+    m, _ = sfx.fx_sample(dict(ev, muffle=[0.0] * 30 + [1.0] * 30), np.random.default_rng(1))
+    assert _band(m, 0.2, 0.9, 2000, 8000) == pytest.approx(_band(y, 0.2, 0.9, 2000, 8000), rel=0.15)
+    assert _band(m, 1.2, 1.9, 2000, 8000) < 1e-3 * _band(y, 1.2, 1.9, 2000, 8000)
+    assert _band(m, 1.2, 1.9, 40, 200) > 0.2 * _band(y, 1.2, 1.9, 40, 200)
+
+
 def test_recorded_samples(tmp_path):
     """"sample" events: the file's loudest moment on the frame (align peak), its peak at
     `level`, looped to `dur`, stopped dead at `until`, from `offset`; the music ducks; an MP3

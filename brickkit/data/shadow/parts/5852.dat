@@ -1,0 +1,13 @@
+0 brickkit overlay for "Brick  2 x  2 x  0.667 Quarter Circle with Curved Top" (5852)
+0 // The LDCad shadow library has no file for this part, and its LDraw file (5852.dat,
+0 // s\5852s01.dat) uses no stud primitive, so it gets no stud holes and never sits on anything.
+0 // It is the 2 x 2 curved slope (15068) turned round a corner, with that part's stepped
+0 // underside: the low cells either side of the round corner end at the bottom plane (y = 0)
+0 // and take a stud there; the high, square corner's cell ends one plate up (y = -8: the
+0 // "1 x 1 bottom cutout") and takes a stud from a plate that high. The cell under the round
+0 // corner is cut away by the quarter circle and has no hole. Read from the part's own mesh:
+0 // at each hole a 12 LDU stud has 4 LDU or more of room, walls on three sides within 1 LDU,
+0 // and the part's rim comes down to the stud's base; as LDCad gives 15068 (s\15068s01.dat).
+0 !LDCAD SNAP_CYL [gender=F] [caps=one] [secs=S 6 4] [pos=-10 0 -10]
+0 !LDCAD SNAP_CYL [gender=F] [caps=one] [secs=S 6 4] [pos=10 0 10]
+0 !LDCAD SNAP_CYL [gender=F] [caps=one] [secs=S 6 4] [pos=-10 -8 10]

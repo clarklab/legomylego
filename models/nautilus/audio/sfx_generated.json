@@ -1,0 +1,264 @@
+{
+ "organ_1.mp3": {
+  "bytes": 385389,
+  "generated": "2026-10-03",
+  "loop": false,
+  "model_id": "music_v1",
+  "name": "organ",
+  "output_format": "mp3_48000_192",
+  "prompt": "Solo pipe organ in a vast, reverberant iron chamber, a short eerie baroque toccata phrase in D minor: a dramatic opening flourish with a mordent and a fast descending run in octaves, answered an octave lower, then a thundering low pedal note under a dark diminished chord that swells and rings out. Ominous, gothic, played by a lone organist deep under the sea. Organ only: no drums, no orchestra, no choir, no vocals.",
+  "prompt_influence": 0.0,
+  "seconds": 16.0,
+  "sha1": "1f397e973aaf9ddc4bb6e18aaaa862da96d9c27a",
+  "source": "ElevenLabs music API (Creator plan)"
+ },
+ "organ_2.mp3": {
+  "bytes": 385389,
+  "generated": "2026-10-03",
+  "loop": false,
+  "model_id": "music_v1",
+  "name": "organ",
+  "output_format": "mp3_48000_192",
+  "prompt": "Solo pipe organ in a vast, reverberant iron chamber, a short eerie baroque toccata phrase in D minor: a dramatic opening flourish with a mordent and a fast descending run in octaves, answered an octave lower, then a thundering low pedal note under a dark diminished chord that swells and rings out. Ominous, gothic, played by a lone organist deep under the sea. Organ only: no drums, no orchestra, no choir, no vocals.",
+  "prompt_influence": 0.0,
+  "seconds": 16.0,
+  "sha1": "dfc5f0fbfe098e2fef0cb566fac51d6d47bf0565",
+  "source": "ElevenLabs music API (Creator plan)"
+ },
+ "score_cut_1.mp3": {
+  "bytes": 1007469,
+  "generated": "2026-10-04",
+  "loop": false,
+  "model_id": "music_v1",
+  "name": "score_cut",
+  "output_format": "mp3_48000_192",
+  "plan": {
+   "negative_global_styles": [
+    "vocals",
+    "choir",
+    "electronic beats",
+    "synthesizers",
+    "drum kit",
+    "guitar",
+    "tempo changes",
+    "pop",
+    "rock"
+   ],
+   "positive_global_styles": [
+    "epic cinematic orchestral adventure film score",
+    "a 1950s Hollywood sea adventure",
+    "an iron Victorian submarine voyaging under the sea",
+    "big brass and soaring strings",
+    "deep timpani",
+    "a heroic main theme with a dark, mysterious undertow",
+    "a touch of pipe organ",
+    "106 BPM, 4/4, steady tempo",
+    "full symphony orchestra in a rich concert hall"
+   ],
+   "sections": [
+    {
+     "duration_ms": 3400,
+     "lines": [],
+     "negative_local_styles": [],
+     "positive_local_styles": [
+      "a huge orchestral hit with timpani and brass on the very first beat",
+      "then a short rising string figure"
+     ],
+     "section_name": "Hit"
+    },
+    {
+     "duration_ms": 4533,
+     "lines": [],
+     "negative_local_styles": [],
+     "positive_local_styles": [
+      "the heroic main theme stated by horns over pulsing strings and timpani"
+     ],
+     "section_name": "Theme"
+    },
+    {
+     "duration_ms": 13033,
+     "lines": [],
+     "negative_local_styles": [],
+     "positive_local_styles": [
+      "a driving string ostinato and timpani, building fast",
+      "the theme passed between brass and strings, growing bigger",
+      "one strong crescendo across the whole section"
+     ],
+     "section_name": "Build"
+    },
+    {
+     "duration_ms": 5667,
+     "lines": [],
+     "negative_local_styles": [],
+     "positive_local_styles": [
+      "darker and mysterious: low strings and pipe organ under the pulse",
+      "tension, the dark undertow of the deep sea"
+     ],
+     "section_name": "Mystery"
+    },
+    {
+     "duration_ms": 4533,
+     "lines": [],
+     "negative_local_styles": [],
+     "positive_local_styles": [
+      "the full orchestra at its peak: the heroic theme on trumpets and horns",
+      "crashing cymbals, rolling timpani"
+     ],
+     "section_name": "Peak"
+    },
+    {
+     "duration_ms": 3400,
+     "lines": [],
+     "negative_local_styles": [],
+     "positive_local_styles": [
+      "a moment of wonder: shimmering strings, harp and a soft pipe organ chord",
+      "swelling into the finale"
+     ],
+     "section_name": "Wonder"
+    },
+    {
+     "duration_ms": 3400,
+     "lines": [],
+     "negative_local_styles": [],
+     "positive_local_styles": [
+      "a grand final cadence resolving on a big sustained chord with timpani"
+     ],
+     "section_name": "Finale"
+    },
+    {
+     "duration_ms": 3967,
+     "lines": [],
+     "negative_local_styles": [],
+     "positive_local_styles": [
+      "the chord sinks into a low, ominous swell: contrabasses, low brass and a pipe organ pedal",
+      "dark and menacing, fading away into silence"
+     ],
+     "section_name": "Abyss"
+    }
+   ]
+  },
+  "prompt": "",
+  "prompt_influence": 0.0,
+  "seconds": 41.933,
+  "sha1": "bb4a8b33cf7d84a0333fb297f43a2e376526992e",
+  "source": "ElevenLabs music API (Creator plan)"
+ },
+ "score_cut_2.mp3": {
+  "bytes": 1007469,
+  "generated": "2026-10-04",
+  "loop": false,
+  "model_id": "music_v1",
+  "name": "score_cut",
+  "output_format": "mp3_48000_192",
+  "plan": {
+   "negative_global_styles": [
+    "vocals",
+    "choir",
+    "electronic beats",
+    "synthesizers",
+    "drum kit",
+    "guitar",
+    "tempo changes",
+    "pop",
+    "rock"
+   ],
+   "positive_global_styles": [
+    "epic cinematic orchestral adventure film score",
+    "a 1950s Hollywood sea adventure",
+    "an iron Victorian submarine voyaging under the sea",
+    "big brass and soaring strings",
+    "deep timpani",
+    "a heroic main theme with a dark, mysterious undertow",
+    "a touch of pipe organ",
+    "106 BPM, 4/4, steady tempo",
+    "full symphony orchestra in a rich concert hall"
+   ],
+   "sections": [
+    {
+     "duration_ms": 3400,
+     "lines": [],
+     "negative_local_styles": [],
+     "positive_local_styles": [
+      "a huge orchestral hit with timpani and brass on the very first beat",
+      "then a short rising string figure"
+     ],
+     "section_name": "Hit"
+    },
+    {
+     "duration_ms": 4533,
+     "lines": [],
+     "negative_local_styles": [],
+     "positive_local_styles": [
+      "the heroic main theme stated by horns over pulsing strings and timpani"
+     ],
+     "section_name": "Theme"
+    },
+    {
+     "duration_ms": 13033,
+     "lines": [],
+     "negative_local_styles": [],
+     "positive_local_styles": [
+      "a driving string ostinato and timpani, building fast",
+      "the theme passed between brass and strings, growing bigger",
+      "one strong crescendo across the whole section"
+     ],
+     "section_name": "Build"
+    },
+    {
+     "duration_ms": 5667,
+     "lines": [],
+     "negative_local_styles": [],
+     "positive_local_styles": [
+      "darker and mysterious: low strings and pipe organ under the pulse",
+      "tension, the dark undertow of the deep sea"
+     ],
+     "section_name": "Mystery"
+    },
+    {
+     "duration_ms": 4533,
+     "lines": [],
+     "negative_local_styles": [],
+     "positive_local_styles": [
+      "the full orchestra at its peak: the heroic theme on trumpets and horns",
+      "crashing cymbals, rolling timpani"
+     ],
+     "section_name": "Peak"
+    },
+    {
+     "duration_ms": 3400,
+     "lines": [],
+     "negative_local_styles": [],
+     "positive_local_styles": [
+      "a moment of wonder: shimmering strings, harp and a soft pipe organ chord",
+      "swelling into the finale"
+     ],
+     "section_name": "Wonder"
+    },
+    {
+     "duration_ms": 3400,
+     "lines": [],
+     "negative_local_styles": [],
+     "positive_local_styles": [
+      "a grand final cadence resolving on a big sustained chord with timpani"
+     ],
+     "section_name": "Finale"
+    },
+    {
+     "duration_ms": 3967,
+     "lines": [],
+     "negative_local_styles": [],
+     "positive_local_styles": [
+      "the chord sinks into a low, ominous swell: contrabasses, low brass and a pipe organ pedal",
+      "dark and menacing, fading away into silence"
+     ],
+     "section_name": "Abyss"
+    }
+   ]
+  },
+  "prompt": "",
+  "prompt_influence": 0.0,
+  "seconds": 41.933,
+  "sha1": "678e2472b06f2bd336c125889494d54812c842b8",
+  "source": "ElevenLabs music API (Creator plan)"
+ }
+}

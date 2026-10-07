@@ -166,6 +166,11 @@ def check_buildability(ctx, cfg) -> CheckResult:
                 comps = [c for c in comps
                          if not any(abs(bottoms[built[i]] - table) < 0.5 for i in c)] or [[]]
                 comps = [[]] + [c for c in comps if c]
+            loose_ok = set(ctx.config.get("connections", {}).get("allow_separate_tags", []))
+            if len(comps) > 1 and loose_ok:
+                # a piece that is meant to stand apart (a minifigure beside the model)
+                comps = [comps[0]] + [c for c in comps[1:]
+                                      if not all(units[built[i]].tag in loose_ok for i in c)]
             captive = ctx.model.captive_tags
             if len(comps) > 1 and captive:
                 # a captive slider (held by its guide, not clicked on) isn't a loose piece

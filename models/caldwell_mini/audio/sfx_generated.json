@@ -1,0 +1,54 @@
+{
+ "bell_1.mp3": {
+  "bytes": 121670,
+  "generated": "2026-10-06",
+  "loop": false,
+  "model_id": "eleven_text_to_sound_v2",
+  "name": "bell",
+  "output_format": "mp3_44100_192",
+  "prompt": "One single toll of a big bronze bell in an old courthouse clock tower: struck once, deep and resonant, then ringing out with a long, slow, natural decay. Just the one strike, starting at once. Heard clearly from the town square, no echo of other bells, no clock ticking, no music, no voices, nothing else.",
+  "prompt_influence": 0.6,
+  "seconds": 5.0,
+  "sha1": "f0ec83c4f56a528963baf34b99bb18c10c24635e",
+  "source": "ElevenLabs sound generation API (Creator plan)"
+ },
+ "bell_2.mp3": {
+  "bytes": 121670,
+  "generated": "2026-10-06",
+  "loop": false,
+  "model_id": "eleven_text_to_sound_v2",
+  "name": "bell",
+  "output_format": "mp3_44100_192",
+  "prompt": "One single toll of a big bronze bell in an old courthouse clock tower: struck once, deep and resonant, then ringing out with a long, slow, natural decay. Just the one strike, starting at once. Heard clearly from the town square, no echo of other bells, no clock ticking, no music, no voices, nothing else.",
+  "prompt_influence": 0.6,
+  "seconds": 5.0,
+  "sha1": "e31310b726c04468b3da83a484ae03078cd8734c",
+  "source": "ElevenLabs sound generation API (Creator plan)"
+ },
+ "bell_3.mp3": {
+  "bytes": 121670,
+  "generated": "2026-10-06",
+  "loop": false,
+  "model_id": "eleven_text_to_sound_v2",
+  "name": "bell",
+  "output_format": "mp3_44100_192",
+  "prompt": "One single toll of a big bronze bell in an old courthouse clock tower: struck once, deep and resonant, then ringing out with a long, slow, natural decay. Just the one strike, starting at once. Heard clearly from the town square, no echo of other bells, no clock ticking, no music, no voices, nothing else.",
+  "prompt_influence": 0.6,
+  "seconds": 5.0,
+  "sha1": "5e580ecf43070537491d54fe426e2aef580009e9",
+  "source": "ElevenLabs sound generation API (Creator plan)"
+ },
+ "bell_4.mp3": {
+  "bytes": 121670,
+  "generated": "2026-10-06",
+  "loop": false,
+  "model_id": "eleven_text_to_sound_v2",
+  "name": "bell",
+  "output_format": "mp3_44100_192",
+  "prompt": "One single toll of a big bronze bell in an old courthouse clock tower: struck once, deep and resonant, then ringing out with a long, slow, natural decay. Just the one strike, starting at once. Heard clearly from the town square, no echo of other bells, no clock ticking, no music, no voices, nothing else.",
+  "prompt_influence": 0.6,
+  "seconds": 5.0,
+  "sha1": "774e661e1f17dad52aeb13f04d83caf8d5b6a36f",
+  "source": "ElevenLabs sound generation API (Creator plan)"
+ }
+}

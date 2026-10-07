@@ -1,0 +1,44 @@
+0 FILE bat.ldr
+0 Bat
+0 Name: bat.ldr
+0 Author: brickkit
+
+0 // The feet: two clip plates, the clips forward
+1 0 -10 0 0 1 0 0 0 1 0 0 0 1 61252.dat
+1 0 10 0 0 1 0 0 0 1 0 0 0 1 61252.dat
+0 STEP
+0 // The chin: two inverted slopes, tips out
+1 0 -10 -24 0 0 0 1 0 1 0 -1 0 0 3665b.dat
+1 0 10 -24 0 0 0 -1 0 1 0 1 0 0 3665b.dat
+0 STEP
+0 // The fangs, and a plate on each side of them
+1 15 -10 -32 0 1 0 0 0 1 0 0 0 1 15070.dat
+1 15 10 -32 0 1 0 0 0 1 0 0 0 1 15070.dat
+1 0 -30 -32 0 1 0 0 0 1 0 0 0 1 3024.dat
+1 0 30 -32 0 1 0 0 0 1 0 0 0 1 3024.dat
+0 STEP
+0 // The head: a 1 x 2 brick between two bricks with a stud in front
+1 0 0 -56 0 1 0 0 0 1 0 0 0 1 3004.dat
+1 0 -30 -56 0 1 0 0 0 1 0 0 0 1 87087.dat
+1 0 30 -56 0 1 0 0 0 1 0 0 0 1 87087.dat
+0 STEP
+0 // The wings: a 1 x 4 tile out from each side, an inverted slope pressed up under it
+1 0 -60 -64 0 1 0 0 0 1 0 0 0 1 2431.dat
+1 0 -50 -56 0 0 0 1 0 1 0 -1 0 0 4287c.dat
+1 0 60 -64 0 1 0 0 0 1 0 0 0 1 2431.dat
+1 0 50 -56 0 0 0 -1 0 1 0 1 0 0 4287c.dat
+0 STEP
+0 // A plate on top of the head
+1 0 0 -64 0 1 0 0 0 1 0 0 0 1 3023b.dat
+0 STEP
+0 // Angry eyes: half-round tiles on the front studs, tipped in towards the nose
+1 14 -30 -46 -18 0.866025 0 0.5 0.5 0 -0.866025 0 1 0 1748.dat
+1 14 30 -46 -18 0.866025 0 -0.5 -0.5 0 -0.866025 0 1 0 1748.dat
+0 STEP
+0 // The ears: a slope on each side of the top plate, a small slope on its stud
+1 0 -30 -88 0 0 0 -1 0 1 0 1 0 0 3040b.dat
+1 0 -30 -88 0 0 0 -1 0 1 0 1 0 0 54200.dat
+1 0 30 -88 0 0 0 1 0 1 0 -1 0 0 3040b.dat
+1 0 30 -88 0 0 0 1 0 1 0 -1 0 0 54200.dat
+0 STEP
+0 NOFILE
