@@ -10,9 +10,11 @@ What moves, per model (model.meta["turntable"] can override):
   - neither: just the orbit
 Frames are rendered by the build video's Blender animator (render/blender_animate.py) from a
 timeline written here: the model fully built, groups posed per frame, LEDs and glow per
-frame, a camera orbiting once. Frames already on disk are reused, so a run resumes."""
+frame, a camera orbiting once. Frames already on disk are reused, so a run resumes - until the
+model (the timeline), the size, the samples or the way of rendering (RENDER) changes."""
 from __future__ import annotations
 
+import hashlib
 import json
 import math
 import shutil
@@ -29,6 +31,9 @@ ELEVATION = 22.0
 START_AZ = -35.0          # the hero render's angle, relative to the model's front
 BACKDROP = "#EEF0F3"
 CHUNK = 48                # frames per Blender process (the GPU lock is taken per chunk)
+RENDER = 2                # frames from an older way of rendering are made again. 2: the GPU
+                          # alone - sharing a frame with the CPU left the CPU's strip along
+                          # the bottom hazy and bright, a different height each frame: flicker
 
 
 def _smooth(x):
@@ -141,8 +146,11 @@ def make_turntable(engine, model, out_dir: Path, *, seconds: float = 12.0, fps: 
     work.mkdir(parents=True, exist_ok=True)
     tl, prog = timeline(engine, model, n)
     tl_path = work / "timeline.json"
-    stamp = json.dumps({"n": n, "size": size, "samples": samples,
-                        "kind": prog["kind"]}, sort_keys=True)
+    # (the timeline's digest: a changed model, pose or camera means new frames, not old
+    # frames encoded again)
+    stamp = json.dumps({"n": n, "size": size, "samples": samples, "kind": prog["kind"],
+                        "render": RENDER, "timeline": hashlib.sha1(
+                            json.dumps(tl, sort_keys=True).encode()).hexdigest()}, sort_keys=True)
     if (work / "stamp.json").exists() and (work / "stamp.json").read_text() != stamp:
         for png in work.glob("*.png"):
             png.unlink()                          # settings changed: start over

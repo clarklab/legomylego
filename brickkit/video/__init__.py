@@ -86,14 +86,18 @@ def _file_hash(*files: Path) -> str:
 
 # ---------------------------------------------------------------------------- Blender runs
 CHUNK = 40      # frames per Blender process: the GPU lock is released between chunks
+RETRIES = 3     # a chunk again after Metal loses the GPU (a fault, or Blender stuck on one)
+STALL = 1200.0  # s without a line from Blender: it is stuck, stop it
 
 
 def _run_blender(script: Path, job: dict, job_path: Path, label: str, log) -> float:
     """Render the job's missing frames, CHUNK frames per Blender process. GPU jobs take the
     machine-wide Blender lock (render/scene.py's blender_slot) one chunk at a time, so other
     renders queue in between instead of thrashing the GPU alongside a long video; a CPU-only
-    Cycles job leaves the GPU alone and skips the lock. Returns render seconds (not counting
-    time spent waiting for the lock)."""
+    Cycles job leaves the GPU alone and skips the lock. A chunk that dies of a Metal GPU fault,
+    or goes quiet for STALL seconds, is run again (its finished frames are kept), up to
+    RETRIES times. Returns render seconds (not counting time spent waiting for the lock)."""
+    import threading
     from contextlib import nullcontext
 
     from ..render.scene import BLENDER, blender_slot
@@ -108,28 +112,46 @@ def _run_blender(script: Path, job: dict, job_path: Path, label: str, log) -> fl
         chunk = dict(job, frames=todo[c:c + CHUNK])
         job_path.write_text(json.dumps(chunk))
         cmd = [BLENDER, "-b", "--factory-startup", "-P", str(script), "--", str(job_path)]
-        tail = collections.deque(maxlen=80)
-        ok = False
-        with (nullcontext() if cpu else blender_slot()):
-            t0 = time.time()
-            proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
-                                    text=True, bufsize=1)
-            for line in proc.stdout:
-                tail.append(line)
-                if line.startswith("BRICKKIT_FRAME"):
-                    done += 1
-                    now = time.time()
-                    if now - last > 30 or done == len(todo):
-                        rate = (busy + now - t0) / done
-                        log(f"  {label}: {done}/{len(todo)} frames, {rate:.1f} s/frame, "
-                            f"~{rate * (len(todo) - done) / 60:.0f} min left")
-                        last = now
-                elif line.startswith("BRICKKIT_DONE"):
-                    ok = True
-            code = proc.wait()
-            busy += time.time() - t0
-        if code != 0 or not ok:
-            raise RuntimeError(f"Blender failed ({label}):\n" + "".join(tail))
+        for attempt in range(RETRIES + 1):
+            tail = collections.deque(maxlen=80)
+            ok, stuck = False, threading.Event()
+            with (nullcontext() if cpu else blender_slot()):
+                t0 = time.time()
+                proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
+                                        text=True, bufsize=1)
+                heard = [time.time()]
+
+                def watch(proc=proc, heard=heard, stuck=stuck):
+                    while proc.poll() is None:
+                        if time.time() - heard[0] > STALL:
+                            stuck.set()
+                            proc.kill()
+                            return
+                        time.sleep(5)
+                threading.Thread(target=watch, daemon=True).start()
+                for line in proc.stdout:
+                    heard[0] = time.time()
+                    tail.append(line)
+                    if line.startswith("BRICKKIT_FRAME"):
+                        done += 1
+                        now = time.time()
+                        if now - last > 30 or done == len(todo):
+                            rate = (busy + now - t0) / done
+                            log(f"  {label}: {done}/{len(todo)} frames, {rate:.1f} s/frame, "
+                                f"~{rate * (len(todo) - done) / 60:.0f} min left")
+                            last = now
+                    elif line.startswith("BRICKKIT_DONE"):
+                        ok = True
+                code = proc.wait()
+                busy += time.time() - t0
+            if code == 0 and ok:
+                break
+            lost = stuck.is_set() or any("MTLCommandBufferErrorDomain" in ln for ln in tail)
+            if not lost or attempt == RETRIES:
+                raise RuntimeError(f"Blender failed ({label}):\n" + "".join(tail))
+            log(f"  {label}: Blender {'went quiet' if stuck.is_set() else 'lost the GPU (a Metal fault)'}"
+                f"; the chunk again ({attempt + 1} of {RETRIES})")
+            time.sleep(5)
     return busy
 
 

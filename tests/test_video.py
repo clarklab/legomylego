@@ -1414,3 +1414,52 @@ def test_connection_points_skip_press_fits():
     press = NS(ca=None, cb=None, kind="press")
     engine = NS(context=lambda model: NS(connections=[stud, press]))
     assert connection_points(engine, None) == [[10.0, 0.0, 0.0, "stud"]]
+
+
+def test_run_blender_again_after_a_gpu_fault(tmp_path, monkeypatch):
+    """A chunk that dies of a Metal GPU fault is run again and keeps the frames it had; any
+    other failure is an error straight away."""
+    import json
+    import sys
+
+    from brickkit import video as V
+    from brickkit.render import scene as S
+
+    stub = tmp_path / "blender"
+    stub.write_text(f"""#!{sys.executable}
+import json, os, sys
+job = json.load(open(sys.argv[-1]))
+mode = open({str(tmp_path / "mode")!r}).read()
+first = not os.path.exists({str(tmp_path / "ran")!r})
+open({str(tmp_path / "ran")!r}, "a").write("x")
+for i, (f, path) in enumerate(job["frames"]):
+    if os.path.exists(path):
+        continue
+    if first and i == 1:
+        print("Error Domain=MTLCommandBufferErrorDomain Code=3" if mode == "gpu" else "Traceback: boom")
+        sys.exit(1)
+    open(path, "w").write("png")
+    print("BRICKKIT_FRAME", f, "0.01", flush=True)
+print("BRICKKIT_DONE")
+""")
+    stub.chmod(0o755)
+    monkeypatch.setattr(S, "BLENDER", str(stub))
+    monkeypatch.setattr(S, "LOCK", "none")
+    monkeypatch.setattr(V.time, "sleep", lambda s: None)
+    lines = []
+
+    def run(mode):
+        (tmp_path / "mode").write_text(mode)
+        (tmp_path / "ran").unlink(missing_ok=True)
+        work = tmp_path / mode
+        work.mkdir()
+        job = {"frames": [[f, str(work / f"{f:05d}.png")] for f in range(3)], "engine": "cycles"}
+        V._run_blender(tmp_path / "script.py", job, work / "job.json", "test", lines.append)
+        return work
+
+    work = run("gpu")
+    assert sorted(p.name for p in work.glob("*.png")) == ["00000.png", "00001.png", "00002.png"]
+    assert len((tmp_path / "ran").read_text()) == 2 and any("lost the GPU" in ln for ln in lines)
+    with pytest.raises(RuntimeError, match="boom"):
+        run("other")
+    assert len((tmp_path / "ran").read_text()) == 1

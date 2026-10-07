@@ -24,7 +24,7 @@ The cache location can be overridden with `BRICKKIT_CACHE` (useful in git worktr
 | `brickkit render SLUG [--views a,b] [--size N] [--samples N] [--pose T] [--lights] [--variant V]` | Blender stills in `out/renders/` |
 | `brickkit booklet SLUG [--no-render]` | instruction booklet `out/booklet.pdf` (pictures in `out/booklet/`) |
 | `brickkit viewer SLUG` | export `site/models/SLUG/` (GLB + model.json + files) for the viewer site |
-| `brickkit turntable SLUG [--preview]` | `out/turntable.mp4`: a 12 s photoreal (Cycles) orbit with the mechanism and lights working, muted and seamless; the site plays it where WebGL is missing (`meta["turntable"]`: `program` tap/swing/lights, `cycles`, `taps`) |
+| `brickkit turntable SLUG [--preview]` | `out/turntable.mp4`: a 12 s photoreal (Cycles) orbit with the mechanism and lights working, muted and seamless; the site plays it where WebGL is missing (`meta["turntable"]`: `program` tap/swing/lights, `cycles`, `taps`). Its frames are kept and reused until the model, the size, the samples or the way of rendering changes |
 | `brickkit quick SLUG [--preview] [--set PRESET\|random] [--surface S] [--room R] [--light L] [--seed N] [--seconds S] [--stills F,F] [--layout\|--no-layout] [--remix]` | `out/SLUG-1080x1920.mp4` (+ `quick_poster.jpg`): Quick Bricks, a 14 s vertical (1080×1920, 60 fps) photoreal build video of a small model for TikTok and Instagram, made to loop (config `[quick]`; see Video) |
 | `brickkit sizzle [SLUG ...] [--stills F,F] [--preview]` | `showreel/sizzle.mp4`: one quick brand reel of several models cut on the music's beats, from their showreels' footage (config `showreel/sizzle.toml`; see Video) |
 | `python tools/hero.py SLUG` | hero stills: `out/hero/`, `out/hero_lit/` (lights), `out/hero_open/` (pose 1) |
@@ -877,7 +877,10 @@ Frames render under the GPU lock, 40 to a Blender process (Cycles, 32 samples, d
 a preview about ten minutes), and are kept between runs until the plan, the samples or the
 scripts change. Every Cycles render uses the GPU on its own (`blender_scene.settings`): with
 the CPU sharing each frame it took over twice as long for the same picture, and a see-through
-part under motion blur made Metal fault and the render hang. See-through parts are tinted more
+part under motion blur made Metal fault and the render hang. A chunk that still loses the GPU
+(a Metal fault, or 20 minutes without a word from Blender) is run again, up to three times,
+keeping the frames it had (`video._run_blender`); never start another Blender outside the
+`blender_slot()` lock while one renders - that is what sets the faults off. See-through parts are tinted more
 strongly here than in the stills (`blender_quick.TINT`): at real size and this close, the
 stills' absorption leaves a flame all but clear. The next one: add `[quick]` to the model's model.toml
 (or nothing: the defaults work) and run `brickkit quick SLUG --preview`, then `brickkit quick
