@@ -1,0 +1,53 @@
+0 FILE taco.ldr
+0 Taco
+0 Name: taco.ldr
+0 Author: brickkit
+
+0 // 1 · The first curved shell corner
+1 14 -40 -40 12 -1 0 0 0 0 1 0 1 0 30565.dat
+0 STEP
+0 // 2 · The eight-stud folded edge
+1 14 0 -10 -12 1 0 0 0 0 -1 0 1 0 3008.dat
+0 STEP
+0 // 3 · Complete the back shell
+1 14 40 -40 12 0 0 -1 -1 0 0 0 1 0 30565.dat
+0 STEP
+0 // 4 · Lettuce filling and two red round plates
+1 27 0 -30 -12 1 0 0 0 0 -1 0 1 0 3010.dat
+1 4 -50 -30 4 1 0 0 0 0 -1 0 1 0 85861.dat
+1 4 50 -30 4 1 0 0 0 0 -1 0 1 0 85861.dat
+0 STEP
+0 // 5 · The hidden coral brick and two white side-stud bricks
+1 15 -30 -50 -12 -1 0 0 0 0 1 0 1 0 87087.dat
+1 15 30 -50 -12 -1 0 0 0 0 1 0 1 0 87087.dat
+1 353 0 -50 -12 1 0 0 0 0 -1 0 1 0 3004.dat
+0 STEP
+0 // 6 · Curved green and brown fillings
+1 27 30 -60 -2 1 0 0 0 1 0 0 0 1 49307.dat
+1 70 -30 -60 -2 1 0 0 0 1 0 0 0 1 49307.dat
+0 STEP
+0 // 7 · A curved tomato slice
+1 4 0 -70 -12 -1 0 0 0 0 1 0 1 0 37352.dat
+0 STEP
+0 // 8 · Two lettuce leaves at the edges
+1 10 -50 -50 4 -1 0 0 0 0 1 0 1 0 32607.dat
+1 10 50 -50 4 0 0 -1 -1 0 0 0 1 0 32607.dat
+0 STEP
+0 // 9 · White round plates between the leaves
+1 15 -50 -50 -4 1 0 0 0 0 -1 0 1 0 85861.dat
+1 15 50 -50 -4 1 0 0 0 0 -1 0 1 0 85861.dat
+0 STEP
+0 // 10 · A second pair of lettuce leaves
+1 10 -50 -50 -12 -1 0 0 0 0 1 0 1 0 32607.dat
+1 10 50 -50 -12 0 0 -1 -1 0 0 0 1 0 32607.dat
+0 STEP
+0 // 11 · Close the front shell
+1 14 -40 -40 -20 -1 0 0 0 0 1 0 1 0 30565.dat
+1 14 40 -40 -20 0 0 -1 -1 0 0 0 1 0 30565.dat
+0 STEP
+0 // 12 · The nose and happy closed eyes
+1 14 0 -10 -28 1 0 0 0 0 -1 0 1 0 15573.dat
+1 15 -30 -30 -28 1 0 0 0 0 -1 0 1 0 98138p2n.dat
+1 15 30 -30 -28 1 0 0 0 0 -1 0 1 0 98138p2n.dat
+0 STEP
+0 NOFILE

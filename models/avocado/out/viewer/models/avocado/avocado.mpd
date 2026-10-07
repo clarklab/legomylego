@@ -1,0 +1,79 @@
+0 FILE avocado.ldr
+0 Avocado
+0 Name: avocado.ldr
+0 Author: brickkit
+
+0 // 1 · The lime base
+1 27 0 0 0 1 0 0 0 1 0 0 0 1 3020.dat
+0 STEP
+0 // 2 · The centre of the avocado
+1 27 0 -24 0 1 0 0 0 1 0 0 0 1 3003.dat
+0 STEP
+0 // 3 · The two back corners slope inward
+1 27 -30 -24 10 0 0 1 0 1 0 -1 0 0 3665b.dat
+1 27 30 -24 10 0 0 -1 0 1 0 1 0 0 3665b.dat
+0 STEP
+0 // 4 · Join the back with a six-stud brick
+1 27 0 -48 10 1 0 0 0 1 0 0 0 1 3009.dat
+0 STEP
+0 // 5 · The stud for the stone
+1 27 0 -48 -10 1 0 0 0 1 0 0 0 1 86876.dat
+0 STEP
+0 // 6 · Attach the right cheek
+1 16 30 -24 -10 1 0 0 0 1 0 0 0 1 cheek_6.ldr
+0 STEP
+0 // 7 · Attach the left cheek
+1 16 -30 -24 -10 1 0 0 0 1 0 0 0 1 cheek_7.ldr
+0 STEP
+0 // 8 · A square brick above the stone
+1 27 0 -72 0 1 0 0 0 1 0 0 0 1 3003.dat
+0 STEP
+0 // 9 · Round off both shoulders
+1 27 -30 -72 0 0 0 1 0 1 0 -1 0 0 3039.dat
+1 27 30 -72 0 0 0 -1 0 1 0 1 0 0 3039.dat
+0 STEP
+0 // 10 · The round brown stone
+1 70 0 -38 -28 1 0 0 0 0 -1 0 1 0 67095.dat
+0 STEP
+0 // 11 · Build the back of the head
+1 27 0 -96 10 1 0 0 0 1 0 0 0 1 3010.dat
+0 STEP
+0 // 12 · A smile between the eye studs
+1 27 -30 -96 -10 1 0 0 0 1 0 0 0 1 87087.dat
+1 27 30 -96 -10 1 0 0 0 1 0 0 0 1 87087.dat
+1 27 0 -96 -10 1 0 0 0 1 0 0 0 1 3004p0g.dat
+0 STEP
+0 // 13 · Two squeezed-shut eyes
+1 15 -30 -86 -28 -1 0 0 0 0 1 0 1 0 98138p2o.dat
+1 15 30 -86 -28 1 0 0 0 0 -1 0 1 0 98138p2o.dat
+0 STEP
+0 // 14 · The tapered top
+1 27 -10 -120 0 0 0 1 0 1 0 -1 0 0 3039.dat
+1 27 10 -120 0 0 0 -1 0 1 0 1 0 0 3039.dat
+0 STEP
+0 // 15 · Finish with the green stem cap
+1 10 0 -128 0 1 0 0 0 1 0 0 0 1 18674.dat
+0 STEP
+0 NOFILE
+
+0 FILE cheek_6.ldr
+0 Step 6: build the right cheek
+0 Name: cheek_6.ldr
+0 Author: brickkit
+
+0 // Stack the brick on the inverted slope
+1 27 0 0 0 0 0 -1 0 1 0 1 0 0 3665b.dat
+1 27 10 -24 0 1 0 0 0 1 0 0 0 1 3004.dat
+0 STEP
+0 NOFILE
+
+0 FILE cheek_7.ldr
+0 Step 7: build the left cheek
+0 Name: cheek_7.ldr
+0 Author: brickkit
+
+0 // Stack the brick on the inverted slope
+1 27 0 0 0 0 0 1 0 1 0 -1 0 0 3665b.dat
+1 27 -10 -24 0 1 0 0 0 1 0 0 0 1 3004.dat
+0 STEP
+0 NOFILE

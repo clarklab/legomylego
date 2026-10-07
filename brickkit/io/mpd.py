@@ -11,9 +11,11 @@ from ..model.builder import Model, Placement
 
 
 def write_mpd(model: Model, path, lib=None) -> Path:
-    """Write the model; with `lib` (an LDrawLibrary), brickkit's own stand-in parts (non-LEGO
-    hardware, from its extra part roots) are embedded at the end so other LDraw programs can
-    show them."""
+    """Write the model and embed custom parts and their custom dependencies.
+
+    Supplemental LDraw geometry and hardware from `lib`'s extra roots remain
+    portable to other LDraw programs without installing brickkit's overlays.
+    """
     path = Path(path)
     lines: list[str] = []
     subs = [model.main] + [s for s in model.submodels.values() if s is not model.main]
@@ -34,9 +36,18 @@ def write_mpd(model: Model, path, lib=None) -> Path:
             lines.append("0 STEP")
         lines += ["0 NOFILE", ""]
     if lib is not None:
-        custom = sorted({it.part for sub in subs for it in sub.items
-                         if isinstance(it, Placement) and lib.is_custom(it.part)})
-        for part in custom:
+        custom = {it.part for sub in subs for it in sub.items
+                  if isinstance(it, Placement) and lib.is_custom(it.part)}
+        pending = list(custom)
+        while pending:
+            for raw in lib.resolve(pending.pop()).read_text(encoding="utf-8").splitlines():
+                fields = raw.split()
+                if len(fields) >= 15 and fields[0] == "1":
+                    dependency = normalize(" ".join(fields[14:]))
+                    if lib.is_custom(dependency) and dependency not in custom:
+                        custom.add(dependency)
+                        pending.append(dependency)
+        for part in sorted(custom):
             body = lib.resolve(part).read_text(encoding="utf-8").splitlines()
             lines += [f"0 FILE {part}"] + body + ["0 NOFILE", ""]
     path.parent.mkdir(parents=True, exist_ok=True)

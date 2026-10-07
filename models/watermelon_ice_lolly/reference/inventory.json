@@ -1,0 +1,171 @@
+{
+  "source_url": "https://www.lego.com/cdn/product-assets/product.bi.core.pdf/6555451.pdf",
+  "source_sha256": "3d72407e04a6e77ac486f71280385d2190e7f4ac690b843cf77f7802bdb77965",
+  "set_number": "11039",
+  "model": "Watermelon Ice Lolly",
+  "physical_piece_count": 23,
+  "official_numbered_step_count": 11,
+  "excluded_pages": [
+    20,
+    21
+  ],
+  "exclusion_reason": "Unnumbered alternate face/rebuild inspiration, not steps of the primary model.",
+  "steps": [
+    {
+      "number": 1,
+      "page": 14,
+      "parts": [
+        {
+          "element_id": "4165967",
+          "ldraw": "3001",
+          "color": "Lime",
+          "quantity": 1
+        },
+        {
+          "element_id": "302001",
+          "ldraw": "3020",
+          "color": "White",
+          "quantity": 1
+        }
+      ]
+    },
+    {
+      "number": 2,
+      "page": 14,
+      "parts": [
+        {
+          "element_id": "6422918",
+          "ldraw": "3010",
+          "color": "Coral",
+          "quantity": 1
+        }
+      ]
+    },
+    {
+      "number": 3,
+      "page": 15,
+      "parts": [
+        {
+          "element_id": "6523861",
+          "ldraw": "86876",
+          "color": "Coral",
+          "quantity": 2
+        },
+        {
+          "element_id": "6284070",
+          "ldraw": "98138",
+          "color": "Black",
+          "quantity": 2
+        }
+      ]
+    },
+    {
+      "number": 4,
+      "page": 15,
+      "parts": [
+        {
+          "element_id": "6523861",
+          "ldraw": "86876",
+          "color": "Coral",
+          "quantity": 1
+        },
+        {
+          "element_id": "6284070",
+          "ldraw": "98138",
+          "color": "Black",
+          "quantity": 1
+        }
+      ]
+    },
+    {
+      "number": 5,
+      "page": 16,
+      "parts": [
+        {
+          "element_id": "6258572",
+          "ldraw": "3004",
+          "color": "Coral",
+          "quantity": 3
+        }
+      ]
+    },
+    {
+      "number": 6,
+      "page": 16,
+      "parts": [
+        {
+          "element_id": "6422918",
+          "ldraw": "3010",
+          "color": "Coral",
+          "quantity": 1
+        },
+        {
+          "element_id": "6522845",
+          "ldraw": "3004p0g",
+          "color": "Coral",
+          "quantity": 1
+        }
+      ]
+    },
+    {
+      "number": 7,
+      "page": 17,
+      "parts": [
+        {
+          "element_id": "6261292",
+          "ldraw": "87087",
+          "color": "Coral",
+          "quantity": 2
+        }
+      ]
+    },
+    {
+      "number": 8,
+      "page": 17,
+      "parts": [
+        {
+          "element_id": "6431716",
+          "ldraw": "98138p2j",
+          "color": "White",
+          "quantity": 2
+        }
+      ]
+    },
+    {
+      "number": 9,
+      "page": 18,
+      "parts": [
+        {
+          "element_id": "6422920",
+          "ldraw": "3003",
+          "color": "Coral",
+          "quantity": 1
+        }
+      ]
+    },
+    {
+      "number": 10,
+      "page": 18,
+      "parts": [
+        {
+          "element_id": "6261293",
+          "ldraw": "37352",
+          "color": "Coral",
+          "quantity": 2
+        }
+      ]
+    },
+    {
+      "number": 11,
+      "page": 19,
+      "parts": [
+        {
+          "element_id": "4125220",
+          "ldraw": "3941",
+          "color": "Tan",
+          "quantity": 2
+        }
+      ]
+    }
+  ]
+}

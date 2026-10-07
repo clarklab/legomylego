@@ -34,6 +34,11 @@ from pathlib import Path
 from PIL import Image, ImageDraw, ImageFont
 from resvg_py import svg_to_bytes
 
+if __package__:
+    from .quick_site import build_quick_site
+else:
+    from quick_site import build_quick_site
+
 ROOT = Path(__file__).resolve().parents[1]
 SITE = ROOT / "site"
 ORIGIN = "https://bricks.superfun.games"
@@ -495,8 +500,10 @@ def main() -> int:
     og_home()
 
     template = (SITE / "model.html").read_text()
+    quick = build_quick_site(SITE, ROOT / "models")
     media = {"models": {}}
     slugs = []
+    regular_slugs = []
     entries = []
     for m in models:
         slug = m["slug"]
@@ -508,6 +515,10 @@ def main() -> int:
         data = json.loads(mj.read_text())
         slugs.append(slug)
         media["models"][slug] = model_media(slug, data, slug_dir)
+        if data.get("collection") == "quick_bricks":
+            print(f"  {slug}: QuickBricks assets")
+            continue
+        regular_slugs.append(slug)
         og = og_model(m, data, slug_dir)
         media["models"][slug]["og"] = f"/assets/og/{slug}.png?v={sha(og)}"
         notice = data.get("notice") or data.get("credits") or notices.get(slug, "")
@@ -519,7 +530,7 @@ def main() -> int:
 
     # clean up generated output for models that are gone
     for d in (SITE / "m").glob("*/"):
-        if d.name not in slugs and (d / "index.html").exists() and GENERATED in (d / "index.html").read_text():
+        if d.name not in regular_slugs and (d / "index.html").exists() and GENERATED in (d / "index.html").read_text():
             shutil.rmtree(d)
     for p in (SITE / "assets" / "og").glob("*.png"):
         if p.stem != "home" and p.stem not in slugs:
@@ -532,6 +543,13 @@ def main() -> int:
     home_day = max([day(SITE / "index.html")] + [e[1] for e in entries])
     extra = [(f"{ORIGIN}/videos/", max(home_day, day(SITE / "videos" / "index.html")))] \
         if (SITE / "videos" / "index.html").exists() else []
+    quick_index = SITE / "quick" / "index.html"
+    if quick_index.exists():
+        extra.append((f"{ORIGIN}/quick/", day(quick_index)))
+    for item in quick["models"]:
+        page = SITE / "quick" / item["slug"] / "index.html"
+        if page.exists():
+            extra.append((ORIGIN + item["url"], day(page)))
     write_if_changed(SITE / "sitemap.xml", sitemap([(f"{ORIGIN}/", home_day)] + extra + entries))
 
     # the all-models showreel (brickkit sizzle -> showreel/), featured on the videos page
@@ -541,10 +559,12 @@ def main() -> int:
             dst.parent.mkdir(parents=True, exist_ok=True)
             shutil.copy2(src, dst)
 
-    for name in ("index.html", "model.html", "404.html", "videos/index.html"):
+    for name in ("index.html", "model.html", "quick-model.html", "404.html", "videos/index.html", "quick/index.html"):
         p = SITE / name
         if p.exists():
             write_if_changed(p, stamp(p.read_text()))
+    for page in (SITE / "quick").glob("*/index.html"):
+        write_if_changed(page, stamp(page.read_text()))
     print(f"site assets written for {len(slugs)} model(s)")
     return 0
 

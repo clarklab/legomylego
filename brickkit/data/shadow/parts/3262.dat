@@ -1,0 +1,6 @@
+0 brickkit overlay for 3262, vented dome stud
+0 // The upper stud has a radius-4 blind bore from y=-4 to y=0 (stud2a / filstud2
+0 // and the annular cap at y=0 in s/3262s01.dat). A 37762 candle's 7.5-LDU bar
+0 // seats 3.5 LDU into it; its shoulder remains 4 LDU above the stud. This bore
+0 // is absent from the upstream shadow file, which only describes the underside.
+0 !LDCAD SNAP_CYL [gender=F] [caps=one] [secs=R 4 4] [pos=0 -4 0] [ori=1 0 0 0 -1 0 0 0 -1]

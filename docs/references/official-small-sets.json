@@ -1,0 +1,116 @@
+{
+  "verified_on": "2026-10-06",
+  "criterion": "Official LEGO sets with strictly fewer than 50 pieces and instruction PDFs on lego.com",
+  "sets": [
+    {
+      "set_number": "30222",
+      "name": "Police Helicopter",
+      "pieces": 33,
+      "official_source": "https://www.lego.com/en-us/service/building-instructions/30222",
+      "pdf": "https://www.lego.com/cdn/product-assets/product.bi.core.pdf/6036462.pdf",
+      "verified_pdf": true,
+      "local_file": "official-small-sets/30222-police-helicopter.pdf",
+      "pdf_pages": 2,
+      "sha256": "4a970bc6ca808ecef6ca9b2e73cfcc15715c8416e3e9862a855f91a9ccd2fb97"
+    },
+    {
+      "set_number": "30363",
+      "name": "Race Boat",
+      "pieces": 34,
+      "official_source": "https://www.lego.com/en-us/service/building-instructions/30363",
+      "pdf": "https://www.lego.com/cdn/product-assets/product.bi.core.pdf/6268751.pdf",
+      "verified_pdf": true,
+      "local_file": "official-small-sets/30363-race-boat.pdf",
+      "pdf_pages": 2,
+      "sha256": "1c03152dec06c2207bb61c5f9ac264f9d9dbb7d8bf8bdc6cdb28029ea6004cab"
+    },
+    {
+      "set_number": "30225",
+      "name": "Seaplane",
+      "pieces": 37,
+      "official_source": "https://www.lego.com/en-us/service/building-instructions/30225",
+      "pdf": "https://www.lego.com/cdn/product-assets/product.bi.core.pdf/6047196.pdf",
+      "verified_pdf": true,
+      "local_file": "official-small-sets/30225-seaplane.pdf",
+      "pdf_pages": 2,
+      "sha256": "6bd903195f2f1ea71428bf4dda7ab486c5bfd1eafb7ec615f12cccb0bc0923d1"
+    },
+    {
+      "set_number": "30354",
+      "name": "Hot Rod",
+      "pieces": 38,
+      "official_source": "https://www.lego.com/en-us/service/building-instructions/30354",
+      "pdf": "https://www.lego.com/cdn/product-assets/product.bi.core.pdf/6188416.pdf",
+      "verified_pdf": true,
+      "local_file": "official-small-sets/30354-hot-rod.pdf",
+      "pdf_pages": 2,
+      "sha256": "ecb687fdb95eb9236a7f29f4e36013fab5530a3ca7dd72652e42f6eb74d245d0"
+    },
+    {
+      "set_number": "30315",
+      "name": "Space Vehicle",
+      "pieces": 39,
+      "official_source": "https://www.lego.com/en-us/service/building-instructions/30315",
+      "pdf": "https://www.lego.com/cdn/product-assets/product.bi.core.pdf/6121306.pdf",
+      "verified_pdf": true,
+      "local_file": "official-small-sets/30315-space-vehicle.pdf",
+      "pdf_pages": 2,
+      "sha256": "51f42ee92fa335faa32ca2e141d311dce230e8f22d41ac8428120a212d509b34"
+    },
+    {
+      "set_number": "30312",
+      "name": "Demolition Driller",
+      "pieces": 40,
+      "official_source": "https://www.lego.com/en-us/service/building-instructions/30312",
+      "pdf": "https://www.lego.com/cdn/product-assets/product.bi.core.pdf/6109846.pdf",
+      "verified_pdf": true,
+      "local_file": "official-small-sets/30312-demolition-driller.pdf",
+      "pdf_pages": 2,
+      "sha256": "8655ffa02da77690b0e53c7ab3ebab4ea6404d206877b3982638b3a0e02ab023"
+    },
+    {
+      "set_number": "30224",
+      "name": "Lawn Mover",
+      "pieces": 42,
+      "official_source": "https://www.lego.com/en-us/service/building-instructions/30224",
+      "pdf": "https://www.lego.com/cdn/product-assets/product.bi.core.pdf/6047194.pdf",
+      "verified_pdf": true,
+      "local_file": "official-small-sets/30224-lawn-mover.pdf",
+      "pdf_pages": 2,
+      "sha256": "2a29a9719b041845393310ba53b69c2bd5e57edbe6fbb85639f6d7ff37a8e429"
+    },
+    {
+      "set_number": "30283",
+      "name": "Off-Road",
+      "pieces": 43,
+      "official_source": "https://www.lego.com/en-us/service/building-instructions/30283",
+      "pdf": "https://www.lego.com/cdn/product-assets/product.bi.core.pdf/6112655.pdf",
+      "verified_pdf": true,
+      "local_file": "official-small-sets/30283-off-road.pdf",
+      "pdf_pages": 2,
+      "sha256": "94addc56fffcaaf857e7ce137a867af3b29f930ad1efbbee6f3cb4be5e482f3b"
+    },
+    {
+      "set_number": "30540",
+      "name": "Yellow Flyer",
+      "pieces": 43,
+      "official_source": "https://www.lego.com/en-us/service/building-instructions/30540",
+      "pdf": "https://www.lego.com/cdn/product-assets/product.bi.core.pdf/6226373.pdf",
+      "verified_pdf": true,
+      "local_file": "official-small-sets/30540-yellow-flyer.pdf",
+      "pdf_pages": 2,
+      "sha256": "8bf102940685f7bc2dd4a5c75f881041a7bad1d0176d7257c2f83d65edcee3e5"
+    },
+    {
+      "set_number": "30351",
+      "name": "Police Helicopter",
+      "pieces": 44,
+      "official_source": "https://www.lego.com/en-us/service/building-instructions/30351",
+      "pdf": "https://www.lego.com/cdn/product-assets/product.bi.core.pdf/6188385.pdf",
+      "verified_pdf": true,
+      "local_file": "official-small-sets/30351-police-helicopter.pdf",
+      "pdf_pages": 2,
+      "sha256": "51e799bf3a380beb89f3365902b63bb22ccad60fd5751be97ae4e4c566fb6518"
+    }
+  ]
+}

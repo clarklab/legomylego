@@ -1,0 +1,26 @@
+[model]
+name = "Birthday Cake"
+design = "design.py"
+description = "The 20-piece birthday cake from LEGO Classic 11039: white frosting, sleepy eyes, a cherry and a candle."
+collection = "quick_bricks"
+
+[palette]
+cake = "Reddish Brown"
+frosting = "White"
+cherry = "Red"
+flame = "Trans-Orange"
+
+[booklet]
+subtitle = "A little birthday cake in 20 pieces."
+intro = "Build the birthday cake from LEGO Classic 11039 Creative Food Friends, following its 11 numbered steps. This standalone reconstruction uses the exact printed face and LEGO element inventory from the official booklet."
+notes = ["Source: LEGO 11039, instruction PDF 6555451, pages 6-11.", "Build the flame into the candle separately, then attach the candle to the cherry."]
+
+[checks]
+enabled = ["real_elements", "connections", "collisions", "buildability", "stability", "mechanism", "electrics", "technique"]
+
+[quick]
+set = "linen"
+seconds = 14
+highlight = ["eyes", "candle"]
+close_ups = 2
+music = false

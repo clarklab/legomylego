@@ -1,0 +1,27 @@
+{
+  "physical_pieces": 23,
+  "unique_animated_pieces": 23,
+  "layout": true,
+  "close_ups": [
+    "smile",
+    "eye_left"
+  ],
+  "last_placements": [
+    "stick/stick_top",
+    "stick/stick_bottom"
+  ],
+  "frames": 168,
+  "fps": 12,
+  "size": [
+    360,
+    640
+  ],
+  "visually_verified_frames": [
+    0,
+    84,
+    150
+  ],
+  "completed": true,
+  "rendered_frames": 168,
+  "video": "quick_preview.mp4"
+}

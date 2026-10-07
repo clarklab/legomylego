@@ -43,6 +43,10 @@ def check_real_elements(ctx, cfg) -> CheckResult:
             items.append({**base, "severity": "info",
                           "problem": "LDraw has no model of this part: its 3D shape is "
                                      "brickkit's approximation (data/approximate.json)"})
+        elif ctx.catalog.is_supplemental(part):
+            items.append({**base, "severity": "info",
+                          "problem": "Supplemental upstream LDraw geometry; not yet in the complete library",
+                          "source": ctx.catalog.supplemental_sources[part]["url"]})
         elif ctx.engine.lib.is_custom(part):
             items.append({**base, "severity": "fail",
                           "problem": "brickkit stand-in part that is not listed as hardware"})

@@ -1,0 +1,27 @@
+/* Quick Bricks entry point and shared compact navigation. */
+.quick-entry { padding-block: clamp(38px, 5vw, 64px); background: var(--bg-2); border-top: 1px solid var(--line); }
+.quick-entry .wrap { display: flex; align-items: center; justify-content: space-between; gap: 32px; }
+.quick-entry h2 { margin-top: 12px; font-size: clamp(28px, 3vw, 38px); }
+.quick-entry .quick-entry-copy { margin-top: 14px; max-width: 55ch; font-size: 15px; color: var(--muted); }
+.quick-entry .btn { flex: none; }
+.nav-toggle { display: none; }
+@media (max-width: 700px) {
+  .quick-entry .wrap { align-items: flex-start; flex-direction: column; gap: 24px; }
+  .quick-entry .quick-entry-copy { font-size: 16px; }
+  .site-header .wrap { gap: 12px; }
+  .nav-toggle { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 44px; padding: 8px 12px; margin-left: auto; border: 1px solid var(--line); border-radius: 7px; background: transparent; color: var(--ink); font-size: 13px; font-weight: 500; }
+  .nav-toggle:hover, .nav-toggle[aria-expanded="true"] { background: var(--surface-2); border-color: var(--line-2); }
+  .nav-toggle-icon { position: relative; width: 15px; height: 12px; border-block: 1.5px solid currentColor; }
+  .nav-toggle-icon::after { content: ""; position: absolute; left: 0; right: 0; top: 4px; border-top: 1.5px solid currentColor; }
+  .site-header .theme-toggle { width: 44px; height: 44px; }
+  .site-header[data-nav-ready] .nav { display: none; position: absolute; top: 100%; left: 0; right: 0; margin: 0; padding: 10px var(--gutter) 18px; background: var(--bg); border-bottom: 1px solid var(--line); box-shadow: var(--shadow-md); }
+  .site-header[data-nav-open] .nav { display: flex; align-items: stretch; flex-direction: column; gap: 0; }
+  .site-header .nav a, .site-header .nav .nav-optional { display: block; min-height: 44px; padding: 10px 12px; border-radius: 5px; font-size: 16px; }
+  .site-header .nav a:hover, .site-header .nav a[aria-current="page"] { background: var(--surface-2); }
+  .site-header .nav a[aria-current="page"]::after { display: none; }
+  /* Keep navigation available when scripts are disabled. */
+  .site-header:not([data-nav-ready]) { height: auto; }
+  .site-header:not([data-nav-ready]) .wrap { flex-wrap: wrap; padding-block: 12px; }
+  .site-header:not([data-nav-ready]) .theme-toggle { margin-left: auto; }
+  .site-header:not([data-nav-ready]) .nav { order: 3; width: 100%; flex-wrap: wrap; gap: 0; }
+}

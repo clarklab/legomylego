@@ -1,0 +1,32 @@
+[model]
+name = "Watermelon Ice Lolly"
+design = "design.py"
+description = "The smiling watermelon ice lolly from LEGO Classic 11039: 23 pieces, with three black seeds, a lime rind and a tan stick."
+collection = "quick_bricks"
+
+[palette]
+flesh = "Coral"
+rind = "Lime"
+pith = "White"
+seed = "Black"
+eye = "White"
+stick = "Tan"
+
+[booklet]
+subtitle = "A smiling watermelon ice lolly in 23 pieces."
+intro = "A standalone transcription of the watermelon ice lolly from LEGO Classic Creative Food Friends (11039), official instruction PDF 6555451, pages 14–19. Follow all eleven numbered steps, including the seed and stick subassemblies."
+notes = ["The printed smile and two-highlight eyes are the exact official prints.", "The handle is attached underneath in the last step, as shown in LEGO's instructions."]
+
+[checks]
+enabled = ["real_elements", "connections", "collisions", "buildability", "stability", "mechanism", "electrics", "technique"]
+
+[quick]
+surface = "blue_mat"          # its own workshop, so the series doesn't repeat a scene
+room = "studio"
+light = "day"
+seconds = 14
+highlight = ["smile", "eye_left"]
+close_ups = 2
+layout = true
+music = false
+view = "filmic"

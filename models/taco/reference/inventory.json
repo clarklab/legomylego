@@ -1,0 +1,184 @@
+{
+  "source_url": "https://www.lego.com/cdn/product-assets/product.bi.core.pdf/6555451.pdf",
+  "set_number": "11039",
+  "model": "taco",
+  "source_pdf": "6555451.pdf",
+  "inventory_pages": [
+    46,
+    47
+  ],
+  "piece_count": 23,
+  "source_step_count": 12,
+  "steps": [
+    {
+      "number": 1,
+      "page": 34,
+      "parts": [
+        {
+          "element_id": "6344217",
+          "ldraw": "30565",
+          "color": "Yellow",
+          "quantity": 1
+        }
+      ]
+    },
+    {
+      "number": 2,
+      "page": 34,
+      "parts": [
+        {
+          "element_id": "300824",
+          "ldraw": "3008",
+          "color": "Yellow",
+          "quantity": 1
+        }
+      ]
+    },
+    {
+      "number": 3,
+      "page": 35,
+      "parts": [
+        {
+          "element_id": "6344217",
+          "ldraw": "30565",
+          "color": "Yellow",
+          "quantity": 1
+        }
+      ]
+    },
+    {
+      "number": 4,
+      "page": 35,
+      "parts": [
+        {
+          "element_id": "4234716",
+          "ldraw": "3010",
+          "color": "Lime",
+          "quantity": 1
+        },
+        {
+          "element_id": "6223427",
+          "ldraw": "85861",
+          "color": "Red",
+          "quantity": 2
+        }
+      ]
+    },
+    {
+      "number": 5,
+      "page": 36,
+      "parts": [
+        {
+          "element_id": "4558952",
+          "ldraw": "87087",
+          "color": "White",
+          "quantity": 2
+        },
+        {
+          "element_id": "6258572",
+          "ldraw": "3004",
+          "color": "Coral",
+          "quantity": 1
+        }
+      ]
+    },
+    {
+      "number": 6,
+      "page": 37,
+      "parts": [
+        {
+          "element_id": "6312452",
+          "ldraw": "49307",
+          "color": "Lime",
+          "quantity": 1
+        },
+        {
+          "element_id": "6371437",
+          "ldraw": "49307",
+          "color": "Reddish Brown",
+          "quantity": 1
+        }
+      ]
+    },
+    {
+      "number": 7,
+      "page": 37,
+      "parts": [
+        {
+          "element_id": "6252037",
+          "ldraw": "37352",
+          "color": "Red",
+          "quantity": 1
+        }
+      ]
+    },
+    {
+      "number": 8,
+      "page": 38,
+      "parts": [
+        {
+          "element_id": "6182261",
+          "ldraw": "32607",
+          "color": "Bright Green",
+          "quantity": 2
+        }
+      ]
+    },
+    {
+      "number": 9,
+      "page": 39,
+      "parts": [
+        {
+          "element_id": "6168642",
+          "ldraw": "85861",
+          "color": "White",
+          "quantity": 2
+        }
+      ]
+    },
+    {
+      "number": 10,
+      "page": 39,
+      "parts": [
+        {
+          "element_id": "6182261",
+          "ldraw": "32607",
+          "color": "Bright Green",
+          "quantity": 2
+        }
+      ]
+    },
+    {
+      "number": 11,
+      "page": 40,
+      "parts": [
+        {
+          "element_id": "6344217",
+          "ldraw": "30565",
+          "color": "Yellow",
+          "quantity": 2
+        }
+      ]
+    },
+    {
+      "number": 12,
+      "page": 40,
+      "parts": [
+        {
+          "element_id": "6092583",
+          "ldraw": "15573",
+          "color": "Yellow",
+          "quantity": 1
+        },
+        {
+          "element_id": "6433502",
+          "ldraw": "98138p2n",
+          "color": "White",
+          "quantity": 2
+        }
+      ]
+    }
+  ],
+  "final_orientation_page": 41,
+  "repo_step_count": 12
+}

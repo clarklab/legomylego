@@ -1,5 +1,63 @@
 {
  "models": {
+  "avocado": {
+   "files": {
+    "avocado.mpd": {
+     "v": "d6f9fc432a",
+     "size": 2100
+    },
+    "booklet.pdf": {
+     "v": "763c3d4e40",
+     "size": 2653438
+    },
+    "bricklink_wanted.xml": {
+     "v": "b747f1e2c3",
+     "size": 1235
+    },
+    "model.glb": {
+     "v": "9b95a67248",
+     "size": 222912
+    },
+    "model.json": {
+     "v": "6fb3539887",
+     "size": 9069
+    },
+    "parts.csv": {
+     "v": "5702c8ef50",
+     "size": 1138
+    },
+    "pick_a_brick.csv": {
+     "v": "a85cfe6cf1",
+     "size": 163
+    },
+    "price_estimate.md": {
+     "v": "607786c2d0",
+     "size": 1848
+    },
+    "renders/renders_qa_front.png": {
+     "v": "d4fcbb6abc",
+     "size": 448102
+    },
+    "renders/renders_qa_three_quarter.png": {
+     "v": "f96972fb8f",
+     "size": 459446
+    }
+   },
+   "images": {
+    "renders/renders_qa_front.png": {
+     "w": 650,
+     "h": 650,
+     "lg": "/assets/img/avocado/renders_qa_front.webp?v=eb1a1ea1a2",
+     "sm": "/assets/img/avocado/renders_qa_front-480.webp?v=e358dbc694"
+    },
+    "renders/renders_qa_three_quarter.png": {
+     "w": 650,
+     "h": 650,
+     "lg": "/assets/img/avocado/renders_qa_three_quarter.webp?v=6cd11df4fc",
+     "sm": "/assets/img/avocado/renders_qa_three_quarter-480.webp?v=9049a4d53c"
+    }
+   }
+  },
   "baby_metroid": {
    "files": {
     "baby_metroid-1080x1080.mp4": {
@@ -110,6 +168,95 @@
     }
    },
    "og": "/assets/og/baby_metroid.png?v=e1a16ff654"
+  },
+  "bat": {
+   "files": {
+    "bat.mpd": {
+     "v": "525f9f4b58",
+     "size": 1570
+    },
+    "booklet.pdf": {
+     "v": "49a92e6851",
+     "size": 1392309
+    },
+    "bricklink_wanted.xml": {
+     "v": "56c6880b9d",
+     "size": 1133
+    },
+    "model.glb": {
+     "v": "c3ea462a8c",
+     "size": 113772
+    },
+    "model.json": {
+     "v": "1cfdd58f50",
+     "size": 7804
+    },
+    "parts.csv": {
+     "v": "d7587987e2",
+     "size": 1076
+    },
+    "pick_a_brick.csv": {
+     "v": "736121a379",
+     "size": 146
+    },
+    "price_estimate.md": {
+     "v": "112559e1e8",
+     "size": 1778
+    },
+    "quick_poster.jpg": {
+     "v": "1e141d8bec",
+     "size": 153283
+    }
+   },
+   "images": {}
+  },
+  "birthday_cake": {
+   "files": {
+    "birthday_cake.mpd": {
+     "v": "0ba226c9e2",
+     "size": 4157
+    },
+    "booklet.pdf": {
+     "v": "46164dc466",
+     "size": 1778599
+    },
+    "bricklink_wanted.xml": {
+     "v": "9097dd0ec9",
+     "size": 1321
+    },
+    "model.glb": {
+     "v": "4dfc0a9531",
+     "size": 202500
+    },
+    "model.json": {
+     "v": "7b3282bf77",
+     "size": 9090
+    },
+    "parts.csv": {
+     "v": "d5dd818b8e",
+     "size": 1312
+    },
+    "pick_a_brick.csv": {
+     "v": "e3e71c2159",
+     "size": 173
+    },
+    "price_estimate.md": {
+     "v": "144a528ebe",
+     "size": 2027
+    },
+    "renders/renders_qa_front.png": {
+     "v": "2d8175ee87",
+     "size": 429191
+    }
+   },
+   "images": {
+    "renders/renders_qa_front.png": {
+     "w": 650,
+     "h": 650,
+     "lg": "/assets/img/birthday_cake/renders_qa_front.webp?v=74e57d2b5a",
+     "sm": "/assets/img/birthday_cake/renders_qa_front-480.webp?v=2fa0c225e5"
+    }
+   }
   },
   "caldwell_courthouse": {
    "files": {
@@ -356,6 +503,92 @@
    },
    "og": "/assets/og/caldwell_courthouse.png?v=0a1b3125d0"
   },
+  "caldwell_mini": {
+   "files": {
+    "booklet.pdf": {
+     "v": "80df8f5acd",
+     "size": 3414739
+    },
+    "bricklink_wanted.xml": {
+     "v": "ccc9d749ac",
+     "size": 2164
+    },
+    "caldwell_mini.mpd": {
+     "v": "3533dff4d3",
+     "size": 4380
+    },
+    "model.glb": {
+     "v": "21eb43292b",
+     "size": 865964
+    },
+    "model.json": {
+     "v": "f187b0a617",
+     "size": 27971
+    },
+    "parts.csv": {
+     "v": "8f6fb1e7a3",
+     "size": 2083
+    },
+    "pick_a_brick.csv": {
+     "v": "240eaabf2a",
+     "size": 271
+    },
+    "price_estimate.md": {
+     "v": "cc76f2a059",
+     "size": 2882
+    },
+    "quick_poster.jpg": {
+     "v": "0c3c8d5783",
+     "size": 155694
+    },
+    "renders/hero_hero.png": {
+     "v": "3ad604e728",
+     "size": 1100269
+    },
+    "renders/renders_back.png": {
+     "v": "574cb2df7e",
+     "size": 1571065
+    },
+    "renders/renders_budget.png": {
+     "v": "3913c4ef8b",
+     "size": 1566965
+    },
+    "renders/renders_front.png": {
+     "v": "c10d1706b4",
+     "size": 1511545
+    },
+    "turntable.mp4": {
+     "v": "42fdf466cc",
+     "size": 800080
+    }
+   },
+   "images": {
+    "renders/hero_hero.png": {
+     "w": 1000,
+     "h": 1000,
+     "lg": "/assets/img/caldwell_mini/hero_hero.webp?v=e1706e89f7",
+     "sm": "/assets/img/caldwell_mini/hero_hero-480.webp?v=202514ff9b"
+    },
+    "renders/renders_back.png": {
+     "w": 1200,
+     "h": 1200,
+     "lg": "/assets/img/caldwell_mini/renders_back.webp?v=b11d2fc8fa",
+     "sm": "/assets/img/caldwell_mini/renders_back-480.webp?v=90074e29d8"
+    },
+    "renders/renders_budget.png": {
+     "w": 1200,
+     "h": 1200,
+     "lg": "/assets/img/caldwell_mini/renders_budget.webp?v=cf3f3112c1",
+     "sm": "/assets/img/caldwell_mini/renders_budget-480.webp?v=bcabe6b8f3"
+    },
+    "renders/renders_front.png": {
+     "w": 1200,
+     "h": 1200,
+     "lg": "/assets/img/caldwell_mini/renders_front.webp?v=0f74f382a5",
+     "sm": "/assets/img/caldwell_mini/renders_front-480.webp?v=36b9befbfb"
+    }
+   }
+  },
   "chainsaw_face": {
    "files": {
     "booklet.pdf": {
@@ -466,6 +699,84 @@
     }
    },
    "og": "/assets/og/chainsaw_face.png?v=e7e98b19b0"
+  },
+  "dinosaur": {
+   "files": {
+    "bricklink_wanted.xml": {
+     "v": "032e2dcd35",
+     "size": 2129
+    },
+    "dinosaur.mpd": {
+     "v": "22fb316b1d",
+     "size": 4286
+    },
+    "model.glb": {
+     "v": "1f6c1aa313",
+     "size": 243712
+    },
+    "model.json": {
+     "v": "b5b5cc4957",
+     "size": 14559
+    },
+    "parts.csv": {
+     "v": "fa1eb5c76b",
+     "size": 1721
+    },
+    "pick_a_brick.csv": {
+     "v": "0a7dc17118",
+     "size": 268
+    },
+    "price_estimate.md": {
+     "v": "fba65294b0",
+     "size": 2550
+    },
+    "quick_poster.jpg": {
+     "v": "f5bd39e70a",
+     "size": 122426
+    }
+   },
+   "images": {}
+  },
+  "dracula": {
+   "files": {
+    "booklet.pdf": {
+     "v": "919b926c8d",
+     "size": 1697490
+    },
+    "bricklink_wanted.xml": {
+     "v": "998c262b0a",
+     "size": 1229
+    },
+    "dracula.mpd": {
+     "v": "2f522b6704",
+     "size": 2049
+    },
+    "model.glb": {
+     "v": "35cf06af6f",
+     "size": 79668
+    },
+    "model.json": {
+     "v": "5cfd4d003a",
+     "size": 9435
+    },
+    "parts.csv": {
+     "v": "089c136eba",
+     "size": 1117
+    },
+    "pick_a_brick.csv": {
+     "v": "a6f1e214c0",
+     "size": 157
+    },
+    "price_estimate.md": {
+     "v": "fcda419495",
+     "size": 1802
+    },
+    "quick_poster.jpg": {
+     "v": "37ecfbd269",
+     "size": 108357
+    }
+   },
+   "images": {}
   },
   "ferret": {
    "files": {
@@ -780,6 +1091,54 @@
    },
    "og": "/assets/og/nautilus_crew.png?v=0273587d77"
   },
+  "taco": {
+   "files": {
+    "booklet.pdf": {
+     "v": "cc1536132d",
+     "size": 2512335
+    },
+    "bricklink_wanted.xml": {
+     "v": "43715c21a9",
+     "size": 1229
+    },
+    "model.glb": {
+     "v": "b6a866f91c",
+     "size": 188996
+    },
+    "model.json": {
+     "v": "e3f00827b2",
+     "size": 8936
+    },
+    "parts.csv": {
+     "v": "98bbda2282",
+     "size": 1234
+    },
+    "pick_a_brick.csv": {
+     "v": "94dedef14f",
+     "size": 162
+    },
+    "price_estimate.md": {
+     "v": "f4bf315997",
+     "size": 1935
+    },
+    "renders/renders_qa_front.png": {
+     "v": "3fc59effda",
+     "size": 227259
+    },
+    "taco.mpd": {
+     "v": "e18aada368",
+     "size": 1689
+    }
+   },
+   "images": {
+    "renders/renders_qa_front.png": {
+     "w": 360,
+     "h": 640,
+     "lg": "/assets/img/taco/renders_qa_front.webp?v=688f67d1dc",
+     "sm": "/assets/img/taco/renders_qa_front-480.webp?v=1c2560221d"
+    }
+   }
+  },
   "vhs_tape": {
    "files": {
     "booklet.pdf": {
@@ -910,6 +1269,54 @@
     }
    },
    "og": "/assets/og/vhs_tape.png?v=7c15cdace5"
+  },
+  "watermelon_ice_lolly": {
+   "files": {
+    "booklet.pdf": {
+     "v": "d2c40692b5",
+     "size": 2379839
+    },
+    "bricklink_wanted.xml": {
+     "v": "4ec61f4d4c",
+     "size": 1148
+    },
+    "model.glb": {
+     "v": "556b7a9f89",
+     "size": 168440
+    },
+    "model.json": {
+     "v": "7cfb780294",
+     "size": 9012
+    },
+    "parts.csv": {
+     "v": "4183ff1ce0",
+     "size": 1070
+    },
+    "pick_a_brick.csv": {
+     "v": "dd41205e2c",
+     "size": 151
+    },
+    "price_estimate.md": {
+     "v": "33620c9855",
+     "size": 1790
+    },
+    "renders/renders_qa_front.png": {
+     "v": "fbcc2c54c7",
+     "size": 250459
+    },
+    "watermelon_ice_lolly.mpd": {
+     "v": "a74465a515",
+     "size": 2103
+    }
+   },
+   "images": {
+    "renders/renders_qa_front.png": {
+     "w": 360,
+     "h": 640,
+     "lg": "/assets/img/watermelon_ice_lolly/renders_qa_front.webp?v=f3e60cdbeb",
+     "sm": "/assets/img/watermelon_ice_lolly/renders_qa_front-480.webp?v=33c58b566d"
+    }
+   }
   }
  }
 }

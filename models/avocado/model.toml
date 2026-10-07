@@ -1,0 +1,30 @@
+[model]
+name = "Avocado"
+design = "design.py"
+description = "The smiling 23-piece avocado from LEGO Classic 11039 Creative Food Friends, with lime flesh, a round brown stone and squeezed-shut eyes."
+collection = "quick_bricks"
+
+[palette]
+flesh = "Lime"
+stone = "Reddish Brown"
+eyes = "White"
+stem = "Bright Green"
+
+[booklet]
+subtitle = "A smiling avocado in 23 pieces."
+intro = "Build the standalone avocado from LEGO Classic 11039, following all 15 numbered steps on pages 22-31 of the official LEGO instructions. The two cheeks are built separately before they join the body."
+notes = ["The cheek subassemblies correspond to the callouts in official steps 6 and 7.", "Use the exact smile brick and squeezed-shut eye prints shown in the parts list."]
+
+[checks]
+enabled = ["real_elements", "connections", "collisions", "buildability", "stability", "mechanism", "electrics", "technique"]
+
+[quick]
+surface = "oak"          # its own workshop, so the series doesn't repeat a scene
+room = "bookshelf"
+light = "morning"
+seconds = 14
+highlight = ["stone", "left_eye", "stem"]
+close_ups = 2
+layout = true
+music = false
+view = "filmic"

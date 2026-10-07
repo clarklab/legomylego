@@ -1,0 +1,60 @@
+0 FILE dracula.ldr
+0 Dracula
+0 Name: dracula.ldr
+0 Author: brickkit
+
+0 // The feet: two 1 x 2 plates, a stud apart
+1 0 -20 0 -10 0 0 1 0 1 0 -1 0 0 3023b.dat
+1 0 20 0 -10 0 0 1 0 1 0 -1 0 0 3023b.dat
+0 STEP
+0 // The legs: a 1 x 3 brick across their back studs
+1 0 0 -24 0 1 0 0 0 1 0 0 0 1 3622.dat
+0 STEP
+0 // Shoes on the front studs
+1 0 -20 0 -20 1 0 0 0 1 0 0 0 1 54200.dat
+1 0 20 0 -20 1 0 0 0 1 0 0 0 1 54200.dat
+0 STEP
+0 // The cape: three 1 x 1 plates
+1 0 -20 -32 0 1 0 0 0 1 0 0 0 1 3024.dat
+1 0 0 -32 0 1 0 0 0 1 0 0 0 1 3024.dat
+1 0 20 -32 0 1 0 0 0 1 0 0 0 1 3024.dat
+0 STEP
+0 // The shirt front in the middle
+1 0 -20 -40 0 1 0 0 0 1 0 0 0 1 3024.dat
+1 15 0 -40 0 1 0 0 0 1 0 0 0 1 3024.dat
+1 0 20 -40 0 1 0 0 0 1 0 0 0 1 3024.dat
+0 STEP
+0 // The fangs, and the red mouth between them
+1 15 -20 -48 0 1 0 0 0 1 0 0 0 1 15070.dat
+1 15 20 -48 0 1 0 0 0 1 0 0 0 1 15070.dat
+1 4 0 -48 0 1 0 0 0 1 0 0 0 1 3024.dat
+0 STEP
+0 // The face: grey plates, and a brick with a stud in front for the nose
+1 71 -20 -56 0 1 0 0 0 1 0 0 0 1 3024.dat
+1 71 20 -56 0 1 0 0 0 1 0 0 0 1 3024.dat
+1 71 0 -72 0 1 0 0 0 1 0 0 0 1 87087.dat
+0 STEP
+0 // Bricks with studs in front and on the outside, for the eyes and the hair
+1 71 -20 -80 0 0 0 1 0 1 0 -1 0 0 26604.dat
+1 71 20 -80 0 1 0 0 0 1 0 0 0 1 26604.dat
+1 71 0 -80 0 1 0 0 0 1 0 0 0 1 3024.dat
+0 STEP
+0 // Black hair, one plate higher in the middle: the widow's peak
+1 0 -20 -88 0 1 0 0 0 1 0 0 0 1 3024.dat
+1 0 0 -88 0 1 0 0 0 1 0 0 0 1 3024.dat
+1 0 20 -88 0 1 0 0 0 1 0 0 0 1 3024.dat
+1 0 0 -96 0 1 0 0 0 1 0 0 0 1 3024.dat
+0 STEP
+0 // Slick it back: slopes on top and on each side, a tile in the middle
+1 0 -20 -88 0 0 0 1 0 1 0 -1 0 0 54200.dat
+1 0 20 -88 0 0 0 -1 0 1 0 1 0 0 54200.dat
+1 0 0 -104 0 1 0 0 0 1 0 0 0 1 3070b.dat
+1 0 -30 -70 0 0 1 0 0 0 1 1 0 0 54200.dat
+1 0 30 -70 0 0 -1 0 0 0 1 -1 0 0 54200.dat
+0 STEP
+0 // The eyes and the nose
+1 15 -20 -70 -18 0 0 1 1 0 0 0 1 0 98138p07.dat
+1 15 20 -70 -18 0 0 1 1 0 0 0 1 0 98138p07.dat
+1 71 0 -62 -10 -1 0 0 0 0 1 0 1 0 54200.dat
+0 STEP
+0 NOFILE

@@ -1,0 +1,33 @@
+[model]
+name = "Taco"
+design = "design.py"
+description = "The 23-piece taco from LEGO Classic 11039 Creative Food Friends: a happy yellow shell around tomato, green and brown fillings and four lettuce leaves."
+collection = "quick_bricks"
+
+[palette]
+shell = "Yellow"
+filling = "Lime"
+tomato = "Red"
+white = "White"
+inner = "Coral"
+meat = "Reddish Brown"
+leaf = "Bright Green"
+
+[booklet]
+subtitle = "A happy little taco in 23 pieces."
+intro = "Build the standalone taco from LEGO Classic 11039 with all 12 steps on pages 34-40 of the official instructions. The finished model stands on its straight folded edge, as shown on page 41."
+notes = ["For a hands-on build, lay the taco flat while stacking the shell and filling, then stand it upright on the folded edge.", "The coral brick and the white round plates are hidden inside the finished taco but are included in the parts list and build steps."]
+
+[checks]
+enabled = ["real_elements", "connections", "collisions", "buildability", "stability", "mechanism", "electrics", "technique"]
+
+[quick]
+surface = "green_mat"          # its own workshop, so the series doesn't repeat a scene
+room = "workbench"
+light = "day"
+seconds = 14
+highlight = ["tomato_slice", "upper_left_leaf", "eye_-1"]
+close_ups = 2
+layout = true
+music = false
+view = "filmic"

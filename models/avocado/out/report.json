@@ -1,0 +1,91 @@
+{
+  "title": "Avocado",
+  "status": "pass",
+  "checks": [
+    {
+      "name": "real_elements",
+      "status": "pass",
+      "summary": "13 part/colour combinations: 0 not real, 0 rare",
+      "items": [],
+      "stats": {
+        "combinations": 13,
+        "not_real": 0,
+        "rare": 0,
+        "hardware": 0,
+        "minifig_components": 0,
+        "stand_ins": 0,
+        "approximate": 0
+      }
+    },
+    {
+      "name": "connections",
+      "status": "pass",
+      "summary": "55 connections (55 stud); 1 separate piece(s)",
+      "items": [],
+      "stats": {
+        "connections": 55,
+        "by_kind": {
+          "stud": 55
+        },
+        "pieces": 1
+      }
+    },
+    {
+      "name": "collisions",
+      "status": "pass",
+      "summary": "0 overlapping pair(s) among 23 parts",
+      "items": [],
+      "stats": {
+        "pairs": 0
+      }
+    },
+    {
+      "name": "buildability",
+      "status": "pass",
+      "summary": "22 insertions tried across 3 submodel(s); 0 problem(s)",
+      "items": [],
+      "stats": {
+        "insertions": 22
+      }
+    },
+    {
+      "name": "stability",
+      "status": "pass",
+      "summary": "about 22 g; centre of mass inside the base (92% margin); tips at 17.0 deg",
+      "items": [],
+      "stats": {
+        "mass_g": 21.91076418152641,
+        "com": [
+          1.0947878560251835e-17,
+          -52.34987334021619,
+          -1.5307554139644024
+        ],
+        "approx_parts": 0,
+        "margin": 0.9234622293017798,
+        "tip_angle_deg": 17.01600606596797,
+        "com_height_ldu": 60.34987334021619
+      }
+    },
+    {
+      "name": "mechanism",
+      "status": "pass",
+      "summary": "no moving parts defined",
+      "items": [],
+      "stats": {}
+    },
+    {
+      "name": "electrics",
+      "status": "pass",
+      "summary": "no electrics in this model",
+      "items": [],
+      "stats": {}
+    },
+    {
+      "name": "technique",
+      "status": "pass",
+      "summary": "0 note(s)",
+      "items": [],
+      "stats": {}
+    }
+  ]
+}

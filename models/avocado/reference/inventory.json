@@ -1,0 +1,225 @@
+{
+  "source_url": "https://www.lego.com/cdn/product-assets/product.bi.core.pdf/6555451.pdf",
+  "set_number": "11039",
+  "model": "avocado",
+  "source_pdf": "6555451.pdf",
+  "inventory_pages": [
+    46,
+    47
+  ],
+  "piece_count": 23,
+  "source_step_count": 15,
+  "steps": [
+    {
+      "number": 1,
+      "page": 22,
+      "parts": [
+        {
+          "element_id": "4537936",
+          "ldraw": "3020",
+          "color": "Lime",
+          "quantity": 1
+        }
+      ]
+    },
+    {
+      "number": 2,
+      "page": 23,
+      "parts": [
+        {
+          "element_id": "4220632",
+          "ldraw": "3003",
+          "color": "Lime",
+          "quantity": 1
+        }
+      ]
+    },
+    {
+      "number": 3,
+      "page": 23,
+      "parts": [
+        {
+          "element_id": "6030276",
+          "ldraw": "3665b",
+          "color": "Lime",
+          "quantity": 2
+        }
+      ]
+    },
+    {
+      "number": 4,
+      "page": 24,
+      "parts": [
+        {
+          "element_id": "4537919",
+          "ldraw": "3009",
+          "color": "Lime",
+          "quantity": 1
+        }
+      ]
+    },
+    {
+      "number": 5,
+      "page": 24,
+      "parts": [
+        {
+          "element_id": "6528558",
+          "ldraw": "86876",
+          "color": "Lime",
+          "quantity": 1
+        }
+      ]
+    },
+    {
+      "number": 6,
+      "page": 25,
+      "parts": [
+        {
+          "element_id": "4164022",
+          "ldraw": "3004",
+          "color": "Lime",
+          "quantity": 1
+        },
+        {
+          "element_id": "6030276",
+          "ldraw": "3665b",
+          "color": "Lime",
+          "quantity": 1
+        }
+      ]
+    },
+    {
+      "number": 7,
+      "page": 26,
+      "parts": [
+        {
+          "element_id": "4164022",
+          "ldraw": "3004",
+          "color": "Lime",
+          "quantity": 1
+        },
+        {
+          "element_id": "6030276",
+          "ldraw": "3665b",
+          "color": "Lime",
+          "quantity": 1
+        }
+      ]
+    },
+    {
+      "number": 8,
+      "page": 27,
+      "parts": [
+        {
+          "element_id": "4220632",
+          "ldraw": "3003",
+          "color": "Lime",
+          "quantity": 1
+        }
+      ]
+    },
+    {
+      "number": 9,
+      "page": 27,
+      "parts": [
+        {
+          "element_id": "4650630",
+          "ldraw": "3039",
+          "color": "Lime",
+          "quantity": 2
+        }
+      ]
+    },
+    {
+      "number": 10,
+      "page": 28,
+      "parts": [
+        {
+          "element_id": "6440768",
+          "ldraw": "67095",
+          "color": "Reddish Brown",
+          "quantity": 1
+        }
+      ]
+    },
+    {
+      "number": 11,
+      "page": 29,
+      "parts": [
+        {
+          "element_id": "4234716",
+          "ldraw": "3010",
+          "color": "Lime",
+          "quantity": 1
+        }
+      ]
+    },
+    {
+      "number": 12,
+      "page": 29,
+      "parts": [
+        {
+          "element_id": "6073026",
+          "ldraw": "87087",
+          "color": "Lime",
+          "quantity": 2
+        },
+        {
+          "element_id": "6432104",
+          "ldraw": "3004p0g",
+          "color": "Lime",
+          "quantity": 1
+        }
+      ]
+    },
+    {
+      "number": 13,
+      "page": 30,
+      "parts": [
+        {
+          "element_id": "6431715",
+          "ldraw": "98138p2o",
+          "color": "White",
+          "quantity": 2
+        }
+      ]
+    },
+    {
+      "number": 14,
+      "page": 30,
+      "parts": [
+        {
+          "element_id": "4650630",
+          "ldraw": "3039",
+          "color": "Lime",
+          "quantity": 2
+        }
+      ]
+    },
+    {
+      "number": 15,
+      "page": 31,
+      "parts": [
+        {
+          "element_id": "6380676",
+          "ldraw": "18674",
+          "color": "Bright Green",
+          "quantity": 1
+        }
+      ]
+    }
+  ],
+  "subassemblies": [
+    {
+      "source_step": 6,
+      "submodel": "cheek_6",
+      "note": "Separate two-piece callout before attachment"
+    },
+    {
+      "source_step": 7,
+      "submodel": "cheek_7",
+      "note": "Separate two-piece callout before attachment"
+    }
+  ],
+  "repo_step_count": 17
+}

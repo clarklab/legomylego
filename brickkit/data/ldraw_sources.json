@@ -1,0 +1,16 @@
+{
+  "76959.dat": {
+    "url": "https://library.ldraw.org/library/unofficial/parts/76959.dat",
+    "sha256": "92b2d14bd30d90742d44494b9b32518a340036f2a9b28987f282b33c9e309a65",
+    "license": "CC-BY-4.0",
+    "author": "Florent Faramond (Makou)",
+    "note": "Exact round hollow bottom pin mould used by element 6425510 in LEGO 11039; upstream unofficial geometry, vendored unchanged."
+  },
+  "s/76959s01.dat": {
+    "url": "https://library.ldraw.org/library/unofficial/parts/s/76959s01.dat",
+    "sha256": "8247fbb8be226a011037ffcefe73b5f252258d9576afb3ef79e86115565d074f",
+    "license": "CC-BY-4.0",
+    "author": "Florent Faramond (Makou)",
+    "note": "Dependency of 76959.dat; vendored unchanged."
+  }
+}

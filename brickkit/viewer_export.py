@@ -182,6 +182,7 @@ def model_json(engine, proj, model, placed, *, files: dict, variants: list[tuple
     bom = var_out[0]["bom"] if var_out else _bom_rows(engine, placed, model.extras)
     return {
         "slug": proj.slug, "name": model.name,
+        "collection": cfg.get("collection"),
         "description": cfg.get("description", ""), "notice": cfg.get("notice", ""),
         "parts": len(placed), "pieces": sum(r["qty"] for r in bom), "dims_mm": dims,
         "price": _price(engine, placed, model.extras, proj.out / "price.json"),
@@ -323,6 +324,7 @@ def export_model(engine, proj, model, site_dir: Path | None = None) -> Path:
                       ("pick_a_brick_csv", proj.out / "pick_a_brick.csv"),
                       ("price_estimate", proj.out / "price_estimate.md"),
                       ("video_poster", proj.out / "video_poster.jpg"),
+                      ("quick_poster", proj.out / "quick_poster.jpg"),
                       ("turntable", proj.out / "turntable.mp4")]:
         if src.exists():
             shutil.copy2(src, dst / src.name)
@@ -361,6 +363,7 @@ def update_index(site: Path) -> None:
         status = ("fail" if "fail" in statuses else "warn" if "warn" in statuses else "pass"
                   ) if statuses else "unknown"
         items.append({"slug": d["slug"], "name": d["name"], "description": d.get("description", ""),
+                      "collection": d.get("collection"), "steps": len(d.get("steps", [])),
                       "notice": d.get("notice", ""), "parts": d["parts"],
                       "pieces": d.get("pieces", d["parts"]), "dims_mm": d["dims_mm"],
                       "price": d.get("price"), "features": d.get("features", {}),

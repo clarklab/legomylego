@@ -38,6 +38,16 @@ Each model's `out/` folder holds:
 
 Colourways live under `out/variants/<name>/`.
 
+## Quick Bricks from LEGO 11039
+
+Four standalone primary builds from the official Creative Food Friends instructions:
+[Birthday Cake](models/birthday_cake/NOTES.md) (20 pieces),
+[Watermelon Ice Lolly](models/watermelon_ice_lolly/NOTES.md) (23),
+[Avocado](models/avocado/NOTES.md) (23), and [Taco](models/taco/NOTES.md) (23).
+Each has its own source-step inventory, parts exports, checks and parsed assembly steps.
+[Source reconciliation and verification commands](docs/lego-11039.md) account for all 49
+numbered steps and distinguish the 89 primary-build pieces from the set's 61 rebuild pieces.
+
 ## brickkit
 
 The engine behind the models is model-agnostic: a new model is a folder under `models/` with
@@ -78,6 +88,23 @@ and detail sections use `site/assets/css/model.css`. Inter is served locally fro
 `site/assets/fonts/` (license included). Edit `site/model.html` for model-page markup,
 then run `.venv/bin/python tools/site_assets.py` to refresh the generated `site/m/` pages.
 Preview locally with `.venv/bin/python -m http.server 4401 --directory site`.
+
+Quick Bricks has its own gallery at `/quick/` and instruction pages at `/quick/SLUG/`.
+Models opt in with `[model] collection = "quick_bricks"`; they stay out of the main
+model and video galleries. Edit `site/quick/index.html` for the gallery and
+`site/quick-model.html` for the instruction-page template. Refresh both with:
+
+```sh
+.venv/bin/python tools/quick_site.py
+.venv/bin/python tools/site_assets.py
+```
+
+This exports model and step data and copies existing videos, previews, PDFs and parts
+files. It does not run Blender or generate videos or booklets. Models without a video
+use their existing preview; models without a PDF still have interactive instructions.
+Each instruction page starts with the first build step, embeds an existing PDF booklet
+when available, and links to Pick a Brick and BrickLink with the model's CSV/XML parts lists.
+Use `tools/quick_site.py --index-only` after editing just the page template.
 
 The Bricks mark lives in `site/assets/brand/bricks.svg`, using the supplied SVG path.
 The asset script inlines it into page headers and footers and renders the icons, social

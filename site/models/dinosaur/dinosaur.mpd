@@ -1,0 +1,132 @@
+0 FILE dinosaur.ldr
+0 Mini T. rex
+0 Name: dinosaur.ldr
+0 Author: brickkit
+
+0 // Set the left completed leg upright on the table
+1 16 0 0 0 1 0 0 0 1 0 0 0 1 left_leg.ldr
+0 STEP
+0 // Set the right completed leg upright on the table
+1 16 0 0 0 1 0 0 0 1 0 0 0 1 right_leg.ldr
+0 STEP
+0 // Lock the two hip halves together with an orange plate extending into the tail
+1 25 0 -54 30 0 0 1 0 1 0 -1 0 0 3020.dat
+0 STEP
+0 // The inverted orange belly widens toward the chest; red tail slopes taper backward
+1 25 -10 -78 20 1 0 0 0 1 0 0 0 1 3665b.dat
+1 25 10 -78 20 1 0 0 0 1 0 0 0 1 3665b.dat
+1 4 -10 -78 40 -1 0 0 0 1 0 0 0 -1 3040b.dat
+1 4 10 -78 40 -1 0 0 0 1 0 0 0 -1 3040b.dat
+0 STEP
+0 // A red shoulder handle with free outer ends, and a red rear plate
+1 4 0 -86 0 1 0 0 0 1 0 0 0 1 2540.dat
+1 4 0 -86 20 1 0 0 0 1 0 0 0 1 3023b.dat
+0 STEP
+0 // Clip the arms onto the outer shoulder-bar ends, hands curving forward
+1 4 -16 -84 -20 1 0 0 0 1 0 0 0 1 30377.dat
+1 4 16 -84 -20 1 0 0 0 1 0 0 0 1 30377.dat
+0 STEP
+0 // Orange neck above the front row of the body
+1 25 0 -110 0 1 0 0 0 1 0 0 0 1 3004.dat
+0 STEP
+0 // The flat red lower jaw extends forward from the neck
+1 4 0 -118 -30 0 0 1 0 1 0 -1 0 0 3020.dat
+0 STEP
+0 // Only one white round plate per tooth; two orange plates form the rear mouth support
+1 15 -10 -126 -60 1 0 0 0 1 0 0 0 1 6141.dat
+1 15 10 -126 -60 1 0 0 0 1 0 0 0 1 6141.dat
+1 25 0 -126 0 1 0 0 0 1 0 0 0 1 3023b.dat
+1 25 0 -134 0 1 0 0 0 1 0 0 0 1 3023b.dat
+0 STEP
+0 // A thin red upper jaw spans the mouth
+1 4 0 -142 -30 0 0 1 0 1 0 -1 0 0 3020.dat
+0 STEP
+0 // A one-plate-high skull row: red snout, black eyes, orange rear
+1 4 0 -150 -50 1 0 0 0 1 0 0 0 1 3022.dat
+1 0 -10 -150 -20 1 0 0 0 1 0 0 0 1 6141.dat
+1 0 10 -150 -20 1 0 0 0 1 0 0 0 1 6141.dat
+1 25 0 -150 0 1 0 0 0 1 0 0 0 1 3023b.dat
+0 STEP
+0 // Support the curved forehead; finish with a low red crown
+1 4 0 -158 -40 1 0 0 0 1 0 0 0 1 3023b.dat
+1 4 0 -150 -50 1 0 0 0 1 0 0 0 1 15068.dat
+1 4 0 -158 -10 1 0 0 0 1 0 0 0 1 3022.dat
+1 4 0 -166 -10 1 0 0 0 1 0 0 0 1 3068b.dat
+0 STEP
+0 NOFILE
+
+0 FILE left_leg.ldr
+0 Left pinned leg
+0 Name: left_leg.ldr
+0 Author: brickkit
+
+0 // Pin-bearing leg on its side, with dark-tan face over the two front studs
+1 19 -30 -36 0 0 0 -1 -1 0 0 0 1 0 2458.dat
+1 28 -30 -36 -8 0 0 -1 -1 0 0 0 1 0 3023b.dat
+0 STEP
+0 // White hollow round socket on the lower stud, with the claw curving downward
+1 15 -30 -26 -16 1 0 0 0 0 -1 0 1 0 85861.dat
+1 15 -30 -26 -20 1 0 0 0 -1 0 0 0 -1 53451.dat
+0 STEP
+0 // Attach the orange ankle behind the lower leg socket
+1 25 -30 -36 34 1 0 0 0 1 0 0 0 1 87087.dat
+0 STEP
+0 // Press the completed foot onto the ankle from underneath
+1 16 0 0 0 1 0 0 0 1 0 0 0 1 left_foot.ldr
+0 STEP
+0 // Slide the orange Technic hip onto the inward-facing integral leg pin
+1 25 -10 -46 10 0 0 1 0 1 0 -1 0 0 3700.dat
+0 STEP
+0 NOFILE
+
+0 FILE left_foot.ldr
+0 Left foot
+0 Name: left_foot.ldr
+0 Author: brickkit
+
+0 // Dark-tan foot sole
+1 28 -30 -4 14 0 0 1 0 1 0 -1 0 0 3623.dat
+0 STEP
+0 // Orange ankle pad at the rear and smooth orange toe at the front
+1 25 -30 -12 34 1 0 0 0 1 0 0 0 1 3024.dat
+1 25 -30 -12 -6 1 0 0 0 1 0 0 0 1 3070b.dat
+0 STEP
+0 NOFILE
+
+0 FILE right_leg.ldr
+0 Right pinned leg
+0 Name: right_leg.ldr
+0 Author: brickkit
+
+0 // Pin-bearing leg on its side, with dark-tan face over the two front studs
+1 19 30 -36 0 0 0 1 1 0 0 0 1 0 2458.dat
+1 28 30 -36 -8 0 0 1 1 0 0 0 1 0 3023b.dat
+0 STEP
+0 // White hollow round socket on the lower stud, with the claw curving downward
+1 15 30 -26 -16 1 0 0 0 0 -1 0 1 0 85861.dat
+1 15 30 -26 -20 1 0 0 0 -1 0 0 0 -1 53451.dat
+0 STEP
+0 // Attach the orange ankle behind the lower leg socket
+1 25 30 -36 34 1 0 0 0 1 0 0 0 1 87087.dat
+0 STEP
+0 // Press the completed foot onto the ankle from underneath
+1 16 0 0 0 1 0 0 0 1 0 0 0 1 right_foot.ldr
+0 STEP
+0 // Slide the orange Technic hip onto the inward-facing integral leg pin
+1 25 10 -46 10 0 0 1 0 1 0 -1 0 0 3700.dat
+0 STEP
+0 NOFILE
+
+0 FILE right_foot.ldr
+0 Right foot
+0 Name: right_foot.ldr
+0 Author: brickkit
+
+0 // Dark-tan foot sole
+1 28 30 -4 14 0 0 1 0 1 0 -1 0 0 3623.dat
+0 STEP
+0 // Orange ankle pad at the rear and smooth orange toe at the front
+1 25 30 -12 34 1 0 0 0 1 0 0 0 1 3024.dat
+1 25 30 -12 -6 1 0 0 0 1 0 0 0 1 3070b.dat
+0 STEP
+0 NOFILE

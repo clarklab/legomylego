@@ -55,7 +55,7 @@ async function main() {
     return;
   }
   const [media, conf] = await Promise.all([getJSON('/assets/media.json', { optional: true }), getJSON('/site.json', { optional: true })]);
-  const models = index.models || [];
+  const models = (index.models || []).filter((m) => m.collection !== 'quick_bricks');
   const mediaFor = (m) => new Media(media, m.slug, hash(JSON.stringify(m)));
   grid.innerHTML = models.map((m) => card(m, mediaFor(m))).join('');
   $('#collection-count').textContent = `${String(models.length).padStart(2, '0')} original ${models.length === 1 ? 'design' : 'designs'}`;

@@ -1,0 +1,112 @@
+{
+  "title": "Birthday Cake",
+  "status": "warn",
+  "checks": [
+    {
+      "name": "real_elements",
+      "status": "warn",
+      "summary": "14 part/colour combinations: 0 not real, 1 rare",
+      "items": [
+        {
+          "part": "3004p0g",
+          "name": "Brick 1 x 2 with Black Curved Line / Smile print",
+          "colour": "White",
+          "severity": "warn",
+          "problem": "rare: in 2 set(s), last seen 2025",
+          "element_ids": [
+            "6522847"
+          ]
+        },
+        {
+          "part": "76959",
+          "name": "Brick Sloped Inverted 45\u00b0 2 x 2 [Round Hollow Bottom Pin, Bar-sized Stud Holes]",
+          "colour": "Reddish Brown",
+          "severity": "info",
+          "problem": "Supplemental upstream LDraw geometry; not yet in the complete library",
+          "source": "https://library.ldraw.org/library/unofficial/parts/76959.dat"
+        }
+      ],
+      "stats": {
+        "combinations": 14,
+        "not_real": 0,
+        "rare": 1,
+        "hardware": 0,
+        "minifig_components": 0,
+        "stand_ins": 0,
+        "approximate": 0
+      }
+    },
+    {
+      "name": "connections",
+      "status": "pass",
+      "summary": "40 connections (38 stud, 1 pin, 1 bar); 1 separate piece(s)",
+      "items": [],
+      "stats": {
+        "connections": 40,
+        "by_kind": {
+          "stud": 38,
+          "pin": 1,
+          "bar": 1
+        },
+        "pieces": 1
+      }
+    },
+    {
+      "name": "collisions",
+      "status": "pass",
+      "summary": "0 overlapping pair(s) among 20 parts",
+      "items": [],
+      "stats": {
+        "pairs": 0
+      }
+    },
+    {
+      "name": "buildability",
+      "status": "pass",
+      "summary": "19 insertions tried across 2 submodel(s); 0 problem(s)",
+      "items": [],
+      "stats": {
+        "insertions": 19
+      }
+    },
+    {
+      "name": "stability",
+      "status": "pass",
+      "summary": "about 14 g; centre of mass inside the base (97% margin); tips at 23.4 deg",
+      "items": [],
+      "stats": {
+        "mass_g": 14.402992154011256,
+        "com": [
+          -0.16323874295434737,
+          -37.050646850813195,
+          -0.5458993734850277
+        ],
+        "approx_parts": 0,
+        "margin": 0.9727050313257486,
+        "tip_angle_deg": 23.356006721532488,
+        "com_height_ldu": 45.050646850813195
+      }
+    },
+    {
+      "name": "mechanism",
+      "status": "pass",
+      "summary": "no moving parts defined",
+      "items": [],
+      "stats": {}
+    },
+    {
+      "name": "electrics",
+      "status": "pass",
+      "summary": "no electrics in this model",
+      "items": [],
+      "stats": {}
+    },
+    {
+      "name": "technique",
+      "status": "pass",
+      "summary": "0 note(s)",
+      "items": [],
+      "stats": {}
+    }
+  ]
+}

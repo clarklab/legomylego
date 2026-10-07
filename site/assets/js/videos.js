@@ -1,4 +1,4 @@
-// Videos page: every model's build video from models.json (written by the brickkit viewer
+// Videos page: collection build videos from models.json (written by the brickkit viewer
 // export), playable in place; models whose video isn't rendered yet show a "coming soon" card.
 import { initSite, $, $$, esc, fmtInt, fmtBytes, getJSON, hash, Media, noticeFor, renderNotices } from './site.js';
 import { icon } from './icons.js';
@@ -39,7 +39,8 @@ async function main() {
     return;
   }
   const [media, conf] = await Promise.all([getJSON('/assets/media.json', { optional: true }), getJSON('/site.json', { optional: true })]);
-  const models = (index.models || []).slice().sort((a, b) => Number(!a.video) - Number(!b.video));
+  const models = (index.models || []).filter((m) => m.collection !== 'quick_bricks')
+    .sort((a, b) => Number(!a.video) - Number(!b.video));
   grid.innerHTML = models.map((m) => card(m, new Media(media, m.slug, hash(JSON.stringify(m))))).join('');
   // one video at a time
   const videos = $$('video', grid);

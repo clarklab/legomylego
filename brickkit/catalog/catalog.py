@@ -153,6 +153,14 @@ class Catalog:
         checked like any part; only its 3D shape is approximate."""
         return part_id(part) in self.approximate and self.ldraw.is_custom(part)
 
+    @cached_property
+    def supplemental_sources(self) -> dict:
+        """Pinned upstream LDraw parts not yet in the complete library release."""
+        return _data("ldraw_sources.json")
+
+    def is_supplemental(self, part: str) -> bool:
+        return normalize(part) in self.supplemental_sources and self.ldraw.is_custom(part)
+
     def is_hardware(self, part: str) -> bool:
         """A stand-in for a bought non-LEGO item (data/hardware.json), not a LEGO element."""
         return part_id(part) in self.hardware

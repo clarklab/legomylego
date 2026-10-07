@@ -1,0 +1,550 @@
+{
+  "source_url": "https://www.lego.com/cdn/product-assets/product.bi.core.pdf/6555451.pdf",
+  "sha256": "3d72407e04a6e77ac486f71280385d2190e7f4ac690b843cf77f7802bdb77965",
+  "set_number": "11039",
+  "inventory_pages": [
+    46,
+    47
+  ],
+  "total_pieces": 150,
+  "primary_build_pieces": 89,
+  "remaining_for_rebuilds": 61,
+  "elements": [
+    {
+      "element_id": "6234807",
+      "rebrickable": "37762",
+      "color": "White",
+      "quantity": 2,
+      "used_in_primary_models": 1,
+      "remaining_for_rebuilds": 1
+    },
+    {
+      "element_id": "6431716",
+      "rebrickable": "98138pr9981",
+      "color": "White",
+      "quantity": 2,
+      "used_in_primary_models": 2,
+      "remaining_for_rebuilds": 0
+    },
+    {
+      "element_id": "6434345",
+      "rebrickable": "98138pr9976",
+      "color": "White",
+      "quantity": 2,
+      "used_in_primary_models": 2,
+      "remaining_for_rebuilds": 0
+    },
+    {
+      "element_id": "6433502",
+      "rebrickable": "98138pr9977",
+      "color": "White",
+      "quantity": 2,
+      "used_in_primary_models": 2,
+      "remaining_for_rebuilds": 0
+    },
+    {
+      "element_id": "6168642",
+      "rebrickable": "85861",
+      "color": "White",
+      "quantity": 2,
+      "used_in_primary_models": 2,
+      "remaining_for_rebuilds": 0
+    },
+    {
+      "element_id": "6431715",
+      "rebrickable": "98138pr9980",
+      "color": "White",
+      "quantity": 2,
+      "used_in_primary_models": 2,
+      "remaining_for_rebuilds": 0
+    },
+    {
+      "element_id": "6432105",
+      "rebrickable": "98138pr9979",
+      "color": "White",
+      "quantity": 2,
+      "used_in_primary_models": 0,
+      "remaining_for_rebuilds": 2
+    },
+    {
+      "element_id": "6433501",
+      "rebrickable": "98138pr9978",
+      "color": "White",
+      "quantity": 2,
+      "used_in_primary_models": 0,
+      "remaining_for_rebuilds": 2
+    },
+    {
+      "element_id": "6250591",
+      "rebrickable": "24246",
+      "color": "White",
+      "quantity": 2,
+      "used_in_primary_models": 0,
+      "remaining_for_rebuilds": 2
+    },
+    {
+      "element_id": "4558952",
+      "rebrickable": "87087",
+      "color": "White",
+      "quantity": 4,
+      "used_in_primary_models": 4,
+      "remaining_for_rebuilds": 0
+    },
+    {
+      "element_id": "4504369",
+      "rebrickable": "54200",
+      "color": "White",
+      "quantity": 2,
+      "used_in_primary_models": 2,
+      "remaining_for_rebuilds": 0
+    },
+    {
+      "element_id": "6510068",
+      "rebrickable": "1748",
+      "color": "White",
+      "quantity": 2,
+      "used_in_primary_models": 0,
+      "remaining_for_rebuilds": 2
+    },
+    {
+      "element_id": "6093053",
+      "rebrickable": "18674",
+      "color": "White",
+      "quantity": 2,
+      "used_in_primary_models": 0,
+      "remaining_for_rebuilds": 2
+    },
+    {
+      "element_id": "6194851",
+      "rebrickable": "25214",
+      "color": "White",
+      "quantity": 1,
+      "used_in_primary_models": 0,
+      "remaining_for_rebuilds": 1
+    },
+    {
+      "element_id": "6248827",
+      "rebrickable": "37352",
+      "color": "White",
+      "quantity": 2,
+      "used_in_primary_models": 2,
+      "remaining_for_rebuilds": 0
+    },
+    {
+      "element_id": "6346616",
+      "rebrickable": "78666",
+      "color": "White",
+      "quantity": 2,
+      "used_in_primary_models": 2,
+      "remaining_for_rebuilds": 0
+    },
+    {
+      "element_id": "6522847",
+      "rebrickable": "3004pr0103",
+      "color": "White",
+      "quantity": 1,
+      "used_in_primary_models": 1,
+      "remaining_for_rebuilds": 0
+    },
+    {
+      "element_id": "300401",
+      "rebrickable": "3004",
+      "color": "White",
+      "quantity": 2,
+      "used_in_primary_models": 1,
+      "remaining_for_rebuilds": 1
+    },
+    {
+      "element_id": "6429055",
+      "rebrickable": "3262",
+      "color": "Red",
+      "quantity": 1,
+      "used_in_primary_models": 1,
+      "remaining_for_rebuilds": 0
+    },
+    {
+      "element_id": "6252037",
+      "rebrickable": "37352",
+      "color": "Red",
+      "quantity": 2,
+      "used_in_primary_models": 1,
+      "remaining_for_rebuilds": 1
+    },
+    {
+      "element_id": "6284577",
+      "rebrickable": "98138",
+      "color": "Yellow",
+      "quantity": 2,
+      "used_in_primary_models": 0,
+      "remaining_for_rebuilds": 2
+    },
+    {
+      "element_id": "6092583",
+      "rebrickable": "15573",
+      "color": "Yellow",
+      "quantity": 2,
+      "used_in_primary_models": 1,
+      "remaining_for_rebuilds": 1
+    },
+    {
+      "element_id": "300124",
+      "rebrickable": "3001",
+      "color": "Yellow",
+      "quantity": 2,
+      "used_in_primary_models": 0,
+      "remaining_for_rebuilds": 2
+    },
+    {
+      "element_id": "6344217",
+      "rebrickable": "30565",
+      "color": "Yellow",
+      "quantity": 4,
+      "used_in_primary_models": 4,
+      "remaining_for_rebuilds": 0
+    },
+    {
+      "element_id": "300824",
+      "rebrickable": "3008",
+      "color": "Yellow",
+      "quantity": 1,
+      "used_in_primary_models": 1,
+      "remaining_for_rebuilds": 0
+    },
+    {
+      "element_id": "6058177",
+      "rebrickable": "11211",
+      "color": "White",
+      "quantity": 2,
+      "used_in_primary_models": 0,
+      "remaining_for_rebuilds": 2
+    },
+    {
+      "element_id": "301001",
+      "rebrickable": "3010",
+      "color": "White",
+      "quantity": 2,
+      "used_in_primary_models": 1,
+      "remaining_for_rebuilds": 1
+    },
+    {
+      "element_id": "302001",
+      "rebrickable": "3020",
+      "color": "White",
+      "quantity": 4,
+      "used_in_primary_models": 1,
+      "remaining_for_rebuilds": 3
+    },
+    {
+      "element_id": "4125220",
+      "rebrickable": "3941",
+      "color": "Tan",
+      "quantity": 2,
+      "used_in_primary_models": 2,
+      "remaining_for_rebuilds": 0
+    },
+    {
+      "element_id": "6223427",
+      "rebrickable": "85861",
+      "color": "Red",
+      "quantity": 2,
+      "used_in_primary_models": 2,
+      "remaining_for_rebuilds": 0
+    },
+    {
+      "element_id": "6324417",
+      "rebrickable": "98138pr9989",
+      "color": "Red",
+      "quantity": 1,
+      "used_in_primary_models": 0,
+      "remaining_for_rebuilds": 1
+    },
+    {
+      "element_id": "6516544",
+      "rebrickable": "1748",
+      "color": "Red",
+      "quantity": 2,
+      "used_in_primary_models": 0,
+      "remaining_for_rebuilds": 2
+    },
+    {
+      "element_id": "6284070",
+      "rebrickable": "98138",
+      "color": "Black",
+      "quantity": 4,
+      "used_in_primary_models": 3,
+      "remaining_for_rebuilds": 1
+    },
+    {
+      "element_id": "6182261",
+      "rebrickable": "32607",
+      "color": "Bright Green",
+      "quantity": 6,
+      "used_in_primary_models": 4,
+      "remaining_for_rebuilds": 2
+    },
+    {
+      "element_id": "6380676",
+      "rebrickable": "18674",
+      "color": "Bright Green",
+      "quantity": 2,
+      "used_in_primary_models": 1,
+      "remaining_for_rebuilds": 1
+    },
+    {
+      "element_id": "6525777",
+      "rebrickable": "7134",
+      "color": "Trans-Clear",
+      "quantity": 2,
+      "used_in_primary_models": 0,
+      "remaining_for_rebuilds": 2
+    },
+    {
+      "element_id": "6312452",
+      "rebrickable": "49307",
+      "color": "Lime",
+      "quantity": 2,
+      "used_in_primary_models": 1,
+      "remaining_for_rebuilds": 1
+    },
+    {
+      "element_id": "6073026",
+      "rebrickable": "87087",
+      "color": "Lime",
+      "quantity": 2,
+      "used_in_primary_models": 2,
+      "remaining_for_rebuilds": 0
+    },
+    {
+      "element_id": "6429057",
+      "rebrickable": "3262",
+      "color": "Lime",
+      "quantity": 1,
+      "used_in_primary_models": 0,
+      "remaining_for_rebuilds": 1
+    },
+    {
+      "element_id": "6528558",
+      "rebrickable": "86876",
+      "color": "Lime",
+      "quantity": 2,
+      "used_in_primary_models": 1,
+      "remaining_for_rebuilds": 1
+    },
+    {
+      "element_id": "6514093",
+      "rebrickable": "6223",
+      "color": "Trans-Clear",
+      "quantity": 2,
+      "used_in_primary_models": 0,
+      "remaining_for_rebuilds": 2
+    },
+    {
+      "element_id": "6030276",
+      "rebrickable": "3665",
+      "color": "Lime",
+      "quantity": 4,
+      "used_in_primary_models": 4,
+      "remaining_for_rebuilds": 0
+    },
+    {
+      "element_id": "4164022",
+      "rebrickable": "3004",
+      "color": "Lime",
+      "quantity": 4,
+      "used_in_primary_models": 2,
+      "remaining_for_rebuilds": 2
+    },
+    {
+      "element_id": "6432104",
+      "rebrickable": "3004pr0103",
+      "color": "Lime",
+      "quantity": 1,
+      "used_in_primary_models": 1,
+      "remaining_for_rebuilds": 0
+    },
+    {
+      "element_id": "4220632",
+      "rebrickable": "3003",
+      "color": "Lime",
+      "quantity": 2,
+      "used_in_primary_models": 2,
+      "remaining_for_rebuilds": 0
+    },
+    {
+      "element_id": "4650630",
+      "rebrickable": "3039",
+      "color": "Lime",
+      "quantity": 4,
+      "used_in_primary_models": 4,
+      "remaining_for_rebuilds": 0
+    },
+    {
+      "element_id": "4234716",
+      "rebrickable": "3010",
+      "color": "Lime",
+      "quantity": 2,
+      "used_in_primary_models": 2,
+      "remaining_for_rebuilds": 0
+    },
+    {
+      "element_id": "4165967",
+      "rebrickable": "3001",
+      "color": "Lime",
+      "quantity": 2,
+      "used_in_primary_models": 1,
+      "remaining_for_rebuilds": 1
+    },
+    {
+      "element_id": "4537936",
+      "rebrickable": "3020",
+      "color": "Lime",
+      "quantity": 2,
+      "used_in_primary_models": 1,
+      "remaining_for_rebuilds": 1
+    },
+    {
+      "element_id": "4537919",
+      "rebrickable": "3009",
+      "color": "Lime",
+      "quantity": 1,
+      "used_in_primary_models": 1,
+      "remaining_for_rebuilds": 0
+    },
+    {
+      "element_id": "6514274",
+      "rebrickable": "37775",
+      "color": "Trans-Orange",
+      "quantity": 2,
+      "used_in_primary_models": 1,
+      "remaining_for_rebuilds": 1
+    },
+    {
+      "element_id": "4529242",
+      "rebrickable": "59900",
+      "color": "Reddish Brown",
+      "quantity": 2,
+      "used_in_primary_models": 0,
+      "remaining_for_rebuilds": 2
+    },
+    {
+      "element_id": "6371437",
+      "rebrickable": "49307",
+      "color": "Reddish Brown",
+      "quantity": 2,
+      "used_in_primary_models": 1,
+      "remaining_for_rebuilds": 1
+    },
+    {
+      "element_id": "6035291",
+      "rebrickable": "85984",
+      "color": "Reddish Brown",
+      "quantity": 4,
+      "used_in_primary_models": 0,
+      "remaining_for_rebuilds": 4
+    },
+    {
+      "element_id": "6425510",
+      "rebrickable": "76959",
+      "color": "Reddish Brown",
+      "quantity": 2,
+      "used_in_primary_models": 2,
+      "remaining_for_rebuilds": 0
+    },
+    {
+      "element_id": "4211210",
+      "rebrickable": "3003",
+      "color": "Reddish Brown",
+      "quantity": 2,
+      "used_in_primary_models": 1,
+      "remaining_for_rebuilds": 1
+    },
+    {
+      "element_id": "6440768",
+      "rebrickable": "67095",
+      "color": "Reddish Brown",
+      "quantity": 1,
+      "used_in_primary_models": 1,
+      "remaining_for_rebuilds": 0
+    },
+    {
+      "element_id": "4211186",
+      "rebrickable": "3020",
+      "color": "Reddish Brown",
+      "quantity": 2,
+      "used_in_primary_models": 1,
+      "remaining_for_rebuilds": 1
+    },
+    {
+      "element_id": "6284587",
+      "rebrickable": "98138",
+      "color": "Bright Pink",
+      "quantity": 2,
+      "used_in_primary_models": 0,
+      "remaining_for_rebuilds": 2
+    },
+    {
+      "element_id": "6322819",
+      "rebrickable": "98138",
+      "color": "Medium Azure",
+      "quantity": 2,
+      "used_in_primary_models": 0,
+      "remaining_for_rebuilds": 2
+    },
+    {
+      "element_id": "6261292",
+      "rebrickable": "87087",
+      "color": "Coral",
+      "quantity": 4,
+      "used_in_primary_models": 2,
+      "remaining_for_rebuilds": 2
+    },
+    {
+      "element_id": "6523861",
+      "rebrickable": "86876",
+      "color": "Coral",
+      "quantity": 4,
+      "used_in_primary_models": 3,
+      "remaining_for_rebuilds": 1
+    },
+    {
+      "element_id": "6258572",
+      "rebrickable": "3004",
+      "color": "Coral",
+      "quantity": 4,
+      "used_in_primary_models": 4,
+      "remaining_for_rebuilds": 0
+    },
+    {
+      "element_id": "6522845",
+      "rebrickable": "3004pr0103",
+      "color": "Coral",
+      "quantity": 1,
+      "used_in_primary_models": 1,
+      "remaining_for_rebuilds": 0
+    },
+    {
+      "element_id": "6261293",
+      "rebrickable": "37352",
+      "color": "Coral",
+      "quantity": 2,
+      "used_in_primary_models": 2,
+      "remaining_for_rebuilds": 0
+    },
+    {
+      "element_id": "6422920",
+      "rebrickable": "3003",
+      "color": "Coral",
+      "quantity": 2,
+      "used_in_primary_models": 1,
+      "remaining_for_rebuilds": 1
+    },
+    {
+      "element_id": "6422918",
+      "rebrickable": "3010",
+      "color": "Coral",
+      "quantity": 2,
+      "used_in_primary_models": 2,
+      "remaining_for_rebuilds": 0
+    }
+  ]
+}

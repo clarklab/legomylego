@@ -1,0 +1,124 @@
+/* Quick Bricks instructions. Keep all layout rules inside this page. */
+.quickdetail { padding-block: 32px 88px; }
+.quickdetail .qd-back { display: inline-flex; align-items: center; gap: 7px; text-decoration: none; color: var(--muted); font-size: .875rem; font-weight: 550; }
+.quickdetail .qd-back:hover { color: var(--ink); }
+.quickdetail .qd-heading { display: grid; gap: 24px; align-items: end; padding-block: 34px 40px; }
+.quickdetail .qd-heading h1 { max-width: 900px; font-size: clamp(2.4rem, 5.4vw, 4.75rem); line-height: 1.03; margin-top: 12px; }
+.quickdetail .qd-description { max-width: 720px; color: var(--muted); font-size: 1.0625rem; line-height: 1.65; }
+.quickdetail .qd-page-links { display: flex; flex-wrap: wrap; gap: 10px 24px; font-size: .875rem; font-weight: 550; }
+.quickdetail .qd-page-links a { padding-block: 5px; text-underline-offset: 5px; text-decoration-color: var(--line-2); }
+.quickdetail .qd-page-links a:hover { text-decoration-color: var(--ink); }
+.quickdetail .qd-workspace { display: grid; grid-template-columns: minmax(0, 7fr) minmax(320px, 4fr); border: 1px solid var(--line); border-radius: 16px; overflow: hidden; background: var(--surface); }
+.quickdetail .qd-stage { min-width: 0; display: flex; flex-direction: column; background: var(--stage-a); }
+.quickdetail .qd-viewer { position: relative; min-height: 520px; height: min(62vw, 660px); flex: 1; isolation: isolate; overflow: hidden; }
+.quickdetail .qd-viewer canvas { position: absolute; inset: 0; width: 100%; height: 100%; touch-action: none; }
+.quickdetail .qd-poster { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; padding: 30px; }
+.quickdetail .qd-loading { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px; color: var(--muted); background: var(--glass); text-align: center; padding: 30px; }
+.quickdetail .qd-loading > .icon { width: 32px; height: 32px; color: var(--yellow-deep); }
+.quickdetail .qd-viewer-tools { position: absolute; top: 20px; right: 20px; z-index: 2; }
+.quickdetail .qd-viewer-tools .icon-btn { background: var(--glass); }
+.quickdetail .qd-drag-hint { position: absolute; left: 20px; right: 20px; bottom: 20px; display: flex; align-items: center; justify-content: center; gap: 9px; font-size: .75rem; color: var(--ink-2); pointer-events: none; }
+.quickdetail .qd-viewer-note { padding: 18px 24px; border-top: 1px solid var(--line); background: var(--surface-2); font-size: .875rem; color: var(--ink-2); }
+.quickdetail .qd-build-panel { display: flex; flex-direction: column; align-items: stretch; gap: 22px; padding: clamp(24px, 3vw, 40px); border-left: 1px solid var(--line); min-width: 0; }
+.quickdetail .qd-stats { display: flex; gap: 20px; padding-bottom: 23px; border-bottom: 1px solid var(--line); font-size: .875rem; font-variant-numeric: tabular-nums; color: var(--muted); }
+.quickdetail .qd-stats p { display: flex; align-items: center; gap: 7px; }
+.quickdetail .qd-stats strong { color: var(--ink); font-weight: 650; }
+.quickdetail .qd-step-heading { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.quickdetail .qd-step-heading .eyebrow { font-size: .6875rem; letter-spacing: .08em; }
+.quickdetail .qd-text-button { padding: 0; border: 0; background: transparent; text-decoration: underline; text-underline-offset: 4px; text-decoration-color: var(--line-2); font-size: .75rem; color: var(--muted); }
+.quickdetail .qd-text-button:hover { color: var(--ink); text-decoration-color: var(--ink); }
+.quickdetail .qd-build-panel h2 { font-size: clamp(1.6rem, 2.5vw, 2.2rem); line-height: 1.17; letter-spacing: -.045em; }
+.quickdetail .qd-step-description { color: var(--muted); font-size: .9375rem; }
+.quickdetail .qd-start { align-self: flex-start; min-height: 50px; --btn-bg: var(--yellow); --btn-fg: var(--black); }
+.quickdetail .qd-start:disabled { opacity: .5; transform: none; }
+.quickdetail .qd-step-controls { display: grid; gap: 18px; }
+.quickdetail .qd-step-navigation { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 8px; }
+.quickdetail .qd-step-button { display: flex; justify-content: center; align-items: center; gap: 4px; min-height: 44px; border: 1px solid var(--line-2); border-radius: 6px; background: var(--surface); font-size: .8125rem; font-weight: 550; padding: 8px; }
+.quickdetail .qd-step-button:not(:disabled):hover { background: var(--surface-2); }
+.quickdetail .qd-step-button:disabled { color: var(--muted); opacity: .4; }
+.quickdetail .qd-step-button:last-child:not(:disabled) { background: var(--yellow); color: var(--black); border-color: transparent; }
+.quickdetail .qd-jump select { min-height: 44px; max-width: 86px; padding: 8px; border: 0; border-radius: 5px; background: var(--surface-2); font-size: .875rem; font-variant-numeric: tabular-nums; cursor: pointer; }
+.quickdetail .qd-progress { height: 4px; border-radius: 2px; overflow: hidden; background: var(--line); }
+.quickdetail .qd-progress span { display: block; height: 100%; width: var(--qd-progress, 0%); background: var(--yellow-deep); }
+.quickdetail .qd-step-parts { border-top: 1px solid var(--line); padding-top: 20px; }
+.quickdetail .qd-step-parts h3 { font-size: .75rem; font-weight: 600; letter-spacing: 0; }
+.quickdetail .qd-step-parts ul { display: grid; gap: 13px; list-style: none; padding: 16px 0 0; margin: 0; }
+.quickdetail .qd-piece { display: grid; grid-template-columns: 16px 30px 1fr; align-items: start; gap: 9px; font-size: .8125rem; line-height: 1.5; }
+.quickdetail .qd-piece-color { width: 14px; height: 14px; border-radius: 50%; background: var(--piece-color, #999); box-shadow: inset 0 0 0 1px #0002; margin-top: 4px; }
+.quickdetail .qd-piece-quantity { font-weight: 650; font-variant-numeric: tabular-nums; }
+.quickdetail .qd-piece-label p + p { color: var(--muted); font-size: .75rem; }
+.quickdetail .qd-part-tip { padding-top: 14px; border-top: 1px solid var(--line); font-size: .8125rem; color: var(--muted); }
+.quickdetail .qd-booklet, .quickdetail .qd-shopping { display: grid; gap: 22px; padding-top: 44px; }
+.quickdetail .qd-section-heading { display: flex; align-items: end; justify-content: space-between; flex-wrap: wrap; gap: 16px; }
+.quickdetail .qd-section-heading h2 { margin-top: 12px; font-size: 1.875rem; }
+.quickdetail .qd-booklet-frame { width: 100%; height: min(80vh, 900px); min-height: 460px; border: 1px solid var(--line); border-radius: 10px; background: var(--surface); }
+.quickdetail .qd-shopping-links { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; }
+.quickdetail .qd-shop { display: flex; flex-direction: column; align-items: start; gap: 14px; padding: 26px; border: 1px solid var(--line); border-radius: 12px; background: var(--surface); }
+.quickdetail .qd-shop h3 { font-size: 1.25rem; letter-spacing: -.025em; }
+.quickdetail .qd-shop > p { font-size: .875rem; color: var(--muted); }
+.quickdetail .qd-shop-download { display: flex; align-items: center; gap: 9px; margin-top: auto; min-height: 48px; padding: 11px 13px; border: 1px solid var(--line-2); border-radius: 7px; text-decoration: none; font-size: .875rem; font-weight: 550; }
+.quickdetail .qd-shop-download:hover { background: var(--surface-2); }
+.quickdetail .qd-file-type { color: var(--muted); font-weight: 400; }
+.quickdetail .qd-shop-visit { display: flex; align-items: center; gap: 9px; min-height: 40px; font-size: .875rem; text-underline-offset: 5px; text-decoration-color: var(--line-2); }
+.quickdetail .qd-shop-visit:hover { text-decoration-color: var(--ink); }
+.quickdetail .qd-shop-visit .icon { width: 15px; height: 15px; }
+.quickdetail .qd-resources { display: grid; grid-template-columns: minmax(0, 7fr) minmax(320px, 4fr); align-items: start; gap: 48px; padding-block: 40px; }
+.quickdetail .qd-downloads { display: grid; gap: 15px; }
+.quickdetail .qd-downloads h2 { font-size: 1.875rem; }
+.quickdetail .qd-download-links { display: flex; flex-wrap: wrap; gap: 12px 20px; padding-top: 5px; }
+.quickdetail .qd-download-link { display: inline-flex; align-items: center; gap: 8px; text-decoration: none; padding: 5px 0; font-size: .875rem; font-weight: 550; border-bottom: 1px solid var(--line-2); }
+.quickdetail .qd-download-link:hover { border-color: var(--ink); }
+.quickdetail .qd-resource-note { font-size: .875rem; color: var(--muted); }
+.quickdetail .qd-video-details { border-block: 1px solid var(--line); }
+.quickdetail .qd-video-details summary, .quickdetail .qd-inventory summary { display: flex; align-items: center; gap: 12px; padding: 20px 0; list-style: none; cursor: pointer; font-size: .9375rem; font-weight: 550; }
+.quickdetail details summary::-webkit-details-marker { display: none; }
+.quickdetail .qd-video-details summary > span { display: inline-flex; align-items: center; gap: 10px; }
+.quickdetail details summary > .icon { margin-left: auto; width: 18px; }
+.quickdetail details[open] summary > .icon { transform: rotate(90deg); }
+.quickdetail .qd-video-inner { padding-bottom: 20px; }
+.quickdetail .qd-video-inner video { width: 100%; max-height: 620px; background: #111; border-radius: 8px; }
+.quickdetail .qd-video-inner p { padding-top: 12px; color: var(--muted); }
+.quickdetail .qd-inventory { border-block: 1px solid var(--line); }
+.quickdetail #qd-inventory-total { color: var(--muted); font-weight: 400; }
+.quickdetail .qd-inventory > ul { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px 30px; padding: 12px 0 30px; margin: 0; list-style: none; }
+.quickdetail .qd-error { padding: 48px 0; max-width: 650px; font-size: 1.0625rem; color: var(--muted); }
+.quickdetail .qd-error h2 { color: var(--ink); margin-bottom: 14px; }
+.quickdetail .qd-error a { display: inline-block; margin-top: 18px; }
+@media (max-width: 900px) {
+  .quickdetail .qd-workspace { grid-template-columns: minmax(0, 6fr) minmax(300px, 5fr); }
+  .quickdetail .qd-viewer { min-height: 480px; }
+  .quickdetail .qd-resources { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 28px; }
+  .quickdetail .qd-inventory > ul { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 700px) {
+  .quickdetail { padding-block: 22px 56px; }
+  .quickdetail .qd-heading { padding-block: 26px 28px; gap: 18px; }
+  .quickdetail .qd-page-links { font-size: 1rem; gap: 6px 20px; }
+  .quickdetail .qd-page-links a { padding-block: 8px; }
+  .quickdetail .qd-booklet, .quickdetail .qd-shopping { padding-top: 32px; }
+  .quickdetail .qd-booklet-frame { height: 70vh; min-height: 400px; }
+  .quickdetail .qd-shopping-links { grid-template-columns: minmax(0, 1fr); gap: 14px; }
+  .quickdetail .qd-shop { padding: 22px; }
+  .quickdetail .qd-shop > p, .quickdetail .qd-shop-download, .quickdetail .qd-shop-visit { font-size: 1rem; }
+  .quickdetail .qd-shop-visit { min-height: 44px; }
+  .quickdetail .qd-workspace, .quickdetail .qd-resources { grid-template-columns: minmax(0, 1fr); }
+  .quickdetail .qd-viewer { min-height: 0; height: clamp(300px, 92vw, 470px); flex: auto; }
+  .quickdetail .qd-build-panel { border-left: 0; border-top: 1px solid var(--line); padding: 24px; gap: 20px; }
+  .quickdetail .qd-description, .quickdetail .qd-step-description, .quickdetail .qd-resource-note, .quickdetail .qd-viewer-note { font-size: 1rem; }
+  .quickdetail .qd-stats, .quickdetail .qd-step-button, .quickdetail .qd-jump select, .quickdetail .qd-download-link { font-size: 1rem; }
+  .quickdetail .qd-piece { font-size: 1rem; }
+  .quickdetail .qd-piece-label p + p { font-size: .875rem; }
+  .quickdetail .qd-step-parts h3 { font-size: .875rem; }
+  .quickdetail .qd-step-heading { align-items: start; }
+  .quickdetail .qd-step-heading .eyebrow { font-size: .75rem; }
+  .quickdetail .qd-text-button { font-size: .8125rem; text-align: right; }
+  .quickdetail .qd-step-navigation { gap: 6px; }
+  .quickdetail .qd-step-button { min-height: 48px; padding: 8px 5px; }
+  .quickdetail .qd-jump select { min-height: 48px; }
+  .quickdetail .qd-resources { gap: 30px; padding-block: 32px; }
+  .quickdetail .qd-inventory > ul { grid-template-columns: minmax(0, 1fr); gap: 20px; }
+  .quickdetail .qd-start { min-height: 50px; font-size: 1rem; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .quickdetail .btn { transition: none; }
+}
