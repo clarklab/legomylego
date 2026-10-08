@@ -355,8 +355,14 @@ def test_blank_frames(tmp_path):
     assert Q.blank_frames(tmp_path, 3) == [0]
 
 
-QUICK = ["dracula", "bat", "caldwell_mini", "dinosaur", "birthday_cake", "watermelon_ice_lolly",
-         "avocado", "taco"]
+def _quick_models() -> list[str]:
+    """Every model tagged for the site's Quick Bricks section (a new one is held to it too)."""
+    import tomllib
+    return sorted(f.parent.name for f in paths.MODELS_DIR.glob("*/model.toml")
+                  if tomllib.loads(f.read_text()).get("model", {}).get("collection") == "quick_bricks")
+
+
+QUICK = _quick_models()
 
 
 @pytest.mark.parametrize("slug", QUICK)

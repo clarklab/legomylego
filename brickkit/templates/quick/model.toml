@@ -1,0 +1,27 @@
+[model]
+name = "{{name}}"
+design = "design.py"
+description = ""              # one sentence for the site: what it is, how many pieces, how big
+# collection = "quick_bricks" # uncomment when it is ready for the site (docs/new-model.md, stage 6)
+
+[palette]                     # role -> a real colour name; design.py places parts by role
+body = "Light Bluish Gray"
+
+[booklet]
+subtitle = ""                 # one line under the title
+intro = ""                    # two or three sentences: the order it goes together in
+
+[checks]
+enabled = ["real_elements", "connections", "collisions", "buildability", "stability",
+           "mechanism", "electrics", "technique"]
+
+# Quick Bricks video (brickkit quick {{slug}}). Pick a workshop the last few models did not
+# use (brickkit status shows theirs); under 25 pieces the parts start laid out on the table
+[quick]
+surface = "blue_mat"          # blue_mat | green_mat | kraft | oak | baseplate
+room = "workbench"            # workbench | studio | window | night | bookshelf
+light = "morning"             # morning | day | evening
+seconds = 14
+highlight = []                # tags or part numbers worth a close-up (the face, the last piece)
+close_ups = 2
+music = false                 # just the clicks

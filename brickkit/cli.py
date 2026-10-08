@@ -94,16 +94,21 @@ def _bom(engine, proj, model) -> None:
               f"{out / 'hardware.csv'}; about ${h['low']:,.0f}-${h['high']:,.0f}")
 
 
-def _new(slug: str, name: str | None) -> int:
+def _new(slug: str, name: str | None, quick: bool = False) -> int:
+    """Scaffold models/SLUG: model.toml and design.py; `quick` (a Quick Bricks model, see
+    docs/new-model.md): also NOTES.md to fill in and reference/ for what was pasted."""
     dst = paths.MODELS_DIR / slug
     if dst.exists():
         print(f"{dst} already exists")
         return 1
     dst.mkdir(parents=True)
-    for f in (paths.TEMPLATES_DIR / "model").iterdir():
+    for f in (paths.TEMPLATES_DIR / ("quick" if quick else "model")).iterdir():
         text = f.read_text().replace("{{slug}}", slug).replace("{{name}}", name or slug)
         (dst / f.name).write_text(text)
-    print(f"created {dst}")
+    if quick:
+        (dst / "reference").mkdir()
+    print(f"created {dst}" + (": save the source in reference/, then fill in NOTES.md "
+                              "(docs/new-model.md)" if quick else ""))
     return 0
 
 
@@ -114,6 +119,14 @@ def main(argv=None) -> int:
     p = sub.add_parser("new", help="scaffold a new model")
     p.add_argument("slug")
     p.add_argument("--name")
+    p.add_argument("--quick", action="store_true",
+                   help="a Quick Bricks model: also NOTES.md and reference/ (docs/new-model.md)")
+    p = sub.add_parser("status", help="where each model is: source, notes, checks, parts lists, "
+                                      "booklet, video, site - and what to do next")
+    p.add_argument("slugs", nargs="*", help="(default: the Quick Bricks models)")
+    p.add_argument("--all", action="store_true", help="every model")
+    p.add_argument("--check", action="store_true",
+                   help="also build each Quick Bricks model and audit its video plan")
     for c in ("build", "verify", "bom", "all"):
         p = sub.add_parser(c)
         p.add_argument("slug")
@@ -213,7 +226,11 @@ def main(argv=None) -> int:
         fetch()
         return 0
     if args.cmd == "new":
-        return _new(args.slug, args.name)
+        return _new(args.slug, args.name, args.quick)
+    if args.cmd == "status":
+        from .status import status, table
+        print(table(status(args.slugs, args.all, args.check)))
+        return 0
     if args.cmd == "sizzle":                  # no model to build: it uses their showreels' footage
         from .video.sizzle import CONFIG, make_sizzle
         stills = [int(x) for x in args.stills.split(",") if x.strip()] if args.stills else None

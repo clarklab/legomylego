@@ -16,7 +16,8 @@ The cache location can be overridden with `BRICKKIT_CACHE` (useful in git worktr
 ## Commands
 | Command | What it does |
 |---|---|
-| `brickkit new SLUG --name "Name"` | scaffold `models/SLUG/` (model.toml + design.py) |
+| `brickkit new SLUG --name "Name" [--quick]` | scaffold `models/SLUG/` (model.toml + design.py); `--quick`: a Quick Bricks model to take in, with `NOTES.md` to fill in and `reference/` for what was pasted ([new-model.md](new-model.md)) |
+| `brickkit status [SLUG ...] [--all] [--check]` | where each model is - source saved, notes, checks, parts lists, booklet, video, site, the workshop its video is set in - and the next thing to do (from the files only; `--check` also audits each Quick Bricks video plan) |
 | `brickkit build SLUG` | run design.py, write `out/SLUG.mpd` |
 | `brickkit verify SLUG` | run all checks, write `out/report.{json,html}`; exit 1 on any FAIL |
 | `brickkit bom SLUG` | `out/parts.csv`, `out/bricklink_wanted.xml`, `out/pick_a_brick.csv`, `out/price_estimate.md` and `out/price.json`: live BrickLink prices dated today when API keys are in `~/.config/brickkit/bricklink.env` (see `brickkit/bom/live_price.py`), else a rough range from `brickkit/data/price_bands.json` |

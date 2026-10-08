@@ -66,6 +66,10 @@ python -m venv .venv && .venv/bin/pip install -e . && .venv/bin/python -m brickk
 It needs Python 3.12 and Blender 5.2 (headless). For Blender's path, set `BRICKKIT_BLENDER`.
 Blender renders take turns on the GPU through a machine-wide lock.
 
+- [docs/new-model.md](docs/new-model.md): the standard way to take in a new small model,
+  stage by stage, from pasted instructions or a picture to its page on the site.
+  `brickkit new SLUG --quick` scaffolds one and `brickkit status` shows where each one is.
+- [AGENTS.md](AGENTS.md): the rules for anyone, or any agent, working in the repo.
 - [docs/brickkit-guide.md](docs/brickkit-guide.md): authoring guide (units, model.toml,
   design.py API, mechanisms, electrics, checks, shape helpers).
 - [docs/superpowers/specs/](docs/superpowers/specs/): the design spec.
