@@ -102,6 +102,32 @@ def model_status(slug: str, models_dir: Path | None = None, site_dir: Path | Non
     return row
 
 
+def waiting(inbox: Path | None = None, models_dir: Path | None = None) -> list[dict]:
+    """What has been dropped in inbox/ and not taken in yet: [{name, slug, files, kinds,
+    next}] - a folder per model (taken in once models/SLUG exists), or a lone file."""
+    inbox = inbox or (paths.ROOT / "inbox")
+    base = models_dir or paths.MODELS_DIR
+    out = []
+    if not inbox.is_dir():
+        return out
+    for p in sorted(inbox.iterdir()):
+        if p.name.startswith(".") or p.name == "README.md":
+            continue
+        slug = "".join(c if c.isalnum() else "_" for c in (p.stem if p.is_file() else p.name).lower()).strip("_")
+        if p.is_dir():
+            files = [f for f in p.rglob("*") if f.is_file() and not f.name.startswith(".")]
+            if (base / slug).is_dir():
+                continue
+            kinds = sorted({f.suffix.lower().lstrip(".") or "?" for f in files})
+            out.append({"name": p.name, "slug": slug, "files": len(files), "kinds": kinds,
+                        "next": f"brickkit new {slug} --quick --as NAME"})
+        else:
+            out.append({"name": p.name, "slug": slug, "files": 1,
+                        "kinds": [p.suffix.lower().lstrip(".") or "?"],
+                        "next": f"give it a folder: inbox/{slug}/"})
+    return out
+
+
 def audit(engine, slug: str) -> str:
     """Build the model and check its Quick Bricks plan (video/quick.clashes)."""
     from .project import Project

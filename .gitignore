@@ -32,3 +32,10 @@ models/_*/
 # LEGO's own instruction booklets (reference copies) stay local: the repo is public
 docs/references/**/*.pdf
 docs/references/*.zip
+# new models waiting to be taken in: local only (docs/new-model.md); and whole instruction
+# files never go in a model's reference/ either (the repo is public)
+inbox/*
+!inbox/README.md
+models/*/reference/*.pdf
+models/*/reference/*.io
+models/*/reference/*.zip

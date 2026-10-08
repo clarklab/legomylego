@@ -85,3 +85,23 @@ def test_cli_claims(tmp_path, monkeypatch, capsys):
     assert status.model_status("tiny_owl", tmp_path, tmp_path / "site")["claim"] == "-"
     assert cli.main(["claim", "no_such_model", "--as", "x"]) == 1
     assert cli.main(["new", "tiny_owl", "--quick", "--as", "x"]) == 1    # it exists: not theirs
+
+
+def test_status_lists_the_inbox(tmp_path):
+    """What is dropped in inbox/ waits there until its model folder exists: a folder per
+    model (any files), or a lone file that still needs a folder; the README is not a model."""
+    from brickkit import status
+    inbox, models = tmp_path / "inbox", tmp_path / "models"
+    (inbox / "Tiny Owl").mkdir(parents=True)
+    (inbox / "Tiny Owl" / "plans.pdf").write_bytes(b"pdf")
+    (inbox / "Tiny Owl" / "front.PNG").write_bytes(b"png")
+    (inbox / "frog").mkdir()
+    (inbox / "frog" / "frog.io").write_bytes(b"io")
+    (inbox / "robot.jpg").write_bytes(b"jpg")
+    (inbox / "README.md").write_text("how to use the inbox")
+    (models / "frog").mkdir(parents=True)                               # the frog is taken in
+    w = status.waiting(inbox, models)
+    assert [(t["name"], t["slug"], t["files"], t["kinds"]) for t in w] == [
+        ("Tiny Owl", "tiny_owl", 2, ["pdf", "png"]), ("robot.jpg", "robot", 1, ["jpg"])]
+    assert w[0]["next"] == "brickkit new tiny_owl --quick --as NAME" and "folder" in w[1]["next"]
+    assert status.waiting(tmp_path / "nowhere", models) == []

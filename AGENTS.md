@@ -29,8 +29,10 @@ bricks.superfun.games).
   lands on something. `brickkit quick` prints a `quick:` line for anything that does not;
   fix it before rendering. `tests/test_quick.py::test_quick_builds_for_real` holds every
   Quick Bricks model to it.
-- **The repo is public.** Never commit LEGO's own instruction PDFs or zips of them
-  (`docs/references/` ignores them). Credit the designer of a model that is not ours.
+- **The repo is public.** Never commit whole instruction files: LEGO's own PDFs, a
+  designer's PDF or Studio `.io` file, zips of them. New material waits in `inbox/`, which is
+  local only; git ignores it, and `.pdf`, `.io` and `.zip` in a model's `reference/`. Credit
+  the designer of a model that is not ours.
 - **Secrets stay out.** API keys live in `~/.config/brickkit/*.env`. Never print, log or
   commit them.
 - **Publish only when the owner says so.** That covers pushing to `main`, tagging a model

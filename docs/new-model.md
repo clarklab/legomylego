@@ -68,10 +68,21 @@ without the chat.
 That makes `models/SLUG/` with `model.toml`, `design.py`, a `NOTES.md` to fill in and an
 empty `reference/`, and claims it for you.
 
-1. **Save the source** in `reference/`, in page order: `page_01.png`, `page_02.png`, or
-   `picture_01.jpg`. Save what was pasted. Do not add LEGO's own instruction PDFs or zips of
-   them (the repo is public). Scans of pages from an official LEGO booklet: ask the owner
-   first.
+1. **Save the source.** New material arrives in `inbox/NAME/` (see [inbox/](../inbox/README.md);
+   `brickkit status` lists what is waiting), or pasted into the chat. The inbox is local and
+   never committed. Into `reference/` go the pictures you worked from, in page order:
+   `page_01.png`, `page_02.png`, or `picture_01.jpg`.
+
+   | You were given | What to do with it |
+   |---|---|
+   | pictures, screenshots | copy them to `reference/` |
+   | an instructions PDF | leave it in the inbox; read it there. Whole instruction files are never committed (the repo is public): git ignores `.pdf`, `.io` and `.zip` in `reference/` |
+   | a BrickLink Studio `.io` file | leave it in the inbox. It is a zip: inside, `model.ldr` is the whole model in LDraw, part by part and step by step - the most exact source there is |
+   | an LDraw `.ldr` / `.mpd` file | the same: read the parts, positions and steps from it |
+   | a link or a note | write it into NOTES.md under *Source* |
+
+   In NOTES.md, say which originals stayed in the inbox. Scans of pages from an official
+   LEGO booklet: ask the owner before committing them.
 2. **Fill in `NOTES.md`.** Its headings are the standard:
    - *Source*: where it came from, who designed it (credit the designer if it is not ours),
      and what each saved file shows.
@@ -245,7 +256,8 @@ twice.
 
 | Path | What |
 |---|---|
-| `models/SLUG/reference/` | what was pasted: the source |
+| `inbox/NAME/` | new material waiting to be taken in: local only, never committed |
+| `models/SLUG/reference/` | the pictures the model was worked out from |
 | `models/SLUG/NOTES.md` | the record: source, parts page by page, what was worked out |
 | `models/SLUG/design.py`, `model.toml` | the model, and its colours, texts and video settings |
 | `models/SLUG/out/` | everything made from it: report, parts lists, booklet, videos |

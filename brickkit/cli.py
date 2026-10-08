@@ -276,8 +276,15 @@ def main(argv=None) -> int:
     if args.cmd in ("claim", "release"):
         return _claim(args)
     if args.cmd == "status":
-        from .status import status, table
+        from .status import status, table, waiting
         print(table(status(args.slugs, args.all, args.check)))
+        todo = [] if args.slugs else waiting()
+        if todo:
+            print("\nWaiting in inbox/ (not taken in yet):")
+            w = max(len(t["name"]) for t in todo)
+            for t in todo:
+                what = f"{t['files']} file{'s' if t['files'] != 1 else ''} ({', '.join(t['kinds']) or 'empty'})"
+                print(f"  {t['name'].ljust(w)}  {what.ljust(24)}  {t['next']}")
         return 0
     if args.cmd == "sizzle":                  # no model to build: it uses their showreels' footage
         from .video.sizzle import CONFIG, make_sizzle
