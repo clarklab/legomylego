@@ -94,14 +94,49 @@ def _bom(engine, proj, model) -> None:
               f"{out / 'hardware.csv'}; about ${h['low']:,.0f}-${h['high']:,.0f}")
 
 
-def _new(slug: str, name: str | None, quick: bool = False) -> int:
+def _who(name: str | None) -> str | None:
+    import os
+    return name or os.environ.get("BRICKKIT_AGENT")
+
+
+def _claim(args) -> int:
+    from . import claims
+    who = _who(args.who)
+    if not who:
+        print("say who you are: --as NAME (or set BRICKKIT_AGENT)")
+        return 2
+    try:
+        if args.cmd == "release":
+            done = claims.release(args.slug, who, args.force)
+            print(f"{args.slug}: released" if done else f"{args.slug}: was not claimed")
+            return 0
+        c = claims.claim(args.slug, who, args.stage, args.note, args.take)
+        print(f"{args.slug}: claimed by {c['who']}" + (f" (stage {c['stage']})" if c.get("stage") else ""))
+        return 0
+    except claims.Claimed as e:
+        held = e.args[0]
+        print(f"{args.slug}: claimed by {claims.label(held)}"
+              + (f" - {held['note']}" if held.get("note") else "")
+              + (": stale, take it with --take" if held.get("stale") and args.cmd == "claim" else ""))
+        return 1
+    except FileNotFoundError as e:
+        print(e)
+        return 1
+
+
+def _new(slug: str, name: str | None, quick: bool = False, who: str | None = None) -> int:
     """Scaffold models/SLUG: model.toml and design.py; `quick` (a Quick Bricks model, see
-    docs/new-model.md): also NOTES.md to fill in and reference/ for what was pasted."""
+    docs/new-model.md): also NOTES.md to fill in and reference/ for what was pasted. `who`:
+    claim it as well (making the folder is what decides between two who start at once)."""
     dst = paths.MODELS_DIR / slug
-    if dst.exists():
+    try:
+        dst.mkdir(parents=True)
+    except FileExistsError:
         print(f"{dst} already exists")
         return 1
-    dst.mkdir(parents=True)
+    if who:
+        from . import claims
+        claims.claim(slug, who, "1", "taking it in")
     for f in (paths.TEMPLATES_DIR / ("quick" if quick else "model")).iterdir():
         text = f.read_text().replace("{{slug}}", slug).replace("{{name}}", name or slug)
         (dst / f.name).write_text(text)
@@ -121,6 +156,17 @@ def main(argv=None) -> int:
     p.add_argument("--name")
     p.add_argument("--quick", action="store_true",
                    help="a Quick Bricks model: also NOTES.md and reference/ (docs/new-model.md)")
+    p.add_argument("--as", dest="who", help="claim it too, under this name (or BRICKKIT_AGENT)")
+    p = sub.add_parser("claim", help="claim a model before working on it (models/SLUG/CLAIM)")
+    p.add_argument("slug")
+    p.add_argument("--as", dest="who", help="who you are (or set BRICKKIT_AGENT)")
+    p.add_argument("--stage", default="", help='what you will do, e.g. "2-3" (docs/new-model.md)')
+    p.add_argument("--note", default="")
+    p.add_argument("--take", action="store_true", help="take over a stale claim")
+    p = sub.add_parser("release", help="give a claimed model back")
+    p.add_argument("slug")
+    p.add_argument("--as", dest="who")
+    p.add_argument("--force", action="store_true", help="release someone else's claim")
     p = sub.add_parser("status", help="where each model is: source, notes, checks, parts lists, "
                                       "booklet, video, site - and what to do next")
     p.add_argument("slugs", nargs="*", help="(default: the Quick Bricks models)")
@@ -226,7 +272,9 @@ def main(argv=None) -> int:
         fetch()
         return 0
     if args.cmd == "new":
-        return _new(args.slug, args.name, args.quick)
+        return _new(args.slug, args.name, args.quick, _who(args.who))
+    if args.cmd in ("claim", "release"):
+        return _claim(args)
     if args.cmd == "status":
         from .status import status, table
         print(table(status(args.slugs, args.all, args.check)))

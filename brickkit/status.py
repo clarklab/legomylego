@@ -2,8 +2,8 @@
 
     brickkit status [SLUG ...] [--all] [--check]
 
-One row per model, one column per stage, the workshop its video is set in (so the next
-one can differ), and the next thing to do. It only
+One row per model: who has claimed it (brickkit claim), a column per stage, the workshop its
+video is set in (so the next one can differ), and the next thing to do. It only
 looks at files (so it is instant): what is saved in reference/, NOTES.md, the checks' report,
 the parts lists, the booklet, the videos, the site's pages. "stale" means design.py has
 changed since. `--check` also builds each Quick Bricks model and audits its video plan."""
@@ -16,8 +16,8 @@ from pathlib import Path
 
 from . import paths
 
-COLUMNS = ["model", "pieces", "source", "notes", "checks", "parts", "booklet", "preview", "video",
-           "site", "scene", "next"]
+COLUMNS = ["model", "claim", "pieces", "source", "notes", "checks", "parts", "booklet", "preview",
+           "video", "site", "scene", "next"]
 
 
 def _fresh(path: Path, than: Path) -> str:
@@ -33,8 +33,10 @@ def model_status(slug: str, models_dir: Path | None = None, site_dir: Path | Non
     site = site_dir or (paths.ROOT / "site")
     out = d / "out"
     design = d / "design.py"
+    from . import claims
     row = {c: "-" for c in COLUMNS}
     row["model"] = slug
+    row["claim"] = claims.label(claims.read(slug, models_dir))
     try:
         cfg = tomllib.loads((d / "model.toml").read_text())
     except (OSError, tomllib.TOMLDecodeError):

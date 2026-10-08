@@ -15,6 +15,9 @@ bricks.superfun.games).
 
 ## Rules
 
+- **Claim a model before you work on it:** `brickkit claim SLUG --as NAME`, and
+  `brickkit release SLUG --as NAME` when you stop. If someone else has it, pick another.
+  `brickkit status` shows who has what.
 - **One Blender render at a time.** Renders take turns on one GPU through a machine-wide
   lock. Go through the `brickkit` commands, or wrap a Blender launch of your own in
   `brickkit.render.scene.blender_slot()`. Starting Blender outside the lock while a render

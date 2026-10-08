@@ -25,6 +25,29 @@ can wait and be queued.
 .venv/bin/python -m brickkit status --check    # also audits each one's video plan
 ```
 
+## Claim it first
+
+More than one agent may be working here, on different tools. Before you touch a model, claim
+it, and give it back when you stop.
+
+```bash
+.venv/bin/python -m brickkit new SLUG --quick --as NAME --name "The Name"   # a new one: made and claimed
+.venv/bin/python -m brickkit claim SLUG --as NAME --stage "2-3"            # one that exists
+.venv/bin/python -m brickkit release SLUG --as NAME                         # when you stop
+```
+
+- `NAME` is who you are, different for every agent: `codex-1`, `claude-owl`. Setting
+  `BRICKKIT_AGENT` saves typing `--as`.
+- The claim is the file `models/SLUG/CLAIM`. Only one agent can make it; a second is told who
+  has the model. `brickkit status` shows every claim in its `claim` column.
+- If a model is claimed by someone else, leave it alone and pick another.
+- Claiming again under your own name renews the claim. One that has not been renewed for 24
+  hours is stale, and `--take` takes it over.
+- Release before you hand back, so the CLAIM file is not committed with your work.
+- **From another clone or machine**, the claim has to travel through git: commit the CLAIM
+  file by itself and push it to the working branch (`new-site`, not `main`) before you start.
+  If the push is rejected, pull: someone else was first.
+
 ## Before you start
 
 - Setup is in the [README](../README.md). Use `.venv/bin/python`. The engine's full reference
@@ -39,11 +62,11 @@ The goal is a record good enough that someone else could build the 3D model from
 without the chat.
 
 ```bash
-.venv/bin/python -m brickkit new SLUG --quick --name "The Name"
+.venv/bin/python -m brickkit new SLUG --quick --as NAME --name "The Name"
 ```
 
 That makes `models/SLUG/` with `model.toml`, `design.py`, a `NOTES.md` to fill in and an
-empty `reference/`.
+empty `reference/`, and claims it for you.
 
 1. **Save the source** in `reference/`, in page order: `page_01.png`, `page_02.png`, or
    `picture_01.jpg`. Save what was pasted. Do not add LEGO's own instruction PDFs or zips of
@@ -160,11 +183,50 @@ There are no steps to copy, so the record matters more.
 
 ## Several models at once
 
-Take them all in first (stage 1), then model them (stages 2 and 3). None of that needs the
-GPU, so it can be done in any order or in parallel, one model per folder. Then queue the
-booklets and the videos one after another. Five videos are about nine hours of rendering.
+Ten models are ten folders, so most of the work can be done side by side. What limits the
+whole job is the one GPU: ten videos are about 17 hours of rendering, whoever starts them.
 
-Other sessions may be working in the same checkout. Commit only the files you made, by name.
+**One agent runs the job** (the strongest model you have). It hands out the models, checks
+each stage's result, and keeps for itself everything that is shared:
+
+| Side by side, one agent per model | One at a time, by the agent running the job |
+|---|---|
+| Stage 1: take it in | the queue of booklets and videos (stages 4 and 5) |
+| Stage 2: model it | `tools/quick_site.py` and `tools/site_assets.py` (stage 6) |
+| Stage 3: parts lists | every commit and push |
+
+An agent working on one model writes only inside `models/SLUG/`. It does not commit, does
+not touch `site/`, and does not start a video.
+
+**Which model for which step.** Every stage ends in a test a machine can run, so a cheaper
+model can do the routine ones safely. Give a step to a stronger model when it fails its test
+twice.
+
+| Step | A small, cheap model | A mid-range model that can read pictures | The strongest model |
+|---|---|---|---|
+| 1. Take it in | | from full instructions | from a single picture |
+| 2. Model it | | plain stacked models | sideways building, clips, sub-assemblies |
+| 3. Parts lists | yes | | |
+| 4. Instructions | running the command | reading the pages | |
+| 5. Video | queueing the renders | looking at the preview | fixing a `quick:` warning |
+| 6. Site | the export, on the owner's go-ahead | | |
+
+**A brief for an agent working on one model:**
+
+> Read AGENTS.md and docs/new-model.md. You are NAME. Claim SLUG. Do stages A to B and
+> nothing else. Write only inside models/SLUG/. Do not commit, do not touch site/, do not
+> render a video. When you finish, run `brickkit status SLUG`, release the claim, and report
+> the status row and everything you had to guess.
+
+**The order for a batch:**
+
+1. Scaffold and claim every model, and save each one's source (stage 1 can start at once).
+2. Stages 1 to 3 for all of them, side by side. `brickkit status` shows who is where.
+3. The agent running the job reviews each one: checks pass, NOTES.md has no TODO, the render
+   looks like the source.
+4. It queues the booklets, then the previews. Someone looks at each preview.
+5. It queues the finals, one after another.
+6. On the owner's go-ahead: the site export, one commit per model, one push.
 
 ## Things that catch people out
 

@@ -17,7 +17,8 @@ The cache location can be overridden with `BRICKKIT_CACHE` (useful in git worktr
 | Command | What it does |
 |---|---|
 | `brickkit new SLUG --name "Name" [--quick]` | scaffold `models/SLUG/` (model.toml + design.py); `--quick`: a Quick Bricks model to take in, with `NOTES.md` to fill in and `reference/` for what was pasted ([new-model.md](new-model.md)) |
-| `brickkit status [SLUG ...] [--all] [--check]` | where each model is - source saved, notes, checks, parts lists, booklet, video, site, the workshop its video is set in - and the next thing to do (from the files only; `--check` also audits each Quick Bricks video plan) |
+| `brickkit claim SLUG --as NAME [--stage "2-3"] [--note "..."] [--take]`, `brickkit release SLUG --as NAME [--force]` | say who is working on a model, so agents on different tools do not collide: the claim is `models/SLUG/CLAIM`, one holder at a time, stale after 24 hours ([new-model.md](new-model.md)); `brickkit new --as NAME` claims what it makes |
+| `brickkit status [SLUG ...] [--all] [--check]` | where each model is - who has claimed it, source saved, notes, checks, parts lists, booklet, video, site, the workshop its video is set in - and the next thing to do (from the files only; `--check` also audits each Quick Bricks video plan) |
 | `brickkit build SLUG` | run design.py, write `out/SLUG.mpd` |
 | `brickkit verify SLUG` | run all checks, write `out/report.{json,html}`; exit 1 on any FAIL |
 | `brickkit bom SLUG` | `out/parts.csv`, `out/bricklink_wanted.xml`, `out/pick_a_brick.csv`, `out/price_estimate.md` and `out/price.json`: live BrickLink prices dated today when API keys are in `~/.config/brickkit/bricklink.env` (see `brickkit/bom/live_price.py`), else a rough range from `brickkit/data/price_bands.json` |

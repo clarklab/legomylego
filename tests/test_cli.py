@@ -50,3 +50,38 @@ def test_cli_new_quick_and_status(tmp_path, monkeypatch, capsys):
     head = next(ln for ln in out.splitlines() if ln.startswith("model"))
     assert "scene" in head and head.rstrip().endswith("next")
     assert "tiny_owl" in out and "blue_mat/workbench/morning" in out
+
+
+def test_cli_claims(tmp_path, monkeypatch, capsys):
+    """A model is claimed before it is worked on: one holder at a time (the claim file is made
+    with an exclusive create); the same name renews it; someone else is refused until it is
+    released or has gone stale; `new --as` claims what it makes; `status` shows who has it."""
+    from datetime import datetime, timedelta, timezone
+
+    from brickkit import claims, cli, status
+    monkeypatch.setattr(paths, "MODELS_DIR", tmp_path)
+    monkeypatch.delenv("BRICKKIT_AGENT", raising=False)
+    assert cli.main(["new", "tiny_owl", "--quick", "--as", "codex-1"]) == 0
+    c = claims.read("tiny_owl")
+    assert c["who"] == "codex-1" and c["stage"] == "1" and not c["stale"] and c["hours"] < 0.1
+    assert cli.main(["claim", "tiny_owl"]) == 2                          # (who are you?)
+    assert cli.main(["claim", "tiny_owl", "--as", "claude-2"]) == 1      # taken
+    assert "claimed by codex-1" in capsys.readouterr().out
+    assert cli.main(["claim", "tiny_owl", "--as", "codex-1", "--stage", "2-3"]) == 0     # renewed
+    assert claims.read("tiny_owl")["stage"] == "2-3"
+    assert status.model_status("tiny_owl", tmp_path, tmp_path / "site")["claim"].startswith("codex-1 ")
+    assert cli.main(["release", "tiny_owl", "--as", "claude-2"]) == 1    # not theirs to release
+    assert cli.main(["claim", "tiny_owl", "--as", "claude-2", "--take"]) == 1            # not stale
+    old = (datetime.now(timezone.utc) - timedelta(hours=claims.STALE_HOURS + 2)).strftime("%Y-%m-%dT%H:%M:%SZ")
+    f = tmp_path / "tiny_owl" / claims.NAME
+    f.write_text(f.read_text().replace(claims.read("tiny_owl")["when"], old))
+    assert claims.read("tiny_owl")["stale"] and "STALE" in claims.label(claims.read("tiny_owl"))
+    assert cli.main(["claim", "tiny_owl", "--as", "claude-2"]) == 1      # stale: only with --take
+    assert cli.main(["claim", "tiny_owl", "--as", "claude-2", "--take"]) == 0
+    assert claims.read("tiny_owl")["who"] == "claude-2"
+    monkeypatch.setenv("BRICKKIT_AGENT", "claude-2")
+    assert cli.main(["release", "tiny_owl"]) == 0 and claims.read("tiny_owl") is None
+    assert cli.main(["release", "tiny_owl"]) == 0                        # nothing to release
+    assert status.model_status("tiny_owl", tmp_path, tmp_path / "site")["claim"] == "-"
+    assert cli.main(["claim", "no_such_model", "--as", "x"]) == 1
+    assert cli.main(["new", "tiny_owl", "--quick", "--as", "x"]) == 1    # it exists: not theirs
