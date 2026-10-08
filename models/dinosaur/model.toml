@@ -12,6 +12,10 @@ pin_leg = "Tan"
 tooth = "White"
 eye = "Black"
 
+[booklet]
+subtitle = "A tiny red-and-orange T. rex with a toothy grin and clip-on arms, in 42 pieces."
+intro = "A T. rex small enough for a desk. Build each leg on its own: press its foot on from underneath and slide its hip onto the leg's pin. Stand the two legs side by side and lock them with the tail plate, then stack the belly, the shoulders with their clip-on arms, and the long red head with its teeth and eyes."
+
 [checks]
 enabled = ["real_elements", "connections", "collisions", "buildability", "stability", "mechanism", "electrics", "technique"]
 

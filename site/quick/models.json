@@ -65,9 +65,9 @@
       "steps": 26,
       "video": "/quick/dinosaur-1080x1920.mp4?v=dc1b98fac717",
       "poster": "/models/dinosaur/quick_poster.jpg?v=bdc4847ad868",
-      "instructions": null,
+      "instructions": "/models/dinosaur/booklet.pdf?v=452ef0cfcac4",
       "url": "/quick/dinosaur/",
-      "model": "/models/dinosaur/model.json?v=94b035985e2f",
+      "model": "/models/dinosaur/model.json?v=e96db48203cf",
       "geometry": "/models/dinosaur/model.glb?v=793c6e3450c7"
     },
     {
