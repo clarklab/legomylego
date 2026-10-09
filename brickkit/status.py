@@ -5,7 +5,7 @@
 One row per model: who has claimed it (brickkit claim), a column per stage, the workshop its
 video is set in (so the next one can differ), and the next thing to do. It only
 looks at files (so it is instant): what is saved in reference/, NOTES.md, the checks' report,
-the parts lists, the booklet, the videos, the site's pages. "stale" means design.py has
+the parts lists, the booklet, the videos, the posts (SOCIAL.md), the site's pages. "stale" means design.py has
 changed since. `--check` also builds each Quick Bricks model and audits its video plan."""
 from __future__ import annotations
 
@@ -17,7 +17,7 @@ from pathlib import Path
 from . import paths
 
 COLUMNS = ["model", "claim", "pieces", "source", "notes", "checks", "parts", "booklet", "preview",
-           "video", "site", "scene", "next"]
+           "video", "posts", "site", "scene", "next"]
 
 
 def _fresh(path: Path, than: Path) -> str:
@@ -28,7 +28,8 @@ def _fresh(path: Path, than: Path) -> str:
 
 def model_status(slug: str, models_dir: Path | None = None, site_dir: Path | None = None) -> dict:
     """One model's row: {model, pieces, source, notes, checks, parts, booklet, preview, video,
-    site, next, quick (it has a [quick] block or the Quick Bricks tag), scene}."""
+    posts (SOCIAL.md: its Instagram and TikTok posts), site, next, quick (it has a [quick]
+    block or the Quick Bricks tag), scene}."""
     d = (models_dir or paths.MODELS_DIR) / slug
     site = site_dir or (paths.ROOT / "site")
     out = d / "out"
@@ -68,6 +69,9 @@ def model_status(slug: str, models_dir: Path | None = None, site_dir: Path | Non
     row["preview"] = _fresh(out / "quick_preview.mp4", design)
     video = out / paths.video_name(slug, 1080, 1920)
     row["video"] = _fresh(video, design)
+    social = d / "SOCIAL.md"
+    if social.exists():
+        row["posts"] = "draft" if "TODO" in social.read_text() else "yes"
     page = site / "quick" / slug / "index.html"
     copy = site / "quick" / video.name
     if not tagged:
@@ -86,6 +90,8 @@ def model_status(slug: str, models_dir: Path | None = None, site_dir: Path | Non
              ("booklet", "-", f"brickkit booklet {slug}"), ("booklet", "stale", f"brickkit booklet {slug}"),
              ("video", "-", f"brickkit quick {slug} --preview, look at it, then: brickkit quick {slug}"),
              ("video", "stale", f"brickkit quick {slug}"),
+             ("posts", "-", "write SOCIAL.md: its Instagram and TikTok posts (docs/new-model.md)"),
+             ("posts", "draft", "finish SOCIAL.md (it still has TODOs)"),
              ("site", "off", "when the owner says so: tag it quick_bricks, tools/quick_site.py"),
              ("site", "tagged", "tools/quick_site.py, tools/site_assets.py"),
              ("site", "old video", "tools/quick_site.py, tools/site_assets.py")]
@@ -96,6 +102,8 @@ def model_status(slug: str, models_dir: Path | None = None, site_dir: Path | Non
         row["next"] = f"fix the failing checks: brickkit verify {slug}"
     else:
         for col, state, todo in steps:
+            if col == "posts" and not row["quick"]:    # (the posts are for Quick Bricks videos)
+                continue
             if row[col] == state:
                 row["next"] = todo
                 break

@@ -14,7 +14,7 @@ do next.
 | 2. Model it | stage 1 | `design.py`, `model.toml` | `brickkit all SLUG` passes every check | no |
 | 3. Parts lists | stage 2 | `out/parts.csv`, `pick_a_brick.csv`, `bricklink_wanted.xml`, price | every part has a LEGO element ID | no |
 | 4. Instructions | stage 2 | `out/booklet.pdf` | you have read every page in order | a few minutes |
-| 5. Video | stage 2 | `out/SLUG-1080x1920.mp4` | no `quick:` warnings, and you have looked at it | about 100 minutes |
+| 5. Video and posts | stage 2 | `out/SLUG-1080x1920.mp4`, `SOCIAL.md` | no `quick:` warnings, you have looked at it, and SOCIAL.md has no TODO left | about 100 minutes |
 | 6. Site | stages 3 to 5, and the owner's go-ahead | pages under `site/quick/SLUG/` | the live page plays the video | no |
 
 Stages 1 to 3 are quick and need no GPU. Do them for every new model first; stages 4 and 5
@@ -65,8 +65,8 @@ without the chat.
 .venv/bin/python -m brickkit new SLUG --quick --as NAME --name "The Name"
 ```
 
-That makes `models/SLUG/` with `model.toml`, `design.py`, a `NOTES.md` to fill in and an
-empty `reference/`, and claims it for you.
+That makes `models/SLUG/` with `model.toml`, `design.py`, a `NOTES.md` and a `SOCIAL.md` to
+fill in and an empty `reference/`, and claims it for you.
 
 1. **Save the source.** New material arrives in `inbox/NAME/` (see [inbox/](../inbox/README.md);
    `brickkit status` lists what is waiting), or pasted into the chat. The inbox is local and
@@ -77,15 +77,18 @@ empty `reference/`, and claims it for you.
    |---|---|
    | pictures, screenshots | copy them to `reference/` |
    | an instructions PDF | leave it in the inbox; read it there. Whole instruction files are never committed (the repo is public): git ignores `.pdf`, `.io` and `.zip` in `reference/` |
-   | a BrickLink Studio `.io` file | leave it in the inbox. It is a zip: inside, `model.ldr` is the whole model in LDraw, part by part and step by step - the most exact source there is |
-   | an LDraw `.ldr` / `.mpd` file | the same: read the parts, positions and steps from it |
+   | a BrickLink Studio `.io` file | leave it in the inbox. `brickkit import SLUG inbox/NAME/file.io --as YOU` makes the model from it: every part where its designer put it. It still has to pass the checks (stage 2) |
+   | an LDraw `.ldr` / `.mpd` file | the same command |
    | a link or a note | write it into NOTES.md under *Source* |
 
    In NOTES.md, say which originals stayed in the inbox. Scans of pages from an official
    LEGO booklet: ask the owner before committing them.
 2. **Fill in `NOTES.md`.** Its headings are the standard:
    - *Source*: where it came from, who designed it (credit the designer if it is not ours),
-     and what each saved file shows.
+     and what each saved file shows. For someone else's design also set `designer` and
+     `source` (a link to the original) in `model.toml`'s `[model]`: the booklet's cover and
+     the model's page on the site say "Designed by ...", linked to the original. With no
+     name to give, write `credit = "..."`, our own sentence for it, instead.
    - *The plans, page by page*: one row per page, with the pieces (quantity, name, part
      number, colour) and where they go. Say how you name the columns and rows.
    - *What had to be worked out*: everything the source did not show plainly, and how sure
@@ -136,7 +139,7 @@ Pick a Brick), `bricklink_wanted.xml` (upload to BrickLink) and `price_estimate.
 Read every page in order. Each step should add what its caption says, and nothing should
 appear from nowhere. If a step is too crowded, split it in `design.py`.
 
-## Stage 5: Video
+## Stage 5: Video and posts
 
 Set `[quick]` in `model.toml`: a surface, a room and a light, and `highlight` tags for the
 close-ups. Pick a workshop the last few models did not use: `brickkit status` lists each
@@ -152,9 +155,22 @@ model's in its `scene` column. Under 25 pieces the parts start laid out on the t
   another), fix that before rendering: usually an `insert=(x, y, z)` hint on the piece, the
   way it comes in from. `brickkit status --check` should say `clean`.
 - Look at the preview before the final. Check the close-ups land on the right pieces.
+  `highlight` is in order of preference: put the face first. A piece the camera cannot get
+  in front of in time (it faces another way than the piece before it) gets no close-up.
+- Pick a surface the model stands out on: an orange or tan model reads as yellow on kraft
+  paper and true on a blue mat.
 - Sound is clicks only by default. A sound of the model's own (`ending`, `[[quick.sound]]`)
   is optional; see the guide.
 - Renders take turns on one GPU. Queue finals one after another; do not start two.
+- If a patch of a frame comes out flat black (the GPU now and then drops a material), the
+  command sees it and renders those frames again by itself.
+
+**The posts.** Each Quick Bricks video goes out as an Instagram post and a TikTok post. Write
+them in `SOCIAL.md` (scaffolded with the model; `models/bat/SOCIAL.md` is a finished one): a
+caption for each, hashtags, a line of on-screen text, a few spare jokes, a first comment and
+alt text. Keep it short and funny, say the piece count, and put the credit in the caption
+when the design is someone else's. `brickkit status` shows `posts` as `draft` until no TODO
+is left.
 
 ## Stage 6: Site
 
@@ -247,7 +263,11 @@ twice.
 - Some part numbers are old moulds that are hard to buy. `brickkit find` ranks parts by how
   many sets used them; prefer the common one (3665b, not 3665).
 - A piece that goes on from the side or from underneath needs nothing special: the video
-  planner finds its way in. Give an `insert=` hint only if it reports a problem.
+  planner finds its way in. Give an `insert=` hint only if a check reports a problem:
+  `brickkit ways SLUG` prints the way each piece can go on, ready to paste.
+- A model imported from Studio is exact but not yet right: designers use colours a part was
+  never made in, old moulds, prints LDraw names differently, and poses that overlap a little.
+  The checks find each of these.
 - A model whose lowest piece goes on last (a stick under a lolly) is built on the table and
   lifted for that piece. You do not have to build it upside down.
 - `brickkit status` says "stale" when `design.py` is newer than a file made from it.
@@ -259,6 +279,7 @@ twice.
 | `inbox/NAME/` | new material waiting to be taken in: local only, never committed |
 | `models/SLUG/reference/` | the pictures the model was worked out from |
 | `models/SLUG/NOTES.md` | the record: source, parts page by page, what was worked out |
+| `models/SLUG/SOCIAL.md` | its Instagram and TikTok posts: captions, hashtags, jokes, alt text |
 | `models/SLUG/design.py`, `model.toml` | the model, and its colours, texts and video settings |
 | `models/SLUG/out/` | everything made from it: report, parts lists, booklet, videos |
 | `site/quick/SLUG/`, `site/models/SLUG/` | its page and files on the site |

@@ -18,7 +18,9 @@ The cache location can be overridden with `BRICKKIT_CACHE` (useful in git worktr
 |---|---|
 | `brickkit new SLUG --name "Name" [--quick]` | scaffold `models/SLUG/` (model.toml + design.py); `--quick`: a Quick Bricks model to take in, with `NOTES.md` to fill in and `reference/` for what was pasted ([new-model.md](new-model.md)) |
 | `brickkit claim SLUG --as NAME [--stage "2-3"] [--note "..."] [--take]`, `brickkit release SLUG --as NAME [--force]` | say who is working on a model, so agents on different tools do not collide: the claim is `models/SLUG/CLAIM`, one holder at a time, stale after 24 hours ([new-model.md](new-model.md)); `brickkit new --as NAME` claims what it makes |
-| `brickkit status [SLUG ...] [--all] [--check]` | where each model is - who has claimed it, source saved, notes, checks, parts lists, booklet, video, site, the workshop its video is set in - and the next thing to do (from the files only; `--check` also audits each Quick Bricks video plan) |
+| `brickkit import SLUG FILE [--name "Name"] [--sub "SubModel"] [--as NAME]` | a new model from a BrickLink Studio `.io` file or an LDraw `.ldr` / `.mpd` file: its exact parts, colours and positions written as `design.py` (Studio's own parts matched to LDraw's by shape; the file's steps, or a build order worked out); it then needs the checks fixed like any model |
+| `brickkit ways SLUG [--all]` | how each piece can go on, as the video's planner sees it: the way it comes from, ready to paste as an `insert=(x, y, z)` hint, and the pieces with no clear way in |
+| `brickkit status [SLUG ...] [--all] [--check]` | where each model is - who has claimed it, source saved, notes, checks, parts lists, booklet, video, posts (SOCIAL.md), site, the workshop its video is set in - and the next thing to do (from the files only; `--check` also audits each Quick Bricks video plan) |
 | `brickkit build SLUG` | run design.py, write `out/SLUG.mpd` |
 | `brickkit verify SLUG` | run all checks, write `out/report.{json,html}`; exit 1 on any FAIL |
 | `brickkit bom SLUG` | `out/parts.csv`, `out/bricklink_wanted.xml`, `out/pick_a_brick.csv`, `out/price_estimate.md` and `out/price.json`: live BrickLink prices dated today when API keys are in `~/.config/brickkit/bricklink.env` (see `brickkit/bom/live_price.py`), else a rough range from `brickkit/data/price_bands.json` |
@@ -50,6 +52,8 @@ applied X then Y then Z.
 [model]
 name = "Baby Metroid Lamp"
 design = "design.py"
+# designer = "..."   # someone else's design: who made it (printed in the booklet),
+# source = "https://..."   # and a link to the original
 
 [palette]            # role -> real colour name (Rebrickable/BrickLink naming)
 dome = "Trans-Light Blue"
@@ -814,7 +818,8 @@ the table, and none lands on nothing.
   straight in the last stretch; the corners are rounded as far as stays clear. Every sample
   of it is tested against everything on the table and the table itself. Two pieces in the air
   at once keep out of each other's way: the later one comes from the other side, or a moment
-  later.
+  later. A piece that has no clear route tumbling in (a tight place under a tail) comes in
+  upright instead, or from straight overhead.
 - *Nothing in the air.* What is built stands on the table on its lowest point (so a model
   that ends up on a stick is built on the table). A piece that reaches lower lifts it first;
   one that goes on from underneath and becomes what it stands on slides in under it on the
@@ -824,8 +829,13 @@ the table, and none lands on nothing.
   where the first leg's hip is) it is built beside the model - upright in its own frame, clear
   of the model's footprint - and joined as one. A bought kit (a minifigure's legs, its torso
   with its arms) is one piece.
-- *The schedule* gives a lift or a join the table to itself (`SLOW`), and the loop is made
-  longer than `[quick] seconds` if the build needs it.
+- *The schedule* gives a lift or a join the table to itself (`SLOW`), holds it until a
+  close-up just before it is over, and the loop is made longer than `[quick] seconds` if the
+  build needs it. For the last shot the camera moves in on the finished model if it had
+  pulled back for units built beside it.
+- *A black patch.* Now and then the GPU drops a material and a part renders flat black until
+  the next Blender process. `brickkit quick` looks for a bright patch that turns pure black
+  from one frame to the next (`black_patches`) and renders those frames again.
 
 `brickkit quick` checks the plan it made (`clashes`: the plan's own frames, part against
 part) and lists anything left - a piece with no clear way in, a part that passes through
@@ -842,7 +852,11 @@ three landings - per `highlight` group the part facing the camera best as it lan
 is timed to be on the side each close-up's part faces when it lands (a part that goes on
 sideways, like an eye or a clock, is seen face on; one that goes on from above from between
 its side of the model and the front), so the close-up is a push in along the orbit, not a
-swing across it; the build gives each one room. Then out, a slow drift across the front, and
+swing across it; the build gives each one room. The orbit only goes one way, so it cannot
+always be there: two parts that face different ways and land a moment apart (a bolt on a
+figure's side, then its eye), or a part that faces the back while pieces still lie on the
+table. A part that would be seen edge on gets no close-up; `highlight` is in order of
+preference, so put the face first. Then out, a slow drift across the front, and
 a hard cut to the empty set, whose camera runs on into the first frame: the loop. The sound:
 a crisp click on every landing (six ElevenLabs takes in turn, a little louder or softer), a
 deeper snap on the last piece and a soft swish into each close-up - just those by default;

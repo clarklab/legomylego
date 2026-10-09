@@ -35,6 +35,7 @@ def test_cli_new_quick_and_status(tmp_path, monkeypatch, capsys):
     assert 'name = "Tiny Owl"' in toml and "[quick]" in toml and "brickkit quick tiny_owl" in toml
     assert '# collection = "quick_bricks"' in toml                 # not on the site yet
     assert (d / "reference").is_dir() and "# Tiny Owl" in (d / "NOTES.md").read_text()
+    assert "# Tiny Owl: posts" in (d / "SOCIAL.md").read_text()    # its Instagram and TikTok posts
     assert "def build(model)" in (d / "design.py").read_text()
     row = status.model_status("tiny_owl", tmp_path, tmp_path / "site")
     assert (row["source"], row["notes"], row["checks"], row["site"]) == ("-", "draft", "-", "off")
@@ -45,6 +46,9 @@ def test_cli_new_quick_and_status(tmp_path, monkeypatch, capsys):
     (d / "NOTES.md").write_text("# Tiny Owl\n\nAll written up.\n")
     row = status.model_status("tiny_owl", tmp_path, tmp_path / "site")
     assert row["notes"] == "yes" and row["next"] == "write design.py, then: brickkit all tiny_owl"
+    assert row["posts"] == "draft"                                 # (till no TODO is left in it)
+    (d / "SOCIAL.md").write_text("# Tiny Owl: posts\n\nWho? Me.\n")
+    assert status.model_status("tiny_owl", tmp_path, tmp_path / "site")["posts"] == "yes"
     assert cli.main(["status", "tiny_owl"]) == 0
     out = capsys.readouterr().out
     head = next(ln for ln in out.splitlines() if ln.startswith("model"))
