@@ -1,0 +1,35 @@
+[model]
+name = "Surprised Pikachu"
+design = "design.py"
+description = "The surprised Pikachu face in 50 pieces, 9 cm across the ears and 6 cm tall: wide eyes, red cheeks, a small black nose over an open pink mouth, and pointed black-tipped ears that swing on clips."
+credit = "Another builder's design: its plans do not name them. If it is yours, tell us and we will credit you."
+# designer = "..."           # not named in the plans it came from: fill in when known
+collection = "quick_bricks"
+
+[palette]                     # role -> a real colour name; design.py places parts by role
+body = "Yellow"               # the head and the ears
+eye = "Black"                 # round tiles printed with a white circle
+nose = "Black"                # a quarter-round tile, its corner up
+cheek = "Red"                 # round tiles
+mouth = "Coral"               # the open mouth: two quarter-round tiles and a 1 x 2 tile
+tip = "Black"                 # the ears' tips
+hinge = "Black"               # the two handles the ears clip to
+
+[booklet]
+subtitle = "The surprised face, with ears that swing, in 50 pieces."
+intro = "Almost nothing here is stacked: the face is built forward off a bracket standing on its edge, so its studs point at you. Start with the bracket, its three plates and the top of the head, then the eyes, nose and cheeks. Turn it round for the plates and bricks that hold the back together, and turn it back for the mouth. Last come the ears: two handles behind the top of the head, a clip plate on each, and the black tips."
+
+[checks]
+enabled = ["real_elements", "connections", "collisions", "buildability", "stability",
+           "mechanism", "electrics", "technique"]
+
+# Quick Bricks video (brickkit quick pikachu): a blue cutting mat in front of the bookshelf,
+# in daylight; close-ups as an eye, the mouth and an ear's black tip land
+[quick]
+surface = "blue_mat"          # blue_mat | green_mat | kraft | oak | baseplate
+room = "bookshelf"            # workbench | studio | window | night | bookshelf
+light = "day"                 # morning | day | evening
+seconds = 14
+highlight = ["eyes", "mouth", "ear_tip"]   # tags worth a close-up
+close_ups = 2
+music = false                 # just the clicks

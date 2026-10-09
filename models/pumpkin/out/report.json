@@ -1,0 +1,92 @@
+{
+  "title": "Pumpkin",
+  "status": "pass",
+  "checks": [
+    {
+      "name": "real_elements",
+      "status": "pass",
+      "summary": "22 part/colour combinations: 0 not real, 0 rare",
+      "items": [],
+      "stats": {
+        "combinations": 22,
+        "not_real": 0,
+        "rare": 0,
+        "hardware": 0,
+        "minifig_components": 0,
+        "stand_ins": 0,
+        "approximate": 0
+      }
+    },
+    {
+      "name": "connections",
+      "status": "pass",
+      "summary": "132 connections (131 stud, 1 clip); 1 separate piece(s)",
+      "items": [],
+      "stats": {
+        "connections": 132,
+        "by_kind": {
+          "stud": 131,
+          "clip": 1
+        },
+        "pieces": 1
+      }
+    },
+    {
+      "name": "collisions",
+      "status": "pass",
+      "summary": "0 overlapping pair(s) among 51 parts",
+      "items": [],
+      "stats": {
+        "pairs": 0
+      }
+    },
+    {
+      "name": "buildability",
+      "status": "pass",
+      "summary": "41 insertions tried across 6 submodel(s); 0 problem(s)",
+      "items": [],
+      "stats": {
+        "insertions": 41
+      }
+    },
+    {
+      "name": "stability",
+      "status": "pass",
+      "summary": "about 44 g; centre of mass inside the base (99% margin); tips at 39.1 deg",
+      "items": [],
+      "stats": {
+        "mass_g": 44.45564429241103,
+        "com": [
+          -0.19342316466866744,
+          -48.86263794049131,
+          -0.29414075383826577
+        ],
+        "approx_parts": 0,
+        "margin": 0.9926464811540434,
+        "tip_angle_deg": 39.09736620171768,
+        "com_height_ldu": 48.86263794049131
+      }
+    },
+    {
+      "name": "mechanism",
+      "status": "pass",
+      "summary": "no moving parts defined",
+      "items": [],
+      "stats": {}
+    },
+    {
+      "name": "electrics",
+      "status": "pass",
+      "summary": "no electrics in this model",
+      "items": [],
+      "stats": {}
+    },
+    {
+      "name": "technique",
+      "status": "pass",
+      "summary": "0 note(s)",
+      "items": [],
+      "stats": {}
+    }
+  ]
+}

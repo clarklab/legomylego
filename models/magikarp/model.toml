@@ -1,0 +1,39 @@
+[model]
+name = "Magikarp"
+design = "design.py"
+description = "A Magikarp in 43 pieces, 6.5 cm long and 6.4 cm high: a red fish built sideways off two brackets, with round white eyes, an open lavender mouth, a white forked tail and a yellow fin on its back and under its belly."
+designer = "Redverse"
+source = "https://rebrickable.com/mocs/MOC-182443/"
+collection = "quick_bricks"
+
+[palette]                     # role -> a real colour name; design.py places parts by role
+body = "Red"                  # the core, the head, the belly and the three curved bricks
+tail = "White"                # the tail and the slope on each of its ends
+side_fin = "White"            # the triangle at each side
+fin = "Yellow"                # the fins on its back and under its belly
+eye = "White"                 # the two dishes
+pin = "Blue"                  # the two pins the eyes sit on
+bar = "Black"                 # the bar through them: the pupils are its ends
+mouth = "Lavender"            # the rounded dish (from the Friends kitchen set of parts)
+
+[booklet]
+subtitle = "A red fish with round eyes, an open mouth and yellow fins, in 43 pieces."
+intro = "This Magikarp is built sideways. Two plates and a bracket make the top of its core; a 2 x 4 plate with a second bracket goes underneath upside down, and two slopes pressed over the brackets' side studs lock the halves together. An axle through the middle carries both eyes. The tail goes on the slopes, the fin brackets and belly go on from underneath, and the head is a brick with a hole, upside down at the front. Last come the eyes and side fins, the mouth, three curved bricks that round the body off, and the two yellow fins. It balances on its belly fin, so lay it on its side or hold it to show it."
+
+# No stability check: the finished fish touches the table only with the tip of its belly fin
+# (one 1 x 1 slope, under the middle of the body), as in the designer's plans. It lies on its
+# side or is held; the model is not changed to make it stand
+[checks]
+enabled = ["real_elements", "connections", "collisions", "buildability",
+           "mechanism", "electrics", "technique"]
+
+# Quick Bricks video (brickkit quick magikarp): a blue cutting mat by the window in morning
+# light (red reads true on blue); close-ups as an eye, the mouth and the fin on its back land
+[quick]
+surface = "blue_mat"          # blue_mat | green_mat | kraft | oak | baseplate
+room = "window"               # workbench | studio | window | night | bookshelf
+light = "morning"             # morning | day | evening
+seconds = 14
+highlight = ["eye", "mouth", "dorsal_fin"]   # tags worth a close-up: the face first
+close_ups = 2
+music = false                 # just the clicks

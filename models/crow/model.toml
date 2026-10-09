@@ -1,0 +1,38 @@
+[model]
+name = "Crow"
+design = "design.py"
+description = "A little black crow in 34 pieces, 7 cm from beak to tail: a pointed beak, half-closed eyes, two wings and two tail feathers on clips, and yellow feet. Designed by Qrys.And.Reading."
+designer = "Qrys.And.Reading"
+source = "https://rebrickable.com/mocs/MOC-165060/"
+collection = "quick_bricks"
+
+[palette]                     # role -> a real colour name; design.py places parts by role
+feather = "Black"             # everything black: the body, head, wings and tail
+grey = "Dark Bluish Gray"     # the two belly plates, a plate in the neck, two tiles on the tail
+shield = "Dark Bluish Gray"   # the plate with a handle under the belly (the file has Black, never made in this part)
+feet = "Yellow"               # (the file has Medium Orange, never made in this part)
+eye = "White"                 # round tiles printed with a half-open eye
+
+[booklet]
+subtitle = "A little crow with a pointed beak, sleepy eyes and yellow feet, in 34 pieces. Designed by Qrys.And.Reading."
+intro = "A crow small enough to perch on two fingers. Build the body up from the belly plate to the back and the neck, then the head: stack the beak and the brow in your hand and press them on together. Add the eyes, clip on the tail and the wings, and last press the legs up under the belly and clip on the feet. It balances on its feet: if it tips back onto its tail, lean the body forward a little on the feet's clips."
+
+# (no stability check: it stands on two 1 x 2 clip plates, 2 x 2 studs of table, and it only
+# balances there. The tail and wings put its centre of mass about 1 mm (3 LDU) in front of the
+# feet's back edge, so the check says it tips backwards at 3.2 degrees. It stands on a level
+# table as its designer posed it; a touch on the tail tips it. No parts were added to fix that)
+[checks]
+enabled = ["real_elements", "connections", "collisions", "buildability",
+           "mechanism", "electrics", "technique"]
+
+# Quick Bricks video (brickkit quick crow): the green cutting mat in the white studio, low
+# morning sun. 34 pieces, so they fly in (the grid layout is for under 25). Close-ups as an
+# eye and the beak land
+[quick]
+surface = "green_mat"         # blue_mat | green_mat | kraft | oak | baseplate
+room = "studio"               # workbench | studio | window | night | bookshelf
+light = "morning"             # morning | day | evening
+seconds = 14
+highlight = ["eye", "beak"]   # tags in design.py: the printed eyes, the pointed plate
+close_ups = 2
+music = false                 # just the clicks

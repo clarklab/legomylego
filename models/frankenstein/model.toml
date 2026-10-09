@@ -1,0 +1,32 @@
+[model]
+name = "Frankenstein"
+design = "design.py"
+description = "A tiny Frankenstein in 17 pieces, about 4.5 cm tall: a flat-topped grey head with sleepy white eyes, a grey brow bar and two white neck bolts, on a black body and base."
+designer = "Agosami Brickworks"
+source = "https://rebrickable.com/mocs/MOC-215912/"
+collection = "quick_bricks"
+
+[palette]                     # role -> a real colour name; design.py places parts by role
+dark = "Black"                # the base, body, the little plates under the arms, the tile on top
+skin = "Light Bluish Gray"    # the head, the mouth, the brow bar and the arms
+bolt = "White"                # the neck bolts
+eye = "White"                 # round tiles printed with a sleepy black eye
+
+[booklet]
+subtitle = "A flat-topped monster with sleepy eyes and neck bolts, in 17 pieces."
+intro = "Frankenstein, small enough to stand on your hand: build up from his black base and legs, give him his grey arms, then set on the big grey head. Add the white neck bolts, his mouth and sleepy eyes, and finish with the brow bar and the flat black top."
+
+[checks]
+enabled = ["real_elements", "connections", "collisions", "buildability", "stability",
+           "mechanism", "electrics", "technique"]
+
+# Quick Bricks video (brickkit quick frankenstein). Pick a workshop the last few models did not
+# use (brickkit status shows theirs); under 25 pieces the parts start laid out on the table
+[quick]
+surface = "kraft"             # blue_mat | green_mat | kraft | oak | baseplate
+room = "night"                # workbench | studio | window | night | bookshelf
+light = "evening"             # morning | day | evening
+seconds = 14
+highlight = ["eyes", "bolts"] # tags or part numbers worth a close-up: the sleepy eyes, the neck bolts
+close_ups = 2
+music = false                 # just the clicks

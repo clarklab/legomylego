@@ -1,0 +1,36 @@
+[model]
+name = "Xenomorph"
+design = "design.py"
+description = "A black alien in 49 pieces, 11 cm from its claws to the tip of its tail and 7 cm tall: a long domed head with silver teeth, tubes on its back and a jointed tail with spines and a barb. Every joint moves, and it stands on its two feet and the barb. Designed by yodakya."
+designer = "yodakya"
+source = "https://rebrickable.com/mocs/MOC-34927/"
+collection = "quick_bricks"
+
+[palette]                     # role -> a real colour name; design.py places parts by role
+black = "Black"
+silver = "Flat Silver"        # the teeth, a 1 x 1 round plate: colour 179 in the designer's file
+
+[booklet]
+subtitle = "A posable alien with a domed head, tubes on its back and a spined tail, in 49 pieces. Designed by yodakya."
+intro = "It goes together in small sections that clip onto each other. Start with the hips, a T-shaped bar: build the two legs flat on the table and slide one onto each end. Clip on the torso, the arms and the head, push the back with its four tubes into the stud behind the torso, then click the tail together link by link and hang it on the hinge."
+notes = ["It stands on three points: its two feet and the barb at the end of its tail. If the barb does not reach the table, tip the body back a little at the hips.",
+         "The tail's hinges click every 22.5 degrees. Count the clicks in each step; a hinge left between two clicks does not hold."]
+
+[checks]
+enabled = ["real_elements", "connections", "collisions", "buildability", "stability",
+           "mechanism", "electrics", "technique"]
+
+# Quick Bricks video (brickkit quick xenomorph): 49 pieces, so they fly in (no layout). The
+# close-ups: the dome of the head as it lands, and the barb at the end of the tail. The build
+# has seven lifts and joins (legs, head, back and sting are built beside it and joined), which
+# do not fit in 14 s: the planner asks for 15
+[quick]
+last_look = [0, 12]           # the video ends three-quarters on (the model's "front", design.py),
+                              # give or take 12 degrees: head on it is a narrow black shape
+surface = "oak"               # blue_mat | green_mat | kraft | oak | baseplate
+room = "workbench"            # workbench | studio | window | night | bookshelf
+light = "evening"             # morning | day | evening
+seconds = 15
+highlight = ["dome", "barb"]  # tags: the head's dome, the tail's tip
+close_ups = 2
+music = false                 # just the clicks

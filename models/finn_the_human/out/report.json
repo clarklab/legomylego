@@ -1,0 +1,94 @@
+{
+  "title": "Finn the Human",
+  "status": "pass",
+  "checks": [
+    {
+      "name": "real_elements",
+      "status": "pass",
+      "summary": "59 part/colour combinations: 0 not real, 0 rare",
+      "items": [],
+      "stats": {
+        "combinations": 59,
+        "not_real": 0,
+        "rare": 0,
+        "hardware": 0,
+        "minifig_components": 0,
+        "stand_ins": 0,
+        "approximate": 0
+      }
+    },
+    {
+      "name": "connections",
+      "status": "pass",
+      "summary": "319 connections (282 stud, 18 bar, 16 pin, 3 clip); 1 separate piece(s)",
+      "items": [],
+      "stats": {
+        "connections": 319,
+        "by_kind": {
+          "stud": 282,
+          "bar": 18,
+          "pin": 16,
+          "clip": 3
+        },
+        "pieces": 1
+      }
+    },
+    {
+      "name": "collisions",
+      "status": "pass",
+      "summary": "0 overlapping pair(s) among 121 parts",
+      "items": [],
+      "stats": {
+        "pairs": 0
+      }
+    },
+    {
+      "name": "buildability",
+      "status": "pass",
+      "summary": "119 insertions tried across 10 submodel(s); 0 problem(s)",
+      "items": [],
+      "stats": {
+        "insertions": 119
+      }
+    },
+    {
+      "name": "stability",
+      "status": "pass",
+      "summary": "about 92 g; centre of mass inside the base (88% margin); tips at 6.6 deg",
+      "items": [],
+      "stats": {
+        "mass_g": 92.2647150431738,
+        "com": [
+          -3.9730556761484035,
+          -303.9524673290219,
+          4.818936444596805
+        ],
+        "approx_parts": 0,
+        "margin": 0.87952658888508,
+        "tip_angle_deg": 6.6023368938474665,
+        "com_height_ldu": 303.9524673290219
+      }
+    },
+    {
+      "name": "mechanism",
+      "status": "pass",
+      "summary": "no moving parts defined",
+      "items": [],
+      "stats": {}
+    },
+    {
+      "name": "electrics",
+      "status": "pass",
+      "summary": "no electrics in this model",
+      "items": [],
+      "stats": {}
+    },
+    {
+      "name": "technique",
+      "status": "pass",
+      "summary": "0 note(s)",
+      "items": [],
+      "stats": {}
+    }
+  ]
+}

@@ -1,0 +1,103 @@
+{
+  "title": "Freddy Fazbear",
+  "status": "pass",
+  "checks": [
+    {
+      "name": "real_elements",
+      "status": "pass",
+      "summary": "25 part/colour combinations: 0 not real, 0 rare",
+      "items": [
+        {
+          "part": "76959",
+          "name": "Brick Sloped Inverted 45\u00b0 2 x 2 [Round Hollow Bottom Pin, Bar-sized Stud Holes]",
+          "colour": "Reddish Brown",
+          "severity": "info",
+          "problem": "Supplemental upstream LDraw geometry; not yet in the complete library",
+          "source": "https://library.ldraw.org/library/unofficial/parts/76959.dat"
+        }
+      ],
+      "stats": {
+        "combinations": 25,
+        "not_real": 0,
+        "rare": 0,
+        "hardware": 0,
+        "minifig_components": 0,
+        "stand_ins": 0,
+        "approximate": 0
+      }
+    },
+    {
+      "name": "connections",
+      "status": "pass",
+      "summary": "64 connections (49 stud, 7 clip, 4 pin, 4 bar); 1 separate piece(s)",
+      "items": [],
+      "stats": {
+        "connections": 64,
+        "by_kind": {
+          "stud": 49,
+          "pin": 4,
+          "clip": 7,
+          "bar": 4
+        },
+        "pieces": 1
+      }
+    },
+    {
+      "name": "collisions",
+      "status": "pass",
+      "summary": "0 overlapping pair(s) among 42 parts",
+      "items": [],
+      "stats": {
+        "pairs": 0
+      }
+    },
+    {
+      "name": "buildability",
+      "status": "pass",
+      "summary": "41 insertions tried across 1 submodel(s); 0 problem(s)",
+      "items": [],
+      "stats": {
+        "insertions": 41
+      }
+    },
+    {
+      "name": "stability",
+      "status": "pass",
+      "summary": "about 15 g; centre of mass inside the base (74% margin); tips at 7.0 deg",
+      "items": [],
+      "stats": {
+        "mass_g": 14.568737452107198,
+        "com": [
+          -0.5380127158258423,
+          -111.96533844885587,
+          5.1641469569027505
+        ],
+        "approx_parts": 0,
+        "margin": 0.7417926521548625,
+        "tip_angle_deg": 7.0498506039725735,
+        "com_height_ldu": 119.96533844885587
+      }
+    },
+    {
+      "name": "mechanism",
+      "status": "pass",
+      "summary": "no moving parts defined",
+      "items": [],
+      "stats": {}
+    },
+    {
+      "name": "electrics",
+      "status": "pass",
+      "summary": "no electrics in this model",
+      "items": [],
+      "stats": {}
+    },
+    {
+      "name": "technique",
+      "status": "pass",
+      "summary": "0 note(s)",
+      "items": [],
+      "stats": {}
+    }
+  ]
+}

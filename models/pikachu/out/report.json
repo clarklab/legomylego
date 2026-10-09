@@ -1,0 +1,104 @@
+{
+  "title": "Surprised Pikachu",
+  "status": "warn",
+  "checks": [
+    {
+      "name": "real_elements",
+      "status": "warn",
+      "summary": "26 part/colour combinations: 0 not real, 1 rare",
+      "items": [
+        {
+          "part": "43720",
+          "name": "Brick Wedged, Sloped 45\u00b0 4 x 2 Right",
+          "colour": "Yellow",
+          "severity": "warn",
+          "problem": "rare: in 3 set(s), last seen 2005",
+          "element_ids": [
+            "4179092",
+            "4262782"
+          ]
+        }
+      ],
+      "stats": {
+        "combinations": 26,
+        "not_real": 0,
+        "rare": 1,
+        "hardware": 0,
+        "minifig_components": 0,
+        "stand_ins": 0,
+        "approximate": 0
+      }
+    },
+    {
+      "name": "connections",
+      "status": "pass",
+      "summary": "84 connections (82 stud, 2 clip); 1 separate piece(s)",
+      "items": [],
+      "stats": {
+        "connections": 84,
+        "by_kind": {
+          "stud": 82,
+          "clip": 2
+        },
+        "pieces": 1
+      }
+    },
+    {
+      "name": "collisions",
+      "status": "pass",
+      "summary": "0 overlapping pair(s) among 50 parts",
+      "items": [],
+      "stats": {
+        "pairs": 0
+      }
+    },
+    {
+      "name": "buildability",
+      "status": "pass",
+      "summary": "46 insertions tried across 2 submodel(s); 0 problem(s)",
+      "items": [],
+      "stats": {
+        "insertions": 46
+      }
+    },
+    {
+      "name": "stability",
+      "status": "pass",
+      "summary": "about 25 g; centre of mass inside the base (100% margin); tips at 25.3 deg",
+      "items": [],
+      "stats": {
+        "mass_g": 25.458977616827248,
+        "com": [
+          1.811419201336077,
+          -57.3709225031641,
+          -1.0738312814612525
+        ],
+        "approx_parts": 0,
+        "margin": 0.9986249243161938,
+        "tip_angle_deg": 25.26302727764641,
+        "com_height_ldu": 57.3709225031641
+      }
+    },
+    {
+      "name": "mechanism",
+      "status": "pass",
+      "summary": "no moving parts defined",
+      "items": [],
+      "stats": {}
+    },
+    {
+      "name": "electrics",
+      "status": "pass",
+      "summary": "no electrics in this model",
+      "items": [],
+      "stats": {}
+    },
+    {
+      "name": "technique",
+      "status": "pass",
+      "summary": "0 note(s)",
+      "items": [],
+      "stats": {}
+    }
+  ]
+}

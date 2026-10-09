@@ -1,0 +1,41 @@
+[model]
+name = "Freddy Fazbear"
+design = "design.py"
+description = "A tiny Freddy Fazbear in 42 pieces, about 9 cm tall: a brown bear robot with a top hat, a black bow tie, big round eyes and a light snout, holding a microphone."
+source = "https://rebrickable.com/mocs/MOC-265184/"
+# designer = "..."           # not named in the plans it came from: fill in when known
+collection = "quick_bricks"
+
+[palette]                     # role -> a real colour name; design.py places parts by role
+body = "Reddish Brown"        # fur: feet, legs, hip, arms, hands, head, ears
+belly = "Tan"                 # the round 2 x 2 tile on his tummy (the pages show Light Nougat, which was never made in this part)
+muzzle = "Light Nougat"       # the snout: a 1 x 2 plate with one stud
+tie = "Black"                 # bow tie, nose, top hat
+neck = "Black"                # the 1 x 2 plate with two clips under his head (never made in Reddish Brown)
+mic = "Black"                 # the microphone, with a silver half-sphere top
+eye = "White"                 # round tiles printed with a black eye
+
+[booklet]
+subtitle = "A brown bear robot with a top hat, a bow tie and a microphone, in 42 pieces."
+intro = "Freddy stands on two 1 x 2 plates. Build up his legs and hip, give him a round belly and a pair of shoulder bars to hang his arms from, put the microphone in his hand, then add his bow tie, his head with its snout, nose and big round eyes, his ears and his top hat."
+
+[checks]
+enabled = ["real_elements", "connections", "collisions", "buildability", "stability",
+           "mechanism", "electrics", "technique"]
+
+# Freddy is tall and narrow: 9 cm high on two 1 x 2 plates (a 16 mm square), so even a perfectly
+# centred centre of mass (his is 74% of the way to the middle) would only tip at about 9 degrees.
+# He does stand, so stability stays on, with the tipping angle he can reach (the default is 10).
+[checks.stability]
+min_tilt_deg = 6
+
+# Quick Bricks video (brickkit quick freddy_fazbear). Under 25 pieces the parts start laid out on
+# the table; he is 42, so they fly in. The close-ups: the eyes, the hat and the microphone.
+[quick]
+surface = "blue_mat"
+room = "night"
+light = "evening"
+seconds = 14
+highlight = ["eyes", "hat", "mic"]
+close_ups = 2
+music = false                 # just the clicks

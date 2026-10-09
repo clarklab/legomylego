@@ -1,0 +1,109 @@
+{
+  "title": "Xenomorph",
+  "status": "warn",
+  "checks": [
+    {
+      "name": "real_elements",
+      "status": "warn",
+      "summary": "20 part/colour combinations: 0 not real, 1 rare",
+      "items": [
+        {
+          "part": "30375",
+          "name": "Torso Mechanical, Battle Droid",
+          "colour": "Black",
+          "severity": "warn",
+          "problem": "rare: in 7 set(s), last seen 2013",
+          "element_ids": [
+            "4143113",
+            "4143663",
+            "4540274"
+          ]
+        }
+      ],
+      "stats": {
+        "combinations": 20,
+        "not_real": 0,
+        "rare": 1,
+        "hardware": 0,
+        "minifig_components": 0,
+        "stand_ins": 0,
+        "approximate": 0
+      }
+    },
+    {
+      "name": "connections",
+      "status": "pass",
+      "summary": "50 connections (20 stud, 16 clip, 7 bar, 5 hinge, 1 pin, 1 press); 1 separate piece(s)",
+      "items": [],
+      "stats": {
+        "connections": 50,
+        "by_kind": {
+          "clip": 16,
+          "stud": 20,
+          "bar": 7,
+          "pin": 1,
+          "hinge": 5,
+          "press": 1
+        },
+        "pieces": 1
+      }
+    },
+    {
+      "name": "collisions",
+      "status": "pass",
+      "summary": "0 overlapping pair(s) among 49 parts",
+      "items": [],
+      "stats": {
+        "pairs": 0
+      }
+    },
+    {
+      "name": "buildability",
+      "status": "pass",
+      "summary": "50 insertions tried across 10 submodel(s); 0 problem(s)",
+      "items": [],
+      "stats": {
+        "insertions": 50
+      }
+    },
+    {
+      "name": "stability",
+      "status": "pass",
+      "summary": "about 14 g; centre of mass inside the base (101% margin); tips at 16.9 deg",
+      "items": [],
+      "stats": {
+        "mass_g": 14.282215970815411,
+        "com": [
+          0.0004376723407429332,
+          -82.46330329325814,
+          17.84064752580914
+        ],
+        "approx_parts": 0,
+        "margin": 1.014121198498444,
+        "tip_angle_deg": 16.88997594489644,
+        "com_height_ldu": 82.46438461614434
+      }
+    },
+    {
+      "name": "mechanism",
+      "status": "pass",
+      "summary": "no moving parts defined",
+      "items": [],
+      "stats": {}
+    },
+    {
+      "name": "electrics",
+      "status": "pass",
+      "summary": "no electrics in this model",
+      "items": [],
+      "stats": {}
+    },
+    {
+      "name": "technique",
+      "status": "pass",
+      "summary": "0 note(s)",
+      "items": [],
+      "stats": {}
+    }
+  ]
+}

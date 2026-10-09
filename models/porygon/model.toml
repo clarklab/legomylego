@@ -1,0 +1,32 @@
+[model]
+name = "Porygon"
+design = "design.py"
+description = "A tiny Porygon in 19 pieces, about 3 cm long and 3 cm tall: a pink head and body, a blue beak, chest, feet and tail, and a round eye on each side of its head."
+designer = "QSKSw"
+source = "https://rebrickable.com/mocs/MOC-31400/"
+collection = "quick_bricks"
+
+[palette]                     # role -> a real colour name; design.py places parts by role
+body = "Dark Pink"            # the head and the body (LEGO's own name: Bright Purple)
+trim = "Dark Azure"           # the base, chest, beak, feet and tail
+eye = "White"                 # round tiles printed with a black eye
+
+[booklet]
+subtitle = "A tiny pink and blue Porygon with a beak, a tail and two round eyes, in 19 pieces."
+intro = "Porygon, small enough to sit on a fingertip: start with the blue plate and the two bricks of its body, give it its feet, then build up through the chest to the tail, the head and the beak. The tile on top and the two eyes go on last."
+
+[checks]
+enabled = ["real_elements", "connections", "collisions", "buildability", "stability",
+           "mechanism", "electrics", "technique"]
+
+# Quick Bricks video (brickkit quick porygon): a green cutting mat in front of the bookshelf,
+# in bright daylight. Under 25 pieces, so the parts start laid out on the table; close-ups as
+# an eye and the beak land
+[quick]
+surface = "green_mat"         # blue_mat | green_mat | kraft | oak | baseplate
+room = "bookshelf"            # workbench | studio | window | night | bookshelf
+light = "day"                 # morning | day | evening
+seconds = 14
+highlight = ["eye", "beak"]   # tags worth a close-up
+close_ups = 2
+music = false                 # just the clicks

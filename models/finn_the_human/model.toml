@@ -1,0 +1,56 @@
+[model]
+name = "Finn the Human"
+design = "design.py"
+description = "Finn the Human from Adventure Time as a lanky, posable figure in 121 pieces, 19.4 cm tall: a white hat with two round ears, a wide grin, noodle arms and legs, a round green backpack and his golden sword."
+# designer = "..."            # someone else's design: who made it (the booklet says so),
+# source = "https://..."      # and where the original is
+collection = "quick_bricks"
+
+[palette]                     # role -> a real colour name; design.py places parts by role
+hat = "White"                 # the hat, its ears and the neck under it
+skin = "Light Nougat"         # face, arms and legs: one colour everywhere
+eye = "Black"
+mouth = "Dark Red"
+shirt = "Medium Azure"
+shorts = "Blue"
+sock = "White"
+shoe = "Black"
+pack_top = "Lime"             # the backpack's upper half
+pack_low = "Green"            # and its lower half
+blade = "Yellow"              # the sword's blade and guard
+hilt = "Pearl Gold"           # its grip: a round plate with a bar
+jewel = "Red"                 # the jewel on the end of the grip
+pin = "Black"                 # the hip and shoulder pins, inside the shorts and the sleeves
+spine = "Black"               # the bars hidden inside the legs
+turntable = "Light Bluish Gray"   # the turntable's top, hidden in the neck (made in grey only)
+
+[booklet]
+subtitle = "A lanky, posable Finn with his backpack and his golden sword, in 121 pieces."
+intro = "Finn goes together in sections that you build apart and then join. Start with his hips and shirt, which hold a pin for each leg and each arm. Build the two legs from the shoe up, then the two arms, the backpack, the head with its sideways face, and the sword. Push the legs and arms onto their pins, press the backpack onto his back and the head onto the turntable, and clip the sword into his right hand."
+notes = ["His hips and shoulders turn on Technic pins, his elbows on a clip, his forearms on the stud above the elbow, and his head on a turntable. Pose him with his weight over his shoes: he is tall, and his head is the heaviest part of him.",
+         "Two bars run down the inside of each leg, through the holes in the round bricks. Push them all the way down before the shorts go on."]
+
+[checks]
+enabled = ["real_elements", "connections", "collisions", "buildability", "stability",
+           "mechanism", "electrics", "technique"]
+
+# Finn is tall and narrow by design: 19.4 cm high on two 2 x 4 shoes, a head of 42 g on legs
+# one stud thick. As posed he weighs about 92 g and his centre of mass is 12.2 cm up, 2 mm
+# behind the middle of his shoes (the backpack) and 14 mm inside their back edge, so he tips
+# backwards at 6.6 degrees (forwards at 8.4, sideways at 8.6 and 10.1). The default 10 all
+# round would take shoes 6 studs long and 3 wide, as big as his head. He does stand, so
+# stability stays on, with the angle a figure this lanky can reach (Freddy Fazbear's is 6 too).
+[checks.stability]
+min_tilt_deg = 6
+
+# Quick Bricks video (brickkit quick finn_the_human): 121 pieces, so they fly in (no layout). The
+# legs, arms, backpack, head and sword are built beside him and joined. The close-ups: the face
+# first (the eyes, then the grin), then the backpack and an ear
+[quick]
+surface = "green_mat"         # blue_mat | green_mat | kraft | oak | baseplate
+room = "window"               # workbench | studio | window | night | bookshelf
+light = "day"                 # morning | day | evening
+seconds = 22
+highlight = ["eyes", "mouth", "backpack", "ear"]   # tags in design.py, the face first
+close_ups = 2
+music = false                 # just the clicks

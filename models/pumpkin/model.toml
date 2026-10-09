@@ -1,0 +1,34 @@
+[model]
+name = "Pumpkin"
+design = "design.py"
+description = "A jack-o'-lantern pumpkin in 51 pieces, about 5.4 cm across and 6.8 cm tall with its leaf: a cube of plates built on its sides, with square black eyes, a toothy mouth and a green stem with a leaf (a design by BrixBuild)."
+designer = "BrixBuild"
+source = "https://rebrickable.com/mocs/MOC-163756/"
+collection = "quick_bricks"
+
+[palette]                     # role -> a real colour name; design.py places parts by role
+rind = "Orange"               # the panels, the top and the tiles under it all
+core = "Light Bluish Gray"    # the hidden core: two halves of bricks and plates
+eye = "Black"                 # the two eye tiles
+teeth = "Black"               # the plate with three teeth, hidden behind the mouth
+stem = "Green"                # the green top plates and the round plate with a handle
+leaf = "Bright Green"         # the leaf
+
+[booklet]
+subtitle = "A jack-o'-lantern with square eyes and a toothy grin, built sideways in 51 pieces."
+intro = "A grey core of two halves, built upside down and the right way up, gets its orange rind from the side: the mouth and eyes panels on the front and a side panel on the back, left and right. The side panels tie the halves together. Finish with the green stem and its leaf."
+
+[checks]
+enabled = ["real_elements", "connections", "collisions", "buildability", "stability",
+           "mechanism", "electrics", "technique"]
+
+# Quick Bricks video (brickkit quick pumpkin): a green cutting mat at night, under a string of
+# lights (on the oak table its orange was lost against the wood)
+[quick]
+surface = "green_mat"         # blue_mat | green_mat | kraft | oak | baseplate
+room = "night"                # workbench | studio | window | night | bookshelf
+light = "evening"             # morning | day | evening
+seconds = 14
+highlight = ["eyes", "stem"]  # tags worth a close-up, the one wanted most first
+close_ups = 2
+music = false                 # just the clicks

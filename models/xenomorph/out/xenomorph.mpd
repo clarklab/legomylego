@@ -1,0 +1,194 @@
+0 FILE xenomorph.ldr
+0 Xenomorph
+0 Name: xenomorph.ldr
+0 Author: brickkit
+
+0 // Stand the hips' T-bar up, stem leaning a little forward
+1 16 0 -66.884448 0 1 0 0 0 0.996917 -0.078459 0 0.078459 0.996917 hips.ldr
+0 STEP
+0 // Slide the right leg's clip onto the end of the hip bar. The leg stands on its toe and on the slope of its heel
+1 16 12 -39.444675 -6.859943 0 -1 0 0.857493 0 -0.514496 0.514496 0 0.857493 right_leg.ldr
+0 STEP
+0 // Slide the left leg onto the other end, to match
+1 16 -12 -39.444675 -6.859943 0 1 0 0.857493 0 0.514496 0.514496 0 -0.857493 left_leg.ldr
+0 STEP
+0 // The torso: a battle droid's, upside down, its stud to the back. Press the thin middle of its shoulder bar down into the waist clip
+1 0 0 -132.463597 -26.922467 -1 0 0 0 -0.967046 -0.254602 0 -0.254602 0.967046 30375.dat
+0 STEP
+0 // Slide an arm onto each end of the shoulder bar, reaching forward
+1 16 15.5 -101.518127 -18.775205 1 0 0 0 0.990866 0.134851 0 -0.134851 0.990866 arm.ldr
+1 16 -15.5 -101.518127 -18.775205 1 0 0 0 0.990866 0.134851 0 -0.134851 0.990866 arm.ldr
+0 STEP
+0 // The neck: clip a plate with a level clip onto the bar at the top of the torso, from the front, studs up. Press the silver round plate onto it: the teeth
+1 0 0 -131.74831 -47.009487 -1 0 0 0 0.990866 0.134851 0 0.134851 -0.990866 61252.dat
+1 315 0 -139.675237 -48.088294 1 0 0 0 0.990866 -0.134851 0 0.134851 0.990866 6141.dat
+0 STEP
+0 // Press the head down onto the teeth, by the hole under its front end
+1 16 0 -150.299183 -29.349784 1 0 0 0 0.990866 -0.134851 0 0.134851 0.990866 head.ldr
+0 STEP
+0 // Push the stem of the back's T-bar into the stud on the torso's back, tubes trailing, hinge plate hanging down
+1 16 0 -122.541846 4.12683 1 0 0 0 0.967046 -0.254602 0 0.254602 0.967046 back.ldr
+0 STEP
+0 // Click the tail onto the hinge, one click up from the line of the back. The barb comes down onto the table: the third foot
+1 16 0 -85.387621 20.113184 1 0 0 0 0.990866 0.134851 0 -0.134851 0.990866 tail.ldr
+0 STEP
+0 NOFILE
+
+0 FILE right_leg.ldr
+0 Right leg
+0 Name: right_leg.ldr
+0 Author: brickkit
+
+0 // The thigh: a 1 x 3 plate. On its middle stud a 1 x 1 plate; on one end stud a plate with a ring, ring out to the side: the ankle
+1 0 0 0 0 1 0 0 0 1 0 0 0 1 3623.dat
+1 0 0 -8 0 1 0 0 0 1 0 0 0 1 3024.dat
+1 0 20 -8 0 1 0 0 0 1 0 0 0 1 4081b.dat
+0 STEP
+0 // On the other end stud a plate with an upright clip, clip out to the other side: the hip
+1 0 -20 -8 0 -1 0 0 0 1 0 0 0 -1 60897.dat
+0 STEP
+0 // The foot: a 1 x 2 plate, standing on edge. Push one of its end holes onto the rim of the ring that faces the hip, so that it points away from the thigh
+1 0 8 -6 -30 0 1 0 0 0 1 1 0 0 3023b.dat
+0 STEP
+0 // The heel: a cheese slope on the ring's other rim, its thin edge towards the toe
+1 0 24 -6 -20 0 -1 0 1 0 0 0 0 1 54200.dat
+0 STEP
+0 NOFILE
+
+0 FILE left_leg.ldr
+0 Left leg
+0 Name: left_leg.ldr
+0 Author: brickkit
+
+0 // The thigh: a 1 x 3 plate. On its middle stud a 1 x 1 plate; on one end stud a plate with a ring, ring out to the side: the ankle
+1 0 0 0 0 1 0 0 0 1 0 0 0 1 3623.dat
+1 0 0 -8 0 1 0 0 0 1 0 0 0 1 3024.dat
+1 0 20 -8 0 -1 0 0 0 1 0 0 0 -1 4081b.dat
+0 STEP
+0 // On the other end stud a plate with an upright clip, clip out to the other side: the hip
+1 0 -20 -8 0 1 0 0 0 1 0 0 0 1 60897.dat
+0 STEP
+0 // The foot: a 1 x 2 plate, standing on edge. Push one of its end holes onto the rim of the ring that faces the hip, so that it points away from the thigh
+1 0 8 -6 30 0 1 0 0 0 -1 -1 0 0 3023b.dat
+0 STEP
+0 // The heel: a cheese slope on the ring's other rim, its thin edge towards the toe
+1 0 24 -6 20 0 -1 0 -1 0 0 0 0 -1 54200.dat
+0 STEP
+0 NOFILE
+
+0 FILE hips.ldr
+0 Hips
+0 Name: hips.ldr
+0 Author: brickkit
+
+0 // The hips: a T-bar, stem up. Clip the tile with a clip onto the top end of the stem from the front, its underside facing forward
+1 0 0 0 0 0 0 1 0 -1 0 1 0 0 4697b.dat
+1 0 0 -16 -6 1 0 0 0 0 1 0 -1 0 15712.dat
+0 STEP
+0 // Press a plate with a level clip onto the underside of the tile, clip up: the waist
+1 0 0 -16 -14 1 0 0 0 0 1 0 -1 0 61252.dat
+0 STEP
+0 NOFILE
+
+0 FILE arm.ldr
+0 Arm
+0 Name: arm.ldr
+0 Author: brickkit
+
+0 // An arm: push a claw's bar into the hole in the end of a robot arm, as far as the picture shows, the claw's two prongs one above the other. Make two
+1 0 0 0 0 0 0 1 0 1 0 -1 0 0 98313.dat
+1 0 0 17.5 -51.8 0 0 -1 -1 0 0 0 1 0 48729b.dat
+0 STEP
+0 NOFILE
+
+0 FILE head.ldr
+0 Head
+0 Name: head.ldr
+0 Author: brickkit
+
+0 // The head: two 1 x 3 plates in a line, the front one on top of the back one's first stud
+1 0 0 8 40 0 0 1 0 1 0 -1 0 0 3623.dat
+1 0 0 0 0 0 0 1 0 1 0 -1 0 0 3623.dat
+0 STEP
+0 // A cheese slope on the front stud, sloping down to the front: the snout. A 1 x 1 plate behind it
+1 0 0 0 -20 1 0 0 0 1 0 0 0 1 54200.dat
+1 0 0 -8 0 1 0 0 0 1 0 0 0 1 3024.dat
+0 STEP
+0 // A 1 x 1 tile on the plate, and the long curved slope behind it, high end forward: the dome
+1 0 0 -16 0 1 0 0 0 1 0 0 0 1 3070b.dat
+1 0 0 -16 40 -1 0 0 0 1 0 0 0 -1 50950.dat
+0 STEP
+0 NOFILE
+
+0 FILE back.ldr
+0 Back
+0 Name: back.ldr
+0 Author: brickkit
+
+0 // The back: a plate with an upright clip. Press the hinge plate onto its stud, the hinge finger at the far end from the clip
+1 0 0 20 -8 1 0 0 0 0 1 0 -1 0 60897.dat
+1 0 0 30 0 0 0 -1 1 0 0 0 -1 0 30383.dat
+0 STEP
+0 // Press the stem of a T-bar into the clip, the end of the stem pointing away from the hinge plate
+1 0 0 0 0 0 0 1 -1 0 0 0 -1 0 4697b.dat
+0 STEP
+0 // Clip four droid arms onto the cross bar, two each side of the stem, all trailing to the back: the inner two hanging low, the outer two nearly level
+1 0 -8 0 0 -1 0 0 0 0.743145 0.669131 0 0.669131 -0.743145 30377.dat
+1 0 8 0 0 -1 0 0 0 0.743145 0.669131 0 0.669131 -0.743145 30377.dat
+1 0 -16 0 0 -1 0 0 0 0.173648 0.984808 0 0.984808 -0.173648 30377.dat
+1 0 16 0 0 -1 0 0 0 0.173648 0.984808 0 0.984808 -0.173648 30377.dat
+0 STEP
+0 NOFILE
+
+0 FILE crest.ldr
+0 Crest
+0 Name: crest.ldr
+0 Author: brickkit
+
+0 // The crest: a T-bar, stem down. Clip four claws onto its cross bar, two each side of the stem, bars straight up
+1 0 0 0 0 1 0 0 0 1 0 0 0 1 4697b.dat
+1 0 0 0 -16 1 0 0 0 -1 0 0 0 -1 48729b.dat
+1 0 0 0 -8 1 0 0 0 -1 0 0 0 -1 48729b.dat
+1 0 0 0 8 1 0 0 0 -1 0 0 0 -1 48729b.dat
+1 0 0 0 16 1 0 0 0 -1 0 0 0 -1 48729b.dat
+0 STEP
+0 NOFILE
+
+0 FILE sting.ldr
+0 Sting
+0 Name: sting.ldr
+0 Author: brickkit
+
+0 // The sting: lay the barb on its side and push the short hinge cylinder onto its bar, as far as it goes. The barb curves across the cylinder's two fingers
+1 0 0 0 30 0 0 1 -1 0 0 0 -1 0 87747.dat
+1 0 0 0 10 0 1 0 -1 0 0 0 0 1 30553.dat
+0 STEP
+0 NOFILE
+
+0 FILE tail.ldr
+0 Tail
+0 Name: tail.ldr
+0 Author: brickkit
+
+0 // The tail's first link: a hinge cylinder with a hole, its two-finger end forward and up. Push a claw's bar down through the hole: a spine
+1 0 0 14.142136 14.142136 -1 0 0 0 0.707107 -0.707107 0 -0.707107 -0.707107 30554b.dat
+1 0 0 -1.414214 29.698485 0 0 1 -0.707107 0.707107 0 -0.707107 -0.707107 0 48729b.dat
+0 STEP
+0 // Click the second link onto the first, turned up two clicks, and give it a spine
+1 0 0 28.284271 48.284271 -1 0 0 0 1 0 0 0 -1 30554b.dat
+1 0 0 6.284271 48.284271 0 0 1 0 1 0 -1 0 0 48729b.dat
+0 STEP
+0 // Click on the third link, turned up two clicks again, and give it a spine
+1 0 0 14.142136 82.426407 -1 0 0 0 0.707107 0.707107 0 0.707107 -0.707107 30554b.dat
+1 0 0 -1.414214 66.870058 0 0 1 0.707107 0.707107 0 -0.707107 0.707107 0 48729b.dat
+0 STEP
+0 // Click on the fourth link, turned down two clicks
+1 0 0 0 116.568542 -1 0 0 0 1 0 0 0 -1 30554b.dat
+0 STEP
+0 // Push the crest's stem into the hole in the fourth link, until the claws' jaws just clear the link
+1 16 0 -16 116.568542 1 0 0 0 1 0 0 0 1 crest.ldr
+0 STEP
+0 // Click the sting onto the end of the fourth link, turned down two clicks
+1 16 0 0 136.568542 0 -1 0 0.707107 0 0.707107 -0.707107 0 0.707107 sting.ldr
+0 STEP
+0 NOFILE

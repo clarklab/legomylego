@@ -1,0 +1,38 @@
+[model]
+name = "Charmander"
+design = "design.py"
+description = "A tiny Charmander in 14 pieces, about 4 cm long and 3 cm tall: an orange body on two round feet, a tan belly, a curved dome of a head with a black eye band, and a trans-orange flame on the end of its tail."
+designer = "SwordBricks (RSierra)"
+source = "https://rebrickable.com/mocs/MOC-220190/"
+collection = "quick_bricks"
+
+[palette]                     # role -> a real colour name; design.py places parts by role
+body = "Orange"               # feet, legs, back plate, arms, tail cone, head plate and dome
+belly = "Tan"                 # the tile on its front
+flame = "Trans-Orange"        # the flame on the tail's tip
+core = "Black"                # the brick with studs on four sides, the middle of the body
+eyes = "Black"                # the plate under the dome's high end: the eye band
+
+[booklet]
+subtitle = "A tiny Charmander with a flame on its tail, in 14 pieces."
+intro = "Charmander is small enough to stand on your palm: build up from two round feet through the legs to the black body brick, put on the tan belly and the little arms, set the tail and its flame on the back, then finish with the head: a plate, the black eye band and the curved dome."
+
+# (no stability check: it stands on two round 1 x 1 plates, one stud wide; its centre of mass
+# is over them, with room to spare, but it tips over at about 9 degrees, so it only balances:
+# a nudge, or a table that is not quite level, topples it. It is not a model that stands
+# firmly. No parts were added to fix that: the design is someone else's)
+[checks]
+enabled = ["real_elements", "connections", "collisions", "buildability",
+           "mechanism", "electrics", "technique"]
+
+# Quick Bricks video (brickkit quick charmander). Under 25 pieces the parts start laid out on
+# the table; close-ups as the flame and then the face (the black eye band and the dome) land.
+# (A blue mat: on kraft paper its orange read as yellow)
+[quick]
+surface = "blue_mat"          # blue_mat | green_mat | kraft | oak | baseplate
+room = "workbench"            # workbench | studio | window | night | bookshelf
+light = "day"                 # morning | day | evening
+seconds = 14
+highlight = ["face", "flame"] # tags worth a close-up, the one wanted most first
+close_ups = 2
+music = false                 # just the clicks
