@@ -1,0 +1,45 @@
+0 FILE frankenstein.ldr
+0 Frankenstein
+0 Name: frankenstein.ldr
+0 Author: brickkit
+
+0 // The base: a 2 x 2 tile with two studs along its back edge
+1 0 0 0 0 1 0 0 0 1 0 0 0 1 33909.dat
+0 STEP
+0 // A 1 x 2 plate on the two studs
+1 0 0 -8 10 1 0 0 0 1 0 0 0 1 3023b.dat
+0 STEP
+0 // Two bricks with a side stud, the studs facing out to each side
+1 0 -10 -32 10 0 0 1 0 1 0 -1 0 0 4070.dat
+1 0 10 -32 10 0 0 -1 0 1 0 1 0 0 4070.dat
+0 STEP
+0 // A 1 x 1 plate on each side stud, its stud facing out
+1 0 -24 -22 10 0 1 0 0 0 -1 -1 0 0 3024.dat
+1 0 24 -22 10 0 -1 0 0 0 -1 1 0 0 3024.dat
+0 STEP
+0 // A half-round tile on each: the arms
+1 71 -32 -22 10 0 1 0 0 0 -1 -1 0 0 24246.dat
+1 71 32 -22 10 0 -1 0 0 0 -1 1 0 0 24246.dat
+0 STEP
+0 // The head: a brick with studs on its front and both ends
+1 71 0 -72 10 1 0 0 0 1 0 0 0 1 67329.dat
+0 STEP
+0 // The neck bolts: a round plate on the lower stud at each end
+1 15 -28 -42 10 0 1 0 0 0 -1 -1 0 0 6141.dat
+1 15 28 -42 10 0 -1 0 0 0 -1 1 0 0 6141.dat
+0 STEP
+0 // A 1 x 2 plate with a stud across the two lower studs in front: the mouth
+1 71 0 -42 -8 1 0 0 0 0 -1 0 1 0 15573.dat
+0 STEP
+0 // Sleepy eyes on the two upper studs in front
+1 15 -10 -62 -8 1 0 0 0 0 -1 0 1 0 98138p2l.dat
+1 15 10 -62 -8 1 0 0 0 0 -1 0 1 0 98138p2l.dat
+0 STEP
+0 // A 1 x 2 brick with two studs in front, on top of the head
+1 71 0 -96 10 1 0 0 0 1 0 0 0 1 11211.dat
+0 STEP
+0 // A black tile on top, and the grey brow bar on the two studs in front
+1 0 0 -104 10 1 0 0 0 1 0 0 0 1 3069b.dat
+1 71 0 -86 -8 1 0 0 0 0 -1 0 1 0 99563.dat
+0 STEP
+0 NOFILE

@@ -1,0 +1,137 @@
+0 FILE pumpkin.ldr
+0 Pumpkin
+0 Name: pumpkin.ldr
+0 Author: brickkit
+
+0 // Two 2 x 4 tiles side by side, smooth side down
+1 25 0 0 -20 1 0 0 0 -1 0 0 0 -1 87079.dat
+1 25 0 0 20 1 0 0 0 -1 0 0 0 -1 87079.dat
+0 STEP
+0 // Four bricks with studs on two sides in the corners, studs out, and a 2 x 4 brick
+1 71 -30 -8 -30 -1 0 0 0 -1 0 0 0 1 26604.dat
+1 71 -30 -8 30 0 0 1 0 -1 0 1 0 0 26604.dat
+1 71 30 -8 -30 0 0 -1 0 -1 0 -1 0 0 26604.dat
+1 71 30 -8 30 1 0 0 0 -1 0 0 0 -1 26604.dat
+1 71 0 -8 0 1 0 0 0 -1 0 0 0 -1 3001.dat
+0 STEP
+0 // A 2 x 4 plate along the back, and two corner plates leaving the front open
+1 71 0 -32 20 1 0 0 0 -1 0 0 0 -1 3020.dat
+1 71 -30 -32 -10 1 0 0 0 -1 0 0 0 -1 2420.dat
+1 71 30 -32 -10 0 0 -1 0 -1 0 -1 0 0 2420.dat
+0 STEP
+0 // A 2 x 2 plate in the middle
+1 71 0 -40 0 1 0 0 0 -1 0 0 0 -1 3022.dat
+0 STEP
+0 // The mouth panel goes on the front of the base
+1 16 0 -48 -40 1 0 0 0 1 0 0 0 1 mouth.ldr
+0 STEP
+0 // The head half sits on the base, and a side panel across the back ties them
+1 16 0 0 0 1 0 0 0 1 0 0 0 1 head.ldr
+1 16 0 -88 40 -1 0 0 0 1 0 0 0 -1 side.ldr
+0 STEP
+0 // A side panel on each side
+1 16 40 -88 0 0 0 -1 0 1 0 1 0 0 side.ldr
+1 16 -40 -88 0 0 0 1 0 1 0 -1 0 0 side.ldr
+0 STEP
+0 // The stem on the green plate
+1 16 -10 -112 10 1 0 0 0 1 0 0 0 1 stem.ldr
+0 STEP
+0 NOFILE
+
+0 FILE mouth.ldr
+0 Mouth panel
+0 Name: mouth.ldr
+0 Author: brickkit
+
+0 // The three teeth: a 1 x 2 plate, its studs out, the teeth up
+1 0 0 30 0 -1 0 0 0 0 1 0 1 0 15208.dat
+0 STEP
+0 // Two corner plates on the teeth plate's studs, round the open mouth
+1 25 -30 30 -8 1 0 0 0 0 -1 0 1 0 2420.dat
+1 25 30 30 -8 0 0 -1 -1 0 0 0 1 0 2420.dat
+0 STEP
+0 // A plate on each upper corner and a 1 x 2 plate along the bottom
+1 25 -30 10 -16 1 0 0 0 0 -1 0 1 0 3024.dat
+1 25 30 10 -16 1 0 0 0 0 -1 0 1 0 3024.dat
+1 25 0 30 -16 1 0 0 0 0 -1 0 1 0 3023b.dat
+0 STEP
+0 NOFILE
+
+0 FILE eyes.ldr
+0 Eyes panel
+0 Name: eyes.ldr
+0 Author: brickkit
+
+0 // A 2 x 4 plate with a 1 x 2 plate on its top middle
+1 25 0 20 -8 1 0 0 0 0 -1 0 1 0 3020.dat
+1 25 0 10 -16 1 0 0 0 0 -1 0 1 0 3023b.dat
+0 STEP
+0 // Two 1 x 2 plates with a stud in the middle, along the bottom row
+1 25 -20 30 -16 1 0 0 0 0 -1 0 1 0 3794b.dat
+1 25 20 30 -16 1 0 0 0 0 -1 0 1 0 3794b.dat
+0 STEP
+0 // A black tile on each stud: the eyes
+1 0 -20 30 -24 1 0 0 0 0 -1 0 1 0 3070b.dat
+1 0 20 30 -24 1 0 0 0 0 -1 0 1 0 3070b.dat
+0 STEP
+0 NOFILE
+
+0 FILE side.ldr
+0 Side panel
+0 Name: side.ldr
+0 Author: brickkit
+
+0 // A 4 x 4 plate with a 2 x 4 plate across its middle rows
+1 25 0 40 -8 1 0 0 0 0 -1 0 1 0 3031.dat
+1 25 0 40 -16 1 0 0 0 0 -1 0 1 0 3020.dat
+0 STEP
+0 // A 1 x 2 plate on the top row and another on the bottom row
+1 25 0 10 -16 1 0 0 0 0 -1 0 1 0 3023b.dat
+1 25 0 70 -16 1 0 0 0 0 -1 0 1 0 3023b.dat
+0 STEP
+0 // A 2 x 2 plate in the middle
+1 25 0 40 -24 1 0 0 0 0 -1 0 1 0 3022.dat
+0 STEP
+0 NOFILE
+
+0 FILE stem.ldr
+0 Stem
+0 Name: stem.ldr
+0 Author: brickkit
+
+0 // A leaf clipped on the handle of a round plate
+1 2 0 0 0 1 0 0 0 1 0 0 0 1 26047.dat
+1 10 0 2 -20 1 0 0 0 0.258819 0.965926 0 -0.965926 0.258819 16770.dat
+0 STEP
+0 NOFILE
+
+0 FILE head.ldr
+0 Head half
+0 Name: head.ldr
+0 Author: brickkit
+
+0 // The top: a 4 x 4 plate (it is built upside down, studs down)
+1 25 0 -96 0 1 0 0 0 1 0 0 0 1 3031.dat
+0 STEP
+0 // Four bricks with studs on two sides, one in each corner, studs out
+1 71 -30 -88 -30 0 0 1 0 1 0 -1 0 0 26604.dat
+1 71 -30 -88 30 -1 0 0 0 1 0 0 0 -1 26604.dat
+1 71 30 -88 -30 1 0 0 0 1 0 0 0 1 26604.dat
+1 71 30 -88 30 0 0 -1 0 1 0 1 0 0 26604.dat
+0 STEP
+0 // A grey 4 x 4 plate across them and a 2 x 2 plate under its middle
+1 71 0 -64 0 1 0 0 0 1 0 0 0 1 3031.dat
+1 71 0 -56 0 1 0 0 0 1 0 0 0 1 3022.dat
+0 STEP
+0 // Two 1 x 4 plates, grey then orange, under the front edge
+1 71 0 -56 -30 1 0 0 0 1 0 0 0 1 3710.dat
+1 25 0 -48 -30 1 0 0 0 1 0 0 0 1 3710.dat
+0 STEP
+0 // The green stem base: a corner tile and a 1 x 1 plate
+1 2 10 -104 -10 0 0 -1 0 1 0 1 0 0 14719.dat
+1 2 -10 -104 10 1 0 0 0 1 0 0 0 1 3024.dat
+0 STEP
+0 // The eyes panel goes on the front of the head
+1 16 0 -88 -40 1 0 0 0 1 0 0 0 1 eyes.ldr
+0 STEP
+0 NOFILE

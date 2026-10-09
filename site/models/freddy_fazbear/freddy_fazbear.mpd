@@ -1,0 +1,192 @@
+0 FILE freddy_fazbear.ldr
+0 Freddy Fazbear
+0 Name: freddy_fazbear.ldr
+0 Author: brickkit
+
+0 // The first foot: a 1 x 2 plate
+1 70 -10 0 0 0 0 1 0 1 0 -1 0 0 3023b.dat
+0 STEP
+0 // A round plate on its back stud
+1 70 -10 -8 10 1 0 0 0 1 0 0 0 1 6141.dat
+0 STEP
+0 // A round tile with a pin on top
+1 70 -10 -16 10 1 0 0 0 1 0 0 0 1 20482.dat
+0 STEP
+0 // The leg: a holder with a clip over the pin
+1 70 -10 -46 10 0 0 1 0 1 0 -1 0 0 11090.dat
+0 STEP
+0 // A plate with a side handle, studs facing front, its handle in the leg's clip
+1 70 -10 -66 8 1 0 0 0 0 -1 0 1 0 26047.dat
+0 STEP
+0 // The hip: a 2 x 3 plate standing up, studs facing front, behind the handle plate
+1 70 0 -86 16 0 0 -1 -1 0 0 0 1 0 3021.dat
+0 STEP
+0 // The second handle plate
+1 70 10 -66 8 1 0 0 0 0 -1 0 1 0 26047.dat
+0 STEP
+0 // The second leg's holder, pushed up onto the handle
+1 70 10 -46 10 0 0 1 0 1 0 -1 0 0 11090.dat
+0 STEP
+0 // The second foot goes on from underneath: a tile with a pin, a round plate, a 1 x 2 plate
+1 70 10 -16 10 1 0 0 0 1 0 0 0 1 20482.dat
+1 70 10 -8 10 1 0 0 0 1 0 0 0 1 6141.dat
+1 70 10 0 0 0 0 1 0 1 0 -1 0 0 3023b.dat
+0 STEP
+0 // A rounded 1 x 2 plate on the 2 x 3 plate's middle studs
+1 70 0 -86 8 1 0 0 0 0 -1 0 1 0 35480.dat
+0 STEP
+0 // The belly: a 2 x 2 plate over the handle plates and the rounded plate, and a round tile on it
+1 70 0 -76 0 1 0 0 0 0 -1 0 1 0 3022.dat
+1 19 0 -76 -8 1 0 0 0 0 -1 0 1 0 14769.dat
+0 STEP
+0 // The shoulders: two round plates with a bar, bars pointing out
+1 70 -10 -106 8 -1 0 0 0 0 1 0 1 0 32828.dat
+1 70 10 -106 8 1 0 0 0 0 -1 0 1 0 32828.dat
+0 STEP
+0 // The left arm: a mechanical arm clipped on the bar
+1 70 33 -106 10 0 0 1 0.642788 0.766044 0 -0.766044 0.642788 0 98313.dat
+0 STEP
+0 // Its hand, pushed into the end of the forearm
+1 70 33 -54.669753 -23.947839 1 0 0 0 -0.642788 -0.766044 0 0.766044 -0.642788 3484.dat
+0 STEP
+0 // The right arm
+1 70 -33 -106 10 0 0 1 0.258819 0.965926 0 -0.965926 0.258819 0 98313.dat
+0 STEP
+0 // Its hand
+1 70 -33 -73.825974 -42.46029 1 0 0 0 -0.258819 -0.965926 0 0.965926 -0.258819 3484.dat
+0 STEP
+0 // The microphone in the right hand
+1 0 -33 -80.104492 -44.142614 1 0 0 0 0.965926 -0.258819 0 0.258819 0.965926 90370p05.dat
+0 STEP
+0 // The neck: a plate with two clips pointing up, on the shoulders' studs
+1 0 0 -106 0 -1 0 0 0 0 1 0 1 0 60470b.dat
+0 STEP
+0 // A black 1 x 2 plate for the bow tie
+1 0 0 -106 -8 1 0 0 0 0 -1 0 1 0 3023b.dat
+0 STEP
+0 // The bow tie: two slopes
+1 0 -10 -106 -8 0 0 -1 -1 0 0 0 1 0 54200.dat
+1 0 10 -106 -8 0 0 1 1 0 0 0 1 0 54200.dat
+0 STEP
+0 // The head: a plate with a handle, its handle in the neck's clips
+1 70 0 -146 0 1 0 0 0 0 -1 0 1 0 48336.dat
+0 STEP
+0 // A 2 x 2 plate behind it and a 1 x 2 plate in front
+1 70 0 -156 8 1 0 0 0 0 -1 0 1 0 3022.dat
+1 70 0 -146 -8 1 0 0 0 0 -1 0 1 0 3023b.dat
+0 STEP
+0 // Another 1 x 2 plate in front, and a slope behind the head
+1 70 0 -146 -16 1 0 0 0 0 -1 0 1 0 3023b.dat
+1 70 0 -166 16 1 0 0 0 0 -1 0 1 0 76959.dat
+0 STEP
+0 // The muzzle: a 1 x 2 plate with a stud in the middle
+1 78 0 -146 -24 1 0 0 0 0 -1 0 1 0 15573.dat
+0 STEP
+0 // The nose: a round tile
+1 0 0 -146 -32 1 0 0 0 0 -1 0 1 0 98138.dat
+0 STEP
+0 // The ears' bars: two round plates with a bar on the head's top studs
+1 70 -10 -166 0 -1 0 0 0 0 1 0 1 0 32828.dat
+1 70 10 -166 0 1 0 0 0 0 -1 0 1 0 32828.dat
+0 STEP
+0 // The head's top: a bracket, and a plate at the back
+1 70 0 -166 -8 -1 0 0 0 0 1 0 1 0 44728.dat
+1 70 0 -166 40 1 0 0 0 0 -1 0 1 0 3023b.dat
+0 STEP
+0 // The eyes: two round tiles on the front studs
+1 15 -10 -166 -16 1 0 0 0 0 -1 0 1 0 98138p07.dat
+1 15 10 -166 -16 1 0 0 0 0 -1 0 1 0 98138p07.dat
+0 STEP
+0 // The right ear: a round plate on the bar's end
+1 70 -38 -166 2 0 1 0 0 0 1 1 0 0 85861.dat
+0 STEP
+0 // The left ear
+1 70 38 -166 2 0 -1 0 0 0 -1 1 0 0 85861.dat
+0 STEP
+0 // The hat's brim: a black round plate on the top studs
+1 0 0 -188 12 1 0 0 0 1 0 0 0 1 4032a.dat
+0 STEP
+0 // The top of the hat: a black round brick
+1 0 -10 -212 22 1 0 0 0 1 0 0 0 1 3062b.dat
+0 STEP
+0 NOFILE
+
+0 FILE 76959.dat
+0 Slope Brick 45  2 x  2 Inverted with Round Bottom Pin with Inner Stopper Ring
+0 Name: 76959.dat
+0 Author: Florent Faramond [Makou]
+0 !LDRAW_ORG Unofficial_Part
+0 !LICENSE Licensed under CC BY 4.0 : see CAreadme.txt
+
+0 !HELP This version has a hollow bottom pin.
+
+0 BFC CERTIFY CCW
+
+0 !CATEGORY Slope
+
+0 !HISTORY 2025-03-16 [MagFors] Update description
+
+
+1 16 0 0 0 1 0 0 0 1 0 0 0 1 s\76959s01.dat
+4 16 20 24 -10 20 4 -30 -20 4 -30 -20 24 -10
+0 NOFILE
+
+0 FILE s/76959s01.dat
+0 ~Slope Brick 45  2 x  2 Inverted with Round Bottom Pin with Inner Stopper Ring without Front Face
+0 Name: s\76959s01.dat
+0 Author: Florent Faramond [Makou]
+0 !LDRAW_ORG Unofficial_Subpart
+0 !LICENSE Licensed under CC BY 4.0 : see CAreadme.txt
+
+0 BFC CERTIFY CCW
+
+0 !HISTORY 2025-03-16 [MagFors] Reworked bottom
+
+0 BFC INVERTNEXT
+1 16 0 24 -.5 16 0 0 0 -20 0 0 0 6.5 box5.dat
+4 16 16 24 6 -16 24 6 -20 24 10 20 24 10
+4 16 -16 24 6 -16 24 -7 -20 24 -10 -20 24 10
+4 16 16 24 -7 16 24 6 20 24 10 20 24 -10
+1 16 0 24 0 20 0 0 0 -1 0 0 0 -10 recte3.dat
+2 24 20 4 -30 20 24 -10
+2 24 -20 4 -30 -20 24 -10
+2 24 20 0 -30 20 0 10
+2 24 -20 0 -30 -20 0 10
+2 24 -18 0 -10 -18 0 -26
+2 24 18 0 -26 18 0 -10
+
+0 BFC INVERTNEXT
+1 16 0 10 -18 18 0 0 0 2 -8 0 0 -8 box2-5.dat
+4 16 20 4 -30 20 24 -10 20 24 10 20 0 10
+3 16 20 4 -30 20 0 10 20 0 -30
+1 16 0 12 10 20 0 0 0 0 12 0 -1 0 rect.dat
+4 16 -20 4 -30 -20 0 10 -20 24 10 -20 24 -10
+3 16 -20 4 -30 -20 0 -30 -20 0 10
+1 16 0 2 -30 20 0 0 0 0 2 0 1 0 rect.dat
+4 16 18 0 -10 18 20 -10 18 4 -26 18 0 -26
+4 16 -18 0 -10 -18 0 -26 -18 4 -26 -18 20 -10
+1 16 0 10 -10 18 0 0 0 0 -10 0 1 0 rect3.dat
+4 16 18 0 -10 20 0 10 -20 0 10 -18 0 -10
+4 16 -18 0 -10 -20 0 10 -20 0 -30 -18 0 -26
+4 16 18 0 -26 20 0 -30 20 0 10 18 0 -10
+
+1 16 10 0 0 0 0 1 0 1 0 -1 0 0 stud.dat
+1 16 10 0 -20 1 0 0 0 1 0 0 0 1 stud2a.dat
+1 16 10 0 -20 1 0 0 0 4 0 0 0 1 stud2s2e.dat
+1 16 10 4 -20 0 0 1 0 6 0 -1 0 0 stud2s2.dat
+
+1 16 -10 0 0 0 0 1 0 1 0 -1 0 0 stud.dat
+1 16 -10 0 -20 1 0 0 0 1 0 0 0 1 stud2a.dat
+1 16 -10 0 -20 1 0 0 0 4 0 0 0 1 stud2s2e.dat
+1 16 -10 4 -20 0 0 1 0 6 0 -1 0 0 stud2s2.dat
+
+0 // hollow stud3
+1 16 0 4 0 1 0 0 0 -5 0 0 0 1 stud3.dat
+
+1 16 10 13.75 -7 -1 0 0 0 0 9.75 0 1 0 box4-1.dat
+1 16 0 13.75 -7 -1 0 0 0 0 9.75 0 1 0 box4-1.dat
+1 16 -10 13.75 -7 1 0 0 0 0 9.75 0 1 0 box4-1.dat
+
+4 16 -20 24 -10 -16 24 -7 16 24 -7 20 24 -10
+4 16 -20 0 -30 20 0 -30 18 0 -26 -18 0 -26
+0 NOFILE

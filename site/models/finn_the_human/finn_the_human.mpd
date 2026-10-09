@@ -1,0 +1,289 @@
+0 FILE finn_the_human.ldr
+0 Finn the Human
+0 Name: finn_the_human.ldr
+0 Author: brickkit
+
+0 // The hips: a 2 x 2 plate. On its back studs two Technic bricks, their holes across; on its front studs a 1 x 2 brick
+1 1 0 -216 0 1 0 0 0 1 0 0 0 1 3022.dat
+1 1 -10 -240 10 0 0 1 0 1 0 -1 0 0 6541.dat
+1 1 10 -240 10 0 0 1 0 1 0 -1 0 0 6541.dat
+1 1 0 -240 -10 1 0 0 0 1 0 0 0 1 3004.dat
+0 STEP
+0 // A 2 x 2 plate on top, then the waistband: a 2 x 4 plate. Push a black pin into each Technic brick from the outside
+1 1 0 -248 0 1 0 0 0 1 0 0 0 1 3022.dat
+1 1 0 -256 0 1 0 0 0 1 0 0 0 1 3020.dat
+1 0 20 -230 10 1 0 0 0 1 0 0 0 1 2780.dat
+1 0 -20 -230 10 1 0 0 0 1 0 0 0 1 2780.dat
+0 STEP
+0 // The shirt: a 1 x 4 brick in front, and two bricks with studs on their sides behind it, studs to the back
+1 322 0 -280 -10 1 0 0 0 1 0 0 0 1 3010.dat
+1 322 -20 -280 10 -1 0 0 0 1 0 0 0 -1 11211.dat
+1 322 20 -280 10 -1 0 0 0 1 0 0 0 -1 11211.dat
+0 STEP
+0 // A 2 x 4 brick
+1 322 0 -304 0 1 0 0 0 1 0 0 0 1 3001.dat
+0 STEP
+0 // The shoulders: a 2 x 2 brick between two Technic bricks, their holes across. Push a black pin into each from the outside
+1 322 0 -328 0 1 0 0 0 1 0 0 0 1 3003.dat
+1 322 30 -328 0 0 0 1 0 1 0 -1 0 0 3700.dat
+1 0 40 -318 0 1 0 0 0 1 0 0 0 1 2780.dat
+1 322 -30 -328 0 0 0 1 0 1 0 -1 0 0 3700.dat
+1 0 -40 -318 0 1 0 0 0 1 0 0 0 1 2780.dat
+0 STEP
+0 // The neck: a round white plate and the turntable's base
+1 15 0 -336 0 1 0 0 0 1 0 0 0 1 4032a.dat
+1 15 0 -344 0 1 0 0 0 1 0 0 0 1 3680.dat
+0 STEP
+0 // Push his left leg onto the pin under the shorts, standing straight
+1 16 30 -230 10 1 0 0 0 1 0 0 0 1 left_leg.ldr
+0 STEP
+0 // And his right leg
+1 16 -30 -230 10 1 0 0 0 1 0 0 0 1 right_leg.ldr
+0 STEP
+0 // Push his right arm onto the pin in his shoulder, its forearm out to his side
+1 16 -50 -318 0 1 0 0 0 1 0 0 0 1 right_arm.ldr
+0 STEP
+0 // And his left arm, waving
+1 16 50 -318 0 1 0 0 0 1 0 0 0 1 left_arm.ldr
+0 STEP
+0 // Press the backpack onto the four studs on his back
+1 16 0 -260 20 -1 0 0 0 0 -1 0 -1 0 backpack.ldr
+0 STEP
+0 // Press the head onto the turntable
+1 16 0 -344 0 1 0 0 0 1 0 0 0 1 head.ldr
+0 STEP
+0 // Clip the sword's bar into his right hand from behind, blade up, flat side forward
+1 16 -134 -264 20 0 0 -1 -1 0 0 0 1 0 sword.ldr
+0 STEP
+0 NOFILE
+
+0 FILE left_leg.ldr
+0 Left leg
+0 Name: left_leg.ldr
+0 Author: brickkit
+
+0 // The shoe: a 2 x 4 plate. On it, behind the toe's two studs: a 1 x 2 plate, a 1 x 2 plate with one stud, and a slope for the heel
+1 0 0 222 -10 0 0 1 0 1 0 -1 0 0 3020.dat
+1 0 0 214 -20 1 0 0 0 1 0 0 0 1 3023b.dat
+1 0 0 214 0 1 0 0 0 1 0 0 0 1 15573.dat
+1 0 0 222 20 -1 0 0 0 1 0 0 0 -1 85984.dat
+0 STEP
+0 // The toe: a curved slope, its high end on the 1 x 2 plate
+1 0 0 222 -30 1 0 0 0 1 0 0 0 1 15068.dat
+0 STEP
+0 // The sock: a white round brick on the single stud
+1 15 0 190 0 1 0 0 0 1 0 0 0 1 3062b.dat
+0 STEP
+0 // The leg: 7 round bricks. Push two long bars down through them, one after the other, into the hole in the shoe's stud: they stiffen the leg
+1 78 0 166 0 1 0 0 0 1 0 0 0 1 3062b.dat
+1 78 0 142 0 1 0 0 0 1 0 0 0 1 3062b.dat
+1 78 0 118 0 1 0 0 0 1 0 0 0 1 3062b.dat
+1 78 0 94 0 1 0 0 0 1 0 0 0 1 3062b.dat
+1 78 0 70 0 1 0 0 0 1 0 0 0 1 3062b.dat
+1 78 0 46 0 1 0 0 0 1 0 0 0 1 3062b.dat
+1 78 0 22 0 1 0 0 0 1 0 0 0 1 3062b.dat
+1 0 0 134 0 1 0 0 0 1 0 0 0 1 30374.dat
+1 0 0 54 0 1 0 0 0 1 0 0 0 1 30374.dat
+0 STEP
+0 // The leg of his shorts: a 1 x 2 plate pointing forward, a small slope on its front stud and a Technic brick on its back stud, the hole across
+1 1 0 14 -10 0 0 1 0 1 0 -1 0 0 3023b.dat
+1 1 0 14 -20 1 0 0 0 1 0 0 0 1 54200.dat
+1 1 0 -10 0 0 0 1 0 1 0 -1 0 0 6541.dat
+0 STEP
+0 NOFILE
+
+0 FILE right_leg.ldr
+0 Right leg
+0 Name: right_leg.ldr
+0 Author: brickkit
+
+0 // The shoe: a 2 x 4 plate. On it, behind the toe's two studs: a 1 x 2 plate, a 1 x 2 plate with one stud, and a slope for the heel
+1 0 0 222 -10 0 0 1 0 1 0 -1 0 0 3020.dat
+1 0 0 214 -20 1 0 0 0 1 0 0 0 1 3023b.dat
+1 0 0 214 0 1 0 0 0 1 0 0 0 1 15573.dat
+1 0 0 222 20 -1 0 0 0 1 0 0 0 -1 85984.dat
+0 STEP
+0 // The toe: a curved slope, its high end on the 1 x 2 plate
+1 0 0 222 -30 1 0 0 0 1 0 0 0 1 15068.dat
+0 STEP
+0 // The sock: a white round brick on the single stud
+1 15 0 190 0 1 0 0 0 1 0 0 0 1 3062b.dat
+0 STEP
+0 // The leg: 7 round bricks. Push two long bars down through them, one after the other, into the hole in the shoe's stud: they stiffen the leg
+1 78 0 166 0 1 0 0 0 1 0 0 0 1 3062b.dat
+1 78 0 142 0 1 0 0 0 1 0 0 0 1 3062b.dat
+1 78 0 118 0 1 0 0 0 1 0 0 0 1 3062b.dat
+1 78 0 94 0 1 0 0 0 1 0 0 0 1 3062b.dat
+1 78 0 70 0 1 0 0 0 1 0 0 0 1 3062b.dat
+1 78 0 46 0 1 0 0 0 1 0 0 0 1 3062b.dat
+1 78 0 22 0 1 0 0 0 1 0 0 0 1 3062b.dat
+1 0 0 134 0 1 0 0 0 1 0 0 0 1 30374.dat
+1 0 0 54 0 1 0 0 0 1 0 0 0 1 30374.dat
+0 STEP
+0 // The leg of his shorts: a 1 x 2 plate pointing forward, a small slope on its front stud and a Technic brick on its back stud, the hole across
+1 1 0 14 -10 0 0 1 0 1 0 -1 0 0 3023b.dat
+1 1 0 14 -20 1 0 0 0 1 0 0 0 1 54200.dat
+1 1 0 -10 0 0 0 1 0 1 0 -1 0 0 6541.dat
+0 STEP
+0 NOFILE
+
+0 FILE left_forearm.ldr
+0 Forearm
+0 Name: left_forearm.ldr
+0 Author: brickkit
+
+0 // A forearm: push the bar of a clip into the top of a round brick, and add a second round brick under it
+1 78 0 0 0 0 0 1 0 1 0 -1 0 0 3484.dat
+1 78 0 14 0 1 0 0 0 1 0 0 0 1 3062b.dat
+1 78 0 38 0 1 0 0 0 1 0 0 0 1 3062b.dat
+0 STEP
+0 NOFILE
+
+0 FILE left_arm.ldr
+0 Left arm
+0 Name: left_arm.ldr
+0 Author: brickkit
+
+0 // The sleeve: a blue Technic brick, its hole across, with a tile on top. Under it two round bricks, and a round plate with a handle: the upper arm
+1 322 0 -10 0 0 0 1 0 1 0 -1 0 0 6541.dat
+1 322 0 -18 0 1 0 0 0 1 0 0 0 1 3070b.dat
+1 78 0 14 0 1 0 0 0 1 0 0 0 1 3062b.dat
+1 78 0 38 0 1 0 0 0 1 0 0 0 1 3062b.dat
+1 78 0 62 0 0 0 -1 0 1 0 1 0 0 26047.dat
+0 STEP
+0 // Clip the forearm onto the handle: the elbow
+1 16 20 64 0 0 0.642788 0.766044 0 -0.766044 0.642788 1 0 0 left_forearm.ldr
+0 STEP
+0 NOFILE
+
+0 FILE right_forearm.ldr
+0 Forearm
+0 Name: right_forearm.ldr
+0 Author: brickkit
+
+0 // A forearm: push the bar of a clip into the top of a round brick, and add a second round brick under it
+1 78 0 0 0 0 0 1 0 1 0 -1 0 0 3484.dat
+1 78 0 14 0 1 0 0 0 1 0 0 0 1 3062b.dat
+1 78 0 38 0 1 0 0 0 1 0 0 0 1 3062b.dat
+0 STEP
+0 // The hand: a plate with a clip on its side. Press one of its studs up into the forearm, the other stud to the front, the clip to the right
+1 78 0 62 -10 0 0 1 0 1 0 -1 0 0 11476.dat
+0 STEP
+0 NOFILE
+
+0 FILE right_arm.ldr
+0 Right arm
+0 Name: right_arm.ldr
+0 Author: brickkit
+
+0 // The sleeve: a blue Technic brick, its hole across, with a tile on top. Under it two round bricks, and a round plate with a handle: the upper arm
+1 322 0 -10 0 0 0 1 0 1 0 -1 0 0 6541.dat
+1 322 0 -18 0 1 0 0 0 1 0 0 0 1 3070b.dat
+1 78 0 14 0 1 0 0 0 1 0 0 0 1 3062b.dat
+1 78 0 38 0 1 0 0 0 1 0 0 0 1 3062b.dat
+1 78 0 62 0 0 0 1 0 1 0 -1 0 0 26047.dat
+0 STEP
+0 // Clip the forearm onto the handle: the elbow
+1 16 -20 64 0 0 -1 0 0 0 1 -1 0 0 right_forearm.ldr
+0 STEP
+0 NOFILE
+
+0 FILE backpack.ldr
+0 Backpack
+0 Name: backpack.ldr
+0 Author: brickkit
+
+0 // The backpack: a 2 x 4 wedge plate, wide edge away from you, and a 1 x 1 plate three studs out from each of its near corners (clear of his arms)
+1 2 0 -8 0 1 0 0 0 1 0 0 0 1 51739.dat
+1 2 -70 -8 -10 1 0 0 0 1 0 0 0 1 3024.dat
+1 2 70 -8 -10 1 0 0 0 1 0 0 0 1 3024.dat
+0 STEP
+0 // Green, on the near studs: a 2 x 3 plate in the middle and a round corner plate each side on the 1 x 1 plates, the round corners towards you and out
+1 2 0 -16 -30 0 0 1 0 1 0 -1 0 0 3021.dat
+1 2 30 -16 -10 0 0 1 0 1 0 -1 0 0 30357.dat
+1 2 -30 -16 -10 -1 0 0 0 1 0 0 0 -1 30357.dat
+0 STEP
+0 // Lime, on the far studs: a half circle, round side away from you
+1 27 0 -16 40 -1 0 0 0 1 0 0 0 -1 22888.dat
+0 STEP
+0 // A 2 x 4 curved slope on each colour, their high edges meeting in the middle
+1 2 0 -16 -20 1 0 0 0 1 0 0 0 1 88930.dat
+1 27 0 -16 20 -1 0 0 0 1 0 0 0 -1 88930.dat
+0 STEP
+0 NOFILE
+
+0 FILE head.ldr
+0 Head
+0 Name: head.ldr
+0 Author: brickkit
+
+0 // The bottom of the hat: the turntable's top, and a 4 x 6 plate pressed onto its four studs, its middle over them. On the plate a 1 x 6 tile along the front (the face stands on this), a 2 x 6 plate and a 1 x 6 plate
+1 71 0 0 0 1 0 0 0 1 0 0 0 1 3679.dat
+1 15 0 -8 0 1 0 0 0 1 0 0 0 1 3032.dat
+1 15 0 -16 -30 1 0 0 0 1 0 0 0 1 6636.dat
+1 15 0 -16 0 1 0 0 0 1 0 0 0 1 3795.dat
+1 15 0 -16 30 1 0 0 0 1 0 0 0 1 3666.dat
+0 STEP
+0 // Behind where the face will go: two 1 x 4 plates and a brick with four studs on its side, studs forward
+1 15 0 -24 -10 1 0 0 0 1 0 0 0 1 3710.dat
+1 15 0 -32 -10 1 0 0 0 1 0 0 0 1 3710.dat
+1 15 0 -56 -10 1 0 0 0 1 0 0 0 1 30414.dat
+0 STEP
+0 // The face: a 4 x 4 plate standing on its edge, on the four studs. A white tile along its top row and a skin one under it: the forehead
+1 15 0 -56 -28 1 0 0 0 0 -1 0 1 0 3031.dat
+1 15 0 -86 -36 1 0 0 0 0 -1 0 1 0 2431.dat
+1 78 0 -66 -36 1 0 0 0 0 -1 0 1 0 2431.dat
+0 STEP
+0 // The eyes, wide apart: a 1 x 1 plate at each end of the row with a round black tile on it, and a 1 x 2 tile between them
+1 78 -30 -46 -36 1 0 0 0 0 -1 0 1 0 3024.dat
+1 0 -30 -46 -44 1 0 0 0 0 -1 0 1 0 98138.dat
+1 78 30 -46 -36 1 0 0 0 0 -1 0 1 0 3024.dat
+1 0 30 -46 -44 1 0 0 0 0 -1 0 1 0 98138.dat
+1 78 0 -46 -36 1 0 0 0 0 -1 0 1 0 3069b.dat
+0 STEP
+0 // The mouth: a 1 x 2 plate between two tiles, and the half circle on it, flat edge up
+1 78 -30 -26 -36 1 0 0 0 0 -1 0 1 0 3070b.dat
+1 78 30 -26 -36 1 0 0 0 0 -1 0 1 0 3070b.dat
+1 78 0 -26 -36 1 0 0 0 0 -1 0 1 0 3023b.dat
+1 320 0 -26 -44 1 0 0 0 0 -1 0 1 0 1748.dat
+0 STEP
+0 // The sides and the back of the hat: a tall 1 x 4 brick each side, a tall panel behind with its wall to the back, and a 1 x 4 plate on each
+1 15 50 -88 0 0 0 1 0 1 0 -1 0 0 49311.dat
+1 15 -50 -88 0 0 0 1 0 1 0 -1 0 0 49311.dat
+1 15 0 -88 30 1 0 0 0 1 0 0 0 1 60581.dat
+1 15 50 -96 0 0 0 1 0 1 0 -1 0 0 3710.dat
+1 15 -50 -96 0 0 0 1 0 1 0 -1 0 0 3710.dat
+1 15 0 -96 30 1 0 0 0 1 0 0 0 1 3710.dat
+0 STEP
+0 // The top: a 4 x 6 plate, and a 2 x 6 plate across its middle
+1 15 0 -104 0 1 0 0 0 1 0 0 0 1 3032.dat
+1 15 0 -112 0 1 0 0 0 1 0 0 0 1 3795.dat
+0 STEP
+0 // Round it off: a curved slope in the middle of the front and of the back, and a 1 x 2 slope each side of them
+1 15 0 -104 -20 1 0 0 0 1 0 0 0 1 15068.dat
+1 15 0 -104 20 -1 0 0 0 1 0 0 0 -1 15068.dat
+1 15 -40 -104 -30 1 0 0 0 1 0 0 0 1 85984.dat
+1 15 -40 -104 30 -1 0 0 0 1 0 0 0 -1 85984.dat
+1 15 40 -104 -30 1 0 0 0 1 0 0 0 1 85984.dat
+1 15 40 -104 30 -1 0 0 0 1 0 0 0 -1 85984.dat
+0 STEP
+0 // The ears: a 2 x 2 dome on each end of the 2 x 6 plate, standing a plate deep in the top of the hat
+1 15 -40 -136 0 1 0 0 0 1 0 0 0 1 30367c.dat
+1 15 40 -136 0 1 0 0 0 1 0 0 0 1 30367c.dat
+0 STEP
+0 NOFILE
+
+0 FILE sword.ldr
+0 Sword
+0 Name: sword.ldr
+0 Author: brickkit
+
+0 // The sword: a long yellow tile. Under one end a round plate with a bar, the bar pointing away from the blade; next to it a 1 x 3 plate across: the guard
+1 297 21 -2 0 -1 0 0 0 1 0 0 0 -1 32828.dat
+1 14 41 -2 0 0 0 1 0 1 0 -1 0 0 3623.dat
+1 14 91 -10 0 1 0 0 0 1 0 0 0 1 4162.dat
+0 STEP
+0 // A red round plate, the hole in its stud pushed onto the end of the bar: the jewel
+1 4 -10 0 0 0 -1 0 1 0 0 0 0 1 85861.dat
+0 STEP
+0 NOFILE

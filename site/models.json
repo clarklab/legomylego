@@ -273,6 +273,80 @@
       "status": "pass"
     },
     {
+      "slug": "charmander",
+      "name": "Charmander",
+      "description": "A tiny Charmander in 14 pieces, about 4 cm long and 3 cm tall: an orange body on two round feet, a tan belly, a curved dome of a head with a black eye band, and a trans-orange flame on the end of its tail.",
+      "collection": "quick_bricks",
+      "steps": 8,
+      "notice": "",
+      "parts": 14,
+      "pieces": 14,
+      "dims_mm": [
+        40.1,
+        28.8,
+        20.5
+      ],
+      "price": {
+        "low": 0.46,
+        "high": 1.76,
+        "currency": "USD",
+        "note": "A rough range from typical BrickLink prices per part type, not live market data.",
+        "source": "estimate",
+        "date": null,
+        "live_lines": 0,
+        "lines": 10
+      },
+      "features": {
+        "mechanism": false,
+        "lights": false,
+        "minifigs": 0
+      },
+      "variants": [
+        "Standard"
+      ],
+      "thumbnail": "renders/renders_front.png",
+      "video": null,
+      "poster": null,
+      "status": "pass"
+    },
+    {
+      "slug": "crow",
+      "name": "Crow",
+      "description": "A little black crow in 34 pieces, 7 cm from beak to tail: a pointed beak, half-closed eyes, two wings and two tail feathers on clips, and yellow feet. Designed by Qrys.And.Reading.",
+      "collection": "quick_bricks",
+      "steps": 15,
+      "notice": "",
+      "parts": 34,
+      "pieces": 34,
+      "dims_mm": [
+        71.2,
+        43.2,
+        43.6
+      ],
+      "price": {
+        "low": 1.15,
+        "high": 4.05,
+        "currency": "USD",
+        "note": "A rough range from typical BrickLink prices per part type, not live market data.",
+        "source": "estimate",
+        "date": null,
+        "live_lines": 0,
+        "lines": 21
+      },
+      "features": {
+        "mechanism": false,
+        "lights": false,
+        "minifigs": 0
+      },
+      "variants": [
+        "Standard"
+      ],
+      "thumbnail": "renders/renders_back.png",
+      "video": null,
+      "poster": null,
+      "status": "warn"
+    },
+    {
       "slug": "dinosaur",
       "name": "Mini T. rex",
       "description": "A tiny red-and-orange dinosaur with an open toothy mouth, black eyes, clip-on red arms, dark-tan feet, downward-curving white claws, and a tapering tail. Reconstructed from a single reference image.",
@@ -386,6 +460,154 @@
       "status": "pass"
     },
     {
+      "slug": "finn_the_human",
+      "name": "Finn the Human",
+      "description": "Finn the Human from Adventure Time as a lanky, posable figure in 121 pieces, 19.4 cm tall: a white hat with two round ears, a wide grin, noodle arms and legs, a round green backpack and his golden sword.",
+      "collection": "quick_bricks",
+      "steps": 45,
+      "notice": "",
+      "parts": 121,
+      "pieces": 121,
+      "dims_mm": [
+        112.6,
+        193.6,
+        38.4
+      ],
+      "price": {
+        "low": 5.72,
+        "high": 20.61,
+        "currency": "USD",
+        "note": "A rough range from typical BrickLink prices per part type, not live market data.",
+        "source": "estimate",
+        "date": null,
+        "live_lines": 0,
+        "lines": 59
+      },
+      "features": {
+        "mechanism": false,
+        "lights": false,
+        "minifigs": 0
+      },
+      "variants": [
+        "Standard"
+      ],
+      "thumbnail": "renders/renders_back.png",
+      "video": null,
+      "poster": null,
+      "status": "pass"
+    },
+    {
+      "slug": "frankenstein",
+      "name": "Frankenstein",
+      "description": "A tiny Frankenstein in 17 pieces, about 4.5 cm tall: a flat-topped grey head with sleepy white eyes, a grey brow bar and two white neck bolts, on a black body and base.",
+      "collection": "quick_bricks",
+      "steps": 11,
+      "notice": "",
+      "parts": 17,
+      "pieces": 17,
+      "dims_mm": [
+        25.6,
+        44.8,
+        16.0
+      ],
+      "price": {
+        "low": 0.52,
+        "high": 1.77,
+        "currency": "USD",
+        "note": "A rough range from typical BrickLink prices per part type, not live market data.",
+        "source": "estimate",
+        "date": null,
+        "live_lines": 0,
+        "lines": 12
+      },
+      "features": {
+        "mechanism": false,
+        "lights": false,
+        "minifigs": 0
+      },
+      "variants": [
+        "Standard"
+      ],
+      "thumbnail": "renders/renders_front.png",
+      "video": null,
+      "poster": null,
+      "status": "pass"
+    },
+    {
+      "slug": "freddy_fazbear",
+      "name": "Freddy Fazbear",
+      "description": "A tiny Freddy Fazbear in 42 pieces, about 9 cm tall: a brown bear robot with a top hat, a black bow tie, big round eyes and a light snout, holding a microphone.",
+      "collection": "quick_bricks",
+      "steps": 32,
+      "notice": "",
+      "parts": 42,
+      "pieces": 42,
+      "dims_mm": [
+        34.4,
+        89.6,
+        40.9
+      ],
+      "price": {
+        "low": 1.29,
+        "high": 5.34,
+        "currency": "USD",
+        "note": "A rough range from typical BrickLink prices per part type, not live market data.",
+        "source": "estimate",
+        "date": null,
+        "live_lines": 0,
+        "lines": 25
+      },
+      "features": {
+        "mechanism": false,
+        "lights": false,
+        "minifigs": 0
+      },
+      "variants": [
+        "Standard"
+      ],
+      "thumbnail": "renders/renders_front.png",
+      "video": null,
+      "poster": null,
+      "status": "pass"
+    },
+    {
+      "slug": "magikarp",
+      "name": "Magikarp",
+      "description": "A Magikarp in 43 pieces, 6.5 cm long and 6.4 cm high: a red fish built sideways off two brackets, with round white eyes, an open lavender mouth, a white forked tail and a yellow fin on its back and under its belly.",
+      "collection": "quick_bricks",
+      "steps": 19,
+      "notice": "",
+      "parts": 43,
+      "pieces": 43,
+      "dims_mm": [
+        25.6,
+        63.7,
+        65.0
+      ],
+      "price": {
+        "low": 2.5,
+        "high": 9.61,
+        "currency": "USD",
+        "note": "A rough range from typical BrickLink prices per part type, not live market data.",
+        "source": "estimate",
+        "date": null,
+        "live_lines": 0,
+        "lines": 22
+      },
+      "features": {
+        "mechanism": false,
+        "lights": false,
+        "minifigs": 0
+      },
+      "variants": [
+        "Standard"
+      ],
+      "thumbnail": "renders/renders_back.png",
+      "video": null,
+      "poster": null,
+      "status": "warn"
+    },
+    {
       "slug": "nautilus",
       "name": "Nautilus",
       "description": "Captain Nemo's Nautilus from Walt Disney's 20,000 Leagues Under the Sea (1954) at minifigure scale, 106 cm long: its salon windows are LEGO's biggest clear bubbles. Big tiled side panels on hinges, the toothed crest arch over an alligator-head wheelhouse with bubble eyes, the saw keel, the shark's dorsal fin and the fish tail with its propeller and rudder; the port side of the salon swings up like a gull wing on Captain Nemo's salon - his pipe organ, library, aquarium and crew - and the whole ship rides a breaking sea on two clear posts. The salon lights up, the propeller spins and the rudder swings.",
@@ -460,6 +682,117 @@
       "video": null,
       "poster": null,
       "status": "warn"
+    },
+    {
+      "slug": "pikachu",
+      "name": "Surprised Pikachu",
+      "description": "The surprised Pikachu face in 50 pieces, 9 cm across the ears and 6 cm tall: wide eyes, red cheeks, a small black nose over an open pink mouth, and pointed black-tipped ears that swing on clips.",
+      "collection": "quick_bricks",
+      "steps": 10,
+      "notice": "",
+      "parts": 50,
+      "pieces": 50,
+      "dims_mm": [
+        88.8,
+        58.2,
+        27.2
+      ],
+      "price": {
+        "low": 1.7,
+        "high": 5.88,
+        "currency": "USD",
+        "note": "A rough range from typical BrickLink prices per part type, not live market data.",
+        "source": "estimate",
+        "date": null,
+        "live_lines": 0,
+        "lines": 26
+      },
+      "features": {
+        "mechanism": false,
+        "lights": false,
+        "minifigs": 0
+      },
+      "variants": [
+        "Standard"
+      ],
+      "thumbnail": "renders/renders_back.png",
+      "video": null,
+      "poster": null,
+      "status": "warn"
+    },
+    {
+      "slug": "porygon",
+      "name": "Porygon",
+      "description": "A tiny Porygon in 19 pieces, about 3 cm long and 3 cm tall: a pink head and body, a blue beak, chest, feet and tail, and a round eye on each side of its head.",
+      "collection": "quick_bricks",
+      "steps": 11,
+      "notice": "",
+      "parts": 19,
+      "pieces": 19,
+      "dims_mm": [
+        32.0,
+        28.8,
+        32.0
+      ],
+      "price": {
+        "low": 0.75,
+        "high": 2.39,
+        "currency": "USD",
+        "note": "A rough range from typical BrickLink prices per part type, not live market data.",
+        "source": "estimate",
+        "date": null,
+        "live_lines": 0,
+        "lines": 12
+      },
+      "features": {
+        "mechanism": false,
+        "lights": false,
+        "minifigs": 0
+      },
+      "variants": [
+        "Standard"
+      ],
+      "thumbnail": "renders/renders_back.png",
+      "video": null,
+      "poster": null,
+      "status": "pass"
+    },
+    {
+      "slug": "pumpkin",
+      "name": "Pumpkin",
+      "description": "A jack-o'-lantern pumpkin in 51 pieces, about 5.4 cm across and 6.8 cm tall with its leaf: a cube of plates built on its sides, with square black eyes, a toothy mouth and a green stem with a leaf (a design by BrixBuild).",
+      "collection": "quick_bricks",
+      "steps": 24,
+      "notice": "",
+      "parts": 51,
+      "pieces": 51,
+      "dims_mm": [
+        54.4,
+        68.0,
+        52.8
+      ],
+      "price": {
+        "low": 2.13,
+        "high": 7.66,
+        "currency": "USD",
+        "note": "A rough range from typical BrickLink prices per part type, not live market data.",
+        "source": "estimate",
+        "date": null,
+        "live_lines": 0,
+        "lines": 22
+      },
+      "features": {
+        "mechanism": false,
+        "lights": false,
+        "minifigs": 0
+      },
+      "variants": [
+        "Standard"
+      ],
+      "thumbnail": "renders/renders_front.png",
+      "video": null,
+      "poster": null,
+      "status": "pass"
     },
     {
       "slug": "taco",
@@ -569,6 +902,43 @@
         "Standard"
       ],
       "thumbnail": "renders/renders_qa_front.png",
+      "video": null,
+      "poster": null,
+      "status": "warn"
+    },
+    {
+      "slug": "xenomorph",
+      "name": "Xenomorph",
+      "description": "A black alien in 49 pieces, 11 cm from its claws to the tip of its tail and 7 cm tall: a long domed head with silver teeth, tubes on its back and a jointed tail with spines and a barb. Every joint moves, and it stands on its two feet and the barb. Designed by yodakya.",
+      "collection": "quick_bricks",
+      "steps": 34,
+      "notice": "",
+      "parts": 49,
+      "pieces": 49,
+      "dims_mm": [
+        22.4,
+        74.2,
+        114.7
+      ],
+      "price": {
+        "low": 1.89,
+        "high": 8.66,
+        "currency": "USD",
+        "note": "A rough range from typical BrickLink prices per part type, not live market data.",
+        "source": "estimate",
+        "date": null,
+        "live_lines": 0,
+        "lines": 20
+      },
+      "features": {
+        "mechanism": false,
+        "lights": false,
+        "minifigs": 0
+      },
+      "variants": [
+        "Standard"
+      ],
+      "thumbnail": "renders/renders_back.png",
       "video": null,
       "poster": null,
       "status": "warn"

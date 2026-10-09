@@ -9,10 +9,10 @@
       "steps": 17,
       "video": "/quick/avocado-1080x1920.mp4?v=6a46668ea54c",
       "poster": "/models/avocado/quick_poster.jpg?v=1ef2741fbdda",
-      "instructions": "/models/avocado/booklet.pdf?v=8d7bb5d0b174",
+      "instructions": "/models/avocado/booklet.pdf?v=379180d9884d",
       "url": "/quick/avocado/",
       "model": "/models/avocado/model.json?v=0dce1dc979f4",
-      "geometry": "/models/avocado/model.glb?v=0ae0ed717315"
+      "geometry": "/models/avocado/model.glb?v=becb7ece243f"
     },
     {
       "slug": "bat",
@@ -23,10 +23,10 @@
       "steps": 8,
       "video": "/quick/bat-1080x1920.mp4?v=94e3d7e44a12",
       "poster": "/models/bat/quick_poster.jpg?v=7d6c65e1a961",
-      "instructions": "/models/bat/booklet.pdf?v=fbe4151b7526",
+      "instructions": "/models/bat/booklet.pdf?v=d5d4cc70a83c",
       "url": "/quick/bat/",
       "model": "/models/bat/model.json?v=5391abdc025b",
-      "geometry": "/models/bat/model.glb?v=4fc6d1dfb619"
+      "geometry": "/models/bat/model.glb?v=c1573b3e653a"
     },
     {
       "slug": "birthday_cake",
@@ -37,10 +37,10 @@
       "steps": 12,
       "video": "/quick/birthday_cake-1080x1920.mp4?v=2f2d25f9f484",
       "poster": "/models/birthday_cake/quick_poster.jpg?v=cb1d523712fa",
-      "instructions": "/models/birthday_cake/booklet.pdf?v=5cb7b87fe9ed",
+      "instructions": "/models/birthday_cake/booklet.pdf?v=031c83092bf6",
       "url": "/quick/birthday_cake/",
       "model": "/models/birthday_cake/model.json?v=dee2d14fc411",
-      "geometry": "/models/birthday_cake/model.glb?v=49a1d6635215"
+      "geometry": "/models/birthday_cake/model.glb?v=61d0f99b4823"
     },
     {
       "slug": "caldwell_mini",
@@ -51,10 +51,42 @@
       "steps": 15,
       "video": "/quick/caldwell_mini-1080x1920.mp4?v=c0fb17afe0d8",
       "poster": "/models/caldwell_mini/quick_poster.jpg?v=0973cdf30470",
-      "instructions": "/models/caldwell_mini/booklet.pdf?v=07086785abba",
+      "instructions": "/models/caldwell_mini/booklet.pdf?v=7a85f7e72312",
       "url": "/quick/caldwell_mini/",
       "model": "/models/caldwell_mini/model.json?v=632d078c03d4",
-      "geometry": "/models/caldwell_mini/model.glb?v=89f602c63ba5"
+      "geometry": "/models/caldwell_mini/model.glb?v=982c063bf263"
+    },
+    {
+      "slug": "charmander",
+      "name": "Charmander",
+      "description": "A tiny Charmander in 14 pieces, about 4 cm long and 3 cm tall: an orange body on two round feet, a tan belly, a curved dome of a head with a black eye band, and a trans-orange flame on the end of its tail.",
+      "collection": "quick_bricks",
+      "pieces": 14,
+      "steps": 8,
+      "video": "/quick/charmander-1080x1920.mp4?v=8733097078ba",
+      "poster": "/models/charmander/quick_poster.jpg?v=bdf98fb204c0",
+      "instructions": "/models/charmander/booklet.pdf?v=6537bc8d173f",
+      "url": "/quick/charmander/",
+      "model": "/models/charmander/model.json?v=59e42f5e98e5",
+      "geometry": "/models/charmander/model.glb?v=86bea5fb0a68",
+      "designer": "SwordBricks (RSierra)",
+      "source": "https://rebrickable.com/mocs/MOC-220190/"
+    },
+    {
+      "slug": "crow",
+      "name": "Crow",
+      "description": "A little black crow in 34 pieces, 7 cm from beak to tail: a pointed beak, half-closed eyes, two wings and two tail feathers on clips, and yellow feet. Designed by Qrys.And.Reading.",
+      "collection": "quick_bricks",
+      "pieces": 34,
+      "steps": 15,
+      "video": "/quick/crow-1080x1920.mp4?v=f28fdcecd25a",
+      "poster": "/models/crow/quick_poster.jpg?v=3a1687dee93c",
+      "instructions": "/models/crow/booklet.pdf?v=8aed0c73e544",
+      "url": "/quick/crow/",
+      "model": "/models/crow/model.json?v=e8c1728bacb3",
+      "geometry": "/models/crow/model.glb?v=6bb08cf9b2c7",
+      "designer": "Qrys.And.Reading",
+      "source": "https://rebrickable.com/mocs/MOC-165060/"
     },
     {
       "slug": "dinosaur",
@@ -65,10 +97,10 @@
       "steps": 26,
       "video": "/quick/dinosaur-1080x1920.mp4?v=dc1b98fac717",
       "poster": "/models/dinosaur/quick_poster.jpg?v=bdc4847ad868",
-      "instructions": "/models/dinosaur/booklet.pdf?v=452ef0cfcac4",
+      "instructions": "/models/dinosaur/booklet.pdf?v=7f62f5bd5820",
       "url": "/quick/dinosaur/",
       "model": "/models/dinosaur/model.json?v=e96db48203cf",
-      "geometry": "/models/dinosaur/model.glb?v=793c6e3450c7"
+      "geometry": "/models/dinosaur/model.glb?v=10fce31fc22f"
     },
     {
       "slug": "dracula",
@@ -79,10 +111,118 @@
       "steps": 11,
       "video": "/quick/dracula-1080x1920.mp4?v=fe7241f549d2",
       "poster": "/models/dracula/quick_poster.jpg?v=df9cb1a0fe8e",
-      "instructions": "/models/dracula/booklet.pdf?v=cfd6bf21093f",
+      "instructions": "/models/dracula/booklet.pdf?v=a5ab4c5407c5",
       "url": "/quick/dracula/",
       "model": "/models/dracula/model.json?v=ad844c79ff94",
-      "geometry": "/models/dracula/model.glb?v=bf34be66ae74"
+      "geometry": "/models/dracula/model.glb?v=1d73a8d9a362"
+    },
+    {
+      "slug": "finn_the_human",
+      "name": "Finn the Human",
+      "description": "Finn the Human from Adventure Time as a lanky, posable figure in 121 pieces, 19.4 cm tall: a white hat with two round ears, a wide grin, noodle arms and legs, a round green backpack and his golden sword.",
+      "collection": "quick_bricks",
+      "pieces": 121,
+      "steps": 45,
+      "video": "/quick/finn_the_human-1080x1920.mp4?v=1eab9dc84e24",
+      "poster": "/models/finn_the_human/quick_poster.jpg?v=f31c2a4d6f9f",
+      "instructions": "/models/finn_the_human/booklet.pdf?v=43eb8af8444a",
+      "url": "/quick/finn_the_human/",
+      "model": "/models/finn_the_human/model.json?v=72ba2370f164",
+      "geometry": "/models/finn_the_human/model.glb?v=8b1c3ebcd0c3"
+    },
+    {
+      "slug": "frankenstein",
+      "name": "Frankenstein",
+      "description": "A tiny Frankenstein in 17 pieces, about 4.5 cm tall: a flat-topped grey head with sleepy white eyes, a grey brow bar and two white neck bolts, on a black body and base.",
+      "collection": "quick_bricks",
+      "pieces": 17,
+      "steps": 11,
+      "video": "/quick/frankenstein-1080x1920.mp4?v=96e22efe1be2",
+      "poster": "/models/frankenstein/quick_poster.jpg?v=a2eaeb0b1ac3",
+      "instructions": "/models/frankenstein/booklet.pdf?v=340761fb0fe1",
+      "url": "/quick/frankenstein/",
+      "model": "/models/frankenstein/model.json?v=624a7b848ee2",
+      "geometry": "/models/frankenstein/model.glb?v=fa974ac48e22",
+      "designer": "Agosami Brickworks",
+      "source": "https://rebrickable.com/mocs/MOC-215912/"
+    },
+    {
+      "slug": "freddy_fazbear",
+      "name": "Freddy Fazbear",
+      "description": "A tiny Freddy Fazbear in 42 pieces, about 9 cm tall: a brown bear robot with a top hat, a black bow tie, big round eyes and a light snout, holding a microphone.",
+      "collection": "quick_bricks",
+      "pieces": 42,
+      "steps": 32,
+      "video": "/quick/freddy_fazbear-1080x1920.mp4?v=b24f63a8d4aa",
+      "poster": "/models/freddy_fazbear/quick_poster.jpg?v=ee568dab2405",
+      "instructions": "/models/freddy_fazbear/booklet.pdf?v=1a24b425609a",
+      "url": "/quick/freddy_fazbear/",
+      "model": "/models/freddy_fazbear/model.json?v=7b12929b3c2d",
+      "geometry": "/models/freddy_fazbear/model.glb?v=e81926d53f64",
+      "source": "https://rebrickable.com/mocs/MOC-265184/"
+    },
+    {
+      "slug": "magikarp",
+      "name": "Magikarp",
+      "description": "A Magikarp in 43 pieces, 6.5 cm long and 6.4 cm high: a red fish built sideways off two brackets, with round white eyes, an open lavender mouth, a white forked tail and a yellow fin on its back and under its belly.",
+      "collection": "quick_bricks",
+      "pieces": 43,
+      "steps": 19,
+      "video": "/quick/magikarp-1080x1920.mp4?v=719e9de97cf1",
+      "poster": "/models/magikarp/quick_poster.jpg?v=ae67a76b44e7",
+      "instructions": "/models/magikarp/booklet.pdf?v=8113050ca8d1",
+      "url": "/quick/magikarp/",
+      "model": "/models/magikarp/model.json?v=107dac34c545",
+      "geometry": "/models/magikarp/model.glb?v=0d1b1ff49564",
+      "designer": "Redverse",
+      "source": "https://rebrickable.com/mocs/MOC-182443/"
+    },
+    {
+      "slug": "pikachu",
+      "name": "Surprised Pikachu",
+      "description": "The surprised Pikachu face in 50 pieces, 9 cm across the ears and 6 cm tall: wide eyes, red cheeks, a small black nose over an open pink mouth, and pointed black-tipped ears that swing on clips.",
+      "collection": "quick_bricks",
+      "pieces": 50,
+      "steps": 10,
+      "video": "/quick/pikachu-1080x1920.mp4?v=ef62c61497b3",
+      "poster": "/models/pikachu/quick_poster.jpg?v=08955b1300de",
+      "instructions": "/models/pikachu/booklet.pdf?v=912151544e6f",
+      "url": "/quick/pikachu/",
+      "model": "/models/pikachu/model.json?v=ac01b9cf81b8",
+      "geometry": "/models/pikachu/model.glb?v=318ab3dcdc0e",
+      "credit": "Another builder's design: its plans do not name them. If it is yours, tell us and we will credit you."
+    },
+    {
+      "slug": "porygon",
+      "name": "Porygon",
+      "description": "A tiny Porygon in 19 pieces, about 3 cm long and 3 cm tall: a pink head and body, a blue beak, chest, feet and tail, and a round eye on each side of its head.",
+      "collection": "quick_bricks",
+      "pieces": 19,
+      "steps": 11,
+      "video": "/quick/porygon-1080x1920.mp4?v=58abbcfb70c5",
+      "poster": "/models/porygon/quick_poster.jpg?v=f27d3769b13c",
+      "instructions": "/models/porygon/booklet.pdf?v=d567eb0f2aab",
+      "url": "/quick/porygon/",
+      "model": "/models/porygon/model.json?v=48d47d3206b8",
+      "geometry": "/models/porygon/model.glb?v=a46e853c1f37",
+      "designer": "QSKSw",
+      "source": "https://rebrickable.com/mocs/MOC-31400/"
+    },
+    {
+      "slug": "pumpkin",
+      "name": "Pumpkin",
+      "description": "A jack-o'-lantern pumpkin in 51 pieces, about 5.4 cm across and 6.8 cm tall with its leaf: a cube of plates built on its sides, with square black eyes, a toothy mouth and a green stem with a leaf (a design by BrixBuild).",
+      "collection": "quick_bricks",
+      "pieces": 51,
+      "steps": 24,
+      "video": "/quick/pumpkin-1080x1920.mp4?v=6cfe55523321",
+      "poster": "/models/pumpkin/quick_poster.jpg?v=3b6711373bb6",
+      "instructions": "/models/pumpkin/booklet.pdf?v=2f8b7c6e0092",
+      "url": "/quick/pumpkin/",
+      "model": "/models/pumpkin/model.json?v=1f421dc1fce0",
+      "geometry": "/models/pumpkin/model.glb?v=41b0f2c90b61",
+      "designer": "BrixBuild",
+      "source": "https://rebrickable.com/mocs/MOC-163756/"
     },
     {
       "slug": "taco",
@@ -93,10 +233,10 @@
       "steps": 12,
       "video": "/quick/taco-1080x1920.mp4?v=7ac9a5e843fe",
       "poster": "/models/taco/quick_poster.jpg?v=866f7d6848b3",
-      "instructions": "/models/taco/booklet.pdf?v=56a58cdd67ca",
+      "instructions": "/models/taco/booklet.pdf?v=0f928322195f",
       "url": "/quick/taco/",
       "model": "/models/taco/model.json?v=17aa5e3d6dc7",
-      "geometry": "/models/taco/model.glb?v=1beff6cb67f5"
+      "geometry": "/models/taco/model.glb?v=ce5243fde9d0"
     },
     {
       "slug": "watermelon_ice_lolly",
@@ -107,10 +247,26 @@
       "steps": 13,
       "video": "/quick/watermelon_ice_lolly-1080x1920.mp4?v=812e2625ee40",
       "poster": "/models/watermelon_ice_lolly/quick_poster.jpg?v=b2b366f82784",
-      "instructions": "/models/watermelon_ice_lolly/booklet.pdf?v=ae8f6c3664a5",
+      "instructions": "/models/watermelon_ice_lolly/booklet.pdf?v=70953717d202",
       "url": "/quick/watermelon_ice_lolly/",
       "model": "/models/watermelon_ice_lolly/model.json?v=ab43245ecd7b",
-      "geometry": "/models/watermelon_ice_lolly/model.glb?v=b0bf360dbe46"
+      "geometry": "/models/watermelon_ice_lolly/model.glb?v=498362a0cc5b"
+    },
+    {
+      "slug": "xenomorph",
+      "name": "Xenomorph",
+      "description": "A black alien in 49 pieces, 11 cm from its claws to the tip of its tail and 7 cm tall: a long domed head with silver teeth, tubes on its back and a jointed tail with spines and a barb. Every joint moves, and it stands on its two feet and the barb. Designed by yodakya.",
+      "collection": "quick_bricks",
+      "pieces": 49,
+      "steps": 34,
+      "video": "/quick/xenomorph-1080x1920.mp4?v=bfe31b8c0247",
+      "poster": "/models/xenomorph/quick_poster.jpg?v=6478c473abbf",
+      "instructions": "/models/xenomorph/booklet.pdf?v=04dd0e79cf5d",
+      "url": "/quick/xenomorph/",
+      "model": "/models/xenomorph/model.json?v=d59f3331efab",
+      "geometry": "/models/xenomorph/model.glb?v=7ba018da0804",
+      "designer": "yodakya",
+      "source": "https://rebrickable.com/mocs/MOC-34927/"
     }
   ]
 }

@@ -1,0 +1,108 @@
+0 FILE magikarp.ldr
+0 Magikarp
+0 Name: magikarp.ldr
+0 Author: brickkit
+
+0 // Two 2 x 2 plates, and a bracket on their end studs: its wall hangs down over their end
+1 4 0 16 -10 1 0 0 0 1 0 0 0 1 3022.dat
+1 4 0 8 -10 1 0 0 0 1 0 0 0 1 3022.dat
+1 4 0 0 0 -1 0 0 0 1 0 0 0 -1 99781.dat
+0 STEP
+0 // Turn the belly plate over and hold it under the stack, wall under wall. Lock them with two slopes: each goes on an upper and a lower side stud
+1 16 0 32 -30 -1 0 0 0 -1 0 0 0 1 belly.ldr
+1 4 10 20 22 -1 0 0 0 0 -1 0 -1 0 15672.dat
+1 4 -10 20 22 -1 0 0 0 0 -1 0 -1 0 15672.dat
+0 STEP
+0 // The eye axle on the two free studs, its pins over the hollow of the 2 x 4
+1 16 0 0 0 1 0 0 0 1 0 0 0 1 axle.ldr
+0 STEP
+0 // On the slopes' two studs: a plate, then a plate with one stud
+1 4 0 10 30 1 0 0 0 0 1 0 -1 0 3023b.dat
+1 4 0 10 38 1 0 0 0 0 1 0 -1 0 15573.dat
+0 STEP
+0 // The tail on that stud, upright, and a white slope on its top and bottom studs
+1 15 0 10 62 1 0 0 0 0 1 0 -1 0 18759.dat
+1 15 0 -10 62 -1 0 0 0 0 -1 0 -1 0 54200.dat
+1 15 0 30 62 1 0 0 0 0 1 0 -1 0 54200.dat
+0 STEP
+0 // Turn it over. A small bracket on each stud of the next row, side studs out, and a plate across the two
+1 4 10 40 -20 0 0 -1 0 -1 0 -1 0 0 36840.dat
+1 4 -10 40 -20 0 0 1 0 -1 0 1 0 0 36840.dat
+1 4 0 48 -20 1 0 0 0 -1 0 0 0 -1 3023b.dat
+0 STEP
+0 // A plate with one stud on that plate, and a slope on the big bracket, falling to the tail
+1 4 0 56 -20 1 0 0 0 -1 0 0 0 -1 15573.dat
+1 4 0 40 0 1 0 0 0 -1 0 0 0 -1 85984.dat
+0 STEP
+0 // Turn it back. A plate on the axle's rear studs. The head: a brick with a hole, upside down, its studs pressed into the hollow of the 2 x 4 at the front
+1 4 0 -8 -20 1 0 0 0 1 0 0 0 1 3023b.dat
+1 4 0 24 -60 1 0 0 0 -1 0 0 0 -1 3700.dat
+0 STEP
+0 // A red pin in the head's hole, and on the plate a plate with one stud and a 1 x 1 plate
+1 4 0 14 -70 0 0 1 0 1 0 -1 0 0 89678.dat
+1 4 0 -16 -20 1 0 0 0 1 0 0 0 1 15573.dat
+1 4 0 -24 -20 1 0 0 0 1 0 0 0 1 3024.dat
+0 STEP
+0 // An eye on the axle, and a triangle on the bracket's side stud: square corner forward
+1 15 28 10 -40 0 -1 0 0 0 -1 1 0 0 4740.dat
+1 15 32 42 -5.857864 0 -1 0 0.707107 0 -0.707107 0.707107 0 0.707107 35787.dat
+0 STEP
+0 // The same on the other side
+1 15 -28 10 -40 0 1 0 0 0 1 1 0 0 4740.dat
+1 15 -32 42 -5.857864 0 1 0 -0.707107 0 0.707107 0.707107 0 0.707107 35787.dat
+0 STEP
+0 // The mouth on the red pin. Three curved bricks: behind the tower, in front of it, and upside down under the head
+1 31 0 14 -78 0 0 1 1 0 0 0 1 0 97785.dat
+1 4 0 0 10 -1 0 0 0 1 0 0 0 -1 30602.dat
+1 4 0 0 -50 1 0 0 0 1 0 0 0 1 30602.dat
+1 4 0 32 -50 -1 0 0 0 -1 0 0 0 1 30602.dat
+0 STEP
+0 // The fins: one on the tower, one under the belly
+1 16 0 -48 -20 1 0 0 0 1 0 0 0 1 fin.ldr
+1 16 0 80 -20 -1 0 0 0 -1 0 0 0 1 fin.ldr
+0 STEP
+0 NOFILE
+
+0 FILE belly.ldr
+0 Belly plate
+0 Name: belly.ldr
+0 Author: brickkit
+
+0 // A bracket on the end studs of the 2 x 4 plate, its wall down over the plate's end
+1 4 0 0 0 0 0 -1 0 1 0 1 0 0 3020.dat
+1 4 0 -8 30 -1 0 0 0 1 0 0 0 -1 99781.dat
+0 STEP
+0 NOFILE
+
+0 FILE axle.ldr
+0 Eye axle
+0 Name: axle.ldr
+0 Author: brickkit
+
+0 // A blue pin in the hole under a plate, from the outside
+1 4 -10 0 -30 0 0 1 0 1 0 -1 0 0 18677.dat
+1 1 -20 10 -40 -1 0 0 0 1 0 0 0 -1 4274.dat
+0 STEP
+0 // The second plate beside it, with its pin
+1 4 10 0 -30 0 0 1 0 1 0 -1 0 0 18677.dat
+1 1 20 10 -40 1 0 0 0 1 0 0 0 1 4274.dat
+0 STEP
+0 // The bar through both pins: the same length sticks out at each end
+1 0 -30 10 -40 0 1 0 1 0 0 0 0 -1 87994.dat
+0 STEP
+0 NOFILE
+
+0 FILE fin.ldr
+0 Fin
+0 Name: fin.ldr
+0 Author: brickkit
+
+0 // A yellow brick with a stud on two sides
+1 14 0 0 0 1 0 0 0 1 0 0 0 1 47905.dat
+0 STEP
+0 // A slope on top, falling to the front, and one on each side stud, thick end up
+1 14 0 0 0 1 0 0 0 1 0 0 0 1 54200.dat
+1 14 0 10 -10 1 0 0 0 0 -1 0 1 0 54200.dat
+1 14 0 10 10 -1 0 0 0 0 -1 0 -1 0 54200.dat
+0 STEP
+0 NOFILE
