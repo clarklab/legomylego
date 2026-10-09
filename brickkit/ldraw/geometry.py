@@ -4,6 +4,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from pathlib import Path
 
+import os
 import numpy as np
 
 from .library import LDrawLibrary, normalize
@@ -82,8 +83,10 @@ class GeometryCache:
         if f is None or key in self.missing:
             return
         f.parent.mkdir(parents=True, exist_ok=True)
-        np.savez_compressed(f, tris=m.tris, colors=m.colors, edges=m.edges,
+        tmp = f.with_name(f"{f.stem}.{os.getpid()}.tmp.npz")     # (whole or not at all: several
+        np.savez_compressed(tmp, tris=m.tris, colors=m.colors, edges=m.edges,    # processes share it)
                             edge_colors=m.edge_colors, cond=m.cond, certified=m.certified)
+        os.replace(tmp, f)
 
     def _flatten(self, key: str, stack: tuple) -> Mesh:
         if key in self._sub:

@@ -157,6 +157,17 @@ def main(argv=None) -> int:
     p.add_argument("--quick", action="store_true",
                    help="a Quick Bricks model: also NOTES.md and reference/ (docs/new-model.md)")
     p.add_argument("--as", dest="who", help="claim it too, under this name (or BRICKKIT_AGENT)")
+    p = sub.add_parser("import", help="a new model from a Studio .io or an LDraw .ldr / .mpd "
+                                      "file: its exact parts and positions as a design.py")
+    p.add_argument("slug")
+    p.add_argument("file")
+    p.add_argument("--name")
+    p.add_argument("--sub", help="just this sub-model of the file")
+    p.add_argument("--as", dest="who", help="claim it too, under this name (or BRICKKIT_AGENT)")
+    p = sub.add_parser("ways", help="how each piece can go on (the video's planner): the way it "
+                                    "comes from, as an insert= hint; what had no clear way")
+    p.add_argument("slug")
+    p.add_argument("--all", action="store_true", help="every piece, not just the unusual ones")
     p = sub.add_parser("claim", help="claim a model before working on it (models/SLUG/CLAIM)")
     p.add_argument("slug")
     p.add_argument("--as", dest="who", help="who you are (or set BRICKKIT_AGENT)")
@@ -297,6 +308,16 @@ def main(argv=None) -> int:
 
     from .engine import Engine
     engine = Engine()
+    if args.cmd == "import":
+        from .io.ldraw_import import import_model
+        r = import_model(engine, args.slug, Path(args.file), args.name, args.sub, _who(args.who))
+        print(f"{args.slug}: {r['parts']} parts in {r['steps']} steps "
+              f"({'the file\'s own' if r['own_steps'] else 'a build order worked out'}) -> {r['dir']}")
+        for line in r["fixed"]:
+            print(f"  Studio's part matched to LDraw's: {line}")
+        for part in r["unknown"]:
+            print(f"  LDraw has no file for {part}: swap it for the LDraw print or the plain part")
+        return 0
     if args.cmd == "inspect":
         import numpy as np
         for part in args.parts:
@@ -339,6 +360,29 @@ def main(argv=None) -> int:
         from .render.turntable import make_turntable
         make_turntable(engine, model, _out(proj, model.variant), seconds=args.seconds,
                        fps=args.fps, size=args.size, samples=args.samples, preview=args.preview)
+        return 0
+    if args.cmd == "ways":
+        import numpy as np
+
+        from .video import assemble as A
+        from .video import quick as Q
+        placed = model.flatten()
+        seq = Q.build_sequence(model, placed)
+        sc = A.assemble(engine, model, placed, seq, log=lambda m: None)
+        words = {(0, -1, 0): "above", (0, 1, 0): "below", (1, 0, 0): "+X", (-1, 0, 0): "-X",
+                 (0, 0, 1): "the back", (0, 0, -1): "the front"}
+        for k, it in enumerate(sc["items"]):
+            p = placed[it.parts[0]]
+            flags = [w for w, on in (("joined as a unit", it.kind == "join"), ("the build is lifted", bool(it.carry)),
+                                     ("set down on it", it.mode == "under"), ("NO CLEAR WAY", it.forced)) if on]
+            if not (args.all or flags or it.way not in ("stud", "table")):
+                continue
+            d = np.round(it.axis, 3) + 0.0
+            print(f"#{k:<3} step {p.local_step + 1:<3} {p.part.removesuffix('.dat'):<12} {'/'.join(p.tags)[:18]:<18} "
+                  f"{it.way:<6} from {words.get(tuple(int(round(v)) for v in d), 'an angle'):<10} "
+                  f"insert=({', '.join(f'{v:g}' for v in d)})  {'; '.join(flags)}")
+        print(f"{len(sc['items'])} pieces and joins; the steps' order {'kept' if sc['order'] == seq else 'CHANGED (a piece had to wait)'}; "
+              f"{sum(it.forced for it in sc['items'])} with no clear way in")
         return 0
     if args.cmd == "quick":
         from .video.quick import make_quick

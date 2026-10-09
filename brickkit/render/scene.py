@@ -47,8 +47,10 @@ def export_meshes(engine, parts, mesh_dir: Path) -> dict[str, str]:
         src = engine.lib.resolve(part)
         if not f.exists() or (src and f.stat().st_mtime < src.stat().st_mtime):
             m = engine.geom.mesh(part)
-            np.savez_compressed(f, tris=m.tris.astype(np.float32), colors=m.colors,
+            tmp = f.with_name(f"{f.stem}.{os.getpid()}.tmp.npz")     # (several processes share it)
+            np.savez_compressed(tmp, tris=m.tris.astype(np.float32), colors=m.colors,
                                 edges=m.edges.astype(np.float32), edge_colors=m.edge_colors)
+            os.replace(tmp, f)
         out[part] = str(f)
     return out
 

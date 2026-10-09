@@ -1,0 +1,7 @@
+0 brickkit overlay for "Hinge Arm Locking with Single and Dual Fingers and Hole" (30554b)
+0 // LDraw draws the link's two-finger end with s\480s02.dat mirrored, and a mirrored finger
+0 // snap is dropped (snaps/shadow.py: its mirror rule is "none"), so the link had a hinge at
+0 // its one-finger end only and a chain of links (a tail) was never joined. The two-finger
+0 // end again, where the part has it: the sub-file's own snap, 20 LDU out (overlays add to
+0 // the library's snaps).
+0 !LDCAD SNAP_FGR [group=lckHng] [genderOfs=M] [seq=4.5 8 4.5] [pos=0 0 20] [ori=0 -1 0 1 0 0 0 0 1]
