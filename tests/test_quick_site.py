@@ -168,3 +168,33 @@ def test_site_assets_routes_quick_pages_separately_and_keeps_regular_pages(tmp_p
     sitemap = (site / 'sitemap.xml').read_text()
     assert '/quick/quickie/' in sitemap and '/quick/</loc>' in sitemap
     assert '/m/display/' in sitemap and '/m/quickie/' not in sitemap
+
+
+def test_quick_index_carries_the_designer(tmp_path):
+    """A model that is someone else's design says whose, and where the original is."""
+    site, models, _ = add_model(tmp_path, 'crow', poster=True)
+    toml = models / 'crow' / 'model.toml'
+    toml.write_text(toml.read_text() + 'designer = "A. Builder"\nsource = "https://example.com/moc/1"\n')
+    add_model(tmp_path, 'ours', poster=True)
+    crow, ours = build_quick_site(site, models)['models']
+    assert (crow['designer'], crow['source']) == ('A. Builder', 'https://example.com/moc/1')
+    assert 'designer' not in ours and 'source' not in ours
+
+
+def test_quick_page_credits_the_designer(tmp_path):
+    """The page says whose design it is under the description: a name linked to the original,
+    our own sentence when there is no name, nothing for a design of ours."""
+    from tools.quick_site import credit_html, quick_page
+    template = TEMPLATE.replace('<p data-fill="description"></p>',
+                                '<p data-fill="description"></p><!-- credit:start --><!-- credit:end -->')
+    item = {"slug": "crow", "name": "Crow", "description": "A crow", "url": "/quick/crow/", "poster": None,
+            "designer": "A. <Builder>", "source": "https://example.com/moc/1"}
+    page = quick_page(template, item)
+    assert '<p class="qd-credit">Designed by <a href="https://example.com/moc/1"' in page
+    assert "A. &lt;Builder&gt;</a>" in page
+    assert credit_html({"credit": "Another builder's design."}) == \
+        '<p class="qd-credit">Another builder&#x27;s design.</p>'
+    assert "the original</a>" in credit_html({"source": "https://example.com/moc/2"})
+    ours = quick_page(template, {**item, "designer": None, "source": None})
+    assert "qd-credit" not in ours and "<!-- credit:start --><!-- credit:end -->" in ours
+    assert "qd-credit" not in quick_page(TEMPLATE, item)          # (a template without the marker)

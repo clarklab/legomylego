@@ -55,6 +55,25 @@ def _copy(src: Path, dst: Path) -> None:
         shutil.copy2(src, dst)
 
 
+def credit_html(item: dict) -> str:
+    """The line under a model's description that says whose design it is, when it is not ours:
+    `credit` (our own words for it), else from `designer` and `source` (a link to the original)."""
+    esc = lambda v: html.escape(str(v), quote=True)    # noqa: E731
+    designer, source = item.get("designer"), item.get("source")
+    link = lambda text: (f'<a href="{esc(source)}" target="_blank" rel="noopener">{text}</a>'    # noqa: E731
+                         if source else text)
+    if item.get("credit"):
+        text = esc(item["credit"]) + (f' {link("The original")}.' if source else "")
+    elif designer:
+        text = (f"Designed by {link(esc(designer))}. These steps were worked out from the design; "
+                "they are not the designer's own instructions.")
+    elif source:
+        text = f"Another builder's design: {link('the original')}. These steps were worked out from it."
+    else:
+        return ""
+    return f'<p class="qd-credit">{text}</p>'
+
+
 def quick_page(template: str, item: dict) -> str:
     """Fill the same meta/data-fill markers as the main model-page template."""
     name = html.escape(item["name"], quote=False)
@@ -75,6 +94,9 @@ def quick_page(template: str, item: dict) -> str:
                   lambda _: "<!-- meta:start -->\n" + "\n".join(tags) + "\n<!-- meta:end -->",
                   template, count=1, flags=re.S)
     page = page.replace('data-slug=""', f'data-slug="{html.escape(item["slug"], quote=True)}"', 1)
+    page = re.sub(r"<!-- credit:start -->.*?<!-- credit:end -->",
+                  lambda _: "<!-- credit:start -->" + credit_html(item) + "<!-- credit:end -->",
+                  page, count=1, flags=re.S)
     for key in ("name", "description"):
         page = re.sub(r'(<[^>]*data-fill="' + key + r'"[^>]*>)[^<]*(<)',
                       lambda m: m[1] + html.escape(item[key], quote=False) + m[2], page)
@@ -114,6 +136,9 @@ def build_quick_site(site: Path = ROOT / "site", models_dir: Path = ROOT / "mode
             "url": f"/quick/{slug}/", "model": _asset_url(site, model_path),
             "geometry": _asset_url(site, model_dir / files.get("glb", "model.glb")),
         })
+        for key in ("designer", "source", "credit"):   # (someone else's design: whose, and where)
+            if cfg.get(key):
+                items[-1][key] = cfg[key]
     result = {"models": items}
     _write(site / "quick" / "models.json", json.dumps(result, indent=2, ensure_ascii=False) + "\n")
     template_path = site / "quick-model.html"
