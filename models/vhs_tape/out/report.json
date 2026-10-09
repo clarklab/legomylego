@@ -45,10 +45,10 @@
     {
       "name": "buildability",
       "status": "pass",
-      "summary": "283 insertions tried across 8 submodel(s); 0 problem(s)",
+      "summary": "258 insertions tried across 8 submodel(s); 0 problem(s)",
       "items": [],
       "stats": {
-        "insertions": 283
+        "insertions": 258
       }
     },
     {
@@ -59,12 +59,12 @@
       "stats": {
         "mass_g": 313.09130887292486,
         "com": [
-          0.0559434787582192,
+          0.05594347875821775,
           -31.14035888360219,
-          5.350037119307222
+          5.35003711930723
         ],
         "approx_parts": 0,
-        "margin": 0.9775426874517561,
+        "margin": 0.9775426874517562,
         "tip_angle_deg": 74.89234671583799,
         "com_height_ldu": 31.14035888360219
       }

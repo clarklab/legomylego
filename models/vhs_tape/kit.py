@@ -258,6 +258,10 @@ class Batch:
         return worst
 
     def emit(self, sub, phases: list, captions: dict, per_step: int = 6):
+        """... Nothing is left lying loose from step to step: the build starts with the biggest
+        group of the first phase that holds together, and a group that nothing built reaches
+        yet (a strip of the grip band, until the layer that crosses it) waits for the phase
+        that ties it in, and goes on in the same step as the part that does, just before it."""
         prior = []
         for it in sub.items:            # parts already in the submodel, sub-assemblies included
             if hasattr(it, "part"):
@@ -269,20 +273,45 @@ class Batch:
         built = set(range(n0))
         told = set()
         pos = {j: it[2][:3, 3] for j, it in enumerate(self.items)}
-        for cats in phases:
-            todo = [j for j, it in enumerate(self.items) if it[3] in cats]
+        layer = lambda j: pos[j][1] // 8                 # noqa: E731 (bigger: lower down)
+        near = lambda j: {m - n0 for m in adj[n0 + j] if m >= n0}      # noqa: E731
+
+        def group(start, among):
+            """The parts of `among` that hang together with those of `start`."""
+            seen, stack = set(start), list(start)
+            while stack:
+                for m in near(stack.pop()) & among - seen:
+                    seen.add(m)
+                    stack.append(m)
+            return seen
+
+        waiting = []                                     # groups nothing built reaches yet
+        for k, cats in enumerate(phases):
+            todo = waiting + [j for j, it in enumerate(self.items) if it[3] in cats]
+            waiting = []
             # start at the back-left of the lowest layer
             todo.sort(key=lambda j: (-pos[j][1] // 8, pos[j][2] * -1, pos[j][0]))
             while todo:
                 step, anchor = [], None
                 while todo and len(step) < per_step:
-                    ready = [j for j in todo if adj[n0 + j] & built or not built]
+                    ready = [j for j in todo if adj[n0 + j] & built]
+                    if not built:                        # the first part: of the biggest group
+                        left, groups = set(todo), []
+                        while left:
+                            g = group([next(j for j in todo if j in left)], left)
+                            groups.append(g)
+                            left -= g
+                        big = max(groups, key=len)
+                        ready = [j for j in todo if j in big][:1]
                     if not ready:
                         if step:
                             break
+                        if k + 1 < len(phases):          # a later phase ties these in
+                            waiting, todo = todo, []
+                            break
                         ready = todo[:1]
-                    low = max(pos[j][1] // 8 for j in ready)      # lowest layer first
-                    ready = [j for j in ready if pos[j][1] // 8 == low]
+                    low = max(layer(j) for j in ready)   # lowest layer first
+                    ready = [j for j in ready if layer(j) == low]
                     if anchor is None:
                         j = ready[0]
                         anchor = pos[j]
@@ -290,9 +319,17 @@ class Batch:
                         j = min(ready, key=lambda j: np.linalg.norm(pos[j] - anchor))
                         if np.linalg.norm(pos[j] - anchor) > 140 and len(step) >= 2:
                             break
-                    step.append(j)
-                    built.add(n0 + j)
-                    todo.remove(j)
+                    # what j goes down onto and nothing built reaches: that group first
+                    loose = {m for m in todo if not adj[n0 + m] & built and layer(m) > layer(j)}
+                    under = group(near(j) & loose, loose) if built else set()
+                    if step and len(step) + len(under) + 1 > per_step + 2:
+                        break                            # (a step of their own, the next)
+                    for m in sorted(under, key=lambda m: (-layer(m), np.linalg.norm(pos[m] - pos[j]))) + [j]:
+                        step.append(m)
+                        built.add(n0 + m)
+                        todo.remove(m)
+                if not step:
+                    continue
                 new = [c for c in captions if c not in told and
                        any(self.items[j][3] == c for j in step)]
                 told.update(self.items[j][3] for j in step)
