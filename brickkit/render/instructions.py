@@ -29,6 +29,8 @@ class StepInfo:
     new_parts: list = field(default_factory=list)       # [(part, colour code, qty)]
     new_subs: list = field(default_factory=list)        # [(submodel name, qty)]
     view: str = "above"
+    also: str = ""                   # a second, small picture from the other side, for new
+    also_view: str = ""              # parts the first cannot show ("below" or "above")
 
 
 def _local_items(sub):
@@ -71,6 +73,38 @@ def _view_for(engine, items, visible: list[int], new: list[int], hint: str | Non
     return "below" if below and overlap else "above"
 
 
+def _out_of_sight(engine, sub, items, visible: list[int], new: list[int], view: str) -> list[int]:
+    """The new parts a step's picture cannot show: covered, from where it looks, by what is
+    over them, and open to the other side (a round plate pushed up into a floor from
+    underneath; a plate with another put on it in the same step). Single parts only: a
+    sub-assembly's own insides are its own steps' business."""
+    boxes = {}
+    for n in visible:
+        lo, hi = _bbox(engine, [items[n]])
+        boxes[n] = (lo, hi, (lo[1] + hi[1]) / 2)
+    out = []
+    for n in new:
+        if not isinstance(sub.items[items[n][0]], Placement):
+            continue
+        lo, hi, mid = boxes[n]
+        px, pz = np.meshgrid(np.linspace(lo[0] + 1, hi[0] - 1, 4), np.linspace(lo[2] + 1, hi[2] - 1, 4))
+        over = np.zeros(px.shape, bool)                # (LDraw: -Y is up)
+        under = np.zeros(px.shape, bool)
+        for m in visible:
+            if m == n:
+                continue
+            l2, h2, mid2 = boxes[m]
+            on = (px > l2[0]) & (px < h2[0]) & (pz > l2[2]) & (pz < h2[2])
+            if mid2 < mid - 2:
+                over |= on
+            elif mid2 > mid + 2:
+                under |= on
+        front, back = (over, under) if view == "above" else (under, over)
+        if front.mean() >= 0.9 and back.mean() <= 0.5:
+            out.append(n)
+    return out
+
+
 def plan(engine, model, out_dir: Path) -> dict:
     """Build the render job list and the booklet's step list."""
     out_dir = Path(out_dir)
@@ -109,9 +143,17 @@ def plan(engine, model, out_dir: Path) -> dict:
                 parts[key] = parts.get(key, 0) + 1
             else:
                 subs[it.sub.name] = subs.get(it.sub.name, 0) + 1
+        also = ""
+        other = "below" if view == "above" else "above"
+        unseen = _out_of_sight(engine, sub, items, visible, new, view)
+        if unseen:                                     # a second picture, from the other side
+            also = f"{name}_also.jpg"
+            jobs.append({"name": f"{name}_also", "set": sub_name, "visible": visible, "new": unseen,
+                         "azimuth": front + 30, "elevation": 32 if other == "above" else -30,
+                         "highlight": True})
         steps.append(StepInfo(number, sub_name, s, sub.captions[s], f"{name}.jpg",
                               [(p, c, q) for (p, c), q in sorted(parts.items())],
-                              sorted(subs.items()), view))
+                              sorted(subs.items()), view, also, other if also else ""))
     # finished sub-assemblies (for "build this first" callouts and the overview)
     for name in list(used_subs) + [model.main.name]:
         items = _local_items(model.submodels[name])
@@ -132,20 +174,32 @@ HIGHLIGHT = (255, 205, 0)          # ring round the new parts of a step
 HIGHLIGHT_EDGE = (28, 28, 28)
 
 
-def outline_new_parts(image: Path, mask: Path, width: int = 5) -> None:
-    """Draw a yellow ring with a thin dark edge around the new parts' visible pixels."""
+def outline_new_parts(image: Path, mask: Path, width: int = 5, close: bool = False) -> None:
+    """Draw a yellow ring with a thin dark edge around the new parts' visible pixels. `close`
+    (a step's second, small picture): then cut the picture down to the ringed parts and what
+    is round them - in a picture of the whole model a 1 x 1 plate is a speck."""
     from PIL import Image, ImageChops, ImageFilter
     if not mask.exists():
         return
     img = Image.open(image).convert("RGB")
     m = Image.open(mask).convert("L").point(lambda v: 255 if v > 127 else 0)
-    if m.size != img.size or not m.getbbox():
+    box = m.getbbox()
+    if m.size != img.size or not box:
         mask.unlink()
         return
     inner = m.filter(ImageFilter.MaxFilter(2 * width + 1))
     outer = inner.filter(ImageFilter.MaxFilter(3))
     img.paste(Image.new("RGB", img.size, HIGHLIGHT_EDGE), mask=ImageChops.subtract(outer, m))
     img.paste(Image.new("RGB", img.size, HIGHLIGHT), mask=ImageChops.subtract(inner, m))
+    if close:
+        W, H = img.size
+        w = min(W, max(3.0 * (box[2] - box[0]), 0.34 * W))
+        h = min(H, max(3.0 * (box[3] - box[1]), w * 0.75))
+        w = min(W, max(w, h / 0.75))
+        cx, cy = (box[0] + box[2]) / 2, (box[1] + box[3]) / 2
+        x0 = int(min(max(cx - w / 2, 0), W - w))
+        y0 = int(min(max(cy - h / 2, 0), H - h))
+        img = img.crop((x0, y0, int(x0 + w), int(y0 + h)))
     img.save(image, quality=88)
     mask.unlink()
 
@@ -172,7 +226,8 @@ def render(engine, model, out_dir: Path, *, size=(1100, 820), part_px_per_ldu: f
     run_blender(scene, out_dir, script=SCRIPT, timeout=7200)
     for job in scene["jobs"]:
         if job.get("highlight"):
-            outline_new_parts(out_dir / f"{job['name']}.jpg", out_dir / f"{job['name']}_mask.png")
+            outline_new_parts(out_dir / f"{job['name']}.jpg", out_dir / f"{job['name']}_mask.png",
+                              close=job["name"].endswith("_also"))
     (out_dir / "plan.json").write_text(json.dumps({
         "steps": [s.__dict__ for s in p["steps"]], "used_subs": p["used_subs"],
         "part_images": {f"{part_id(j['part'])}_{j['color']}": j["name"] + ".png"

@@ -16,3 +16,37 @@ def test_render_sample(engine, tmp_path):
     im = np.asarray(Image.open(files[0]).convert("RGB"), float)
     assert im.shape[:2] == (160, 160)
     assert im.std() > 8          # not a blank frame
+
+
+def test_instructions_show_a_piece_that_goes_on_underneath(engine, tmp_path):
+    """A step's picture cannot show a new piece that something covers (a round plate pushed up
+    into a floor from below; a plate with another put on it in the same step): the step gets a
+    second, small picture from the other side with that piece ringed."""
+    from brickkit.model.builder import Model
+    from brickkit.render import instructions as I
+    model = Model("Floor", "floor", {}, engine.catalog)
+    m = model.main
+    m.place("3020", "Black", (0, -16, 0))              # a 2 x 4 plate, one plate up
+    m.place("3024", "Black", (-30, -8, 10))            # ... on a 1 x 1 at each end
+    m.place("3024", "Black", (30, -8, -10))
+    m.step("A silver round plate, pushed up from underneath")
+    m.place("6141", "Flat Silver", (10, -8, 10))
+    m.step("And a tile on top")
+    m.place("3070b", "Black", (10, -24, 10))
+    p = I.plan(engine, model, tmp_path)
+    first, under, top = p["steps"]
+    assert (first.also_view, under.also_view, top.also) == ("below", "below", "")    # (the two 1 x 1s too)
+    job = next(j for j in p["jobs"] if j["name"] == "step_0002_also")
+    assert under.also == "step_0002_also.jpg" and job["elevation"] < 0 and job["highlight"]
+    assert [p["sets"]["floor"][n]["part"] for n in job["new"]] == ["6141.dat"]
+
+    # ringed, and cut down to the piece: in a picture of the whole model it would be a speck
+    img, mask = tmp_path / "x.jpg", tmp_path / "x_mask.png"
+    Image.new("RGB", (1100, 820), "white").save(img)
+    a = np.zeros((820, 1100), np.uint8)
+    a[400:430, 500:540] = 255
+    Image.fromarray(a).save(mask)
+    I.outline_new_parts(img, mask, close=True)
+    out = Image.open(img)
+    assert out.size[0] < 500 and abs(out.size[1] / out.size[0] - 0.75) < 0.02 and not mask.exists()
+    assert (np.asarray(out)[..., 2] < 60).any()        # (the yellow ring is in it)
