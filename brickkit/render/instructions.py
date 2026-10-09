@@ -75,6 +75,8 @@ def _view_for(engine, items, visible: list[int], new: list[int], hint: str | Non
 
 SEEN = 0.3            # of what could ever show of a piece: with less it is not "in the picture"
 LEAST = 0.06          # ... and with less than this in every picture it cannot be shown at all
+FADE = 0.72           # how pale what is built is drawn in such a piece's own picture (the step
+                      # pictures' 0.38 leaves a black piece on dark grey: hard to make out)
 # the pictures' cameras: (degrees round from the step pictures' own azimuth, elevation)
 LOOKS = {"above": (0, 32), "below": (0, -30), "behind": (180, 32), "behind_below": (180, -30)}
 # where a piece the step's own picture does not show is looked for, in turn: (picture, the
@@ -196,7 +198,7 @@ def plan(engine, model, out_dir: Path) -> dict:
                 continue
             turn, el = LOOKS[looks[k_]]
             many = len({items[n][0] for n in where[key]}) > 1
-            jobs.append({"name": f"{name}_{key}", "set": sub_name, "new": where[key],
+            jobs.append({"name": f"{name}_{key}", "set": sub_name, "new": where[key], "fade": FADE,
                          "visible": visible if whole else before + where[key],
                          "azimuth": front + 30 + turn, "elevation": el, "highlight": True})
             also.append({"image": f"{name}_{key}.jpg",

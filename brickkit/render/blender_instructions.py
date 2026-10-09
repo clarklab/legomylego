@@ -44,7 +44,8 @@ class Instr:
         rgb = lifted(hex_to_linear(info["rgb"]))
         alpha = 0.5 if info["alpha"] < 255 else 1.0
         if pale:                          # mix toward white in sRGB so the hue survives
-            rgb = [_lin(_srgb(c) * 0.62 + 0.38) for c in rgb]
+            w = 0.38 if pale is True else float(pale)     # (a job's "fade": paler still)
+            rgb = [_lin(_srgb(c) * (1 - w) + w) for c in rgb]
             alpha = min(alpha, 0.85) if info["alpha"] < 255 else 1.0
         m = bpy.data.materials.new(f"i{code}{'p' if pale else ''}")
         m.diffuse_color = (*rgb, alpha)
@@ -228,7 +229,8 @@ def main():
             ob = objs[n]
             if ob is None:
                 continue
-            want[ob] = ins.material(cols[n], pale=not (n in new or job.get("all_full")))
+            want[ob] = ins.material(cols[n], pale=False if (n in new or job.get("all_full"))
+                                    else (job.get("fade") or True))
             shown.append(ob)
         # touch only what changes: every property write re-tags the object for evaluation
         for ob in list(visible):
@@ -245,7 +247,7 @@ def main():
             pale = mat.name.endswith("p")
             for code, slot in zip(ins.fixed_of.get(ob, ()), list(ob.material_slots)[1:]):
                 if pale:
-                    pm = ins.material(code, pale=True)
+                    pm = ins.material(code, pale=job.get("fade") or True)
                     if slot.link != "OBJECT" or slot.material != pm:
                         slot.link = "OBJECT"
                         slot.material = pm

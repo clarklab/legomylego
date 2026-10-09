@@ -42,7 +42,7 @@
 <section class="page legend">
   <h2>How to read the steps</h2>
   <div class="grid3">
-    <div class="box"><h3>Parts and step number</h3><div class="demo"><span class="bignum">7</span><span class="callout"><span class="item"><img src="{{ inventory[0].img }}">2x</span></span></div><p>The parts for the step and how many of each, then the step number. All parts are drawn at one scale.</p></div>
+    <div class="box"><h3>Parts and step number</h3><div class="demo"><span class="bignum">7</span><span class="callout"><span class="item"><img src="{{ inventory[0].img }}">2x</span></span></div><p>The parts for the step and how many of each, then the step number. The parts of a step are drawn at one scale, so a longer one looks longer; a tile or a long plate also has its size in studs under it.</p></div>
     <div class="box"><h3>New parts</h3><p>The parts added in a step have a yellow outline and are drawn in full colour; the parts from earlier steps are drawn paler.</p></div>
     <div class="box"><h3>Sub-assemblies</h3><div class="demo"><span class="callout"><span class="item sub"><img src="sub_{{ sections[0].name }}.png">1x</span></span></div><p>A yellow-framed picture means: put in the sub-assembly you built in its own section. "Build 4x" means you need four of them.</p></div>
     <div class="box"><h3>Sections</h3><p>Each section starts with its name at the top of the page. Sections are built in the order they appear.</p></div>
@@ -74,7 +74,7 @@
       <div class="top"><div class="n">{{ s.number }}</div>
         {% if s.parts or s.subs %}<div class="callout">
           {% for sa in s.subs %}<div class="item sub"><img src="{{ sa.img }}">{{ sa.qty }}x</div>{% endfor %}
-          {% for p in s.parts %}<div class="item"><img src="{{ p.img }}" title="{{ p.name }} ({{ p.colour }})">{{ p.qty }}x</div>{% endfor %}
+          {% for p in s.parts %}<div class="item"><img src="{{ p.img }}" title="{{ p.name }} ({{ p.colour }})"{% if p.w %} style="width:{{ p.w }}mm;max-width:none;max-height:none"{% endif %}>{{ p.qty }}x{% if p.size %}<span class="dim">{{ p.size }}</span>{% endif %}</div>{% endfor %}
         </div>{% endif %}
       </div>
       <div class="cap">{{ s.caption }}</div>

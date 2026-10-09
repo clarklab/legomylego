@@ -65,6 +65,7 @@ p, li { font-size: 9.5pt; line-height: 1.45; }
            gap: 3mm 4mm; align-items: flex-end; max-width: 100%; }
 .callout .item { text-align: center; font-size: 8pt; font-weight: 700; }
 .callout .item img { display: block; max-height: 18mm; max-width: 30mm; margin: 0 auto 0.5mm; }
+.callout .item .dim { display: block; font-weight: 400; font-size: 7pt; color: #4a5560; }
 .callout .sub img { max-height: 20mm; }
 .callout .sub { background: #fff; border: 0.4mm solid #ffd500; border-radius: 1.5mm; padding: 1mm 2mm; }
 .step .cap { font-size: 8.5pt; color: #444; margin: 1.5mm 0 0 20mm; min-height: 4mm; }
@@ -72,11 +73,13 @@ p, li { font-size: 9.5pt; line-height: 1.45; }
 .step .img img { max-width: 100%; max-height: 138mm; }
 .single .step .img img { max-height: 140mm; }
 .section-banner { position: absolute; top: 0; left: 4mm; font-size: 7.5pt; font-weight: 700; color: #b58f00; text-transform: uppercase; letter-spacing: 0.8pt; }
-.step .img.with-also { gap: 3mm; }
-.step .img.with-also > img { max-width: 61%; flex: 0 1 auto; }
-.step .alsos { flex: 0 0 36%; align-self: flex-end; display: flex; flex-direction: column; gap: 2mm; }
-.step .also { background: #fff; border: 0.5mm solid #ffd500; border-radius: 2mm; padding: 1mm 1mm 1.5mm; text-align: center; font-size: 7.5pt; line-height: 1.25; color: #555; }
-.step .also img { display: block; width: 100%; max-height: none; margin-bottom: 0.8mm; border-radius: 1.2mm; }
+/* a step with a piece its picture cannot show: the step's picture, and under it that piece's
+   own (from below, from behind), as wide - they share the height there is */
+.step .img.with-also { flex-direction: column; align-items: stretch; gap: 2mm; }
+.step .img.with-also > img { flex: 1 1 0; min-height: 0; width: 100%; object-fit: contain; }
+.step .alsos { flex: 1 1 0; min-height: 0; display: flex; gap: 3mm; justify-content: center; }
+.step .also { flex: 0 1 82%; min-width: 0; min-height: 0; display: flex; flex-direction: column; background: #fff; border: 0.5mm solid #ffd500; border-radius: 2mm; padding: 1mm 1mm 1.5mm; text-align: center; font-size: 8pt; line-height: 1.25; color: #444; }
+.step .also img { flex: 1 1 0; min-height: 0; width: 100%; object-fit: contain; margin-bottom: 0.8mm; }
 .below { position: absolute; right: 5mm; top: 3mm; font-size: 7.5pt; color: #666; border: 0.3mm solid #ccc; border-radius: 1.5mm; padding: 0.5mm 2mm; }
 /* works */
 .works { display: grid; grid-template-columns: repeat(2, 1fr); gap: 6mm; }

@@ -68,3 +68,22 @@ def test_instructions_show_a_piece_that_goes_on_underneath(engine, tmp_path):
     out = Image.open(img)
     assert out.size[0] <= 550 and abs(out.size[1] / out.size[0] - 0.75) < 0.02 and not mask.exists()
     assert (np.asarray(out)[..., 2] < 60).any()        # (the yellow ring is in it)
+
+
+def test_step_parts_are_drawn_to_scale(tmp_path):
+    """The parts in a step's box share one scale (a 1 x 4 tile is drawn longer than a 1 x 3),
+    shrunk together if the biggest would not fit; a tile or a long plate has its size under it."""
+    from brickkit.booklet import booklet as B
+    for name, size in (("part_a.png", (138, 76)), ("part_b.png", (112, 66)), ("part_c.png", (59, 54)),
+                       ("part_big.png", (800, 300))):
+        Image.new("RGBA", size).save(tmp_path / name)
+    parts = [{"img": "part_a.png", "name": "Tile 1 x 4"}, {"img": "part_b.png", "name": "Tile 1 x 3"},
+             {"img": "part_c.png", "name": "Plate 1 x 1"}, {"img": "sub_kit.png", "name": "Legs"}]
+    B._to_scale(parts, tmp_path)
+    a, b, c, kit = parts
+    assert a["w"] == pytest.approx(138 * B.PART_MM, abs=0.06) and a["w"] / b["w"] == pytest.approx(138 / 112, abs=0.01)
+    assert (a["size"], b["size"]) == ("1 × 4", "1 × 3") and "size" not in c and "w" not in kit
+    more = [{"img": "part_a.png", "name": "Plate 1 x 4"}, {"img": "part_big.png", "name": "Plate 8 x 16"}]
+    B._to_scale(more, tmp_path)                        # (the big one fits; the small one shrinks with it)
+    assert more[1]["w"] <= B.PART_BOX[0] + 0.05 and more[0]["w"] / more[1]["w"] == pytest.approx(138 / 800, abs=0.01)
+    assert more[0]["size"] == "1 × 4"

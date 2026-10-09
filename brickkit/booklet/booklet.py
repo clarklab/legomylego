@@ -19,6 +19,7 @@ from __future__ import annotations
 
 import datetime as dt
 import json
+import re
 import shutil
 import subprocess
 from collections import Counter
@@ -102,6 +103,7 @@ def build_context(engine, proj, model, img_dir: Path) -> dict:
             "subs": [{"img": f"sub_{n}.png", "qty": q, "title": titles.get(n, n)}
                      for n, q in s["new_subs"] if n not in kits],
         })
+        _to_scale(steps[-1]["parts"], img_dir)
     sections, seen = [], set()
     for s in steps:
         if s["submodel"] not in seen:
@@ -174,6 +176,34 @@ def html_to_pdf(html: Path, pdf: Path) -> Path:
         page.pdf(path=str(pdf), prefer_css_page_size=True, print_background=True)
         browser.close()
     return pdf
+
+
+PART_MM = 0.17        # mm of page per pixel of a part's picture (about 5.4 mm a stud)
+PART_BOX = (62.0, 24.0)   # the most room a part gets in a step's box: mm wide, mm high
+SIZED = re.compile(r"^(Tile|Plate|Brick)\b\D*?(\d+) x (\d+)")
+
+
+def _to_scale(parts: list[dict], img_dir: Path) -> None:
+    """A step's parts at one scale (each gets `w`: its picture's width on the page, mm). The
+    pictures are rendered to scale (px per LDU), so one factor does it: PART_MM, or less for
+    the whole step if its biggest part would not fit PART_BOX - a 1 x 4 tile is never drawn
+    shorter than a 1 x 3 beside it. And `size`: "1 × 4" under a tile or a long plate, whose
+    studs cannot be counted (it has none, or too many)."""
+    from PIL import Image
+    px = {}
+    for k, p in enumerate(parts):
+        f = img_dir / str(p.get("img"))
+        if p.get("img") and str(p["img"]).startswith("part_") and f.exists():
+            with Image.open(f) as im:
+                px[k] = im.size
+    if px:
+        mm = min([PART_MM] + [PART_BOX[0] / w for w, _ in px.values()] + [PART_BOX[1] / h for _, h in px.values()])
+        for k, (w, _) in px.items():
+            parts[k]["w"] = round(w * mm, 1)
+    for p in parts:
+        m = SIZED.match(p.get("name") or "")
+        if m and (max(int(m[2]), int(m[3])) >= 3 or (m[1] == "Tile" and max(int(m[2]), int(m[3])) >= 2)):
+            p["size"] = f"{m[2]} × {m[3]}"
 
 
 def make_booklet(engine, proj, model, *, rerender: bool = True, cover: Path | None = None,
