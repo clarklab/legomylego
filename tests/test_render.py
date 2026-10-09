@@ -44,7 +44,9 @@ def test_instructions_show_a_piece_that_goes_on_underneath(engine, tmp_path):
     # picture from below, the 2 x 4 in place
     assert [a["image"] for a in first.also] == ["step_0001_under.jpg"]
     job = jobs["step_0001_under"]
-    assert {part(n) for n in job["new"]} == {"3024.dat"} and job["elevation"] < 0
+    assert job["elevation"] < 0 and "3024.dat" in {part(n) for n in job["new"]}
+    assert {part(n) for n in job["new"]} == {"3024.dat", "3020.dat"}   # (every piece that shows there
+                                                                       # is ringed: the 2 x 4 as well)
     assert len(job["visible"]) == 3 and "in here" in first.also[0]["text"]
     # step 2: the tile shows from above, the round plate only from below
     assert mixed.view == "above" and [a["image"] for a in mixed.also] == ["step_0002_under.jpg"]
@@ -87,3 +89,22 @@ def test_step_parts_are_drawn_to_scale(tmp_path):
     B._to_scale(more, tmp_path)                        # (the big one fits; the small one shrinks with it)
     assert more[1]["w"] <= B.PART_BOX[0] + 0.05 and more[0]["w"] / more[1]["w"] == pytest.approx(138 / 800, abs=0.01)
     assert more[0]["size"] == "1 × 4"
+
+
+def test_outline_tells_touching_pieces_apart(tmp_path):
+    """Two new pieces that lie end to end get a line between them (the mask has a grey per
+    piece), so they do not read as one long piece; noise in the mask's greys (a dithered
+    render) must not fill them with yellow."""
+    from brickkit.render import instructions as I
+    img, mask = tmp_path / "x.jpg", tmp_path / "x_mask.png"
+    Image.new("RGB", (400, 300), (120, 120, 120)).save(img)
+    a = np.zeros((300, 400), np.int16)
+    a[100:130, 60:160], a[100:130, 160:260], a[180:210, 100:200] = 255, 188, 121
+    noise = np.random.default_rng(1).integers(-1, 2, a.shape)
+    Image.fromarray(np.where(a > 0, np.clip(a + noise, 0, 255), 0).astype(np.uint8)).save(mask)
+    I.outline_new_parts(img, mask)
+    out = np.asarray(Image.open(img)).astype(int)
+    yellow = (out[..., 0] > 200) & (out[..., 1] > 160) & (out[..., 2] < 90)
+    assert yellow[115, 158:162].all()                  # the line between the two end to end
+    assert yellow[115, 56] and yellow[195, 96]         # the ring round them, and round the third
+    assert not yellow[104:126, 66:154].any() and not yellow[184:206, 106:194].any()   # not inside

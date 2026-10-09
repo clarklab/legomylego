@@ -141,26 +141,33 @@ def setup(s):
 MASK = {}
 
 
-def mask_pass(sc, s, job, is_new):
-    """Render which pixels show this step's new parts (white on black, flat, no AA) so the
-    booklet can draw a highlight ring around them. Leaves shading as it found it."""
-    if not MASK:
-        for key, rgb in (("new", (1, 1, 1, 1)), ("old", (0, 0, 0, 1))):
-            m = bpy.data.materials.new(f"mask_{key}")
-            m.diffuse_color = rgb
-            MASK[key] = m
+def mask_pass(sc, s, job, level):
+    """Render which pixels show this step's new parts (flat, no AA; black: not new) so the
+    booklet can draw a highlight ring around them. `level` {object: 0 for what was built, else
+    its piece's grey (1..255)}: each new piece its own grey, so the booklet can tell two that
+    lie end to end apart. Leaves shading as it found it."""
+    def mask(v):
+        if v not in MASK:
+            m = bpy.data.materials.new(f"mask_{v}")
+            c = v / 255.0
+            lin = c / 12.92 if c <= 0.04045 else ((c + 0.055) / 1.055) ** 2.4     # (out as v)
+            m.diffuse_color = (lin, lin, lin, 1)
+            MASK[v] = m
+        return MASK[v]
     sh = sc.display.shading
     saved = (sh.light, sh.show_cavity, sh.show_object_outline, sh.show_specular_highlight,
              sc.display.render_aa, sc.world.color[:], sc.view_settings.exposure,
              sc.render.image_settings.file_format, sc.render.image_settings.color_mode)
-    mats = {ob: ob.material_slots[0].material for ob in is_new}
+    dither = sc.render.dither_intensity
+    sc.render.dither_intensity = 0.0          # (the greys are piece numbers: no noise in them)
+    mats = {ob: ob.material_slots[0].material for ob in level}
     slots = []                  # printed areas (fixed colours) too, not just the base colour
-    for ob, new in is_new.items():
-        ob.material_slots[0].material = MASK["new" if new else "old"]
+    for ob, v in level.items():
+        ob.material_slots[0].material = mask(v)
         for slot in list(ob.material_slots)[1:]:
             slots.append((slot, slot.link, slot.material if slot.link == "OBJECT" else None))
             slot.link = "OBJECT"
-            slot.material = MASK["new" if new else "old"]
+            slot.material = mask(v)
     sh.light = "FLAT"
     sh.show_cavity = sh.show_object_outline = sh.show_specular_highlight = False
     sc.display.render_aa = "OFF"
@@ -174,6 +181,7 @@ def mask_pass(sc, s, job, is_new):
      sc.display.render_aa, wc, sc.view_settings.exposure,
      sc.render.image_settings.file_format, sc.render.image_settings.color_mode) = saved
     sc.world.color = wc
+    sc.render.dither_intensity = dither
     for ob, m in mats.items():
         ob.material_slots[0].material = m
     for slot, link, m in slots:
@@ -267,8 +275,11 @@ def main():
         sc.render.filepath = f"{s['out_dir']}/{job['name']}{ext}"
         bpy.ops.render.render(write_still=True)
         if job.get("highlight"):
-            new_obs = {objs[n] for n in new if objs[n] is not None}
-            mask_pass(sc, s, job, {ob: ob in new_obs for ob in shown})
+            ids = job.get("ids") or [1] * len(job["new"])       # (which piece each new part is of)
+            most = max(ids)
+            grey = {objs[n]: 255 - (k - 1) * (max(1, 200 // most)) for n, k in zip(job["new"], ids)
+                    if objs[n] is not None}
+            mask_pass(sc, s, job, {ob: grey.get(ob, 0) for ob in shown})
         print("BRICKKIT_RENDERED", job["name"])
     for ob in all_objs:
         ob.hide_render = True

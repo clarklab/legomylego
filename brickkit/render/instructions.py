@@ -73,7 +73,9 @@ def _view_for(engine, items, visible: list[int], new: list[int], hint: str | Non
     return "below" if below and overlap else "above"
 
 
-SEEN = 0.3            # of what could ever show of a piece: with less it is not "in the picture"
+SEEN = 0.45           # of what could ever show of a piece: with less it is not "in the picture"
+                      # (0.3 let a face-down tile through on the strength of its edge)
+LOW = 0.25            # a piece that shows this much somewhere, and no more anywhere: shown there
 LEAST = 0.06          # ... and with less than this in every picture it cannot be shown at all
 FADE = 0.72           # how pale what is built is drawn in such a piece's own picture (the step
                       # pictures' 0.38 leaves a black piece on dark grey: hard to make out)
@@ -107,25 +109,37 @@ def _extra_pictures(sight, items, visible: list[int], new: list[int], view: str)
     def shows(g, look, shown) -> bool:
         return float(np.mean([sight(look).seen(n, shown) for n in g])) >= SEEN
 
+    def frac(g, look, shown) -> float:
+        return float(np.mean([sight(look).seen(n, shown) for n in g]))
+
     out: dict = {}
+    k_ = 0 if view == "above" else 1
     rest = [g for g in groups.values() if not shows(g, view, visible)]
-    for key, looks, whole, _ in EXTRA:
-        if not rest:
-            break
-        look = looks[0 if view == "above" else 1]
-        shown = visible if whole else old + flat(rest)
-        got = [g for g in rest if shows(g, look, shown)]
-        if got:
-            out[key] = flat(got)
-            rest = [g for g in rest if g not in got]
+    for key, looks, whole, _ in EXTRA:                 # with everything in place, from another side
+        if whole and rest:
+            got = [g for g in rest if shows(g, looks[k_], visible)]
+            if got:
+                out[key] = flat(got)
+                rest = [g for g in rest if g not in got]
+    for g in list(rest):                               # it shows a little: where it shows most
+        best = max([(frac(g, view, visible), "")] + [(frac(g, looks[k_], visible), key)
+                                                     for key, looks, whole, _ in EXTRA if whole])
+        if best[0] >= LOW:
+            if best[1]:
+                out.setdefault(best[1], []).extend(g)
+            rest.remove(g)
+    for key, looks, whole, _ in EXTRA:                 # on its own, before the others go over it
+        if not whole and rest:
+            got = [g for g in rest if shows(g, looks[k_], old + flat(rest))]
+            if got:
+                out[key] = flat(got)
+                rest = [g for g in rest if g not in got]
     for g in list(rest):                               # mostly inside something (an axle through
         best = (LEAST, None)                           # its holes): where the most of it shows
         for key, looks, whole, _ in EXTRA:
-            look = looks[0 if view == "above" else 1]
-            shown = visible if whole else old + flat(rest)
-            frac = float(np.mean([sight(look).seen(n, shown) for n in g]))
-            if frac > best[0]:
-                best = (frac, key)
+            f = frac(g, looks[k_], visible if whole else old + flat(rest))
+            if f > best[0]:
+                best = (f, key)
         if best[1]:
             out.setdefault(best[1], []).extend(g)
             rest.remove(g)
@@ -197,6 +211,14 @@ def plan(engine, model, out_dir: Path) -> dict:
             if key not in where:
                 continue
             turn, el = LOOKS[looks[k_]]
+            if whole:                                  # ... and the step's other pieces that show
+                rest = {}                              # there: all of them ringed, not just these
+                for n in new:
+                    if n not in where[key]:
+                        rest.setdefault(items[n][0], []).append(n)
+                for g in rest.values():
+                    if float(np.mean([sight(looks[k_]).seen(n, visible) for n in g])) >= SEEN:
+                        where[key] = where[key] + g
             many = len({items[n][0] for n in where[key]}) > 1
             jobs.append({"name": f"{name}_{key}", "set": sub_name, "new": where[key], "fade": FADE,
                          "visible": visible if whole else before + where[key],
@@ -209,6 +231,10 @@ def plan(engine, model, out_dir: Path) -> dict:
         steps.append(StepInfo(number, sub_name, s, sub.captions[s], f"{name}.jpg",
                               [(p, c, q) for (p, c), q in sorted(parts.items())],
                               sorted(subs.items()), view, also))
+    for job in jobs:                                   # which piece each new part is of (1..): a
+        its = _local_items(model.submodels[job["set"]])     # sub-assembly counts as one
+        seen: dict = {}
+        job["ids"] = [seen.setdefault(its[n][0], len(seen) + 1) for n in job["new"]]
     # finished sub-assemblies (for "build this first" callouts and the overview)
     for name in list(used_subs) + [model.main.name]:
         items = _local_items(model.submodels[name])
@@ -227,17 +253,21 @@ def plan(engine, model, out_dir: Path) -> dict:
 
 HIGHLIGHT = (255, 205, 0)          # ring round the new parts of a step
 HIGHLIGHT_EDGE = (28, 28, 28)
+SEAM = 2              # px each way: the line between two new pieces that touch
 
 
 def outline_new_parts(image: Path, mask: Path, width: int = 5, close: bool = False) -> None:
-    """Draw a yellow ring with a thin dark edge around the new parts' visible pixels. `close`
-    (a step's second, small picture): then cut the picture down to the ringed parts and what
-    is round them - in a picture of the whole model a 1 x 1 plate is a speck."""
+    """Draw a yellow ring with a thin dark edge around the new parts' visible pixels, and a
+    yellow line between two new pieces that touch (the mask has a grey level per piece): two
+    grilles end to end read as one long piece otherwise. `close` (a step's second, small
+    picture): then cut the picture down to the ringed parts and what is round them - in a
+    picture of the whole model a 1 x 1 plate is a speck."""
     from PIL import Image, ImageChops, ImageFilter
     if not mask.exists():
         return
     img = Image.open(image).convert("RGB")
-    m = Image.open(mask).convert("L").point(lambda v: 255 if v > 127 else 0)
+    grey = Image.open(mask).convert("L")
+    m = grey.point(lambda v: 255 if v > 20 else 0)
     box = m.getbbox()
     if m.size != img.size or not box:
         mask.unlink()
@@ -246,6 +276,24 @@ def outline_new_parts(image: Path, mask: Path, width: int = 5, close: bool = Fal
     outer = inner.filter(ImageFilter.MaxFilter(3))
     img.paste(Image.new("RGB", img.size, HIGHLIGHT_EDGE), mask=ImageChops.subtract(outer, m))
     img.paste(Image.new("RGB", img.size, HIGHLIGHT), mask=ImageChops.subtract(inner, m))
+    # where one new piece meets another: a line between them (each piece's pixels grown a
+    # little, where that runs into another piece's)
+    a = np.asarray(grey).astype(np.int16)
+    piece = np.zeros(a.shape, np.int16)                # 0: not new; else which piece (1, 2, ...)
+    last, k = -99, 0
+    for v in np.unique(a[a > 20]):                     # greys within a few of each other: one piece
+        if v - last > 4:                               # (pieces are 15 or more apart)
+            k += 1
+        piece[a == v] = k
+        last = v
+    kept = [n for n in range(1, k + 1) if int((piece == n).sum()) >= 12]
+    if len(kept) > 1:
+        seam = np.zeros(a.shape, bool)
+        for n in kept:
+            own = Image.fromarray(((piece == n) * 255).astype(np.uint8))
+            grown = np.asarray(own.filter(ImageFilter.MaxFilter(2 * SEAM + 1))) > 0
+            seam |= grown & (piece > 0) & (piece != n)
+        img.paste(Image.new("RGB", img.size, HIGHLIGHT), mask=Image.fromarray((seam * 255).astype(np.uint8)))
     if close:
         W, H = img.size
         w = min(W, max(3.0 * (box[2] - box[0]), 0.5 * W))    # (half the model round it, at least:
