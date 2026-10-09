@@ -274,6 +274,36 @@ def test_quick_close_ups(engine):
     assert np.dot(out, d / np.linalg.norm(d)) > 0.5            # seen face on
 
 
+def test_quick_close_ups_face_on(engine):
+    """A close-up is only made on a part the camera can be in front of when it lands. The orbit
+    goes one way and takes its time: of a tile on a brick's side and one on its front, landing
+    a moment apart, only the first one asked for gets its close-up - the other would be seen
+    edge on."""
+    from brickkit.checks import run_checks
+    from brickkit.ldraw.matrix import rot
+    from brickkit.model.builder import Model
+    model = Model("Two faces", "two_faces", {}, engine.catalog)
+    m = model.main
+    m.place("3001", "White")
+    m.step()
+    for k in range(12):                                # (enough before them that the two come quickly)
+        x, z = [(-30, -10), (-30, 10), (-10, 10), (30, 10)][k % 4]
+        m.place("3024", "White", (x, -8 * (1 + k // 4), z))
+        m.step()
+    m.place("4733", "White", (10, -24, -10))
+    m.step()
+    m.place("98138", "Red", (28, -14, -10), rot(z=90), tag="side")
+    m.step()
+    m.place("98138", "Blue", (10, -14, -28), rot(x=90), tag="front")
+    assert {c.status for c in run_checks(engine.context(model), ["connections", "collisions", "buildability"])} == {"pass"}
+    placed = model.flatten()
+    tags = lambda hl: [placed[c["part"]].tags for c in Q.plan(     # noqa: E731
+        engine, model, Q.quick_config({"quick": {"highlight": hl, "close_ups": 2}}))["close_ups"]]
+    assert tags(["front", "side"]) == [("front",)]
+    assert tags(["side", "front"]) == [("side",)]
+    assert tags(["side"]) == [("side",)]
+
+
 def test_quick_cues(sample_plan, tmp_path):
     """A click on every landing (the variants in turn), the snap on the last, a swish into
     each close-up, the music bed to the cut; the files are the shared ones."""
@@ -365,6 +395,28 @@ def _quick_models() -> list[str]:
 QUICK = _quick_models()
 
 
+def test_black_patches(tmp_path):
+    """A material the GPU failed to draw: a bright patch that is flat black for a run of
+    frames. Found (and rendered again); a part that is black anyway, or the cut to the empty
+    set, is not."""
+    from PIL import Image
+    def frame(k, patch, table=(60, 140, 90)):          # noqa: E306
+        a = np.zeros((480, 270, 3), np.uint8)
+        a[:] = table
+        a[200:260, 100:160] = patch
+        a[300:330, 30:60] = (2, 2, 2)                  # (a black part, there all along)
+        Image.fromarray(a).save(tmp_path / f"{k:05d}.png")
+    for k in range(12):
+        frame(k, (0, 0, 0) if 4 <= k <= 6 else (250, 205, 30))
+    assert Q.black_patches(tmp_path, 12, cut=10) == [(4, 6)]
+    for k in range(12):                                # the cut: the model gone, the table bare
+        frame(k, (250, 205, 30) if k < 8 else (1, 1, 1), table=(60, 140, 90) if k < 8 else (1, 1, 1))
+    assert Q.black_patches(tmp_path, 12, cut=8) == []
+    for k in range(12):                                # black to the end of the shot
+        frame(k, (250, 205, 30) if k < 5 else (0, 0, 0))
+    assert Q.black_patches(tmp_path, 12, cut=10) == [(5, 9)]
+
+
 @pytest.mark.parametrize("slug", QUICK)
 def test_quick_builds_for_real(engine, slug):
     """Every Quick Bricks model goes together the way it really would: in the plan's own
@@ -429,6 +481,18 @@ def test_quick_units_and_lifts(engine):
     assert sorted(len(it.parts) for it in s3["items"])[-2:] == [3, 5]   # his legs; torso and arms
 
 
+def test_quick_hero_moves_in(engine):
+    """Units built beside the model (the T. rex's legs and arms) widen the shot; for the hero
+    the camera moves in again, and the finished model fills the frame as one that was built
+    in place does."""
+    for slug in ("dinosaur", "bat"):
+        proj = Project(slug, paths.MODELS_DIR)
+        model = proj.build(engine.catalog)
+        pl = Q.plan(engine, model, Q.quick_config(proj.config, slug=slug))
+        xy = _project(pl["camera"], pl["cut"] - 2, T.corners(engine, model.flatten()).reshape(-1, 3))
+        assert 1.2 < np.ptp(xy[:, 0]) < 1.9 and np.abs(xy[:, :2]).max() < 1.0, slug    # all of it, and big
+
+
 def test_quick_schedule_slow():
     """A lift or a join gets the table to itself: nothing else lands in its time."""
     plain = Q.schedule(20, 14.0)
@@ -437,6 +501,11 @@ def test_quick_schedule_slow():
     assert s["land"][8] - s["land"][7] >= before - 1e-6 and s["land"][9] - s["land"][8] >= after - 1e-6
     assert s["flight"][8] >= takes and s["cut"] == pytest.approx(plain["cut"])
     assert plain["land"][8] - plain["land"][7] < before
+    # ... and it waits for a close-up on the piece before it: what is built keeps still till
+    # the camera has moved off (a unit carried away from under it left an empty frame)
+    c = Q.schedule(20, 14.0, highlights=[7], slow={8: Q.SLOW["join"]})
+    assert c["launch"][8] >= c["land"][7] + Q.CLOSE[1] - 1e-6
+    assert s["launch"][8] < s["land"][7] + Q.CLOSE[1]
 
 
 def test_route_keeps_clear(engine):

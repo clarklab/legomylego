@@ -116,6 +116,7 @@ SLOWEST = 4.0         # degrees a second: it never quite stops (and never turns 
 DRIFT = 6.0           # degrees a second: the drift through a close-up
 FACING = (22.0, 60.0)  # degrees: in a close-up the camera is within this of the way the part
                        # faces - a part that goes on sideways, one that goes on from above
+OFF_FACE = 20.0       # degrees further round than that: no close-up is made on the part
 FASTEST = 110.0       # degrees a second: the most the orbit averages between two close-ups
 ROUND = 300.0         # degrees: the orbit goes at least this far round (it shows every side)
 CLOSE_EL = 17.0       # degrees: a close-up's camera above its part
@@ -143,6 +144,10 @@ LAST_LOOK = (25.0, 20.0)   # degrees from the front (either side), give or take:
 BACK_PACE = 0.35      # how much faster it passes the back than the front (0: the same)
 ELEVATION = (11.0, 19.0)   # degrees: the camera low by the table, rising a little with the build
 MARGIN = 1.1          # air round the finished model in the frame (tighter on the base at first)
+RELEASE = 0.5         # of its distance a second: how fast the camera closes in again once a unit
+                      # built beside the model has joined it (it goes out for one at once)
+HERO_WIDE = 1.15      # the camera this much further back than the finished model needs (it was
+HERO_IN = 0.9         # framing units built beside it): it moves in for the hero, over this long (s)
 TILT = 26.0           # degrees a part tumbles in its flight, straightening as it lands
 SOUNDS = {"click": [f"click_{k}.mp3" for k in range(1, 7)], "snap": "snap_1.mp3",
           "swish": "swish_1.mp3", "bed": "bed_2.mp3"}
@@ -233,7 +238,8 @@ def schedule(n: int, seconds: float, highlights: list[int] | None = None, fps: i
     out on the table): LAYOUT_PRE s to look at them first, slower flights (FLOAT) and a longer
     hero (LAYOUT_HERO). `slow` {position: (s before it lands, s after, s it takes)}: what needs
     the table to itself (the build lifted for a piece, a unit joined): nothing else lands in
-    that time."""
+    that time, and it does not start until a close-up just before it is over (the camera
+    would be left looking at where the unit was)."""
     highlights = sorted(set(highlights or []))
     u = np.arange(n) / max(1, n - 1)
     pre, fly, hero = (LAYOUT_PRE, FLOAT, LAYOUT_HERO) if laid else (PRE, FLIGHT, HERO)
@@ -255,6 +261,9 @@ def schedule(n: int, seconds: float, highlights: list[int] | None = None, fps: i
             fixed[h] = max(fixed[h], before)
         if h + 1 < n:
             fixed[h + 1] = max(fixed[h + 1], after)
+    for h in highlights:                               # what is built keeps still till a close-up
+        if h + 1 in (slow or {}):                      # is over: a lift or a join waits for it
+            fixed[h + 1] = max(fixed[h + 1], CLOSE[1] + flight[h + 1])
     span = seconds - pre - hero - TAIL - flight[0]
     free = span - fixed.sum()
     if free <= 0.05 * n or span <= 0:
@@ -417,13 +426,19 @@ def orbit(t: np.ndarray, sch: dict, windows: list, faces: list, front: float,
 
 
 def plan_camera(model, placed, C, seq, sch: dict, groups: list[list[int]], cfg: dict, axes,
-                fps: int = FPS, size=SIZE, laid: dict | None = None, final=None) -> dict:
+                fps: int = FPS, size=SIZE, laid: dict | None = None, final=None,
+                sure: bool = False, home=None) -> dict:
     """The camera per frame: one smooth orbit low round the model (orbit(): it starts on the
     front's three-quarter view and never turns back), framing what is built so far (and
     growing with it), moving in to a macro close-up on up to `close_ups` landings - per group
     the part that faces the camera best as it lands, the orbit timed to be on that part's
     side then - and holding there (from one close-up straight into the next if they come
-    close together); then out, to end on the front. `laid` (lay_out(): the parts start laid
+    close together); then out, to end on the front. `sure` (the schedule has room round the
+    close-ups by now): none on a part the orbit cannot be round to in time, which would be
+    seen edge on (face_on()). `home` (s, per part: when it is on the model): with units built
+    beside the model, the shot takes in a unit's place on the table only until the unit has
+    joined, then closes in on the model again (RELEASE): with every place a unit was ever
+    built kept in the shot, a model of many sections was a speck in the middle of them. `laid` (lay_out(): the parts start laid
     out on the table): it starts high (LAYOUT_EL) in front, on the build's place and the whole
     grid behind it, stopped down to keep them sharp; it frames the build and what still lies
     there, so it closes in and comes down as the grid empties, drifting across the front, and
@@ -444,30 +459,42 @@ def plan_camera(model, placed, C, seq, sch: dict, groups: list[list[int]], cfg: 
     # close-ups: in group order, the part facing the camera best when it lands
     face = {i: facing(C[i], C, axes[i], front) for g in groups for i in g}
     windows = []
+
+    def face_on(ws) -> bool:
+        """With these close-ups, is each one's part seen from near enough the way it faces?
+        The orbit only goes one way and no faster than FASTEST, so two parts that face
+        different ways and land a moment apart cannot both be (a bolt on a figure's side, then
+        its eye); nor one that faces the back while parts still lie on the table (`calm`)."""
+        ws = sorted(ws)
+        az = orbit(t, sch, ws, [(azimuth(face[i][0]), face[i][1]) for _, _, i in ws], front, opening, calm)
+        for _, _, i in ws:
+            z = float(az[min(n - 1, int(land[order_of[i]] * fps))])
+            if abs(T._near(azimuth(face[i][0]), z) - z) > face[i][1] + OFF_FACE:
+                return False
+        return True
+
     if cfg["close_ups"] > 0:
         az0 = orbit(t, sch, [], [], front, opening, calm)    # the orbit left to itself
         for g in groups:
             if len(windows) >= cfg["close_ups"]:
                 break
-            best = None
-            for i in g:                                # (of equals, the later one)
+            ranked = []
+            for at, i in enumerate(g):                 # (of equals, the later one)
                 k = order_of[i]
                 if laid is not None and k < len(seq) / 2:
                     continue
                 f = min(n - 1, int(land[k] * fps))
                 dcam = view_dir(az0[f], 15.0) * [1, 0, 1]
                 dcam /= np.linalg.norm(dcam) + 1e-12
-                score = float(face[i][0] @ dcam)
-                if best is None or score > best[0] - 1e-6:
-                    best = (score, i, k)
-            if best is None:
-                continue
-            _, i, k = best
-            a = land[k] - CLOSE[0] + 0.05
-            b = land[k] + CLOSE[1] - 0.05
-            if k + 1 == len(seq) - 1 and land[-1] - land[k] < 1.0:     # hold for the last piece
-                b = land[-1] + 0.4
-            windows.append([a, b, i])
+                a = land[k] - CLOSE[0] + 0.05
+                b = land[k] + CLOSE[1] - 0.05
+                if k + 1 == len(seq) - 1 and land[-1] - land[k] < 1.0:     # hold for the last piece
+                    b = land[-1] + 0.4
+                ranked.append((round(float(face[i][0] @ dcam), 6), at, [a, b, i]))
+            for _, _, w in sorted(ranked, reverse=True):
+                if not sure or face_on(windows + [w]):     # (else it would be seen edge on, or
+                    windows.append(w)                      # from behind: no close-up is better)
+                    break
     windows.sort()
     az = orbit(t, sch, windows, [(azimuth(face[i][0]), face[i][1]) for _, _, i in windows], front,
                opening, calm)
@@ -476,20 +503,25 @@ def plan_camera(model, placed, C, seq, sch: dict, groups: list[list[int]], cfg: 
     built = np.zeros((n, 2, 3))
     allp = (C if final is None else final).reshape(-1, 3)
     lo_all, hi_all = allp.min(0), allp.max(0)
-    for f in range(n):
-        tf = f / fps
-        sel = [i for k, i in enumerate(seq) if sch["launch"][k] <= tf + 0.25] or [seq[0]]
-        q = C[sel].reshape(-1, 3)
-        built[f] = [q.min(0), q.max(0)]
+    beside = home is not None and final is not None and float(       # (across the table: a build
+        np.abs((C - final)[..., [0, 2]]).max()) > 10.0             # only lifted is not "beside")
     mid = (lo_all + hi_all) / 2
     half = (hi_all - lo_all) / 2
     ground, tall = hi_all[1], hi_all[1] - lo_all[1]           # (LDraw: -Y up)
     least_lo = np.array([mid[0] - 0.55 * half[0], ground - 0.3 * tall, mid[2] - 0.55 * half[2]])
     least_hi = np.array([mid[0] + 0.55 * half[0], ground, mid[2] + 0.55 * half[2]])
+    for f in range(n):
+        tf = f / fps
+        sel = [i for k, i in enumerate(seq) if sch["launch"][k] <= tf + 0.25] or [seq[0]]
+        q = C[sel].reshape(-1, 3)
+        if beside:                                     # (each part where it is by now)
+            q = np.concatenate([final[i] if tf >= home[i] + 0.15 else C[i] for i in sel])
+        built[f] = [q.min(0), q.max(0)]
     lo = np.minimum(built[:, 0], least_lo)
     hi = np.maximum(built[:, 1], least_hi)
-    lo, hi = np.maximum.accumulate(-lo, axis=0) * -1, np.maximum.accumulate(hi, axis=0)
-    height = np.clip((hi[:, 1] - lo[:, 1]) / max(1e-6, hi_all[1] - lo_all[1]), 0, 1)
+    if not beside:                                     # (it only ever grows)
+        lo, hi = np.maximum.accumulate(-lo, axis=0) * -1, np.maximum.accumulate(hi, axis=0)
+    height = np.clip(np.maximum.accumulate(hi[:, 1] - lo[:, 1]) / max(1e-6, hi_all[1] - lo_all[1]), 0, 1)
     el = ELEVATION[0] + (ELEVATION[1] - ELEVATION[0]) * height
     t_h = max([float(sch.get("last", land[-1]))] + [b for _, b, _ in windows])
     hero = t >= t_h
@@ -516,9 +548,20 @@ def plan_camera(model, placed, C, seq, sch: dict, groups: list[list[int]], cfg: 
         tgt[f] = c
         mg = 1.0 + (MARGIN - 1.0) * (1.0 if hero[f] else height[f])      # tight on the base first
         dist[f] = frame_distance(box, c, d, lens0, mg, size)
-    # smooth, and never closer than it was (the shot grows with the build), until the hero
-    tgt = np.stack([T._gauss(tgt[:, a], 0.35 * fps) for a in range(3)], 1)
-    dist = T._gauss(np.maximum.accumulate(dist), 0.3 * fps)
+    # smooth, and never closer than it was (the shot grows with the build), until the hero:
+    # then on the finished model, if the shot had grown for more than that
+    tgt = np.stack([T._gauss(tgt[:, a], (0.6 if beside else 0.35) * fps) for a in range(3)], 1)
+    need = float(dist[hero].max()) if hero.any() else 0.0      # the finished model, from any side
+    if beside:                                         # out at once for a unit's place, in again
+        for f in range(1, n):                          # slowly once it has joined
+            dist[f] = max(dist[f], dist[f - 1] * (1.0 - RELEASE / fps))
+    else:
+        dist = np.maximum.accumulate(dist)
+    k = int(np.argmax(hero)) if hero.any() else 0
+    if k > 0 and dist[k - 1] > HERO_WIDE * need:       # the camera was back for units built
+        ease = T.smootherstep(np.clip((t[k:] - t[k]) / HERO_IN, 0, 1))     # beside the model: in
+        dist[k:] = dist[k - 1] + (need - dist[k - 1]) * ease               # again for the hero
+    dist = T._gauss(dist, 0.3 * fps)
     if laid is not None:                               # from on high: the build's place and all
         far, mid_w = np.zeros(n), np.zeros((n, 3))     # that still lies behind it
         for f in range(n):
@@ -899,9 +942,13 @@ def motion(engine, placed, script: dict, sch: dict, cam: dict, laid: dict | None
         from_table = it.source is not None or bool(laid)
         routes: dict = {}
 
-        def way(flip: bool) -> dict:
-            if flip in routes:
-                return routes[flip]
+        def way(opt: int) -> dict:
+            """Its route. 0, 1: from one side of the frame or the other (tumbling in, if it
+            comes from off the frame); 2, 3: the same without the tumble, and 4: from straight
+            overhead - for a tight place a tumbling piece does not fit into."""
+            if opt in routes:
+                return routes[opt]
+            flip = opt in (1, 3)
             turn, tilt = None, None
             if from_table:                             # from where it stands or lies
                 X0 = np.asarray(it.source[lead] if it.source is not None else laid["start"][lead], float) \
@@ -923,8 +970,10 @@ def motion(engine, placed, script: dict, sch: dict, cam: dict, laid: dict | None
                 start = side * reach + up * (0.9 if flip and np.linalg.norm(side) < 0.9 else 0.55) * reach \
                     + it.axis * it.travel
                 tilt_axis = np.cross(up, side)
-                if np.linalg.norm(tilt_axis) > 1e-6:
+                if np.linalg.norm(tilt_axis) > 1e-6 and opt < 2:
                     tilt = (tilt_axis, TILT)
+                if opt == 4:
+                    start = up * 0.9 * reach + it.axis * it.travel
             if it.mode == "under":                     # along the table, in under what is held up
                 flatr = right * [1, 0, 1] / (np.linalg.norm(right * [1, 0, 1]) + 1e-12)
                 sgn = (1.0 if float(start @ flatr) >= 0 else -1.0) * (-1.0 if flip else 1.0)
@@ -932,9 +981,9 @@ def motion(engine, placed, script: dict, sch: dict, cam: dict, laid: dict | None
                 ways = [(h, 16.0) for h in (flatr * sgn, -flatr * sgn, fwd, -fwd)]
             else:
                 ways = [(it.axis, it.travel)]
-            routes[flip] = A.route(world, movers, start, turn, ways, tilt=tilt, direct=not from_table,
-                                   hop=30.0 if flip and from_table else 10.0)
-            return routes[flip]
+            routes[opt] = A.route(world, movers, start, turn, ways, tilt=tilt, direct=not from_table,
+                                  hop=30.0 if flip and from_table else 10.0)
+            return routes[opt]
 
         def fly(path: dict, f0: int, f1: int):
             total = float(path["s"][-1])
@@ -979,20 +1028,23 @@ def motion(engine, placed, script: dict, sch: dict, cam: dict, laid: dict | None
 
         least = max(0, last_land + 1 - f1s, (last_end - f0s) if slow else (held - f1s))
         best = None
-        for more in (int(round(x * fps)) for x in LATER):
-            for flip in (False, True):
-                path = way(flip)
-                if best is not None and not path["clear"] and best[1]["clear"]:
-                    continue
-                f0, f1 = f0s + least + more, f1s + least + more
-                frames, carried = fly(path, f0, f1)
-                score = (not path["clear"], crossing(frames, f0, f1), more, flip)
-                if best is None or score < best[0]:
-                    best = (score, path, f0, f1, frames, carried)
-                if score[:2] == (False, 0):
-                    break
-            if best[0][:2] == (False, 0):
+        for opts in ((0, 1), (2, 3, 4)):               # (the plain ways only if those are blocked)
+            if best is not None and (best[1]["clear"] or from_table):
                 break
+            for more in (int(round(x * fps)) for x in LATER):
+                for opt in opts:
+                    path = way(opt)
+                    if best is not None and not path["clear"] and best[1]["clear"]:
+                        continue
+                    f0, f1 = f0s + least + more, f1s + least + more
+                    frames, carried = fly(path, f0, f1)
+                    score = (not path["clear"], crossing(frames, f0, f1), more, opt)
+                    if best is None or score < best[0]:
+                        best = (score, path, f0, f1, frames, carried)
+                    if score[:2] == (False, 0):
+                        break
+                if best[0][:2] == (False, 0):
+                    break
         _, path, f0, f1, frames, carried = best
         if not path["clear"] or it.forced:
             notes.append(f"{A_name(placed, it.parts)}: no clear way in")
@@ -1179,12 +1231,27 @@ def plan(engine, model, cfg: dict, fps: int = FPS, size=SIZE, log=None) -> dict:
                     land=np.array([si["land"][piece[i]] for i in order]), last=float(si["land"][-1]))
         return si, view
 
+    def home(si) -> np.ndarray:
+        """When (s) each part is on the model: its own landing, or when the unit it was built
+        in beside the model is joined (the last such, for a unit of a unit)."""
+        at = np.array([float(si["land"][piece[i]]) for i in range(len(placed))])
+        for k, it in enumerate(items):
+            if it.kind == "join":
+                for i in it.parts:
+                    at[i] = max(at[i], float(si["land"][k]))
+        return at
+
     # schedule, pick the close-ups on it, schedule again with room round them, then the camera
     si, sch = timed([])
-    cam = plan_camera(model, placed, Cl, order, sch, groups, cfg, axes, fps, size, laid, C)
-    si, sch = timed([piece[w[2]] for w in cam["windows"]])
-    groups2 = [[w[2]] for w in cam["windows"]]
-    cam = plan_camera(model, placed, Cl, order, sch, groups2, cfg, axes, fps, size, laid, C)
+    cam = plan_camera(model, placed, Cl, order, sch, groups, cfg, axes, fps, size, laid, C, home=home(si))
+    for _ in range(2):                                 # (again, if one is dropped: face_on())
+        picked = [w[2] for w in cam["windows"]]
+        si, sch = timed([piece[i] for i in picked])
+        groups2 = [g2 for g2 in ([i for i in g if i in picked] for g in groups) if g2]   # (first wanted first)
+        cam = plan_camera(model, placed, Cl, order, sch, groups2, cfg, axes, fps, size, laid, C, sure=True,
+                          home=home(si))
+        if len(cam["windows"]) == len(picked):
+            break
     if seconds > float(cfg["seconds"]) and log:
         log(f"  quick: {seconds:g} s, not {float(cfg['seconds']):g}: the build takes that long "
             f"({len(slow)} lifts and joins)")
@@ -1371,6 +1438,20 @@ def make_quick(engine, proj, model, *, preview: bool = False, set_name: str | No
     if stills:
         log(f"stills -> {work}")
         return work
+    for again in (True, True, False):                  # a patch gone black: those frames again
+        runs = black_patches(work, n, pl["cut"])
+        if not runs:
+            break
+        said = ", ".join(f"{a}-{b}" if b > a else str(a) for a, b in runs[:8])
+        if not again:
+            log(f"warning: a bright patch is flat black in frames {said}: look at them")
+            break
+        log(f"  quick: a bright patch went flat black in frames {said} (the GPU dropped a "
+            f"material): rendering them again")
+        for a, b in runs:
+            for f in range(a, b + 1):
+                (work / f"{f:05d}.png").unlink(missing_ok=True)
+        secs += _run_blender(script, job, work / "job.json", "quick", log)
     return _finish(proj, model, cfg, pl, work, q, audio, preview, t_start, secs, log)
 
 
@@ -1436,6 +1517,38 @@ def blank_frames(work: Path, n: int, threshold: float = 5.0) -> list[int]:
         if float(a.std(axis=(0, 1)).mean()) < threshold:          # each channel's spread
             out.append(f)
     return out
+
+
+def black_patches(work: Path, n: int, cut: int, least: int = 60) -> list[tuple[int, int]]:
+    """Runs of frames [(first, last)] in which a bright patch is flat black: a material the GPU
+    failed to draw. (Seen once, with the machine short of memory: a model's yellow feet went
+    black for 18 frames, and were right again in the next Blender process.) A run starts where
+    `least` pixels or more (of 270 x 480) go from bright to black between two frames, and
+    ends where as many come back, or at the cut to the empty set."""
+    from PIL import Image
+    runs, prev, start = [], None, None
+    for f in range(n):
+        path = work / f"{f:05d}.png"
+        if not path.exists():
+            prev = None
+            continue
+        with Image.open(path) as im:
+            im.draft("RGB", (270, 480))
+            top = np.asarray(im.convert("RGB").resize((270, 480), Image.BILINEAR)).max(axis=2)
+        bright, black = top > 120, top < 2             # (black plastic is never quite 0; this is)
+        if prev is not None and abs(f - cut) > 2:
+            if start is None and int((prev[0] & black).sum()) >= least:
+                start = f
+            elif start is not None and int((prev[1] & bright).sum()) >= least:
+                runs.append((start, f - 1))
+                start = None
+        if start is not None and f == cut - 1:
+            runs.append((start, f))
+            start = None
+        prev = (bright, black)
+    if start is not None:
+        runs.append((start, n - 1))
+    return runs
 
 
 def encode(work: Path, fps: int, n: int, wm: Path | None, wav: Path | None, mp4: Path, q: dict,
