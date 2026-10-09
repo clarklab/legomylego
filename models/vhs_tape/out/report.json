@@ -45,7 +45,7 @@
     {
       "name": "buildability",
       "status": "pass",
-      "summary": "258 insertions tried across 8 submodel(s); 0 problem(s)",
+      "summary": "258 insertions tried across 14 submodel(s); 0 problem(s)",
       "items": [],
       "stats": {
         "insertions": 258

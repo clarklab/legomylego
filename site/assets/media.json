@@ -1158,20 +1158,20 @@
   "vhs_tape": {
    "files": {
     "booklet.pdf": {
-     "v": "46e7bdcad4",
-     "size": 15363926
+     "v": "5a3c09bf10",
+     "size": 19629402
     },
     "bricklink_wanted.xml": {
      "v": "e030cffbd7",
      "size": 4925
     },
     "model.glb": {
-     "v": "6fbb353cdc",
+     "v": "7f6b67beff",
      "size": 2759496
     },
     "model.json": {
-     "v": "9ca3a29477",
-     "size": 80924
+     "v": "42e15dcbf0",
+     "size": 84603
     },
     "parts.csv": {
      "v": "9126d98ac2",
@@ -1226,8 +1226,8 @@
      "size": 28963220
     },
     "vhs_tape.mpd": {
-     "v": "3f7634cb60",
-     "size": 20651
+     "v": "520a8c5fce",
+     "size": 22546
     },
     "video_poster.jpg": {
      "v": "a8ed6d985e",
@@ -1284,7 +1284,7 @@
      "sm": "/assets/img/vhs_tape/renders_white-480.webp?v=5799d76587"
     }
    },
-   "og": "/assets/og/vhs_tape.png?v=230750620d"
+   "og": "/assets/og/vhs_tape.png?v=7d879247e4"
   },
   "watermelon_ice_lolly": {
    "files": {

@@ -230,6 +230,10 @@ def n_pieces(parts: list[tuple]) -> int:
     return n
 
 
+SMALL = 4             # things to put on in one booklet step, at most (a strip counts as one)
+STRIP = 3             # pieces: a loose group this big is built apart, as a sub-assembly
+
+
 class Batch:
     """Collect placements (part, colour, M, category), then emit them as build steps.
 
@@ -292,7 +296,7 @@ class Batch:
             # start at the back-left of the lowest layer
             todo.sort(key=lambda j: (-pos[j][1] // 8, pos[j][2] * -1, pos[j][0]))
             while todo:
-                step, anchor = [], None
+                step, anchor, entries = [], None, []
                 while todo and len(step) < per_step:
                     ready = [j for j in todo if adj[n0 + j] & built]
                     if not built:                        # the first part: of the biggest group
@@ -324,7 +328,14 @@ class Batch:
                     under = group(near(j) & loose, loose) if built else set()
                     if step and len(step) + len(under) + 1 > per_step + 2:
                         break                            # (a step of their own, the next)
-                    for m in sorted(under, key=lambda m: (-layer(m), np.linalg.norm(pos[m] - pos[j]))) + [j]:
+                    under = sorted(under, key=lambda m: (-layer(m), np.linalg.norm(pos[m] - pos[j])))
+                    parts_, left = [], list(under)     # the groups of it that hold together by
+                    while left:                        # themselves (the rest only through j)
+                        g = group([left[0]], set(left))
+                        parts_.append([m for m in left if m in g])
+                        left = [m for m in left if m not in g]
+                    entries.append((parts_, j))
+                    for m in under + [j]:
                         step.append(m)
                         built.add(n0 + m)
                         todo.remove(m)
@@ -333,8 +344,53 @@ class Batch:
                 new = [c for c in captions if c not in told and
                        any(self.items[j][3] == c for j in step)]
                 told.update(self.items[j][3] for j in step)
-                sub.step(captions[new[0]] if new else "")
-                for j in step:
-                    part, color, M, cat, tag, insert = self.items[j]
-                    sub.place(part, color, (0, 0, 0), tag=tag, insert=insert).M = M
+                self._emit_step(sub, entries, captions[new[0]] if new else "", pos)
+                entries = []
         self.items = []
+
+    def _put(self, sub, j):
+        part, color, M, cat, tag, insert = self.items[j]
+        sub.place(part, color, (0, 0, 0), tag=tag, insert=insert).M = M
+
+    def _emit_step(self, sub, entries: list, caption: str, pos: dict):
+        """One cluster of the build order as booklet steps a builder can follow: about SMALL
+        things to put on in a step, and a strip that goes on with the part that ties it down
+        (STRIP pieces or more that hold together by themselves) is a sub-assembly: built apart
+        in a step or two of its own, then put on as one thing together with that part.
+        `entries`: [(the loose groups a part ties down, each lowest pieces first; the part)],
+        in order; a step never ends between a group and its part, so nothing lies loose from
+        step to step."""
+        things = lambda groups: sum(1 if len(g) >= STRIP else len(g) for g in groups) + 1   # noqa: E731
+        chunks, cur, units = [], [], 0
+        for groups, j in entries:
+            if cur and units + things(groups) > SMALL:
+                chunks.append(cur)
+                cur, units = [], 0
+            cur.append((groups, j))
+            units += things(groups)
+        chunks.append(cur)
+        for k, chunk in enumerate(chunks):
+            made = {}
+            for groups, j in chunk:
+                for g in groups:
+                    if len(g) < STRIP:
+                        continue
+                    n = sum(1 for name in sub.model.submodels if name.startswith(sub.name + "_strip")) + 1
+                    strip = sub.model.submodel(f"{sub.name}_strip{n}", f"{sub.title}: strip {n}")
+                    low = max(pos[m][1] // 8 for m in g)           # (its lowest layer: on the table)
+                    order = [m for m in g if pos[m][1] // 8 == low] + [m for m in g if pos[m][1] // 8 != low]
+                    for at in range(0, len(order), SMALL):
+                        strip.step("Build this strip apart, the way up it is drawn. Once built, it goes on "
+                                   "with the piece that locks it down" if at == 0 else "")
+                        for m in order[at:at + SMALL]:
+                            self._put(strip, m)
+                    made[id(g)] = strip
+            sub.step(caption if k == 0 else "")
+            for groups, j in chunk:
+                for g in groups:
+                    if id(g) in made:
+                        sub.use(made[id(g)])
+                    else:
+                        for m in g:
+                            self._put(sub, m)
+                self._put(sub, j)
