@@ -192,6 +192,12 @@ def quick_config(config: dict, over: dict | None = None, slug: str = "") -> dict
         raise SystemExit('[quick] view: "filmic" or "agx"')
     if float(out["seconds"]) < 6:
         raise SystemExit("[quick] seconds: at least 6")
+    if out.get("last_look") is not None:
+        try:
+            a, tol = (float(v) for v in out["last_look"])
+        except (TypeError, ValueError):
+            raise SystemExit("[quick] last_look: [degrees from the front, give or take], e.g. [0, 12]")
+        out["last_look"] = (a, tol)
     return out
 
 
@@ -353,7 +359,7 @@ def _pick(centres, tol: float, want: float, least: float) -> float:
 
 
 def orbit(t: np.ndarray, sch: dict, windows: list, faces: list, front: float,
-          opening: float = OPENING, calm: float | None = None) -> np.ndarray:
+          opening: float = OPENING, calm: float | None = None, last=None) -> np.ndarray:
     """The camera's azimuth per frame (degrees): one smooth orbit that only ever goes one
     way. It opens on the front's three-quarter view (`opening`), circles slowly at first and faster as
     the build speeds up (ORBIT), is where each close-up's part faces when that part lands
@@ -398,7 +404,8 @@ def orbit(t: np.ndarray, sch: dict, windows: list, faces: list, front: float,
         t0, z0 = keys[-1]
     if cut > t0 + 0.1:
         speed = pace(t0, cut) if not windows else 0.5 * (ORBIT[0] + ORBIT[1])
-        z = _pick([front + LAST_LOOK[0], front - LAST_LOOK[0]], LAST_LOOK[1],     # (it may all
+        look = LAST_LOOK if last is None else last     # ([quick] last_look, for a model that is
+        z = _pick([front + look[0], front - look[0]], look[1],    # poor from some of that) (it may all
                   z0 + speed * (cut - t0), z0 + 0.5 * SLOWEST * (cut - t0))       # but stay)
         free.append(len(keys) - 1)
         keys.append((cut, min(z, z0 + FASTEST * (cut - t0))))
@@ -454,6 +461,7 @@ def plan_camera(model, placed, C, seq, sch: dict, groups: list[list[int]], cfg: 
     front = float(model.meta.get("azimuth_offset", 0.0))
     opening = OPENING if laid is None else LAYOUT_OPENING
     calm = None if laid is None else float(sch["launch"][max(0, len(seq) - 3)])   # all but lifted
+    last = cfg.get("last_look")                        # where the orbit ends, if not LAST_LOOK
     land = sch["land"]
     order_of = {i: k for k, i in enumerate(seq)}
     # close-ups: in group order, the part facing the camera best when it lands
@@ -466,7 +474,8 @@ def plan_camera(model, placed, C, seq, sch: dict, groups: list[list[int]], cfg: 
         different ways and land a moment apart cannot both be (a bolt on a figure's side, then
         its eye); nor one that faces the back while parts still lie on the table (`calm`)."""
         ws = sorted(ws)
-        az = orbit(t, sch, ws, [(azimuth(face[i][0]), face[i][1]) for _, _, i in ws], front, opening, calm)
+        az = orbit(t, sch, ws, [(azimuth(face[i][0]), face[i][1]) for _, _, i in ws], front, opening, calm,
+                   last)
         for _, _, i in ws:
             z = float(az[min(n - 1, int(land[order_of[i]] * fps))])
             if abs(T._near(azimuth(face[i][0]), z) - z) > face[i][1] + OFF_FACE:
@@ -474,7 +483,7 @@ def plan_camera(model, placed, C, seq, sch: dict, groups: list[list[int]], cfg: 
         return True
 
     if cfg["close_ups"] > 0:
-        az0 = orbit(t, sch, [], [], front, opening, calm)    # the orbit left to itself
+        az0 = orbit(t, sch, [], [], front, opening, calm, last)    # the orbit left to itself
         for g in groups:
             if len(windows) >= cfg["close_ups"]:
                 break
@@ -497,7 +506,7 @@ def plan_camera(model, placed, C, seq, sch: dict, groups: list[list[int]], cfg: 
                     break
     windows.sort()
     az = orbit(t, sch, windows, [(azimuth(face[i][0]), face[i][1]) for _, _, i in windows], front,
-               opening, calm)
+               opening, calm, last)
     # what is built (or flying in) at each frame frames the shot; never less than the first
     # part and half the model
     built = np.zeros((n, 2, 3))

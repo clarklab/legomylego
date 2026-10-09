@@ -903,6 +903,8 @@ seconds = 14                        # the whole loop
 highlight = ["14769p0m", "3688"]    # parts (numbers or tags) for the close-ups, by preference
                                     # (else printed parts, then the last two parts)
 close_ups = 2                       # 0..3
+# last_look = [0, 12]              # where the video ends: degrees from the model's front, give
+                                    # or take (else its three-quarter view, either side)
 layout = "auto"                     # true: the parts start laid out in a grid and float in;
                                     # false: they fly in; "auto": laid out under 25 pieces
 music = false                       # true: a light music bed under the clicks

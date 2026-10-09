@@ -493,6 +493,21 @@ def test_quick_hero_moves_in(engine):
         assert 1.2 < np.ptp(xy[:, 0]) < 1.9 and np.abs(xy[:, :2]).max() < 1.0, slug    # all of it, and big
 
 
+def test_quick_last_look():
+    """[quick] last_look = [degrees from the front, give or take]: where the orbit ends (the
+    front's three-quarter view, either side, if not given) - for a model that is poor from
+    part of that (a long thin creature, head on)."""
+    sch = Q.schedule(20, 14.0)
+    t = np.arange(sch["frames"]) / Q.FPS
+    end = lambda last: (float(Q.orbit(t, sch, [], [], 50.0, last=last)[int(sch["cut"] * Q.FPS) - 1]) + 180) % 360 - 180   # noqa: E731
+    assert 5 - 8 <= abs(end(None) - 50.0) <= 45 + 8            # LAST_LOOK: 25 off the front, +-20
+    assert abs(end((0, 12)) - 50.0) <= 12 + 8                  # on the front itself, +-12
+    assert Q.quick_config({"quick": {"last_look": [0, 12]}})["last_look"] == (0.0, 12.0)
+    assert Q.quick_config({}).get("last_look") is None
+    with pytest.raises(SystemExit):
+        Q.quick_config({"quick": {"last_look": "side"}})
+
+
 def test_quick_schedule_slow():
     """A lift or a join gets the table to itself: nothing else lands in its time."""
     plain = Q.schedule(20, 14.0)
