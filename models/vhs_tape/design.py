@@ -78,21 +78,18 @@ def best_layout(layout, phases, tries=36):
 
 # ------------------------------------------------------------------------------ reels
 def reel(model, name: str, title: str, full: bool):
-    """A reel built around its own axis: a light grey lower flange (8 x 8 round plate), a black
-    tape pack, a clear upper flange ring (Trans-Clear 4 x 4 macaroni tiles, r 60..80 LDU) and
+    """A reel built around its own axis: a black lower flange (8 x 8 round plate; black is the
+    colour of it Pick a Brick ships with the rest of the kit), a second one for the tape pack,
+    a clear upper flange ring (Trans-Clear 4 x 4 macaroni tiles, r 60..80 LDU) and
     a white hub: a flat ring of 2 x 2 macaroni tiles round a 2 x 2 round plate whose four
     studs are the hub's bumps. A red Technic axle runs through the round plates' holes and
     the hub's axle hole: its end is the red dot in the middle of the hub, and underneath it
     is the spindle that turns in the chassis' round bearing holes."""
     s = model.submodel(name, title)
-    s.step("Lower flange: a light grey 8 x 8 round plate with a hole in the middle")
+    s.step("Lower flange: a black 8 x 8 round plate with a hole in the middle")
     s.place("74611", "flange", (0, -8, 0))
-    if full:
-        s.step("A full pack of tape: a black 8 x 8 round plate")
-        s.place("74611", "tape", (0, -16, 0))
-    else:
-        s.step("Nearly empty: a second grey plate, so the flange shows round a thin pack")
-        s.place("74611", "flange", (0, -16, 0))
+    s.step("The tape pack: a second black 8 x 8 round plate on top of it")
+    s.place("74611", "tape" if full else "flange", (0, -16, 0))
     s.step("The hub: a round plate with an axle hole, and a flat white ring round it")
     s.place("4032a", "hub", (0, -24, 0))
     for q in range(4):
@@ -421,7 +418,7 @@ def build(model):
     model.meta["mechanism_name"] = "Dust door and reels"
     model.meta["mechanism_labels"] = ["closed", "open"]
     reels = {"reel_l": reel(model, "reel_full", "Supply reel (full)", True),
-             "reel_r": reel(model, "reel_empty", "Take-up reel (nearly empty)", False)}
+             "reel_r": reel(model, "reel_empty", "Take-up reel", False)}
     chassis = core(model)
     win = window(model)
     label = label_panel(model)
@@ -435,7 +432,7 @@ def build(model):
               "down through the round holes")
     main.use(reels["reel_l"], (REEL_X["reel_l"], -16, REEL_Z), tag="reel_l",
              insert=(0, -1, 0))
-    main.step("The nearly empty take-up reel on the left-hand bearing")
+    main.step("The take-up reel on the left-hand bearing")
     main.use(reels["reel_r"], (REEL_X["reel_r"], -16, REEL_Z), tag="reel_r",
              insert=(0, -1, 0))
     main.step("End walls")

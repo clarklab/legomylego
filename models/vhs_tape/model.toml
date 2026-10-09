@@ -8,7 +8,9 @@ notice = "VHS is a trademark of JVC KENWOOD Corporation."
 shell = "Black"              # the cassette: chassis, walls, top shell, dust flap
 glass = "Trans-Clear"        # window glass (Glass for Frame 1 x 6 x 6)
 label = "White"              # face label and spine label
-flange = "Light Bluish Gray" # lower reel flanges (8 x 8 round plates; White 74611 ships slowly from Pick a Brick)
+flange = "Black"             # reel flanges under the clear rings (8 x 8 round plates). Black is the one
+                             # colour of 74611 in Pick a Brick's Bestseller range, which ships with the rest
+                             # of the kit: White and Light Bluish Gray come later, in a parcel of their own
 hub = "White"                # reel hubs
 tape = "Black"               # tape packs and the tape run across the mouth
 clear = "Trans-Clear"        # clear upper reel flanges
@@ -27,7 +29,7 @@ label = "Light Bluish Gray"
 
 [booklet]
 subtitle = "A 1:1 VHS tape, within a few millimetres of the real 187 x 103 x 25 mm cassette. Swing the dust flap up to see the tape; watch the reels turn through the windows."
-intro = "Built like a real cassette, from the inside out. First the chassis: the bottom with its drive holes and screw heads, the lamp tube, the reel-lock release, the guide rollers and the tape stretched across the mouth. Two reels drop onto their red spindles: a full supply reel and a nearly empty take-up reel. The end walls go on, then the top shell, built upside down with its grip bands, recessed label, spine label and two big windows, is lowered over everything. Last, the full-length dust flap hangs on two Technic pins."
+intro = "Built like a real cassette, from the inside out. First the chassis: the bottom with its drive holes and screw heads, the lamp tube, the reel-lock release, the guide rollers and the tape stretched across the mouth. Two reels drop onto their red spindles: the supply reel and the take-up reel. The end walls go on, then the top shell, built upside down with its grip bands, recessed label, spine label and two big windows, is lowered over everything. Last, the full-length dust flap hangs on two Technic pins."
 notes = [
   "Each reel turns on its red Technic axle in the chassis' round holes. The axle's end shows in the drive hole underneath: turn it with a fingertip to wind the tape.",
   "Lower the top shell straight down so the window hangers find their ledges and the reel hubs slide under the windows.",

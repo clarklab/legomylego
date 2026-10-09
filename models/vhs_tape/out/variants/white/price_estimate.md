@@ -1,6 +1,6 @@
 # VHS Cassette: price estimate
 
-**Roughly $15 - $55** for 384 pieces in 54 lines, new parts on BrickLink, before shipping.
+**Roughly $15 - $55** for 384 pieces in 53 lines, new parts on BrickLink, before shipping.
 
 This is a rough range from typical per-piece prices by part type (see `brickkit/data/price_bands.json`), scaled up for transparent colours and for part/colour combinations that appeared in few sets. It is not live market data: set up BrickLink API credentials (see `brickkit/bom/live_price.py`) for dated prices.
 
@@ -34,12 +34,12 @@ For a real quote, upload `bricklink_wanted.xml` as a BrickLink Wanted List and u
 | 6 | 60479 Plate 1 x 12 | White | 0.02-0.08 | 0.12-0.48 | plate |
 | 2 | 2780 Technic Pin with Friction Ridges Lengthwise and Center Slots | Black | 0.05-0.25 | 0.10-0.50 | technic |
 | 2 | 6541 Technic Brick 1 x 1 with Pin Hole | White | 0.05-0.25 | 0.10-0.50 | technic |
+| 4 | 74611 Plate Round 8 x 8 | Black | 0.03-0.11 | 0.11-0.45 | plate, in 26 set(s) |
 | 4 | 2431 Tile 1 x 4 with Groove | Light Bluish Gray | 0.03-0.10 | 0.12-0.40 | tile |
-| 4 | 3069b Tile 1 x 2 with Groove | White | 0.03-0.10 | 0.12-0.40 | tile |
+| 4 | 3069 Tile 1 x 2 with Groove | White | 0.03-0.10 | 0.12-0.40 | tile |
 | 2 | 69729 Tile 2 x 6 | White | 0.06-0.20 | 0.12-0.40 | 2 x 6 |
 | 5 | 6141 Plate Round 1 x 1 with Solid Stud | Flat Silver | 0.02-0.08 | 0.10-0.40 | plate |
 | 2 | 32062 Technic Axle 2 Notched | Red | 0.03-0.20 | 0.06-0.40 | axle |
-| 3 | 74611 Plate Round 8 x 8 | Light Bluish Gray | 0.03-0.11 | 0.08-0.34 | plate, in 24 set(s) |
 | 2 | 6636 Tile 1 x 6 with Groove | Black | 0.05-0.15 | 0.10-0.30 | 1 x 6 |
 | 4 | 3020 Plate 2 x 4 | White | 0.02-0.08 | 0.08-0.32 | plate |
 | 4 | 6141 Plate Round 1 x 1 with Solid Stud | White | 0.02-0.08 | 0.08-0.32 | plate |
@@ -57,7 +57,6 @@ For a real quote, upload `bricklink_wanted.xml` as a BrickLink Wanted List and u
 | 1 | 32124 Technic Plate 1 x 5 with Smooth Ends, 4 Studs and Centre Axle Hole | White | 0.03-0.20 | 0.03-0.20 | axle |
 | 1 | 3941 Brick Round 2 x 2 with Axle Hole | White | 0.03-0.20 | 0.03-0.20 | axle |
 | 2 | 3460 Plate 1 x 8 | Black | 0.02-0.08 | 0.04-0.16 | plate |
-| 1 | 74611 Plate Round 8 x 8 | Black | 0.03-0.11 | 0.03-0.11 | plate, in 26 set(s) |
 | 1 | 3070b Tile 1 x 1 with Groove | Black | 0.03-0.10 | 0.03-0.10 | tile |
 | 1 | 26603 Tile 2 x 3 | White | 0.03-0.10 | 0.03-0.10 | tile |
 | 1 | 3623 Plate 1 x 3 | Black | 0.02-0.08 | 0.02-0.08 | plate |

@@ -105,11 +105,17 @@ guide rollers.
 ### Reels (`reel_l` supply, `reel_r` take-up)
 Each reel, from the bottom:
 
-1. A **Light Bluish Gray Plate Round 8 x 8 (74611)**: the lower flange, 64 mm. (It was White,
-   but White 74611 only ships slowly from Pick a Brick; grey is in its fast stock, and real
-   reels often have grey flanges.)
-2. The pack: a **black 74611** on the full supply reel; a second **grey** one on the
-   nearly empty take-up reel, so the flange shows round a thin pack.
+1. A **Black Plate Round 8 x 8 (74611)**: the lower flange, 64 mm.
+2. The pack: a second **black 74611** on top of it.
+
+   All four of these plates are Black so that the whole kit ships together. Pick a Brick
+   sends its Bestseller parts in one parcel within days and everything else later, in a
+   parcel of its own. Black 74611 is a Bestseller; White (the first choice) and Light
+   Bluish Gray (the second, wrongly noted here as fast) are not: the owner's order came
+   with the one black plate and without the three grey ones (2026-10-09). The lower plate
+   of each reel cannot be seen at all once the second is on it. The take-up reel's upper
+   plate used to be grey, to show a bare flange round a thin pack: it shows only through
+   the clear ring, as a lighter rim, and black there makes the two reels look alike.
 3. The hub: a **White 2 x 2 round plate with axle hole (4032a)** in a ring of four white
    **2 x 2 macaroni tiles** (32 mm); the round plate's four studs are the ring of bumps.
 4. Four black **3 x 3 macaroni tiles**: tape round the hub (r 40..60 LDU, 48 mm).
@@ -123,8 +129,8 @@ and the top shell keeps it down. Underneath, the red spindle end shows in each d
 flush with the bottom: turn it with a fingertip to wind the tape, as a VCR's spindle turns
 the hub from below. Both reels are declared `captive` (they are trapped by the shell).
 
-Through the windows: the supply reel reads as white hub, black pack and clear ring over
-black; the take-up reel as white hub, thin black pack and clear ring over the grey flange.
+Through the windows both reels read as a white hub, a black pack and a clear ring over
+black.
 `pose(t)` turns both reels the same way, as when playing: the supply reel 270 degrees and
 the take-up reel 360 degrees (the small pack spins faster for the same tape speed).
 
