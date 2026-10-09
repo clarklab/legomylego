@@ -45,10 +45,10 @@
     {
       "name": "buildability",
       "status": "pass",
-      "summary": "258 insertions tried across 14 submodel(s); 0 problem(s)",
+      "summary": "262 insertions tried across 14 submodel(s); 0 problem(s)",
       "items": [],
       "stats": {
-        "insertions": 258
+        "insertions": 262
       }
     },
     {
@@ -57,16 +57,16 @@
       "summary": "about 313 g; centre of mass inside the base (98% margin); tips at 74.9 deg",
       "items": [],
       "stats": {
-        "mass_g": 313.09130887292486,
+        "mass_g": 313.0913088729248,
         "com": [
-          0.05594347875821775,
-          -31.14035888360219,
-          5.35003711930723
+          0.055943478758219395,
+          -31.140358883602193,
+          5.3500371193072285
         ],
         "approx_parts": 0,
         "margin": 0.9775426874517562,
         "tip_angle_deg": 74.89234671583799,
-        "com_height_ldu": 31.14035888360219
+        "com_height_ldu": 31.140358883602193
       }
     },
     {

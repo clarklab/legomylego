@@ -3,10 +3,8 @@
 0 Name: vhs_tape.ldr
 0 Author: brickkit
 
-0 // The chassis
+0 // Take the chassis and drop the supply reel onto its right-hand bearing: the reel's red axle goes down through the round holes
 1 16 0 0 0 1 0 0 0 1 0 0 0 1 core.ldr
-0 STEP
-0 // Drop the full supply reel onto the right-hand bearing: its red axle goes down through the round holes
 1 16 110 -16 -10 1 0 0 0 1 0 0 0 1 reel_full.ldr
 0 STEP
 0 // The take-up reel on the left-hand bearing
@@ -35,10 +33,8 @@
 0 Name: reel_full.ldr
 0 Author: brickkit
 
-0 // Lower flange: a black 8 x 8 round plate with a hole in the middle
+0 // The lower flange and the tape pack: two black 8 x 8 round plates with a hole in the middle, one on the other
 1 0 0 -8 0 1 0 0 0 1 0 0 0 1 74611.dat
-0 STEP
-0 // The tape pack: a second black 8 x 8 round plate on top of it
 1 0 0 -16 0 1 0 0 0 1 0 0 0 1 74611.dat
 0 STEP
 0 // The hub: a round plate with an axle hole, and a flat white ring round it
@@ -70,10 +66,8 @@
 0 Name: reel_empty.ldr
 0 Author: brickkit
 
-0 // Lower flange: a black 8 x 8 round plate with a hole in the middle
+0 // The lower flange and the tape pack: two black 8 x 8 round plates with a hole in the middle, one on the other
 1 0 0 -8 0 1 0 0 0 1 0 0 0 1 74611.dat
-0 STEP
-0 // The tape pack: a second black 8 x 8 round plate on top of it
 1 0 0 -16 0 1 0 0 0 1 0 0 0 1 74611.dat
 0 STEP
 0 // The hub: a round plate with an axle hole, and a flat white ring round it
@@ -322,10 +316,8 @@
 0 Name: window.ldr
 0 Author: brickkit
 
-0 // A window: a 2 x 6 plate stood on its edge, studs to the front
+0 // A window: a 2 x 6 plate stood on its edge, studs to the front, and the door frame 1 x 6 x 6 laid flat and pushed onto the plate's top row
 1 0 0 -44 82 1 0 0 0 0 -1 0 1 0 3795.dat
-0 STEP
-0 // Door frame 1 x 6 x 6, laid flat and pushed onto the plate's top row
 1 0 0 -54 -62 1 0 0 0 0 -1 0 1 0 42205.dat
 0 STEP
 0 // The glass
@@ -558,8 +550,8 @@
 
 0 // Build this strip apart, the way up it is drawn. Once built, it goes on with the piece that locks it down
 1 0 -130 64 120 -1 0 0 0 -1 0 0 0 1 2412b.dat
-1 0 -130 64 100 -1 0 0 0 -1 0 0 0 1 2412b.dat
 1 0 -120 56 110 0 0 -1 0 -1 0 -1 0 0 3023b.dat
+1 0 -130 64 100 -1 0 0 0 -1 0 0 0 1 2412b.dat
 1 0 -140 56 110 0 0 -1 0 -1 0 -1 0 0 3023b.dat
 0 STEP
 0 NOFILE
@@ -571,8 +563,8 @@
 
 0 // Build this strip apart, the way up it is drawn. Once built, it goes on with the piece that locks it down
 1 0 -170 64 120 -1 0 0 0 -1 0 0 0 1 2412b.dat
-1 0 -170 64 100 -1 0 0 0 -1 0 0 0 1 2412b.dat
 1 0 -160 56 110 0 0 -1 0 -1 0 -1 0 0 3023b.dat
+1 0 -170 64 100 -1 0 0 0 -1 0 0 0 1 2412b.dat
 1 0 -180 56 110 0 0 -1 0 -1 0 -1 0 0 3023b.dat
 0 STEP
 0 NOFILE
@@ -584,11 +576,11 @@
 
 0 // Build this strip apart, the way up it is drawn. Once built, it goes on with the piece that locks it down
 1 0 -210 64 100 -1 0 0 0 -1 0 0 0 1 2412b.dat
-1 0 -210 64 120 -1 0 0 0 -1 0 0 0 1 2412b.dat
-1 0 -220 64 10 0 0 -1 0 -1 0 -1 0 0 4162.dat
 1 0 -200 56 110 0 0 -1 0 -1 0 -1 0 0 3023b.dat
-0 STEP
+1 0 -210 64 120 -1 0 0 0 -1 0 0 0 1 2412b.dat
 1 0 -220 56 100 0 0 -1 0 -1 0 -1 0 0 3623.dat
+0 STEP
+1 0 -220 64 10 0 0 -1 0 -1 0 -1 0 0 4162.dat
 1 0 -220 56 30 0 0 -1 0 -1 0 -1 0 0 3710.dat
 1 0 -220 56 -40 0 0 -1 0 -1 0 -1 0 0 3623.dat
 0 STEP
@@ -601,8 +593,8 @@
 
 0 // Build this strip apart, the way up it is drawn. Once built, it goes on with the piece that locks it down
 1 0 130 64 100 -1 0 0 0 -1 0 0 0 1 2412b.dat
-1 0 130 64 120 -1 0 0 0 -1 0 0 0 1 2412b.dat
 1 0 120 56 110 0 0 -1 0 -1 0 -1 0 0 3023b.dat
+1 0 130 64 120 -1 0 0 0 -1 0 0 0 1 2412b.dat
 1 0 140 56 110 0 0 -1 0 -1 0 -1 0 0 3023b.dat
 0 STEP
 0 NOFILE
@@ -614,8 +606,8 @@
 
 0 // Build this strip apart, the way up it is drawn. Once built, it goes on with the piece that locks it down
 1 0 170 64 120 -1 0 0 0 -1 0 0 0 1 2412b.dat
-1 0 170 64 100 -1 0 0 0 -1 0 0 0 1 2412b.dat
 1 0 180 56 110 0 0 -1 0 -1 0 -1 0 0 3023b.dat
+1 0 170 64 100 -1 0 0 0 -1 0 0 0 1 2412b.dat
 1 0 160 56 110 0 0 -1 0 -1 0 -1 0 0 3023b.dat
 0 STEP
 0 NOFILE
@@ -627,11 +619,11 @@
 
 0 // Build this strip apart, the way up it is drawn. Once built, it goes on with the piece that locks it down
 1 0 210 64 120 -1 0 0 0 -1 0 0 0 1 2412b.dat
-1 0 210 64 100 -1 0 0 0 -1 0 0 0 1 2412b.dat
-1 0 220 64 10 0 0 -1 0 -1 0 -1 0 0 4162.dat
 1 0 200 56 110 0 0 -1 0 -1 0 -1 0 0 3023b.dat
-0 STEP
+1 0 210 64 100 -1 0 0 0 -1 0 0 0 1 2412b.dat
 1 0 220 56 70 0 0 -1 0 -1 0 -1 0 0 3666.dat
+0 STEP
+1 0 220 64 10 0 0 -1 0 -1 0 -1 0 0 4162.dat
 1 0 220 56 -30 0 0 -1 0 -1 0 -1 0 0 3710.dat
 0 STEP
 0 NOFILE
@@ -641,29 +633,31 @@
 0 Name: flap.ldr
 0 Author: brickkit
 
-0 // Dust flap, built flat: plates for the two lower rows
+0 // Dust flap, built flat: 2 x N plates in a row, locked together by 2 x N tiles. The tiles' top halves hang over the plates: they are the flap's top row
+1 0 -220 -118 34 0 0 1 0 1 0 -1 0 0 3623.dat
 1 0 -150 -118 24 1 0 0 0 1 0 0 0 1 3795.dat
+1 0 -170 -126 44 1 0 0 0 1 0 0 0 1 69729.dat
+0 STEP
 1 0 -50 -118 24 1 0 0 0 1 0 0 0 1 3020.dat
+1 0 -70 -126 44 1 0 0 0 1 0 0 0 1 87079.dat
+0 STEP
 1 0 0 -118 24 0 0 1 0 1 0 -1 0 0 3023b.dat
 1 0 50 -118 24 1 0 0 0 1 0 0 0 1 3020.dat
-1 0 150 -118 24 1 0 0 0 1 0 0 0 1 3795.dat
-0 STEP
-0 // A 1 x 3 plate at each end reaches the top row
-1 0 -220 -118 34 0 0 1 0 1 0 -1 0 0 3623.dat
-1 0 220 -118 34 0 0 1 0 1 0 -1 0 0 3623.dat
-0 STEP
-0 // 2 x N tiles: their top halves hang over the plates and make the flap's top row
-1 0 -170 -126 44 1 0 0 0 1 0 0 0 1 69729.dat
-1 0 -70 -126 44 1 0 0 0 1 0 0 0 1 87079.dat
 1 0 0 -126 44 1 0 0 0 1 0 0 0 1 26603.dat
+0 STEP
+1 0 150 -118 24 1 0 0 0 1 0 0 0 1 3795.dat
 1 0 70 -126 44 1 0 0 0 1 0 0 0 1 87079.dat
+0 STEP
+1 0 220 -118 34 0 0 1 0 1 0 -1 0 0 3623.dat
 1 0 170 -126 44 1 0 0 0 1 0 0 0 1 69729.dat
 0 STEP
 0 // Bottom row of tiles
 1 0 -170 -126 14 1 0 0 0 1 0 0 0 1 6636.dat
 1 0 -70 -126 14 1 0 0 0 1 0 0 0 1 2431.dat
+0 STEP
 1 0 0 -126 14 1 0 0 0 1 0 0 0 1 63864.dat
 1 0 70 -126 14 1 0 0 0 1 0 0 0 1 2431.dat
+0 STEP
 1 0 170 -126 14 1 0 0 0 1 0 0 0 1 6636.dat
 0 STEP
 0 // Turn it over: Technic bricks at the ends are the flap's cheeks

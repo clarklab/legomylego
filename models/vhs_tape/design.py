@@ -86,9 +86,9 @@ def reel(model, name: str, title: str, full: bool):
     the hub's axle hole: its end is the red dot in the middle of the hub, and underneath it
     is the spindle that turns in the chassis' round bearing holes."""
     s = model.submodel(name, title)
-    s.step("Lower flange: a black 8 x 8 round plate with a hole in the middle")
+    s.step("The lower flange and the tape pack: two black 8 x 8 round plates with a hole in "
+           "the middle, one on the other")
     s.place("74611", "flange", (0, -8, 0))
-    s.step("The tape pack: a second black 8 x 8 round plate on top of it")
     s.place("74611", "tape" if full else "flange", (0, -16, 0))
     s.step("The hub: a round plate with an axle hole, and a flat white ring round it")
     s.place("4032a", "hub", (0, -24, 0))
@@ -199,9 +199,9 @@ def window(model):
     across the cassette. A 2 x 6 plate stood on edge takes the frame's back end; half-round
     plates with a side stud hang it from the top shell."""
     s = model.submodel("window", "Window")
-    s.step("A window: a 2 x 6 plate stood on its edge, studs to the front")
+    s.step("A window: a 2 x 6 plate stood on its edge, studs to the front, and the door frame "
+           "1 x 6 x 6 laid flat and pushed onto the plate's top row")
     s.place("3795", "shell", (0, -44, 82), STUDS_FWD)
-    s.step("Door frame 1 x 6 x 6, laid flat and pushed onto the plate's top row")
     s.place("42205", "shell", (0, -54, -62), STUDS_FWD, insert=(0, 0, -1))
     s.step("The glass")
     s.place("42509", "glass", (0, -59, -58), STUDS_FWD)     # 1 LDU off LDCad's snap point:
@@ -356,28 +356,32 @@ def flap(model):
     top row is the upper half of 2 x N tiles hanging over the plates, so the flap's top edge
     is thin and swings clear of the top shell. Technic bricks at the ends are its cheeks."""
     sub = model.submodel("flap", "Dust flap")
+    b = Batch()
 
-    def add(part, colour, M, insert=None):
-        sub.place(part, colour, insert=insert).M = FLAT @ M
+    def add(part, colour, M, cat):
+        b.add(part, colour, FLAT @ M, cat)
 
-    sub.step("Dust flap, built flat: plates for the two lower rows")
     for part, colour, M in row_parts(PLATE2, [(-10, -5), (-4, -1), (0, 0), (1, 4), (5, 10)],
                                      -24, -118, STUDS_FWD):
-        add(part, colour, M)
-    sub.step("A 1 x 3 plate at each end reaches the top row")
+        add(part, colour, M, "plates")
     for s in (-1, 1):
-        add("3623", "shell", transform((s * 220, -34, -118), UPRIGHT_1XN))
-    sub.step("2 x N tiles: their top halves hang over the plates and make the flap's top row")
+        add("3623", "shell", transform((s * 220, -34, -118), UPRIGHT_1XN), "ends")
     for part, colour, M in row_parts(TILE2, [(-11, -6), (-5, -2), (-1, 1), (2, 5), (6, 11)],
                                      -44, -126, STUDS_FWD):
-        add(part, colour, M)
-    sub.step("Bottom row of tiles")
+        add(part, colour, M, "top")
     for part, colour, M in row_parts(TILE1, [(-11, -6), (-5, -2), (-1, 1), (2, 5), (6, 11)],
                                      -14, -126, STUDS_FWD):
-        add(part, colour, M)
-    sub.step("Turn it over: Technic bricks at the ends are the flap's cheeks")
+        add(part, colour, M, "bottom")
     for s in (-1, 1):
-        add("6541", "shell", transform((s * 220, -54, -110), UPRIGHT_1XN))
+        add("6541", "shell", transform((s * 220, -54, -110), UPRIGHT_1XN), "cheeks")
+    # (the plates and the tiles over them in one phase: a plate goes down with the tile that
+    # locks it to its neighbour, so no row lies loose)
+    b.emit(sub, [["plates", "ends", "top"], ["bottom"], ["cheeks"]], {
+        "plates": "Dust flap, built flat: 2 x N plates in a row, locked together by 2 x N tiles. "
+                  "The tiles' top halves hang over the plates: they are the flap's top row",
+        "ends": "A 1 x 3 plate at each end reaches the top row",
+        "bottom": "Bottom row of tiles",
+        "cheeks": "Turn it over: Technic bricks at the ends are the flap's cheeks"})
     return sub
 
 
@@ -426,10 +430,9 @@ def build(model):
     door = flap(model)
 
     main = model.main
-    main.step("The chassis")
+    main.step("Take the chassis and drop the supply reel onto its right-hand bearing: the "
+              "reel's red axle goes down through the round holes")
     main.use(chassis)
-    main.step("Drop the full supply reel onto the right-hand bearing: its red axle goes "
-              "down through the round holes")
     main.use(reels["reel_l"], (REEL_X["reel_l"], -16, REEL_Z), tag="reel_l",
              insert=(0, -1, 0))
     main.step("The take-up reel on the left-hand bearing")

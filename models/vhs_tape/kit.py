@@ -332,8 +332,14 @@ class Batch:
                     parts_, left = [], list(under)     # the groups of it that hold together by
                     while left:                        # themselves (the rest only through j)
                         g = group([left[0]], set(left))
-                        parts_.append([m for m in left if m in g])
+                        g = [m for m in left if m in g]
                         left = [m for m in left if m not in g]
+                        walk = [g[0]]                  # ... each in an order that holds together
+                        while len(walk) < len(g):      # from its first piece on (lowest first)
+                            on = set(walk)
+                            walk.append(min((m for m in g if m not in on and near(m) & on),
+                                            key=lambda m: (-layer(m), g.index(m))))
+                        parts_.append(walk)
                     entries.append((parts_, j))
                     for m in under + [j]:
                         step.append(m)
@@ -377,8 +383,7 @@ class Batch:
                         continue
                     n = sum(1 for name in sub.model.submodels if name.startswith(sub.name + "_strip")) + 1
                     strip = sub.model.submodel(f"{sub.name}_strip{n}", f"{sub.title}: strip {n}")
-                    low = max(pos[m][1] // 8 for m in g)           # (its lowest layer: on the table)
-                    order = [m for m in g if pos[m][1] // 8 == low] + [m for m in g if pos[m][1] // 8 != low]
+                    order = list(g)                    # (it holds together from its first piece on)
                     for at in range(0, len(order), SMALL):
                         strip.step("Build this strip apart, the way up it is drawn. Once built, it goes on "
                                    "with the piece that locks it down" if at == 0 else "")
