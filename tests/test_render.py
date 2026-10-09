@@ -19,10 +19,10 @@ def test_render_sample(engine, tmp_path):
 
 
 def test_instructions_show_a_piece_that_goes_on_underneath(engine, tmp_path):
-    """A step's picture cannot show a new piece that something covers. Such a step gets a small
-    extra picture with the piece ringed: from the same side, before the others go over it (a
-    plate with another put on it in the same step), or from the other side (a round plate
-    pushed up into a floor from below)."""
+    """Every new piece of a step is in one of its pictures (measured: render/visibility.py).
+    One the step's own picture cannot show gets a small picture beside it from where it can
+    be seen, with everything in place (so it is seen where it clicks in): from below, from
+    behind. If none of a step's pieces show, that other side is the step's picture."""
     from brickkit.model.builder import Model
     from brickkit.render import instructions as I
     model = Model("Floor", "floor", {}, engine.catalog)
@@ -30,24 +30,33 @@ def test_instructions_show_a_piece_that_goes_on_underneath(engine, tmp_path):
     m.place("3020", "Black", (0, -16, 0))              # a 2 x 4 plate, one plate up
     m.place("3024", "Black", (-30, -8, 10))            # ... on a 1 x 1 at each end
     m.place("3024", "Black", (30, -8, -10))
-    m.step("A silver round plate, pushed up from underneath")
+    m.step("A silver round plate, pushed up from underneath; a tile on top")
     m.place("6141", "Flat Silver", (10, -8, 10))
-    m.step("And a tile on top")
     m.place("3070b", "Black", (10, -24, 10))
+    m.step("And one more underneath, by itself")
+    m.place("6141", "Flat Silver", (-10, -8, -10))
     p = I.plan(engine, model, tmp_path)
-    first, under, top = p["steps"]
+    first, mixed, under = p["steps"]
     jobs = {j["name"]: j for j in p["jobs"]}
     part = lambda n: p["sets"]["floor"][n]["part"]     # noqa: E731
-    # step 1: the two 1 x 1s go on first, the 2 x 4 over them: seen from above, without it
-    assert [a["image"] for a in first.also] == ["step_0001_first.jpg"] and first.also[0]["text"].startswith("First")
-    job = jobs["step_0001_first"]
-    assert sorted(part(n) for n in job["new"]) == ["3024.dat", "3024.dat"] and job["elevation"] > 0
-    assert sorted(part(n) for n in job["visible"]) == ["3024.dat", "3024.dat"]
-    # step 2: the round plate goes up into what is built: seen from below
-    assert [a["image"] for a in under.also] == ["step_0002_also.jpg"] and under.also[0]["text"].startswith("From below")
-    job = jobs["step_0002_also"]
-    assert [part(n) for n in job["new"]] == ["6141.dat"] and job["elevation"] < 0 and job["highlight"]
-    assert top.also == []
+    assert p["unseen"] == []
+    # step 1: a 1 x 1 under the 2 x 4 (the other's side shows past the plate's edge): a small
+    # picture from below, the 2 x 4 in place
+    assert [a["image"] for a in first.also] == ["step_0001_under.jpg"]
+    job = jobs["step_0001_under"]
+    assert {part(n) for n in job["new"]} == {"3024.dat"} and job["elevation"] < 0
+    assert len(job["visible"]) == 3 and "in here" in first.also[0]["text"]
+    # step 2: the tile shows from above, the round plate only from below
+    assert mixed.view == "above" and [a["image"] for a in mixed.also] == ["step_0002_under.jpg"]
+    assert [part(n) for n in jobs["step_0002_under"]["new"]] == ["6141.dat"]
+    # step 3: nothing of it shows from above: the step's own picture is from below
+    assert under.view == "below" and under.also == [] and jobs["step_0003"]["elevation"] < 0
+
+    # the measure itself: a plate under a bigger one is seen from below and not from above
+    from brickkit.render.visibility import Sight
+    parts = [("3020.dat", np.eye(4)), ("3024.dat", np.array([[1, 0, 0, 10], [0, 1, 0, 8], [0, 0, 1, 10], [0, 0, 0, 1.0]]))]
+    assert Sight(engine, parts, 30, 32).seen(1, [0, 1]) < 0.1 < 0.9 < Sight(engine, parts, 30, -30).seen(1, [0, 1])
+    assert Sight(engine, parts, 30, 32).seen(0, [0, 1]) > 0.9
 
     # ringed, and cut down to the piece: in a picture of the whole model it would be a speck
     img, mask = tmp_path / "x.jpg", tmp_path / "x_mask.png"
@@ -57,5 +66,5 @@ def test_instructions_show_a_piece_that_goes_on_underneath(engine, tmp_path):
     Image.fromarray(a).save(mask)
     I.outline_new_parts(img, mask, close=True)
     out = Image.open(img)
-    assert out.size[0] < 500 and abs(out.size[1] / out.size[0] - 0.75) < 0.02 and not mask.exists()
+    assert out.size[0] <= 550 and abs(out.size[1] / out.size[0] - 0.75) < 0.02 and not mask.exists()
     assert (np.asarray(out)[..., 2] < 60).any()        # (the yellow ring is in it)

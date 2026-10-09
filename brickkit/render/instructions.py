@@ -73,43 +73,61 @@ def _view_for(engine, items, visible: list[int], new: list[int], hint: str | Non
     return "below" if below and overlap else "above"
 
 
-def _out_of_sight(engine, sub, items, visible: list[int], new: list[int], view: str) -> dict:
-    """The new parts a step's picture cannot show: covered, from where it looks, by what is
-    over them, and open to the other side. {"first": those covered only by other parts of the
-    same step (a plate with tiles put on it in one step: it goes on first), "under": those
-    covered by what was already built (a round plate pushed up into a floor from below)}.
-    Single parts only: a sub-assembly's own insides are its own steps' business."""
-    boxes = {}
-    for n in visible:
-        lo, hi = _bbox(engine, [items[n]])
-        boxes[n] = (lo, hi, (lo[1] + hi[1]) / 2)
-    fresh = set(new)
-    out = {"first": [], "under": []}
+SEEN = 0.3            # of what could ever show of a piece: with less it is not "in the picture"
+LEAST = 0.06          # ... and with less than this in every picture it cannot be shown at all
+# the pictures' cameras: (degrees round from the step pictures' own azimuth, elevation)
+LOOKS = {"above": (0, 32), "below": (0, -30), "behind": (180, 32), "behind_below": (180, -30)}
+# where a piece the step's own picture does not show is looked for, in turn: (picture, the
+# camera for a step seen from above / from below, with the step's other pieces on?, its words)
+EXTRA = [("under", ("below", "above"), True,
+          ("From below: the outlined piece{s} click{v} in here.", "From above: the outlined piece{s}.")),
+         ("behind", ("behind", "behind_below"), True, ("From behind: the outlined piece{s}.",) * 2),
+         ("behind_under", ("behind_below", "behind"), True,
+          ("From behind and below: the outlined piece{s}.", "From behind: the outlined piece{s}.")),
+         ("first", ("above", "below"), False,
+          ("First the outlined piece{s}: the others go on over {it}.",) * 2)]
+
+
+def _extra_pictures(sight, items, visible: list[int], new: list[int], view: str) -> tuple[dict, list]:
+    """Where each new piece of a step can be seen, by measuring (render/visibility.py). A piece
+    the step's own picture does not show (less than SEEN of it) is looked for in the EXTRA
+    pictures in turn: from the other side with everything on (it is seen where it clicks in),
+    from behind, and last on its own with what was built before (it goes on first, the rest
+    over it). A sub-assembly counts as one piece. `sight(look)`: the Sight from a LOOKS
+    camera. Returns ({picture: part indices}, the part indices no picture shows)."""
+    groups: dict = {}
     for n in new:
-        if not isinstance(sub.items[items[n][0]], Placement):
-            continue
-        lo, hi, mid = boxes[n]
-        px, pz = np.meshgrid(np.linspace(lo[0] + 1, hi[0] - 1, 4), np.linspace(lo[2] + 1, hi[2] - 1, 4))
-        over = np.zeros(px.shape, bool)                # (LDraw: -Y is up)
-        under = np.zeros(px.shape, bool)
-        old_over = old_under = False
-        for m in visible:
-            if m == n:
-                continue
-            l2, h2, mid2 = boxes[m]
-            on = (px > l2[0]) & (px < h2[0]) & (pz > l2[2]) & (pz < h2[2])
-            if not on.any():
-                continue
-            if mid2 < mid - 2:
-                over |= on
-                old_over = old_over or m not in fresh
-            elif mid2 > mid + 2:
-                under |= on
-                old_under = old_under or m not in fresh
-        front, back, old_front = (over, under, old_over) if view == "above" else (under, over, old_under)
-        if front.mean() >= 0.9 and back.mean() <= 0.5:
-            out["under" if old_front else "first"].append(n)
-    return out
+        groups.setdefault(items[n][0], []).append(n)
+    fresh = set(new)
+    old = [v for v in visible if v not in fresh]
+    flat = lambda gs: [n for g in gs for n in g]       # noqa: E731
+
+    def shows(g, look, shown) -> bool:
+        return float(np.mean([sight(look).seen(n, shown) for n in g])) >= SEEN
+
+    out: dict = {}
+    rest = [g for g in groups.values() if not shows(g, view, visible)]
+    for key, looks, whole, _ in EXTRA:
+        if not rest:
+            break
+        look = looks[0 if view == "above" else 1]
+        shown = visible if whole else old + flat(rest)
+        got = [g for g in rest if shows(g, look, shown)]
+        if got:
+            out[key] = flat(got)
+            rest = [g for g in rest if g not in got]
+    for g in list(rest):                               # mostly inside something (an axle through
+        best = (LEAST, None)                           # its holes): where the most of it shows
+        for key, looks, whole, _ in EXTRA:
+            look = looks[0 if view == "above" else 1]
+            shown = visible if whole else old + flat(rest)
+            frac = float(np.mean([sight(look).seen(n, shown) for n in g]))
+            if frac > best[0]:
+                best = (frac, key)
+        if best[1]:
+            out.setdefault(best[1], []).extend(g)
+            rest.remove(g)
+    return out, flat(rest)
 
 
 def plan(engine, model, out_dir: Path) -> dict:
@@ -128,6 +146,8 @@ def plan(engine, model, out_dir: Path) -> dict:
             if isinstance(it, Use):
                 used_subs.add(it.sub.name)
     number = 0
+    sights: dict = {}
+    unseen: list = []                                  # pieces no picture of their step shows
     for sub_name, s in order:
         sub = model.submodels[sub_name]
         items = _local_items(sub)
@@ -139,9 +159,10 @@ def plan(engine, model, out_dir: Path) -> dict:
         hint = getattr(sub, "views", {}).get(s)
         view = _view_for(engine, items, visible, new, hint)
         name = f"step_{number:04d}"
-        jobs.append({"name": name, "set": sub_name, "visible": visible, "new": new,
-                     "azimuth": front + 30, "elevation": 32 if view == "above" else -30,
-                     "highlight": len(visible) > len(new)})
+        main = {"name": name, "set": sub_name, "visible": visible, "new": new,
+                "azimuth": front + 30, "elevation": LOOKS[view][1],
+                "highlight": len(visible) > len(new)}
+        jobs.append(main)
         parts, subs = {}, {}
         for k in sorted({items[n][0] for n in new}):
             it = sub.items[k]
@@ -151,25 +172,38 @@ def plan(engine, model, out_dir: Path) -> dict:
             else:
                 subs[it.sub.name] = subs.get(it.sub.name, 0) + 1
         also = []
-        other = "below" if view == "above" else "above"
-        looks = {"above": 32, "below": -30}
-        unseen = _out_of_sight(engine, sub, items, visible, new, view)
-        if unseen["first"]:                            # the step's first half, from the same side
-            n_ = len(unseen["first"])
-            jobs.append({"name": f"{name}_first", "set": sub_name, "new": unseen["first"],
-                         "visible": [v for v in visible if v not in set(new)] + unseen["first"],
-                         "azimuth": front + 30, "elevation": looks[view], "highlight": True})
-            also.append({"image": f"{name}_first.jpg",
-                         "text": f"First the outlined piece{'s' if n_ > 1 else ''}: "
-                                 f"the others go on over {'them' if n_ > 1 else 'it'}."})
-        if unseen["under"]:                            # from the other side
-            n_ = len(unseen["under"])
-            jobs.append({"name": f"{name}_also", "set": sub_name, "visible": visible, "new": unseen["under"],
-                         "azimuth": front + 30, "elevation": looks[other], "highlight": True})
-            also.append({"image": f"{name}_also.jpg",
-                         "text": (f"From below: push the outlined piece{'s' if n_ > 1 else ''} up into place."
-                                  if other == "below" else
-                                  f"From above: the outlined piece{'s' if n_ > 1 else ''}.")})
+
+        def sight(look, sub_name=sub_name, items=items):          # (made when first asked for)
+            if (sub_name, look) not in sights:
+                from .visibility import Sight
+                turn, el = LOOKS[look]
+                sights[sub_name, look] = Sight(engine, [(it[1], it[3]) for it in items], front + 30 + turn, el)
+            return sights[sub_name, look]
+
+        where, nowhere = _extra_pictures(sight, items, visible, new, view)
+        before = [v for v in visible if v not in set(new)]
+        k_ = 0 if view == "above" else 1
+        whole_ = {key: looks[k_] for key, looks, whole, _ in EXTRA if whole}
+        if (not hint and not nowhere and len(where) == 1 and next(iter(where)) in whole_
+                and len(where[next(iter(where))]) == len(new)):
+            # none of the step's pieces show in its picture and all of them show from one
+            # other side: that is the step's picture, then (tiles on a wall's far face)
+            view = whole_[next(iter(where))]
+            main["azimuth"], main["elevation"] = front + 30 + LOOKS[view][0], LOOKS[view][1]
+            where = {}
+        for key, looks, whole, words in EXTRA:
+            if key not in where:
+                continue
+            turn, el = LOOKS[looks[k_]]
+            many = len({items[n][0] for n in where[key]}) > 1
+            jobs.append({"name": f"{name}_{key}", "set": sub_name, "new": where[key],
+                         "visible": visible if whole else before + where[key],
+                         "azimuth": front + 30 + turn, "elevation": el, "highlight": True})
+            also.append({"image": f"{name}_{key}.jpg",
+                         "text": words[k_].format(s="s" if many else "", v="" if many else "s",
+                                                  it="them" if many else "it")})
+        for n in nowhere:
+            unseen.append({"step": number, "submodel": sub_name, "part": part_id(items[n][1])})
         steps.append(StepInfo(number, sub_name, s, sub.captions[s], f"{name}.jpg",
                               [(p, c, q) for (p, c), q in sorted(parts.items())],
                               sorted(subs.items()), view, also))
@@ -186,7 +220,7 @@ def plan(engine, model, out_dir: Path) -> dict:
     part_jobs = [{"name": f"part_{part_id(p).replace('/', '_')}_{c}", "part": p, "color": c}
                  for p, c in combos]
     return {"sets": sets, "jobs": jobs, "part_jobs": part_jobs, "steps": steps,
-            "used_subs": sorted(used_subs)}
+            "used_subs": sorted(used_subs), "unseen": unseen}
 
 
 HIGHLIGHT = (255, 205, 0)          # ring round the new parts of a step
@@ -212,8 +246,8 @@ def outline_new_parts(image: Path, mask: Path, width: int = 5, close: bool = Fal
     img.paste(Image.new("RGB", img.size, HIGHLIGHT), mask=ImageChops.subtract(inner, m))
     if close:
         W, H = img.size
-        w = min(W, max(3.0 * (box[2] - box[0]), 0.34 * W))
-        h = min(H, max(3.0 * (box[3] - box[1]), w * 0.75))
+        w = min(W, max(3.0 * (box[2] - box[0]), 0.5 * W))    # (half the model round it, at least:
+        h = min(H, max(3.0 * (box[3] - box[1]), w * 0.75))  # an edge or a corner to find it by)
         w = min(W, max(w, h / 0.75))
         cx, cy = (box[0] + box[2]) / 2, (box[1] + box[3]) / 2
         x0 = int(min(max(cx - w / 2, 0), W - w))
@@ -246,9 +280,9 @@ def render(engine, model, out_dir: Path, *, size=(1100, 820), part_px_per_ldu: f
     for job in scene["jobs"]:
         if job.get("highlight"):
             outline_new_parts(out_dir / f"{job['name']}.jpg", out_dir / f"{job['name']}_mask.png",
-                              close=job["name"].endswith(("_also", "_first")))
+                              close=job["name"].endswith(tuple("_" + e[0] for e in EXTRA)))
     (out_dir / "plan.json").write_text(json.dumps({
-        "steps": [s.__dict__ for s in p["steps"]], "used_subs": p["used_subs"],
+        "steps": [s.__dict__ for s in p["steps"]], "used_subs": p["used_subs"], "unseen": p["unseen"],
         "part_images": {f"{part_id(j['part'])}_{j['color']}": j["name"] + ".png"
                         for j in p["part_jobs"]}}, indent=1))
     return p

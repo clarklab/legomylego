@@ -46,7 +46,7 @@
     <div class="box"><h3>New parts</h3><p>The parts added in a step have a yellow outline and are drawn in full colour; the parts from earlier steps are drawn paler.</p></div>
     <div class="box"><h3>Sub-assemblies</h3><div class="demo"><span class="callout"><span class="item sub"><img src="sub_{{ sections[0].name }}.png">1x</span></span></div><p>A yellow-framed picture means: put in the sub-assembly you built in its own section. "Build 4x" means you need four of them.</p></div>
     <div class="box"><h3>Sections</h3><p>Each section starts with its name at the top of the page. Sections are built in the order they appear.</p></div>
-    <div class="box"><h3>Seen from below</h3><p>When a step adds parts underneath, the picture shows the model from below. A small label says so. A piece the picture cannot show gets a small picture of its own, ringed in yellow: the piece that goes on first, under the others, or one pushed up from below.</p></div>
+    <div class="box"><h3>Seen from below</h3><p>When a step adds parts underneath, the picture shows the model from below. A small label says so (and "seen from behind" likewise). A piece the picture cannot show gets a small picture beside it, ringed in yellow, from the side it can be seen from: where it clicks in.</p></div>
     <div class="box"><h3>Insert direction</h3><p>Some parts slide in sideways (axles through bearings, gears onto axles). The picture shows where they end up; push them in along their axle.</p></div>
   </div>
   {{ foot() }}
@@ -70,7 +70,7 @@
   {% for s in pair %}
     <div class="step">
       {% if s.section_start %}<div class="section-banner">{{ s.title }}{% if s.repeat > 1 %} · build {{ s.repeat }}x{% endif %}</div>{% endif %}
-      {% if s.view == "below" %}<div class="below">seen from below</div>{% endif %}
+      {% if s.view != "above" %}<div class="below">seen from {{ {"below": "below", "behind": "behind", "behind_below": "behind and below"}.get(s.view, s.view) }}</div>{% endif %}
       <div class="top"><div class="n">{{ s.number }}</div>
         {% if s.parts or s.subs %}<div class="callout">
           {% for sa in s.subs %}<div class="item sub"><img src="{{ sa.img }}">{{ sa.qty }}x</div>{% endfor %}

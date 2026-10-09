@@ -185,7 +185,10 @@ def make_booklet(engine, proj, model, *, rerender: bool = True, cover: Path | No
     out_dir = Path(out_dir or proj.out)
     img_dir = out_dir / "booklet"
     if rerender or not (img_dir / "plan.json").exists():
-        instructions.render(engine, model, img_dir)
+        done = instructions.render(engine, model, img_dir)
+        for u in done.get("unseen", []):               # (enclosed: no picture can show it)
+            print(f"  booklet: step {u['step']}: {u['part']} cannot be seen in any picture of its "
+                  "step (it is inside something): say where it goes in the step's caption")
     if cover is None:
         cover_img = img_dir / "cover.png"
         if rerender or not cover_img.exists():

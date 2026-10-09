@@ -73,8 +73,8 @@ p, li { font-size: 9.5pt; line-height: 1.45; }
 .single .step .img img { max-height: 140mm; }
 .section-banner { position: absolute; top: 0; left: 4mm; font-size: 7.5pt; font-weight: 700; color: #b58f00; text-transform: uppercase; letter-spacing: 0.8pt; }
 .step .img.with-also { gap: 3mm; }
-.step .img.with-also > img { max-width: 67%; flex: 0 1 auto; }
-.step .alsos { flex: 0 0 30%; align-self: flex-end; display: flex; flex-direction: column; gap: 2mm; }
+.step .img.with-also > img { max-width: 61%; flex: 0 1 auto; }
+.step .alsos { flex: 0 0 36%; align-self: flex-end; display: flex; flex-direction: column; gap: 2mm; }
 .step .also { background: #fff; border: 0.5mm solid #ffd500; border-radius: 2mm; padding: 1mm 1mm 1.5mm; text-align: center; font-size: 7.5pt; line-height: 1.25; color: #555; }
 .step .also img { display: block; width: 100%; max-height: none; margin-bottom: 0.8mm; border-radius: 1.2mm; }
 .below { position: absolute; right: 5mm; top: 3mm; font-size: 7.5pt; color: #666; border: 0.3mm solid #ccc; border-radius: 1.5mm; padding: 0.5mm 2mm; }
