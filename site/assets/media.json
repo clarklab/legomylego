@@ -1158,32 +1158,32 @@
   "vhs_tape": {
    "files": {
     "booklet.pdf": {
-     "v": "be1558304f",
-     "size": 12997283
+     "v": "c806783ce6",
+     "size": 14994235
     },
     "bricklink_wanted.xml": {
-     "v": "0ccb132051",
-     "size": 5019
+     "v": "e030cffbd7",
+     "size": 4925
     },
     "model.glb": {
-     "v": "d0ae26f8c6",
-     "size": 1118728
+     "v": "f0468ccaa9",
+     "size": 2759464
     },
     "model.json": {
-     "v": "2624e557f7",
-     "size": 81772
+     "v": "e80cccea39",
+     "size": 81343
     },
     "parts.csv": {
-     "v": "ec9b4f9c03",
-     "size": 3834
+     "v": "9126d98ac2",
+     "size": 3815
     },
     "pick_a_brick.csv": {
-     "v": "d1a33d2d51",
-     "size": 582
+     "v": "e580b1ef30",
+     "size": 571
     },
     "price_estimate.md": {
-     "v": "696b10bf18",
-     "size": 5090
+     "v": "5d19f18e3e",
+     "size": 4991
     },
     "renders/hero_hero.png": {
      "v": "3a700fbf36",
@@ -1202,12 +1202,12 @@
      "size": 818793
     },
     "renders/renders_three_quarter.png": {
-     "v": "cb65d73097",
-     "size": 850939
+     "v": "79418cf7a2",
+     "size": 856490
     },
     "renders/renders_top.png": {
-     "v": "bd0e104014",
-     "size": 838056
+     "v": "8dbfa306bc",
+     "size": 843942
     },
     "renders/renders_underside.png": {
      "v": "8776f1dfe0",
@@ -1226,8 +1226,8 @@
      "size": 28963220
     },
     "vhs_tape.mpd": {
-     "v": "d251ae8b5d",
-     "size": 20732
+     "v": "4bf3baa099",
+     "size": 20693
     },
     "video_poster.jpg": {
      "v": "a8ed6d985e",
@@ -1262,14 +1262,14 @@
     "renders/renders_three_quarter.png": {
      "w": 900,
      "h": 900,
-     "lg": "/assets/img/vhs_tape/renders_three_quarter.webp?v=ce01a797a2",
-     "sm": "/assets/img/vhs_tape/renders_three_quarter-480.webp?v=7f588988f5"
+     "lg": "/assets/img/vhs_tape/renders_three_quarter.webp?v=8a03357fad",
+     "sm": "/assets/img/vhs_tape/renders_three_quarter-480.webp?v=3f1fc9ad18"
     },
     "renders/renders_top.png": {
      "w": 900,
      "h": 900,
-     "lg": "/assets/img/vhs_tape/renders_top.webp?v=1b001730cf",
-     "sm": "/assets/img/vhs_tape/renders_top-480.webp?v=9ab8886e57"
+     "lg": "/assets/img/vhs_tape/renders_top.webp?v=8f7811b3a7",
+     "sm": "/assets/img/vhs_tape/renders_top-480.webp?v=667c272efd"
     },
     "renders/renders_underside.png": {
      "w": 900,
