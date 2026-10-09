@@ -29,8 +29,8 @@ class StepInfo:
     new_parts: list = field(default_factory=list)       # [(part, colour code, qty)]
     new_subs: list = field(default_factory=list)        # [(submodel name, qty)]
     view: str = "above"
-    also: str = ""                   # a second, small picture from the other side, for new
-    also_view: str = ""              # parts the first cannot show ("below" or "above")
+    also: list = field(default_factory=list)    # small extra pictures for new parts the main one
+                                                # cannot show: [{"image", "text"}]
 
 
 def _local_items(sub):
@@ -73,16 +73,18 @@ def _view_for(engine, items, visible: list[int], new: list[int], hint: str | Non
     return "below" if below and overlap else "above"
 
 
-def _out_of_sight(engine, sub, items, visible: list[int], new: list[int], view: str) -> list[int]:
+def _out_of_sight(engine, sub, items, visible: list[int], new: list[int], view: str) -> dict:
     """The new parts a step's picture cannot show: covered, from where it looks, by what is
-    over them, and open to the other side (a round plate pushed up into a floor from
-    underneath; a plate with another put on it in the same step). Single parts only: a
-    sub-assembly's own insides are its own steps' business."""
+    over them, and open to the other side. {"first": those covered only by other parts of the
+    same step (a plate with tiles put on it in one step: it goes on first), "under": those
+    covered by what was already built (a round plate pushed up into a floor from below)}.
+    Single parts only: a sub-assembly's own insides are its own steps' business."""
     boxes = {}
     for n in visible:
         lo, hi = _bbox(engine, [items[n]])
         boxes[n] = (lo, hi, (lo[1] + hi[1]) / 2)
-    out = []
+    fresh = set(new)
+    out = {"first": [], "under": []}
     for n in new:
         if not isinstance(sub.items[items[n][0]], Placement):
             continue
@@ -90,18 +92,23 @@ def _out_of_sight(engine, sub, items, visible: list[int], new: list[int], view: 
         px, pz = np.meshgrid(np.linspace(lo[0] + 1, hi[0] - 1, 4), np.linspace(lo[2] + 1, hi[2] - 1, 4))
         over = np.zeros(px.shape, bool)                # (LDraw: -Y is up)
         under = np.zeros(px.shape, bool)
+        old_over = old_under = False
         for m in visible:
             if m == n:
                 continue
             l2, h2, mid2 = boxes[m]
             on = (px > l2[0]) & (px < h2[0]) & (pz > l2[2]) & (pz < h2[2])
+            if not on.any():
+                continue
             if mid2 < mid - 2:
                 over |= on
+                old_over = old_over or m not in fresh
             elif mid2 > mid + 2:
                 under |= on
-        front, back = (over, under) if view == "above" else (under, over)
+                old_under = old_under or m not in fresh
+        front, back, old_front = (over, under, old_over) if view == "above" else (under, over, old_under)
         if front.mean() >= 0.9 and back.mean() <= 0.5:
-            out.append(n)
+            out["under" if old_front else "first"].append(n)
     return out
 
 
@@ -143,17 +150,29 @@ def plan(engine, model, out_dir: Path) -> dict:
                 parts[key] = parts.get(key, 0) + 1
             else:
                 subs[it.sub.name] = subs.get(it.sub.name, 0) + 1
-        also = ""
+        also = []
         other = "below" if view == "above" else "above"
+        looks = {"above": 32, "below": -30}
         unseen = _out_of_sight(engine, sub, items, visible, new, view)
-        if unseen:                                     # a second picture, from the other side
-            also = f"{name}_also.jpg"
-            jobs.append({"name": f"{name}_also", "set": sub_name, "visible": visible, "new": unseen,
-                         "azimuth": front + 30, "elevation": 32 if other == "above" else -30,
-                         "highlight": True})
+        if unseen["first"]:                            # the step's first half, from the same side
+            n_ = len(unseen["first"])
+            jobs.append({"name": f"{name}_first", "set": sub_name, "new": unseen["first"],
+                         "visible": [v for v in visible if v not in set(new)] + unseen["first"],
+                         "azimuth": front + 30, "elevation": looks[view], "highlight": True})
+            also.append({"image": f"{name}_first.jpg",
+                         "text": f"First the outlined piece{'s' if n_ > 1 else ''}: "
+                                 f"the others go on over {'them' if n_ > 1 else 'it'}."})
+        if unseen["under"]:                            # from the other side
+            n_ = len(unseen["under"])
+            jobs.append({"name": f"{name}_also", "set": sub_name, "visible": visible, "new": unseen["under"],
+                         "azimuth": front + 30, "elevation": looks[other], "highlight": True})
+            also.append({"image": f"{name}_also.jpg",
+                         "text": (f"From below: push the outlined piece{'s' if n_ > 1 else ''} up into place."
+                                  if other == "below" else
+                                  f"From above: the outlined piece{'s' if n_ > 1 else ''}.")})
         steps.append(StepInfo(number, sub_name, s, sub.captions[s], f"{name}.jpg",
                               [(p, c, q) for (p, c), q in sorted(parts.items())],
-                              sorted(subs.items()), view, also, other if also else ""))
+                              sorted(subs.items()), view, also))
     # finished sub-assemblies (for "build this first" callouts and the overview)
     for name in list(used_subs) + [model.main.name]:
         items = _local_items(model.submodels[name])
@@ -227,7 +246,7 @@ def render(engine, model, out_dir: Path, *, size=(1100, 820), part_px_per_ldu: f
     for job in scene["jobs"]:
         if job.get("highlight"):
             outline_new_parts(out_dir / f"{job['name']}.jpg", out_dir / f"{job['name']}_mask.png",
-                              close=job["name"].endswith("_also"))
+                              close=job["name"].endswith(("_also", "_first")))
     (out_dir / "plan.json").write_text(json.dumps({
         "steps": [s.__dict__ for s in p["steps"]], "used_subs": p["used_subs"],
         "part_images": {f"{part_id(j['part'])}_{j['color']}": j["name"] + ".png"
