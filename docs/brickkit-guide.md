@@ -833,6 +833,9 @@ the table, and none lands on nothing.
   close-up just before it is over, and the loop is made longer than `[quick] seconds` if the
   build needs it. For the last shot the camera moves in on the finished model if it had
   pulled back for units built beside it.
+- *Round things.* Pictures (stills, booklets, videos, the site's 3D viewer) draw curved
+  primitives in LDraw's 48-sided form (`engine.geom_round`): a round tile's rim is a visible
+  16-sided polygon otherwise. The checks keep the usual 16 sides (`engine.geom`).
 - *A black patch.* Now and then the GPU drops a material and a part renders flat black until
   the next Blender process. `brickkit quick` looks for a bright patch that turns pure black
   from one frame to the next (`black_patches`) and renders those frames again.

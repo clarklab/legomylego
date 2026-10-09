@@ -39,14 +39,18 @@ def close_spec(engine, model, tag: str, placed, azimuth: float = -20.0,
             "bounds": bounds(engine, mine), "margin": 1.12}
 
 
+MESHES = "blender48"      # the render meshes' folder in the cache (round things of 48 sides)
+
+
 def export_meshes(engine, parts, mesh_dir: Path) -> dict[str, str]:
+    """The parts' meshes as files for Blender, round things round (engine.geom_round)."""
     mesh_dir.mkdir(parents=True, exist_ok=True)
     out = {}
     for part in sorted(parts):
         f = mesh_dir / (part.replace("/", "__") + ".npz")
         src = engine.lib.resolve(part)
         if not f.exists() or (src and f.stat().st_mtime < src.stat().st_mtime):
-            m = engine.geom.mesh(part)
+            m = engine.geom_round.mesh(part)
             tmp = f.with_name(f"{f.stem}.{os.getpid()}.tmp.npz")     # (several processes share it)
             np.savez_compressed(tmp, tris=m.tris.astype(np.float32), colors=m.colors,
                                 edges=m.edges.astype(np.float32), edge_colors=m.edge_colors)
@@ -85,7 +89,7 @@ def model_scene(engine, model, *, pose_t: float | None = None, lights_on: bool =
     if placed is None:
         pose = model.pose(pose_t) if (pose_t is not None and model.pose) else None
         placed = model.flatten(pose=pose)
-    meshes = export_meshes(engine, {p.part for p in placed}, engine.cache / "blender")
+    meshes = export_meshes(engine, {p.part for p in placed}, engine.cache / MESHES)
     instances = []
     for p in placed:
         glow = 0.0

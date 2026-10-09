@@ -14,7 +14,7 @@ import numpy as np
 from ..ldraw.library import part_id
 from ..ldraw.matrix import apply
 from ..model.builder import Placement, Use
-from .scene import BLENDER, _colors, export_meshes, run_blender
+from .scene import BLENDER, MESHES, _colors, export_meshes, run_blender
 
 SCRIPT = Path(__file__).with_name("blender_instructions.py")
 
@@ -165,7 +165,7 @@ def render(engine, model, out_dir: Path, *, size=(1100, 820), part_px_per_ldu: f
         lc = engine.lib.colors.get(code)
         if lc is not None:
             colors[str(code)] = {"rgb": lc.rgb, "alpha": lc.alpha, "material": lc.material}
-    scene = {"meshes": export_meshes(engine, parts, engine.cache / "blender"), "colors": colors,
+    scene = {"meshes": export_meshes(engine, parts, engine.cache / MESHES), "colors": colors,
              "sets": p["sets"], "jobs": [] if only_parts else p["jobs"],
              "part_jobs": p["part_jobs"], "size": list(size), "out_dir": str(out_dir),
              "part_px_per_ldu": part_px_per_ldu}

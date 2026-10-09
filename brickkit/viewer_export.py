@@ -81,7 +81,7 @@ def _indexed(corners: np.ndarray, normals: np.ndarray) -> trimesh.Trimesh:
 
 def _part_meshes(engine, part: str) -> dict[int, trimesh.Trimesh]:
     """{colour code (16 = main): mesh in LDU} with crease-angle normals, inset by GAP_LDU."""
-    m = engine.geom.mesh(part)
+    m = engine.geom_round.mesh(part)                   # (round things round, as in the renders)
     if len(m.tris) == 0:
         return {}
     allv = m.tris.reshape(-1, 3).astype(np.float64)

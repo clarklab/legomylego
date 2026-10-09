@@ -22,6 +22,12 @@ class Engine:
         return GeometryCache(self.lib, self.cache / "geom")
 
     @cached_property
+    def geom_round(self):
+        """The parts as they are drawn in pictures: circles of 48 sides (the checks use `geom`)."""
+        from .ldraw.geometry import GeometryCache
+        return GeometryCache(self.lib, self.cache / "geom48", round_48=True)
+
+    @cached_property
     def shadow(self):
         from .snaps.shadow import ShadowLibrary
         return ShadowLibrary(self.cache / "ldcad_shadow" / "LDCadShadowLibrary-main", self.lib,

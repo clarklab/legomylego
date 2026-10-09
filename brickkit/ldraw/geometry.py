@@ -48,8 +48,14 @@ def _cat(arrs, shape, dtype=float):
 
 
 class GeometryCache:
-    def __init__(self, lib: LDrawLibrary, cache_dir: Path | None = None):
+    """Every part's mesh, its sub-files flattened in. `round_48`: curved primitives in LDraw's
+    high-resolution form (p/48: a circle of 48 sides, not the usual 16), for pictures - a
+    round tile's rim is a visible 16-sided polygon otherwise. The checks keep the usual form
+    (their tolerances were set on it)."""
+
+    def __init__(self, lib: LDrawLibrary, cache_dir: Path | None = None, round_48: bool = False):
         self.lib = lib
+        self.round_48 = round_48
         self.cache_dir = Path(cache_dir) if cache_dir else None
         self._mem: dict[str, Mesh] = {}
         self._sub: dict[str, Mesh] = {}
@@ -123,6 +129,8 @@ class GeometryCache:
                 if kind == "1" and len(t) >= 15:
                     color, M, sub = parse_type1(t)
                     subkey = normalize(sub)
+                    if self.round_48 and "/" not in subkey and ("48/" + subkey) in self.lib.files:
+                        subkey = "48/" + subkey        # (the same primitive, more sides)
                     inv = invert_next ^ is_mirror(M)
                     invert_next = False
                     if subkey in stack:
