@@ -166,7 +166,7 @@ function renderCheckSummary(d) {
   const c = checkCounts(checks);
   const cls = c.fail ? 'fail' : c.warn ? 'warn' : '';
   const ic = c.fail ? 'xCircle' : 'shield';
-  el.innerHTML = `<span class="ring ${cls}">${icon(ic)}</span><span><strong>Checked by computer</strong><span>${checkSummaryText(c)} · not build-tested yet</span></span><span class="chev">${icon('chevronRight')}</span>`;
+  el.innerHTML = `<span class="ring ${cls}">${icon(ic)}</span><span><strong>${d.built ? 'Checked by computer, built with real bricks' : 'Checked by computer'}</strong><span>${checkSummaryText(c)}${d.built ? '' : ' · not build-tested yet'}</span></span><span class="chev">${icon('chevronRight')}</span>`;
   el.hidden = false;
   const badge = c.fail
     ? `<span class="badge badge-fail">${icon('xCircle')}${plural(c.fail, 'check')} failing</span>`
@@ -190,7 +190,13 @@ function renderChecks(d) {
   if (!checks.length) return;
   $('#checks').hidden = false;
   const c = checkCounts(checks);
-  $('#checks-intro').textContent = `brickkit tests the design before anyone builds it: ${checkSummaryText(c)}.`;
+  $('#checks-intro').textContent = d.built
+    ? `brickkit tested the design before it was built: ${checkSummaryText(c)}.`
+    : `brickkit tests the design before anyone builds it: ${checkSummaryText(c)}.`;
+  const honest = document.querySelector('.honest p');
+  if (honest && d.built) {
+    honest.innerHTML = '<strong>Built with real bricks.</strong> This model has been built from its instructions, and it works. The results here come from simulation: part geometry, connection points and collision tests; the real build caught what they could not, and the instructions were corrected from it.';
+  }
   const label = { pass: 'Pass', warn: 'Note', fail: 'Fail' };
   const bic = { pass: 'checkCircle', warn: 'alert', fail: 'xCircle' };
   $('#checks-grid').innerHTML = checks.map((k) => {

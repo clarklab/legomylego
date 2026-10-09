@@ -12,7 +12,9 @@ render. Text comes from the model's `[booklet]` table in model.toml:
 
 and, for a model that is someone else's design, `designer` (and `source`, a link) in `[model]`:
 the cover says "Designed by ...", and "Before you start" says whose it is and where. With no
-name to give, `credit` is our own sentence for it instead.
+name to give, `credit` is our own sentence for it instead. `built = "2026-10-09"` in `[model]`
+(the day someone built it with real bricks, from these instructions, and it worked) takes the
+"not physically build-tested" warnings out and says so instead.
     works = [{title = "...", text = "...", image = "hero_open/low.png"}]   # "It works" panels
 """
 from __future__ import annotations
@@ -138,6 +140,7 @@ def build_context(engine, proj, model, img_dir: Path) -> dict:
         "designer": proj.config["model"].get("designer", ""),      # (not ours: whose, and where
         "source": proj.config["model"].get("source", ""),          # the original is)
         "credit": proj.config["model"].get("credit", ""),          # (or our own words for it)
+        "built": proj.config["model"].get("built", ""),            # built with real bricks: when
         "subtitle": cfg.get("subtitle", ""), "intro": cfg.get("intro", ""),
         "you_will_need": cfg.get("you_will_need", []), "notes": cfg.get("notes", []),
         "hardware": hardware,

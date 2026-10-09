@@ -54,6 +54,8 @@ name = "Baby Metroid Lamp"
 design = "design.py"
 # designer = "..."   # someone else's design: who made it (printed in the booklet),
 # source = "https://..."   # and a link to the original
+# built = "2026-10-09"     # someone has built it with real bricks and it works (the day): the
+                           # booklet and its page say so, in place of "not build-tested"
 
 [palette]            # role -> real colour name (Rebrickable/BrickLink naming)
 dome = "Trans-Light Blue"

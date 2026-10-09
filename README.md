@@ -5,7 +5,8 @@ Buildable models made only of real LEGO elements. They are designed in Python, c
 computer, and shipped with parts lists, an instruction booklet, a build video and a 3D viewer
 at **[bricks.superfun.games](https://bricks.superfun.games)**.
 
-> Computer-checked, not yet built with real bricks. Every part/colour exists, every
+> Computer-checked; most not yet built with real bricks (the VHS Cassette has been, and it
+> works). Every part/colour exists, every
 > connection is matched in 3D, nothing overlaps, every step can be built, the model balances
 > and the mechanisms sweep through their range without collisions. Clutch, tolerances and
 > handling can only be judged with real bricks.

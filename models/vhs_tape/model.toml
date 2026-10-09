@@ -2,6 +2,7 @@
 name = "VHS Cassette"
 design = "design.py"
 description = "A 1:1 VHS video cassette in real LEGO, 184 x 102 x 26 mm: an inner chassis with the tape run, lamp tube and reel spindles inside a shell with two big clear windows; the full-length dust flap swings up and both reels turn."
+built = "2026-10-09"          # built with real bricks by the owner, from the booklet: it works
 notice = "VHS is a trademark of JVC KENWOOD Corporation."
 
 [palette]

@@ -40,6 +40,10 @@ p, li { font-size: 9.5pt; line-height: 1.45; }
 .box { background: #e8f1fa; border-radius: 2.5mm; padding: 4mm 5mm; }
 .box.red { background: #fff; border: 0.6mm solid #e3000b; }
 .box.red h3 { color: #e3000b; }
+.box.green { background: #fff; border: 0.6mm solid #1d7a46; }
+.box.green h3 { color: #1d7a46; }
+.cover .warn.ok { border-color: #1d7a46; }
+.cover .warn.ok b { color: #1d7a46; }
 .box ul { margin: 0; padding-left: 4.5mm; }
 .swatch { display: inline-block; width: 3.4mm; height: 3.4mm; border-radius: 0.8mm; border: 0.2mm solid #0003; vertical-align: -0.6mm; margin-right: 1.5mm; }
 .colours { columns: 2; font-size: 8.5pt; }

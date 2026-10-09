@@ -184,6 +184,7 @@ def model_json(engine, proj, model, placed, *, files: dict, variants: list[tuple
         "slug": proj.slug, "name": model.name,
         "collection": cfg.get("collection"),
         "description": cfg.get("description", ""), "notice": cfg.get("notice", ""),
+        "built": cfg.get("built", ""),             # built with real bricks: the day (else "")
         "parts": len(placed), "pieces": sum(r["qty"] for r in bom), "dims_mm": dims,
         "price": _price(engine, placed, model.extras, proj.out / "price.json"),
         "hardware": _hardware_rows(engine, placed, model),

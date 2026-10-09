@@ -6,6 +6,20 @@ the tape run, and a shell goes over it. The full-length dust flap swings up like
 one, and both reels turn behind two clear windows. 384 parts in 54 part/colour lines,
 104 steps, about 313 g (a real T-120 weighs about 230 g).
 
+## Built with real bricks
+
+The owner built it from the booklet on 2026-10-09, with parts from LEGO Pick a Brick: it goes
+together and it works (the flap swings, the reels turn). `built = "2026-10-09"` in
+`model.toml` takes the "not physically build-tested" warnings out of the booklet and the
+model's page. What the build changed, all in the instructions and none in the model's shape:
+
+- every piece of a step is in one of its pictures (a piece that goes on underneath is shown
+  from below, in place), and a step's parts are drawn to one scale with their sizes;
+- nothing lies loose from step to step and no step is a lone piece: strips of the top shell
+  are built apart and go on with the plate that locks them, about four things to a step
+  (139 steps; it was 104);
+- all four 8 x 8 round plates are Black, so the kit arrives as one Pick a Brick parcel.
+
 ## Size
 
 | | Real VHS | Model | Difference |
