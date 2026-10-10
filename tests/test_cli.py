@@ -109,3 +109,5 @@ def test_status_lists_the_inbox(tmp_path):
         ("Tiny Owl", "tiny_owl", 2, ["pdf", "png"]), ("robot.jpg", "robot", 1, ["jpg"])]
     assert w[0]["next"] == "brickkit new tiny_owl --quick --as NAME" and "folder" in w[1]["next"]
     assert status.waiting(tmp_path / "nowhere", models) == []
+    (models / "frog" / "NOTES.md").write_text("From `inbox/Tiny Owl/` (two owls came of it).")
+    assert [t["name"] for t in status.waiting(inbox, models)] == ["robot.jpg"]   # named as a source
