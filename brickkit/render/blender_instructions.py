@@ -42,7 +42,7 @@ class Instr:
             return self.mats[key]
         info = self.s["colors"].get(str(code), {"rgb": "#888888", "alpha": 255})
         rgb = lifted(hex_to_linear(info["rgb"]))
-        alpha = 0.5 if info["alpha"] < 255 else 1.0
+        alpha = 0.78 if info["alpha"] < 255 else 1.0    # (at 0.5 a flame on white was a grey ghost)
         if pale:                          # mix toward white in sRGB so the hue survives
             w = 0.38 if pale is True else float(pale)     # (a job's "fade": paler still)
             rgb = [_lin(_srgb(c) * (1 - w) + w) for c in rgb]

@@ -1611,13 +1611,46 @@ def encode(work: Path, fps: int, n: int, wm: Path | None, wav: Path | None, mp4:
     subprocess.run(cmd, check=True)
 
 
+COVER_SHARP = 0.0075  # of the frame's width: the most the picture may move while the shutter is
+#                       open, in a frame fit for the cover (8 px at 1080)
+
+
+def _cover_blur(pl: dict, first: int, last: int) -> np.ndarray:
+    """How far the model moves in the picture while the shutter is open (180 degrees: half a
+    frame), in frame widths, for frames first..last: the most of seven points, the model's
+    middle and six round it. The camera turning is little; the camera on its way out of a
+    close-up is a smear."""
+    cam = pl["camera"]
+    pos, tgt = np.asarray(cam["pos"], float), np.asarray(cam["target"], float)
+    lens = np.asarray(cam.get("lens") or np.full(len(pos), 50.0), float)
+    r = 0.25 * np.linalg.norm(pos[last] - tgt[last])
+    P = tgt[last] + r * np.array([[0, 0, 0], [1, 0, 0], [-1, 0, 0], [0, 0, 1], [0, 0, -1],
+                                  [0, -1, 0], [0, 1, 0]], float)
+
+    def screen(k):
+        fwd = tgt[k] - pos[k]
+        fwd = fwd / np.linalg.norm(fwd)
+        right = np.cross(fwd, [0.0, -1.0, 0.0])
+        right = right / np.linalg.norm(right)
+        v = P - pos[k]
+        return np.column_stack((v @ right, v @ np.cross(right, fwd))) / (v @ fwd)[:, None] * lens[k] / 36.0
+
+    at = {k: screen(k) for k in range(max(first - 1, 0), last + 1)}
+    out = []
+    for f in range(first, last + 1):
+        lo, hi = max(f - 1, min(at)), min(f + 1, last)
+        out.append(0.5 * np.linalg.norm(at[hi] - at[lo], axis=1).max() / max(1, hi - lo))
+    return np.array(out)
+
+
 def cover_frame(pl: dict, look: float = 0.0) -> int:
     """The frame for the cover: of the hero the one the camera is nearest `look` in (an
     azimuth, degrees: the model's front, or [quick] cover from it) - its face forward, not
     whatever side the turn is on half way. The hero: from the last landing to the cut, the
     frames in which the model is whole (every piece where it ends up: nothing still to be
-    joined) and framed as it is at the end (not still in a close-up, or on the way out of
-    one). Of frames as near (within a degree), the last."""
+    joined), framed as it is at the end (not still in a close-up, or on the way out of
+    one) and sharp (COVER_SHARP; else the sharpest there is). Of frames as near (within a
+    degree), the last."""
     cam = pl["camera"]
     pos, tgt = np.asarray(cam["pos"], float), np.asarray(cam["target"], float)
     first, cut = int(pl["land"][-1]), int(pl["cut"])
@@ -1631,8 +1664,12 @@ def cover_frame(pl: dict, look: float = 0.0) -> int:
                    for i in range(len(pl.get("parts") or ()))):
             first = f + 1
             break
+    ok = ok[first:cut]
+    blur = _cover_blur(pl, first, last)
+    sharp = ok & (blur <= COVER_SHARP)
+    ok = sharp if sharp.any() else ok & (blur <= blur[ok].min() + 1e-9)
     off = np.abs((np.degrees(np.arctan2(d[:, 0], -d[:, 2])) - look + 180.0) % 360.0 - 180.0)
-    off = np.where(ok, off, np.inf)[first:cut]
+    off = np.where(ok, off[first:cut], np.inf)
     return first + int(np.flatnonzero(off <= off.min() + 1.0)[-1])
 
 

@@ -41,3 +41,9 @@ models/*/reference/*.io
 models/*/reference/*.zip
 # character art a model was worked out from, of unknown source: kept local
 models/jake_the_dog/reference/
+models/bulbasaur/reference/*.webp
+models/bulbasaur/reference/*.jpeg
+models/charmander_starter/reference/*.webp
+models/charmander_starter/reference/*.jpeg
+models/squirtle/reference/*.webp
+models/squirtle/reference/*.jpeg

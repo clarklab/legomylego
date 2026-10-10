@@ -422,11 +422,11 @@ def main(argv=None) -> int:
         print(f"viewer bundle -> {dst}")
         return 0
     if args.cmd == "render":
-        from .render.scene import render_model
+        from .render.scene import render_model, trans_settings
         files = render_model(engine, model, _out(proj, model.variant) / args.out,
                              views=args.views.split(","),
                              size=args.size, samples=args.samples, pose_t=args.pose,
-                             lights_on=args.lights)
+                             lights_on=args.lights, settings=trans_settings(proj.config))
         for f in files:
             print(f"rendered {f}")
         return 0

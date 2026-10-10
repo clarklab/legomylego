@@ -143,6 +143,17 @@ def run_blender(scene: dict, work_dir: Path, script: Path = SCRIPT, timeout: int
     return r.stdout
 
 
+SMALL_TRANS = {"trans_density": 450.0, "trans_body": 0.35}   # see-through pieces as a Quick
+#   Bricks video draws them (blender_quick.py's TINT and BODY): at a small model's size the
+#   stills' own settings leave a flame clear
+
+
+def trans_settings(config: dict) -> dict:
+    """Scene settings for the stills and the booklet's cover of a small model (one with [quick]
+    in its model.toml): its see-through pieces with their colour in them, as in its video."""
+    return dict(SMALL_TRANS) if config.get("quick") is not None else {}
+
+
 def render_model(engine, model, out_dir, *, views=("three_quarter",), size=900, samples=64,
                  pose_t: float | None = None, lights_on: bool = False, background="#F7F8FA",
                  ground: bool = True, transparent: bool = False, lens: float = 70.0,

@@ -25,7 +25,7 @@ The cache location can be overridden with `BRICKKIT_CACHE` (useful in git worktr
 | `brickkit verify SLUG` | run all checks, write `out/report.{json,html}`; exit 1 on any FAIL |
 | `brickkit bom SLUG` | `out/parts.csv`, `out/bricklink_wanted.xml`, `out/pick_a_brick.csv`, `out/price_estimate.md` and `out/price.json`: live BrickLink prices dated today when API keys are in `~/.config/brickkit/bricklink.env` (see `brickkit/bom/live_price.py`), else a rough range from `brickkit/data/price_bands.json` |
 | `brickkit all SLUG` | build + verify + bom, then each colourway (variant) |
-| `brickkit render SLUG [--views a,b] [--size N] [--samples N] [--pose T] [--lights] [--variant V]` | Blender stills in `out/renders/` |
+| `brickkit render SLUG [--views a,b] [--size N] [--samples N] [--pose T] [--lights] [--variant V]` | Blender stills in `out/renders/` (a small model, one with `[quick]`, gets its see-through pieces as its video draws them, their colour in them: `render.scene.trans_settings`; so does its booklet's cover) |
 | `brickkit booklet SLUG [--no-render]` | instruction booklet `out/booklet.pdf` (pictures in `out/booklet/`) |
 | `brickkit viewer SLUG` | export `site/models/SLUG/` (GLB + model.json + files) for the viewer site |
 | `brickkit turntable SLUG [--preview]` | `out/turntable.mp4`: a 12 s photoreal (Cycles) orbit with the mechanism and lights working, muted and seamless; the site plays it where WebGL is missing (`meta["turntable"]`: `program` tap/swing/lights, `cycles`, `taps`). Its frames are kept and reused until the model, the size, the samples or the way of rendering changes |
@@ -942,9 +942,10 @@ part under motion blur made Metal fault and the render hang. A chunk that still 
 (a Metal fault, or 20 minutes without a word from Blender) is run again, up to three times,
 keeping the frames it had (`video._run_blender`); never start another Blender outside the
 `blender_slot()` lock while one renders - that is what sets the faults off. See-through parts are tinted more
-strongly here than in the stills (`blender_quick.TINT`), with some of a vivid colour in the
+strongly here than in a big model's stills (`blender_quick.TINT`), with some of a vivid colour in the
 surface too (`BODY`; none for clear parts): at real size and this close, the stills' glass
-leaves a flame all but clear, or dark with the room it mirrors. The next one: add `[quick]` to the model's model.toml
+leaves a flame all but clear, or dark with the room it mirrors. (A small model's own stills and
+its booklet's cover take these settings too: `render.scene.trans_settings`.) The next one: add `[quick]` to the model's model.toml
 (or nothing: the defaults work) and run `brickkit quick SLUG --preview`, then `brickkit quick
 SLUG`.
 

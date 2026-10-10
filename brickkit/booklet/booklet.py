@@ -214,7 +214,7 @@ def make_booklet(engine, proj, model, *, rerender: bool = True, cover: Path | No
     """Render (unless `rerender` is off and pictures exist) and write out_dir/booklet.pdf;
     out_dir defaults to the model's out/ (a colourway passes out/variants/<name>/)."""
     from ..render import instructions
-    from ..render.scene import render_model
+    from ..render.scene import render_model, trans_settings
     out_dir = Path(out_dir or proj.out)
     img_dir = out_dir / "booklet"
     if rerender or not (img_dir / "plan.json").exists():
@@ -229,7 +229,8 @@ def make_booklet(engine, proj, model, *, rerender: bool = True, cover: Path | No
                                  views=[{"name": "cover", "azimuth": -20, "elevation": 26,
                                          "lens": 60}],
                                  size=(1400, 1400), samples=128, lights_on=bool(model.lights),
-                                 transparent=True, ground=False)
+                                 transparent=True, ground=False,
+                                 settings=trans_settings(proj.config))
             shutil.copy2(files[0], cover_img)
     else:
         shutil.copy2(cover, img_dir / "cover.png")
