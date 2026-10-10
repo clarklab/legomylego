@@ -36,6 +36,7 @@ from ..snaps.match import find_connections
 SNAP = ("clip", "hinge", "pin", "ball", "gen")   # they flex as they go on
 CROSS = ("clip", "hinge")     # pushed on across their axis (as well as slid along it)
 FLEX = 8.0        # LDU: this far out a snap may still touch what it snaps onto
+BALL = ("ball", "gen")        # a ball in a socket: pushed in along the way its stem points
 TRAVEL = 24.0     # LDU: the least clear run of a way in (as checks/buildability)
 RUN = (12.0, 1.2, 6.0)    # the straight run in: at least, x the piece's size that way, plus
 TOL = 0.6         # LDU: "on the table"
@@ -289,6 +290,9 @@ class Assembler:
             cands = [(0 if label == "hint" else 1 if label == "up" else rank + 2, label, d, snap)
                      for rank, label, d, snap in cands]
         snaps_all = {j for i in parts for j, kind, _, _ in self.link.get(i, ()) if kind in SNAP and j in inS}
+        # a ball pushed into its socket the way a hint says squeezes past the socket's lip: that
+        # last touch is the snap, not a clash (a hint is otherwise held to touching nothing)
+        balls = {j for i in parts for j, kind, _, _ in self.link.get(i, ()) if kind in BALL and j in inS}
         out, seen = [], set()
         for rank, label, d, snap in cands:
             key = (tuple(np.round(d, 3)), bool(snap))
@@ -300,9 +304,12 @@ class Assembler:
                 run = RUN[0] + (2.0 if rank == 2 else 0.0)            # underneath: a short run
             if not snap and rank in (2, 3, 4):
                 snap = snaps_all
+            if label == "hint" and not snap:
+                snap = balls
             # pushed on across its bar a clip only flexes the last FLEX; slid along its own
             # axis (a pin in its hole, a clip along its bar) a snap never blocks itself
-            hard, flex = self.sweep(parts, d, max(TRAVEL, run), S, boxes, snap, FLEX if rank == 2 else 1e9)
+            hard, flex = self.sweep(parts, d, max(TRAVEL, run), S, boxes, snap,
+                                    FLEX if rank == 2 or label == "hint" else 1e9)
             if rank == 2 and flex > FLEX - 2:          # through the back of the clip, not its mouth
                 hard = max(hard, 1)
             tie = (flex if rank == 2 else -votes.get(tuple(np.round(d, 2)), 0), -round(float(d @ up), 2))

@@ -575,3 +575,27 @@ def test_quick_cover_is_face_forward():
     assert Q.quick_config({})["cover"] == 0.0
     with pytest.raises(SystemExit):
         Q.quick_config({"quick": {"cover": "side"}})
+
+
+def test_quick_ball_joints(engine):
+    """A ball joint is pushed in the way its hint says: along the stem, not along the snap
+    data's axis (which is the plate's studs). The ball squeezes past the socket's lip in the
+    last few LDU, and that touch is the snap, not a clash: a chain of three joint plates
+    builds for real, each link from the end of the one before."""
+    from brickkit.checks import run_checks
+    from brickkit.model.builder import Model
+    model = Model("Chain", "chain", {}, engine.catalog)
+    m = model.main
+    m.place("14419", "Dark Bluish Gray", (0, 0, 0))                # its socket at x = 30
+    for x in (60, 120):
+        m.step()
+        m.place("14419", "Dark Bluish Gray", (x, 0, 0), insert=(1, 0, 0))      # its ball in that socket
+    assert {c.status for c in run_checks(engine.context(model), ["connections", "collisions", "buildability"])} == {"pass"}
+    placed = model.flatten()
+    sc = A.assemble(engine, model, placed, Q.build_sequence(model, placed))
+    assert sc["warnings"] == [] and not any(it.forced for it in sc["items"])
+    links = [it for it in sc["items"] if placed[it.parts[0]].part == "14419.dat"][1:]
+    assert [it.way for it in links] == ["hint", "hint"]
+    assert all(it.axis @ [1, 0, 0] > 0.99 for it in links)
+    pl = Q.plan(engine, model, Q.quick_config({"quick": {"seconds": 8, "layout": False}}))
+    assert Q.clashes(engine, placed, pl) == []
