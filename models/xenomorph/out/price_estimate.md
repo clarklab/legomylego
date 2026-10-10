@@ -1,6 +1,6 @@
 # Xenomorph: price estimate
 
-**Roughly $2 - $9** for 49 pieces in 20 lines, new parts on BrickLink, before shipping.
+**Roughly $2 - $10** for 51 pieces in 22 lines, new parts on BrickLink, before shipping.
 
 This is a rough range from typical per-piece prices by part type (see `brickkit/data/price_bands.json`), scaled up for transparent colours and for part/colour combinations that appeared in few sets. It is not live market data: set up BrickLink API credentials (see `brickkit/bom/live_price.py`) for dated prices.
 
@@ -11,6 +11,7 @@ For a real quote, upload `bricklink_wanted.xml` as a BrickLink Wanted List and u
 | 9 | 48729b Bar 1L with Clip [Cut Edges and One Side Hole] [Gap in Clip] | Black | 0.05-0.25 | 0.45-2.25 | other |
 | 4 | 30377 Arm Mechanical with 2 Clips [Battle Droid] | Black | 0.05-0.25 | 0.20-1.00 | other |
 | 4 | 30554b Hinge Cylinder 1 x 3 Locking with 1 Finger and 2 Fingers On Ends, with Hole, 9 Teeth | Black | 0.05-0.25 | 0.20-1.00 | other |
+| 1 | 13786pb08 Animal, Cat, Standing New Style with Dark Tan Chest and Muzzle, Black Nose, Angry Print | Orange | 0.20-1.00 | 0.20-1.00 | other, in 1 set(s) |
 | 3 | 4697b Pneumatic T-Piece (T Bar) [New Style] | Black | 0.05-0.25 | 0.15-0.75 | other |
 | 3 | 54200 Brick Sloped 30° 1 x 1 x 2/3 (Cheese Slope) | Black | 0.05-0.15 | 0.15-0.45 | slope |
 | 1 | 30375 Torso Mechanical, Battle Droid | Black | 0.10-0.50 | 0.10-0.50 | other, in 7 set(s) |
@@ -27,4 +28,5 @@ For a real quote, upload `bricklink_wanted.xml` as a BrickLink Wanted List and u
 | 1 | 15712 Tile Special 1 x 1 with Clip with Rounded Edges | Black | 0.03-0.10 | 0.03-0.10 | tile |
 | 1 | 3070b Tile 1 x 1 with Groove | Black | 0.03-0.10 | 0.03-0.10 | tile |
 | 1 | 30383 Hinge Plate 1 x 2 Locking with 1 Finger On Top | Black | 0.02-0.08 | 0.02-0.08 | plate |
+| 1 | 60478 Plate Special 1 x 2 with Handle on End [Closed Ends] | Black | 0.02-0.08 | 0.02-0.08 | plate |
 | 1 | 6141 Plate Round 1 x 1 with Solid Stud | Flat Silver | 0.02-0.08 | 0.02-0.08 | plate |

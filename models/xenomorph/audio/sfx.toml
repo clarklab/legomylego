@@ -16,3 +16,13 @@ variants = 4
 prompt = """A monstrous insect-like alien creature, very close: a wet, rasping hiss that rises \
 at once into a short, piercing, inhuman screech and stops dead. One creature, one cry, \
 starting at once. Dry and close, no echo, no music, no footsteps, no voices, nothing else."""
+
+# The cat on its back answers: one meow as it lands (model.toml's [[quick.sound]] plays the
+# one used)
+[[sfx]]
+name = "meow"
+seconds = 1.0
+variants = 4
+prompt = """A small house cat, very close: one short, clear, slightly grumpy meow. One cat, \
+one meow, starting at once and over in under a second. Dry and close, no echo, no music, no \
+purring, no hissing, no voices, nothing else."""

@@ -1,7 +1,7 @@
 [model]
 name = "Xenomorph"
 design = "design.py"
-description = "A black alien in 49 pieces, 11 cm from its claws to the tip of its tail and 7 cm tall: a long domed head with silver teeth, tubes on its back and a jointed tail with spines and a barb. Every joint moves, and it stands on its two feet and the barb. Designed by yodakya."
+description = "A black alien in 51 pieces with an orange cat riding on its back, 11 cm from its claws to the tip of its tail and 8 cm tall to the cat's ears: a long domed head with silver teeth, tubes on its back and a jointed tail with spines and a barb. Every joint moves, and it stands on its two feet and the barb. Designed by yodakya; the cat is our addition."
 designer = "yodakya"
 source = "https://rebrickable.com/mocs/MOC-34927/"
 collection = "quick_bricks"
@@ -9,21 +9,24 @@ collection = "quick_bricks"
 [palette]                     # role -> a real colour name; design.py places parts by role
 black = "Black"
 silver = "Flat Silver"        # the teeth, a 1 x 1 round plate: colour 179 in the designer's file
+cat = "Orange"                # the cat riding on its back (ours, not the designer's)
 
 [booklet]
-subtitle = "A posable alien with a domed head, tubes on its back and a spined tail, in 49 pieces. Designed by yodakya."
-intro = "It goes together in small sections that clip onto each other. Start with the hips, a T-shaped bar: build the two legs flat on the table and slide one onto each end. Clip on the torso, the arms and the head, push the back with its four tubes into the stud behind the torso, then click the tail together link by link and hang it on the hinge."
+subtitle = "A posable alien with a domed head, tubes on its back, a spined tail and a cat for a passenger, in 51 pieces. Designed by yodakya; the cat is ours."
+intro = "It goes together in small sections that clip onto each other. Start with the hips, a T-shaped bar: build the two legs flat on the table and slide one onto each end. Clip on the torso, the arms and the head, push the back with its four tubes into the stud behind the torso, then click the tail together link by link and hang it on the hinge. Last comes the cat: its saddle, a small plate with a handle, clips into the end of a back tube."
 notes = ["It stands on three points: its two feet and the barb at the end of its tail. If the barb does not reach the table, tip the body back a little at the hips.",
-         "The tail's hinges click every 22.5 degrees. Count the clicks in each step; a hinge left between two clicks does not hold."]
+         "The tail's hinges click every 22.5 degrees. Count the clicks in each step; a hinge left between two clicks does not hold.",
+         "The cat's saddle hangs on two clips. If it droops, turn it level again by hand.",
+         "The orange cat with the angry face was made for one set. Any LEGO standing cat fits the saddle the same way."]
 
 [checks]
 enabled = ["real_elements", "connections", "collisions", "buildability", "stability",
            "mechanism", "electrics", "technique"]
 
-# Quick Bricks video (brickkit quick xenomorph): 49 pieces, so they fly in (no layout). The
-# close-ups: the dome of the head as it lands, and the barb at the end of the tail. The build
-# has seven lifts and joins (legs, head, back and sting are built beside it and joined), which
-# do not fit in 14 s: the planner asks for 15
+# Quick Bricks video (brickkit quick xenomorph): 51 pieces, so they fly in (no layout). The
+# close-ups: the dome of the head as it lands, and the cat as it comes down onto its back, the
+# last piece. The build has seven lifts and joins (legs, head, back and sting are built beside it
+# and joined), which do not fit in 14 s: the planner asks for 15
 [quick]
 last_look = [0, 12]           # the video ends three-quarters on (the model's "front", design.py),
                               # give or take 12 degrees: head on it is a narrow black shape
@@ -31,10 +34,17 @@ surface = "oak"               # blue_mat | green_mat | kraft | oak | baseplate
 room = "workbench"            # workbench | studio | window | night | bookshelf
 light = "evening"             # morning | day | evening
 seconds = 15
-highlight = ["dome", "barb"]  # tags: the head's dome, the tail's tip
+highlight = ["cat", "dome"]   # tags: the cat on its back, the head's dome
 close_ups = 2
 music = false                 # just the clicks
-ending = "audio/hiss_1.mp3"   # its own sound as the last piece goes on: a hiss that rises into a
+ending = "audio/hiss_1.mp3"   # its own sound once the cat is on: a hiss that rises into a
                               # screech (audio/sfx.toml), 2 s
 ending_level = -11.0          # (its peak in the mix; the mastering then brings the whole track up together)
-ending_at = -0.15             # the hiss starts as the sting clicks on, and the cry is over before the cut
+ending_at = 0.0               # the hiss starts as the cat lands: quiet for 0.3 s, so the meow is
+                              # heard, and the cry is over before the cut
+
+[[quick.sound]]               # the cat says so as it comes in to land, in its close-up
+file = "audio/meow_2.mp3"     # 0.8 s (audio/sfx.toml)
+on = "cat"
+level = -7.0
+at = -0.3

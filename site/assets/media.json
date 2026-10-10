@@ -2201,82 +2201,82 @@
   "xenomorph": {
    "files": {
     "booklet.pdf": {
-     "v": "ceb5c47b2e",
-     "size": 5060262
+     "v": "041b3753e1",
+     "size": 5256930
     },
     "bricklink_wanted.xml": {
-     "v": "81c7a988f3",
-     "size": 1883
+     "v": "29d3854baa",
+     "size": 2072
     },
     "model.glb": {
-     "v": "d54fc2d083",
-     "size": 762200
+     "v": "0e85bec6fd",
+     "size": 869328
     },
     "model.json": {
-     "v": "1647c5d2f6",
-     "size": 18430
+     "v": "917fd67c09",
+     "size": 19896
     },
     "parts.csv": {
-     "v": "fadb4d3f3c",
-     "size": 1908
+     "v": "e55bc7fbb4",
+     "size": 2156
     },
     "pick_a_brick.csv": {
-     "v": "b0f7856c84",
-     "size": 236
+     "v": "18a7a1ae7e",
+     "size": 258
     },
     "price_estimate.md": {
-     "v": "f77e3ba73e",
-     "size": 2665
+     "v": "fb1f11a7a7",
+     "size": 2933
     },
     "quick_poster.jpg": {
-     "v": "044eeedb06",
-     "size": 112691
+     "v": "6222b8c32d",
+     "size": 133362
     },
     "renders/renders_back.png": {
-     "v": "565c30386d",
-     "size": 356555
+     "v": "8dc07bbe43",
+     "size": 531876
     },
     "renders/renders_front.png": {
-     "v": "a8aba32765",
-     "size": 201732
+     "v": "2ec6c48cdb",
+     "size": 539658
     },
     "renders/renders_side.png": {
-     "v": "30f7c1e169",
-     "size": 393915
+     "v": "13ae06daf6",
+     "size": 534813
     },
     "renders/renders_three_quarter.png": {
-     "v": "ed360cf7fb",
-     "size": 186466
+     "v": "c546452711",
+     "size": 504636
     },
     "xenomorph.mpd": {
-     "v": "76d1c99891",
-     "size": 7889
+     "v": "c9e4f51da8",
+     "size": 8221
     }
    },
    "images": {
     "renders/renders_back.png": {
-     "w": 600,
-     "h": 600,
-     "lg": "/assets/img/xenomorph/renders_back.webp?v=78b4439ce1",
-     "sm": "/assets/img/xenomorph/renders_back-480.webp?v=a26b4c9ef2"
+     "w": 700,
+     "h": 700,
+     "lg": "/assets/img/xenomorph/renders_back.webp?v=93a86ceba8",
+     "sm": "/assets/img/xenomorph/renders_back-480.webp?v=40038c2d7d"
     },
     "renders/renders_front.png": {
-     "w": 420,
-     "h": 420,
-     "lg": "/assets/img/xenomorph/renders_front.webp?v=23357017e4",
-     "sm": "/assets/img/xenomorph/renders_front-480.webp?v=b0f3602c9d"
+     "w": 700,
+     "h": 700,
+     "lg": "/assets/img/xenomorph/renders_front.webp?v=21ea3a438b",
+     "sm": "/assets/img/xenomorph/renders_front-480.webp?v=25e6adb027"
     },
     "renders/renders_side.png": {
-     "w": 600,
-     "h": 600,
-     "lg": "/assets/img/xenomorph/renders_side.webp?v=937b2f88de",
-     "sm": "/assets/img/xenomorph/renders_side-480.webp?v=73fdce11a8"
+     "w": 700,
+     "h": 700,
+     "lg": "/assets/img/xenomorph/renders_side.webp?v=4e6c49d3e4",
+     "sm": "/assets/img/xenomorph/renders_side-480.webp?v=d7f9404891"
     },
     "renders/renders_three_quarter.png": {
-     "w": 420,
-     "h": 420,
-     "lg": "/assets/img/xenomorph/renders_three_quarter.webp?v=4ccb96e766",
-     "sm": "/assets/img/xenomorph/renders_three_quarter-480.webp?v=1cb86ca1c9"
+     "w": 700,
+     "h": 700,
+     "lg": "/assets/img/xenomorph/renders_three_quarter.webp?v=6a40490180",
+     "sm": "/assets/img/xenomorph/renders_three_quarter-480.webp?v=ab6cbedde7"
     }
    }
   }

@@ -37,6 +37,10 @@ HIP_Y = -(48 * math.cos(math.radians(LEG)) + 50 * math.sin(math.radians(LEG)))  
 WAIST = 16.0        # the waist clip sits at the top end of the hip piece's stem (14 in the file)
 SPINE = 22.0        # a tail spine's clip above its link: its bar ends flush underneath
 CREST = 16.0        # the crest's T-bar above its link, so the spines' jaws clear it (14.5 in the file)
+TUBES = ((-8, -48.0), (8, -48.0), (-16, -20.0), (16, -20.0))   # the back's four tubes: where on
+#                     the cross bar, and how far each droops from the line of the back (the outer
+#                     two 10 more than in the file: the saddle in the right one's end clip then
+#                     clears the back of the head by 4 LDU and more)
 
 
 def axes(x, y, z):
@@ -140,8 +144,9 @@ def build(model):
                "from the hinge plate")
     spine.place("4697b", "black", (0, 0, 0), axes(-EY, -EZ, EX), tag="back_bar")
     spine.step("Clip four droid arms onto the cross bar, two each side of the stem, all "
-               "trailing to the back: the inner two hanging low, the outer two nearly level")
-    for x, droop in ((-8, -48.0), (8, -48.0), (-16, -10.0), (16, -10.0)):
+               "trailing to the back: the inner two hanging low, the outer two a little below "
+               "level")
+    for x, droop in TUBES:
         spine.place("30377", "black", (x, 0, 0), rot(x=droop + 90) @ rot(y=180), tag="tubes")
 
     # The crest: a T-bar, cross bar along Z, stem down, four spines standing on it
@@ -229,3 +234,17 @@ def build(model):
     m.step("Click the tail onto the hinge, one click up from the line of the back. The barb "
            "comes down onto the table: the third foot")
     m.use(tail, tuple(bar + Rt @ np.array([0.0, 40.0, 6.0])), rot(x=TAIL), tag="tail")
+
+    # The cat: ours, not the designer's. Nothing on the back has a free stud, but each tube ends
+    # in a free clip. The outer right tube's takes the handle of a 1 x 2 plate, held level
+    # behind the head: a saddle, and the cat stands on its two studs, looking forward
+    x, droop = TUBES[3]
+    hand = Rt @ rot(x=droop + 90) @ rot(y=180)          # that tube, as it hangs on the figure
+    grip = bar + Rt @ np.array([x, 0.0, 0.0]) + hand @ np.array([0.0, 38.2, -12.0])
+    mouth = hand @ rot(x=-30) @ EY                      # its end clip's jaws open up and back
+    seat = grip + np.array([0.0, -2.0, 30.0])           # the plate's top: its handle is 2 lower
+    m.step("The saddle: press the handle of the 1 x 2 plate into the clip at the end of the "
+           "outer right tube, from behind, studs up and level. Stand the cat on its two studs, "
+           "looking forward over the shoulder")
+    m.place("60478", "black", tuple(seat), axes(-EZ, EY, EX), tag="saddle", insert=tuple(mouth))
+    m.place("13786p07", "cat", tuple(seat + np.array([0.0, 0.0, -10.0])), tag="cat")

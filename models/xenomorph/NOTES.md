@@ -1,13 +1,15 @@
 # Xenomorph
 
-A Quick Bricks model: 49 pieces, all Black but one Flat Silver round plate for the teeth.
-It is 10.8 cm from its claws to the tip of its tail, 6.7 cm tall and 2.2 cm wide. Every joint
-moves: the legs, arms, head and back tubes hang on clips and bars, the tail on click hinges.
-It stands on its two feet and the barb at the end of its tail.
+A Quick Bricks model: 51 pieces, all Black but one Flat Silver round plate for the teeth and
+an Orange cat riding on its back. It is 10.8 cm from its claws to the tip of its tail, 2.3 cm
+wide and 7.8 cm tall to the cat's ears (6.7 cm without the cat). Every joint moves: the legs,
+arms, head and back tubes hang on clips and bars, the tail on click hinges. It stands on its
+two feet and the barb at the end of its tail.
 
 The design is another builder's: **yodakya**, Rebrickable
 [MOC-34927](https://rebrickable.com/mocs/MOC-34927/). This folder is that model, part for part,
-posed so that its joints close and it stands.
+posed so that its joints close and it stands. The cat and the saddle it stands on are ours,
+added on 2026-10-09 at the owner's request (see *The cat*).
 
 ## Source
 
@@ -35,6 +37,8 @@ Left and right are the figure's own. All the angles are in `design.py`, at the t
 | Neck | a clip plate (61252) on the bar at the top of the torso; the teeth and the head stand on it | turns freely; the head is 7.75 degrees nose down |
 | Back | a T-bar's stem in the hollow stud on the torso's back; a clip plate (60897) hangs from the stem and carries the hinge plate (30383) | square with the torso |
 | Tubes | four droid arms (30377) clipped on that T-bar's cross bar | turn freely; the inner pair hang lower than the outer pair |
+| Saddle | the handle of a 1 x 2 plate (60478) in the free clip at the end of the outer right tube | turns freely; held level, studs up |
+| Cat | its two feet on the saddle's two studs | fixed; it looks forward |
 | Tail | click hinges: 22.5 degrees a click | hinge plate to first link 1 click up from the line of the back; then up 2, up 2, down 2, and the sting down 2 |
 | Spines | a claw's bar through the hole in a link; the crest's T-bar stem in the hole of the fourth link, four claws clipped on its cross bar | square with their links |
 | Barb | its bar pushed into the axle hole in the end of the last link | held by friction (see below) |
@@ -42,10 +46,39 @@ Left and right are the figure's own. All the angles are in `design.py`, at the t
 The torso is a battle droid's (30375), upside down: its shoulder bar is the waist and the
 shoulders, its hip bar is the neck, and the stud on its back holds the back.
 
+## The cat
+
+The owner asked for an orange cat on its shoulder or back: BrickLink 13786pb08, the standing
+cat with the angry face (Rebrickable 13786pr0024, LDraw 13786p07, element 6401523), one piece.
+
+- **Where it can stand.** A cat stands on studs, and nothing on the designer's back has one
+  free: the torso's back stud holds the back's T-bar, and the hinge plate's faces backwards
+  into the tubes. Every placing of the cat on those two was tried, at every turn: all collide.
+  The only free studs are on the legs.
+- **What the back does have** is four free clips, one at the end of each tube. So the cat
+  gets a saddle: a 1 x 2 plate with a handle on its end (60478, Black, element 4515368), its
+  handle pressed into the end clip of the **outer right tube**, the plate held level behind
+  the head. The cat stands on its two studs, looking forward over the right shoulder. That is
+  one piece more than the cat; no way was found with none.
+- **The two outer tubes droop 10 degrees more** than in the file (2.5 degrees above level in
+  the file's attitude, not 12.5), both of them, to keep the pair. At the file's angle the
+  saddle's handle sat under 2 LDU from the back end of the head; now the saddle and the cat
+  clear everything by 4 LDU and more.
+- **How it goes on.** The clip's jaws open up and back, so the handle is pressed in from
+  behind and a little above (`insert` on the saddle in `design.py`). Then the cat goes on from
+  above. They are the last step.
+- **What holds it.** Two friction joints in a row: the tube's clip on the T-bar and the
+  tube's end clip on the handle. The cat weighs about a gram and a half, 12 mm out from the
+  handle. A clip holds far more than that, but both can be turned: if the saddle droops, level
+  it by hand. Not built with real bricks yet.
+- **Getting the piece.** The cat was made in Orange with this face for one set (2022), so
+  `real_elements` warns that it is rare. It will not be on Pick a Brick; BrickLink has it
+  (`out/bricklink_wanted.xml`). Any standing cat (13786) fits the same two studs.
+
 ## The build, step by step
 
 The Studio file has no steps, so the order is ours: the figure goes together in sections,
-each built on the table and then joined. The 34 steps are in building order.
+each built on the table and then joined. The 35 steps are in building order.
 
 | Step | Pieces | Where |
 |---:|---|---|
@@ -75,7 +108,7 @@ each built on the table and then joined. The 34 steps are in building order.
 | | **Back** | |
 | 22 | 1x Plate 1 x 1 with Clip Vertical (60897), 1x Hinge Plate 1 x 2 Locking with 1 Finger on Top (30383), Black | The hinge plate goes on the clip plate's stud, its finger at the far end from the clip. |
 | 23 | 1x Pneumatic T-Piece (4697b), Black | Its stem pressed into the clip, the end of the stem pointing away from the hinge plate. |
-| 24 | 4x Arm Mechanical with 2 Clips, battle droid (30377), Black | Clipped on the T-bar's cross bar, two each side of the stem, all trailing to the back: the tubes. The inner two hang low, the outer two are nearly level. |
+| 24 | 4x Arm Mechanical with 2 Clips, battle droid (30377), Black | Clipped on the T-bar's cross bar, two each side of the stem, all trailing to the back: the tubes. The inner two hang low, the outer two a little below level. |
 | 25 | | Push the T-bar's stem into the stud on the torso's back, the hinge plate hanging down. |
 | | **Tail** | |
 | 26 | 1x Hinge Cylinder 1 x 3 Locking with 1 finger and 2 fingers, with hole (30554b), 1x Bar 1L with Clip (48729b), Black | The first link, two-finger end forward. The claw's bar goes down through its hole until it is flush underneath: a spine. |
@@ -87,10 +120,13 @@ each built on the table and then joined. The 34 steps are in building order.
 | 32 | 1x Barb, medium (87747), 1x Hinge Cylinder 1 x 2 Locking with 2 fingers and axle hole (30553), Black | The sting: the barb's bar pushed into the axle hole. |
 | 33 | | Click the sting onto the fourth link, turned down two clicks, point down. |
 | 34 | | Click the tail onto the hinge plate, one click up from the line of the back. The barb comes down onto the table. |
+| | **Cat** (ours) | |
+| 35 | 1x Plate 1 x 2 with Handle on End (60478), Black. 1x Cat, standing, angry face (13786pb08), Orange | The saddle: its handle pressed into the clip at the end of the outer right tube, from behind, studs up and level. The cat stands on its two studs, looking forward. |
 
 ## What changed from the designer's file, and why
 
-Nothing was added or left out: 49 pieces in the file, 49 here. The file's pose has been tipped
+Nothing of the designer's was left out: the file's 49 pieces are all here. Two pieces are
+added, ours: the cat and its saddle (*The cat*, above). The file's pose has been tipped
 back as a whole, and each joint that was only nearly closed has been closed. Distances are in
 LDU: 2.5 LDU is a millimetre.
 
@@ -132,7 +168,7 @@ the jaws of two crest claws in the link under them (2):
 | Crest T-bar | pushed down until the jaws of the two inner claws were 1 LDU inside the link under them | 1.5 higher (its cross bar 3 above the link), stem still 13 deep in the hole |
 | Crest claws | 7.8, 8.1, 17.8 and 18.1 from the T-bar's middle: the outer two hung 2 off the ends of the bar | 8 and 16: all on the bar, side by side |
 | Tail spines | clips 20, 21.4 and 21.3 above their links | all 22: the bar ends flush under the link |
-| Back tubes | 28.9 and 24.6 degrees below level (inner), 11.3 and 12.0 above (outer) | paired: 25.5 below and 12.5 above, in the file's attitude |
+| Back tubes | 28.9 and 24.6 degrees below level (inner), 11.3 and 12.0 above (outer) | paired: 25.5 below and 2.5 above, in the file's attitude (the outer pair 10 lower than the file's, for the saddle) |
 
 **The tail's four hinge cylinders and the barb** were where they belong all along; see
 *The checks* for why they were reported loose.
@@ -151,39 +187,24 @@ the jaws of two crest claws in the link under them (2):
 
 ## The checks
 
-`brickkit all xenomorph`, as the engine stands:
+`brickkit all xenomorph`:
 
 | Check | Result |
 |---|---|
-| real_elements | warns: the Black battle droid torso is rare (above). Everything else is current |
-| connections | **fails**: the model is reported in 5 pieces, the body and four pieces of tail |
+| real_elements | warns: two rare pieces, the Black battle droid torso (above) and the Orange cat (one set, 2022). Everything else is current |
+| connections | passes: 53 connections (22 stud, 17 clip, 7 bar, 5 hinge, 1 pin, 1 press), one piece |
 | collisions | passes |
-| buildability | **fails**: 8 problems, all of them steps of the tail leaving "loose pieces" |
-| stability | passes: the middle is well inside the feet and the barb; it tips at 16.9 degrees |
+| buildability | passes: 52 insertions, no problems |
+| stability | passes: the middle is well inside the feet and the barb; it tips at 14.1 degrees (16.9 without the cat) |
 | mechanism, electrics, technique | pass |
 
-**Why the tail fails, and the fix.** The four links are 30554b, a hinge cylinder with one
+**The tail's hinges needed an overlay.** The four links are 30554b, a hinge cylinder with one
 click finger at one end and two at the other. LDraw's file for it draws the two-finger end by
 including the sub-part `s\480s02.dat` mirrored, and the engine drops a mirrored finger snap
-(`brickkit/snaps/shadow.py`, `place()`: SNAP_FGR has no mirror rule). So the engine knows the
-part's one-finger end and its hole, but not its two-finger end, and none of the four joints
-*hinge plate - link - link - link - link* can be found. The fifth, onto the sting, is found,
-because 30553 includes the same sub-part unmirrored.
-
-That is a gap in the snap data, not in the model, and the guide's cure for one is an overlay.
-This file, `brickkit/data/shadow/parts/30554b.dat`, closes it:
-
-```
-0 LDCad shadow info for "Hinge Arm Locking with Single and Dual Fingers and Hole" (overlay)
-0 !LDCAD SNAP_FGR [group=lckHng] [genderOfs=M] [seq=4.5 8 4.5] [pos=0 0 20] [ori=0 -1 0 1 0 0 0 0 1]
-```
-
-It is not in the repo yet: this model was finished under orders to write only inside
-`models/xenomorph/`. With the overlay loaded (tried in memory, nothing written) every check
-passes: 50 connections (20 stud, 16 clip, 7 bar, 5 hinge, 1 pin, 1 press), one piece; 50
-insertions, no problems; no technique notes, so every hinge is on a click; and the Quick
-Bricks plan audits clean. Until then `brickkit ways` also lists the tail's links as having no
-clear way in, for the same reason.
+(`brickkit/snaps/shadow.py`, `place()`: SNAP_FGR has no mirror rule). So the engine knew the
+part's one-finger end and its hole, but not its two-finger end, and reported the tail in
+pieces. That was a gap in the snap data, not in the model, and the guide's cure for one is an
+overlay: `brickkit/data/shadow/parts/30554b.dat` adds the missing finger.
 
 No check is switched off and no contact is allowed (`allow_contact`). The one press fit is
 the barb, below.
@@ -225,26 +246,31 @@ the barb, below.
 `inbox/xenomorph/unpacked/thumbnail.png`: the same figure in the same pose, piece for piece.
 What differs: it is tipped back about 8 degrees, so the head is nearer level and the tail's
 tip is on the table instead of in the air; the tip of the tail turns down a little more (45
-degrees, not 36); the crest's cross bar stands 0.6 mm higher off its link; and the four
-tubes on the back are paired. The teeth are flat silver, as in the picture.
+degrees, not 36); the crest's cross bar stands 0.6 mm higher off its link; the four
+tubes on the back are paired, the outer two 10 degrees lower; and there is a cat on its back.
+The teeth are flat silver, as in the picture.
 
 ## Parts and price
 
-- 49 pieces in 20 lines; every part has a LEGO element ID.
-- One rare line: the Black battle droid torso (30375).
-- `out/pick_a_brick.csv` and `out/bricklink_wanted.xml` are ready to upload.
-- The rough estimate is $2-$9. Prices have not been checked live.
+- 51 pieces in 22 lines; every part has a LEGO element ID.
+- Two rare lines: the Black battle droid torso (30375) and the Orange cat (13786pb08).
+- `out/pick_a_brick.csv` and `out/bricklink_wanted.xml` are ready to upload. The cat will not
+  be on Pick a Brick: it comes from BrickLink.
+- The rough estimate is $2-$10. Prices have not been checked live, and the estimate does not
+  know what a one-set cat sells for.
 
 ## Quick Bricks
 
-- `[quick]` in `model.toml`: the bare oak desk in the workbench room, evening light, clicks
-  only. `collection` is still commented out: nothing is published.
-- 49 pieces, so they fly in rather than starting laid out.
-- Close-ups: the head's dome as it lands (tag `dome`) and the barb at the tip of the tail
-  (tag `barb`).
+- `[quick]` in `model.toml`: the bare oak desk in the workbench room, evening light.
+  Published: `collection = "quick_bricks"`.
+- 51 pieces, so they fly in rather than starting laid out.
+- Close-ups: the head's dome as it lands (tag `dome`) and the cat as it comes down onto its
+  back (tag `cat`), the last piece. The barb's close-up made way for the cat's.
 - The planner builds the hips in place, each leg beside the model and slides it on, the head
   and the back beside it too, the tail link by link on the model, and the sting beside it. That
   is 7 lifts and joins, which do not fit in the usual 14 s, so `seconds` is 15.
-- With the overlay above loaded the plan has no `quick:` warnings. Without it the checks fail,
-  so `brickkit status --check` does not audit the plan at all.
-- No booklet and no video have been rendered.
+- The video ends three-quarters on (`last_look`): head on, the figure is a narrow black shape.
+- Two sounds of its own, both made with ElevenLabs (`audio/sfx.toml`): the cat's meow as it
+  comes in to land, then the creature's hiss and screech, which starts quietly as the cat
+  lands and is over before the cut.
+- The plan has no `quick:` warnings; `brickkit status xenomorph --check` says clean.
