@@ -1,0 +1,104 @@
+0 FILE squirtle.ldr
+0 Squirtle
+0 Name: squirtle.ldr
+0 Author: brickkit
+
+0 // Stand the two flipper feet side by side, toes forward, and tie their heels together with a blue 1 x 2 plate
+1 16 0 0 0 1 0 0 0 1 0 0 0 1 right_foot.ldr
+1 16 0 0 0 1 0 0 0 1 0 0 0 1 left_foot.ldr
+1 322 0 -24 20 1 0 0 0 1 0 0 0 1 3023b.dat
+0 STEP
+0 // A blue plate behind the right heel starts the outboard tail, and a second hip plate leaves clearance above the curved toes
+1 322 40 -24 20 1 0 0 0 1 0 0 0 1 3023b.dat
+1 322 0 -32 10 1 0 0 0 1 0 0 0 1 3022.dat
+0 STEP
+0 // Two bricks turn studs toward the sides for the little arms
+1 322 -10 -56 10 0 0 1 0 1 0 -1 0 0 11211.dat
+1 322 10 -56 10 0 0 -1 0 1 0 1 0 0 11211.dat
+0 STEP
+0 // The chest and back each have two studs for the belly and shell
+1 322 0 -80 0 1 0 0 0 1 0 0 0 1 11211.dat
+1 322 0 -80 20 -1 0 0 0 1 0 0 0 -1 11211.dat
+1 322 0 -88 10 1 0 0 0 1 0 0 0 1 3022.dat
+0 STEP
+0 // A round tan belly and two rounded blue flippers
+1 19 0 -60 -18 1 0 0 0 0 -1 0 1 0 14769.dat
+1 322 -44 -46 0 0 1 0 1 0 0 0 0 -1 37352.dat
+1 322 44 -46 0 0 -1 0 1 0 0 0 0 1 37352.dat
+0 STEP
+0 // A jumper behind the body centres the shell
+1 19 0 -60 38 1 0 0 0 0 1 0 -1 0 87580.dat
+0 STEP
+0 // A tan rim around a brown domed shell, finished with a smooth centre
+1 19 0 -60 54 1 0 0 0 0 1 0 -1 0 3960.dat
+1 19 0 -60 62 1 0 0 0 0 1 0 -1 0 6141.dat
+1 70 0 -60 70 1 0 0 0 0 1 0 -1 0 43898.dat
+1 70 0 -60 78 1 0 0 0 0 1 0 -1 0 98138.dat
+0 STEP
+0 // A wide plate supports the oversized head
+1 322 0 -96 -10 1 0 0 0 1 0 0 0 1 3031.dat
+0 STEP
+0 // Two eye-support bricks in front and two bricks behind them
+1 322 -20 -120 -40 1 0 0 0 1 0 0 0 1 11211.dat
+1 322 20 -120 -40 1 0 0 0 1 0 0 0 1 11211.dat
+1 322 0 -120 -10 1 0 0 0 1 0 0 0 1 3001.dat
+1 322 0 -120 20 1 0 0 0 1 0 0 0 1 3010.dat
+0 STEP
+0 // Tie the head together and raise the centre of the crown
+1 322 0 -128 -10 1 0 0 0 1 0 0 0 1 3031.dat
+1 322 0 -136 -10 1 0 0 0 1 0 0 0 1 3020.dat
+0 STEP
+0 // Four curved slopes make a rounded blue crown
+1 322 -20 -128 -30 1 0 0 0 1 0 0 0 1 15068.dat
+1 322 -20 -128 10 -1 0 0 0 1 0 0 0 -1 15068.dat
+1 322 20 -128 -30 1 0 0 0 1 0 0 0 1 15068.dat
+1 322 20 -128 10 -1 0 0 0 1 0 0 0 -1 15068.dat
+0 STEP
+0 // Two printed eyes and a small blue pad for the smile
+1 15 -30 -110 -58 1 0 0 0 0 -1 0 1 0 98138p07.dat
+1 15 30 -110 -58 1 0 0 0 0 -1 0 1 0 98138p07.dat
+1 322 0 -100 -58 1 0 0 0 0 -1 0 1 0 87580.dat
+0 STEP
+0 // A little black smile below the eyes
+1 0 0 -100 -66 1 0 0 0 0 -1 0 1 0 1748.dat
+0 STEP
+0 // The first blue elbow curls up from the heel
+1 322 50 -54 20 0 0 1 -1 0 0 0 -1 0 25214.dat
+0 STEP
+0 // An axle joins the next blue bend, turning the tail upward
+1 4 80 -54 20 1 0 0 0 1 0 0 0 1 32062.dat
+1 322 110 -54 20 1 0 0 0 0 -1 0 1 0 25214.dat
+0 STEP
+0 // One more axle and elbow curl the tip back toward the head
+1 4 110 -84 20 0 -1 0 1 0 0 0 0 1 32062.dat
+1 322 110 -114 20 0 0 -1 -1 0 0 0 1 0 25214.dat
+0 STEP
+0 NOFILE
+
+0 FILE right_foot.ldr
+0 Right foot
+0 Name: right_foot.ldr
+0 Author: brickkit
+
+0 // A broad blue sole with a raised heel
+1 322 20 -8 0 0 0 1 0 1 0 -1 0 0 3021.dat
+1 322 20 -16 10 1 0 0 0 1 0 0 0 1 3022.dat
+0 STEP
+0 // Round the front into a flipper toe
+1 322 20 -8 -10 1 0 0 0 1 0 0 0 1 15068.dat
+0 STEP
+0 NOFILE
+
+0 FILE left_foot.ldr
+0 Left foot
+0 Name: left_foot.ldr
+0 Author: brickkit
+
+0 // A broad blue sole with a raised heel
+1 322 -20 -8 0 0 0 1 0 1 0 -1 0 0 3021.dat
+1 322 -20 -16 10 1 0 0 0 1 0 0 0 1 3022.dat
+0 STEP
+0 // Round the front into a flipper toe
+1 322 -20 -8 -10 1 0 0 0 1 0 0 0 1 15068.dat
+0 STEP
+0 NOFILE

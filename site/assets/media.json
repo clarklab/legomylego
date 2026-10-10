@@ -2127,6 +2127,88 @@
     }
    }
   },
+  "squirtle": {
+   "files": {
+    "booklet.pdf": {
+     "v": "9b6b2e7a61",
+     "size": 3662554
+    },
+    "bricklink_wanted.xml": {
+     "v": "d2b2d00c06",
+     "size": 1979
+    },
+    "model.glb": {
+     "v": "e5e96063df",
+     "size": 876984
+    },
+    "model.json": {
+     "v": "66851a57eb",
+     "size": 13982
+    },
+    "parts.csv": {
+     "v": "977d3fadc2",
+     "size": 1860
+    },
+    "pick_a_brick.csv": {
+     "v": "761ed31007",
+     "size": 251
+    },
+    "price_estimate.md": {
+     "v": "9b257c25a2",
+     "size": 2596
+    },
+    "quick_poster.jpg": {
+     "v": "b6a26ef520",
+     "size": 97989
+    },
+    "renders/renders_back.png": {
+     "v": "1db7c28249",
+     "size": 496650
+    },
+    "renders/renders_front.png": {
+     "v": "5dbfab75e0",
+     "size": 502708
+    },
+    "renders/renders_side.png": {
+     "v": "c33b7ba4e4",
+     "size": 494197
+    },
+    "renders/renders_three_quarter.png": {
+     "v": "36ab1a1b92",
+     "size": 508740
+    },
+    "squirtle.mpd": {
+     "v": "3710668014",
+     "size": 3555
+    }
+   },
+   "images": {
+    "renders/renders_back.png": {
+     "w": 700,
+     "h": 700,
+     "lg": "/assets/img/squirtle/renders_back.webp?v=291010c856",
+     "sm": "/assets/img/squirtle/renders_back-480.webp?v=670b7d868c"
+    },
+    "renders/renders_front.png": {
+     "w": 700,
+     "h": 700,
+     "lg": "/assets/img/squirtle/renders_front.webp?v=8e3200f7bd",
+     "sm": "/assets/img/squirtle/renders_front-480.webp?v=f2101401c9"
+    },
+    "renders/renders_side.png": {
+     "w": 700,
+     "h": 700,
+     "lg": "/assets/img/squirtle/renders_side.webp?v=c151bc1dba",
+     "sm": "/assets/img/squirtle/renders_side-480.webp?v=b065a260a1"
+    },
+    "renders/renders_three_quarter.png": {
+     "w": 700,
+     "h": 700,
+     "lg": "/assets/img/squirtle/renders_three_quarter.webp?v=4879f47edd",
+     "sm": "/assets/img/squirtle/renders_three_quarter-480.webp?v=82d77a21a9"
+    }
+   }
+  },
   "taco": {
    "files": {
     "booklet.pdf": {

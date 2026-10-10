@@ -315,6 +315,23 @@
       "source": "https://rebrickable.com/mocs/MOC-163756/"
     },
     {
+      "slug": "squirtle",
+      "name": "Squirtle",
+      "description": "Squirtle from Pokémon in 42 pieces, 5.8 cm tall: flipper feet, a round tan belly, a domed brown shell on its back and an oversized curly tail.",
+      "collection": "quick_bricks",
+      "pieces": 42,
+      "steps": 20,
+      "video": "/quick/squirtle-1080x1920.mp4?v=7b4dbd19d95e",
+      "poster": "/models/squirtle/quick_poster.jpg?v=0b9c4374f608",
+      "instructions": "/models/squirtle/booklet.pdf?v=5f7551cc97de",
+      "url": "/quick/squirtle/",
+      "model": "/models/squirtle/model.json?v=d3df433e65c9",
+      "geometry": "/models/squirtle/model.glb?v=73f173a0bab4",
+      "brands": [
+        "pokemon"
+      ]
+    },
+    {
       "slug": "taco",
       "name": "Taco",
       "description": "The 23-piece taco from LEGO Classic 11039 Creative Food Friends: a happy yellow shell around tomato, green and brown fillings and four lettuce leaves.",

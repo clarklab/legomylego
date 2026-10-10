@@ -1,0 +1,30 @@
+[model]
+name = "Squirtle"
+design = "design.py"
+brands = ["pokemon"]   # the logo cards on the Quick Bricks page it is filed under (brands/)
+description = "Squirtle from Pokémon in 42 pieces, 5.8 cm tall: flipper feet, a round tan belly, a domed brown shell on its back and an oversized curly tail."
+collection = "quick_bricks"
+
+[palette]
+body = "Medium Azure"
+belly = "Tan"
+shell = "Reddish Brown"
+eye = "White"
+mouth = "Black"
+axle = "Red"
+
+[booklet]
+subtitle = "A little water-type with a big curl"
+intro = "Build the flipper feet and small body, then add the rounded shell and head. Three blue elbow pieces curl into the tail."
+
+[checks]
+enabled = ["real_elements", "connections", "collisions", "buildability", "stability", "mechanism", "electrics", "technique"]
+
+[quick]
+surface = "kraft"               # (a light blue model is lost on the blue mat)
+room = "window"
+light = "day"
+seconds = 14
+highlight = ["eye", "tail", "shell"]
+close_ups = 2
+music = false
