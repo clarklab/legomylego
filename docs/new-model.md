@@ -157,8 +157,12 @@ model's in its `scene` column. Under 25 pieces the parts start laid out on the t
 - Look at the preview before the final. Check the close-ups land on the right pieces.
   `highlight` is in order of preference: put the face first. A piece the camera cannot get
   in front of in time (it faces another way than the piece before it) gets no close-up.
-- Pick a surface the model stands out on: an orange or tan model reads as yellow on kraft
-  paper and true on a blue mat.
+- Pick the scene for the model, by what looks best with it. The surface is most of the
+  picture: choose a colour the model stands out on, never its own main colour (a red model
+  on the red LEGO floor is lost; on the green one it jumps out), and one that suits what it
+  is (grass under Mario, a dark mat of white dots like stars under a Stormtrooper). An
+  orange or tan model reads as yellow on kraft paper and true on a blue mat. A strongly
+  coloured floor tints the shadows: look at the preview's colours before the final.
 - Sound is clicks only by default. A sound of the model's own (`ending`, `[[quick.sound]]`)
   is optional; see the guide.
 - Renders take turns on one GPU. Queue finals one after another; do not start two.

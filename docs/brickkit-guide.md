@@ -789,7 +789,7 @@ a little workshop at the model's real size built from three layers, any with any
 
 | Layer | Options |
 |---|---|
-| surface (what it stands on) | `blue_mat` (blue self-healing cutting mat, fine cyan centimetre grid, on oak), `green_mat` (the classic green mat, pale grid and diagonals, on walnut), `kraft` (tan linen with a big printed ring), `oak` (a bare light-oak desktop), `baseplate` (a light grey 48×48 LEGO baseplate, studs and all) |
+| surface (what it stands on) | `blue_mat` (blue self-healing cutting mat, a white dot every centimetre and a bigger one every fifth, on oak), `green_mat` (the classic green mat, pale grid and diagonals, on walnut), `kraft` (tan linen with a big printed ring), `oak` (a bare light-oak desktop), `baseplate` (a light grey 48×48 LEGO baseplate, studs and all), `lego_yellow`, `lego_blue`, `lego_green`, `lego_red` (a LEGO floor: one endless studded mat in that colour, out to the walls; the model stands on its studs) |
 | room (always soft behind) | `workbench` (plank walls, pegboards of colourful tools, a desk lamp, a red toolbox), `studio` (bright white walls, low white shelves, plants, pastel books), `window` (big windows of daylight, bushes and sky outside, a sill of succulents), `night` (dark walls, strings of warm lights, a glowing desk lamp), `bookshelf` (shelves packed with colourful books) |
 | light | `morning` (warm low sun from the side, a cool fill), `day` (bright soft neutral daylight from high up), `evening` (a warm lamp-like key, a dark room) |
 
@@ -799,7 +799,9 @@ plan's `reach`, its farthest from the model) and every prop on the desk - lamps,
 mug, a plant - stands out past it too, so the camera never passes through one; before encoding,
 any frame that is nearly one flat colour (the camera inside something) is listed as a warning. Presets (`set`) name a combo: `cutting_mat` (blue_mat,
 workbench, morning), `linen` (kraft, window, day), `studio` (green_mat, studio, day),
-`night_shift` (oak, night, evening), `reading_nook` (baseplate, bookshelf, morning); any layer
+`night_shift` (oak, night, evening), `reading_nook` (baseplate, bookshelf, morning), and a
+LEGO floor each: `yellow_floor` (lego_yellow, studio, day), `blue_floor` (lego_blue, bookshelf,
+day), `green_floor` (lego_green, window, day), `red_floor` (lego_red, workbench, morning); any layer
 given beside it wins; `set = "random"` picks one of each by `seed` (else by the model), so a
 series of videos varies by itself.
 

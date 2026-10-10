@@ -50,3 +50,4 @@ models/squirtle/reference/*.webp
 models/squirtle/reference/*.jpeg
 models/guardian/reference/*.jpg
 models/pez_*/reference/*
+models/bmo/reference/*

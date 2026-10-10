@@ -23,7 +23,8 @@ enabled = ["real_elements", "connections", "collisions", "buildability", "stabil
 # Quick Bricks video (brickkit quick {{slug}}). Pick a workshop the last few models did not
 # use (brickkit status shows theirs); under 25 pieces the parts start laid out on the table
 [quick]
-surface = "blue_mat"          # blue_mat | green_mat | kraft | oak | baseplate
+surface = "blue_mat"          # blue_mat | green_mat | kraft | oak | baseplate | lego_yellow |
+#                               lego_blue | lego_green | lego_red: one the model stands out on
 room = "workbench"            # workbench | studio | window | night | bookshelf
 light = "morning"             # morning | day | evening
 seconds = 14

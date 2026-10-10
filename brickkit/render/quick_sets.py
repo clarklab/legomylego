@@ -3,11 +3,13 @@ mix-and-match layers, at the model's real size round it (metres; the table's top
 model's lowest point). Any surface goes with any room and any light.
 
 Surfaces - what the model stands on (and the desk under it):
-    blue_mat     a blue self-healing cutting mat with a fine cyan grid, on an oak desk
+    blue_mat     a blue self-healing cutting mat with a grid of white dots, on an oak desk
     green_mat    the classic green cutting mat, pale grid and diagonals, on a walnut desk
     kraft        a tan linen cloth with a big printed ring round the model, on a painted table
     oak          a bare light-oak desktop
     baseplate    a light grey LEGO baseplate (48 x 48 studs) on a white desk
+    lego_yellow, lego_blue, lego_green, lego_red
+                 a LEGO floor: one endless studded mat in that colour, out to the walls
 
 Rooms - always far behind in the depth of field, so big shapes and colour, low on the walls
 (the camera is low: it sees the desk and the walls' bottom 30 cm or so):
@@ -88,6 +90,13 @@ def lines(nb, coord, spacing, half_width, aa):
     """1 on lines `spacing` m apart along coord (a value socket), `half_width` m wide."""
     d = nb.mul(nb.math("PINGPONG", nb.mul(coord, 1.0 / spacing), 0.5), spacing)
     return nb.smooth(d, half_width + aa, half_width - aa)
+
+
+def dots(nb, gx, gy, spacing, radius, aa):
+    """1 on dots of `radius` m at every crossing of a `spacing` m grid over (gx, gy)."""
+    d = [nb.mul(nb.math("PINGPONG", nb.mul(v, 1.0 / spacing), 0.5), spacing) for v in (gx, gy)]
+    r = nb.vec("LENGTH", nb.comb(d[0], d[1], 0.0), out=1)
+    return nb.smooth(r, radius + aa, radius - aa)
 
 
 def hsv(nb, h, s, v):
@@ -178,9 +187,10 @@ def desk(x, kind, top):
 
 
 # ---------------------------------------------------------------------------- surfaces
-def cutting_mat(x, base, line, diagonals=False):
+def cutting_mat(x, base, line, diagonals=False, dotted=False):
     """A self-healing cutting mat, 2.5 mm thick, the model a little off its middle: a
-    centimetre grid (every fifth line stronger), a border, optionally 45-degree guides."""
+    centimetre grid (every fifth line stronger), a border, optionally 45-degree guides - or
+    `dotted`, a dot at every centimetre and a bigger one every fifth."""
     c, z = x.c, x.z
     w = max(0.45, x.foot * 3.2)
     h = w * 2 / 3
@@ -197,6 +207,9 @@ def cutting_mat(x, base, line, diagonals=False):
         inside = nb.mul(nb.mul(nb.smooth(gx, 0.012, 0.0125), nb.smooth(gx, w - 0.012, w - 0.0125)),
                         nb.mul(nb.smooth(gy, 0.012, 0.0125), nb.smooth(gy, h - 0.012, h - 0.0125)))
         grid = nb.math("MAXIMUM", nb.mul(minor, 0.4), nb.mul(major, 0.85))
+        if dotted:
+            grid = nb.math("MAXIMUM", nb.mul(dots(nb, gx, gy, 0.01, 0.00055, 0.0001), 0.85),
+                           dots(nb, gx, gy, 0.05, 0.0011, 0.0001))
         if diagonals:
             diag = lines(nb, nb.add(gx, gy), 0.1 * math.sqrt(2), 0.0003, 0.0001)
             grid = nb.math("MAXIMUM", grid, nb.mul(diag, 0.6))
@@ -211,7 +224,7 @@ def cutting_mat(x, base, line, diagonals=False):
 
 def surface_blue_mat(x):
     desk(x, "oak", x.z - 0.0025)
-    cutting_mat(x, (0.018, 0.08, 0.25), (0.18, 0.62, 0.78))
+    cutting_mat(x, (0.018, 0.08, 0.25), (0.8, 0.83, 0.86), dotted=True)
 
 
 def surface_green_mat(x):
@@ -275,6 +288,40 @@ def surface_baseplate(x):
     grey = plain("baseplate", (0.36, 0.37, 0.38), 0.32, **{"Coat Weight": 0.15})
     put(m, "surface", grey)
     put(studs, "studs", grey, smooth=True)
+
+
+LEGO_FLOORS = {"lego_yellow": "#F2CD37", "lego_blue": "#0055BF", "lego_green": "#237841",
+               "lego_red": "#C91A09"}
+STUD_NEAR = 0.3           # m from the model: studs out to here are round, 12-sided; past it,
+#                           where the depth of field has melted them, 6-sided
+
+
+def lego_floor(x, colour):
+    """An endless LEGO mat in one colour: a plate's worth of plastic out past the walls, and
+    its studs, real ones (the model stands on them, loose parts lie on them). The studs are on
+    the world's own 8 mm grid, the one the model's studs are on."""
+    c, z = x.c, x.z
+    pitch, top = 0.008, z - 0.0017
+    s = 1.25 * x.R
+    m = Mesh()
+    box(m, (c.x - s, c.y - s, top - 0.0032), (c.x + s, c.y + s, top))
+    n = int(math.ceil(1.08 * x.R / pitch))
+    ks = np.arange(-n, n) + 0.5
+    px, py = np.meshgrid((math.floor(c.x / pitch) + ks) * pitch, (math.floor(c.y / pitch) + ks) * pitch)
+    at = np.stack([px.ravel(), py.ravel(), np.zeros(px.size)], -1)
+    near = np.hypot(at[:, 0] - c.x, at[:, 1] - c.y) < STUD_NEAR
+    studs = Mesh()
+    for where, sides in ((at[near], 12), (at[~near], 6)):
+        if not len(where):
+            continue
+        one = Mesh()
+        one.tube([(0, 0, top), (0, 0, z)], 0.0024, sides)
+        V1, F1 = np.concatenate(one.V), np.concatenate(one.F)
+        studs.tris((V1[None] + where[:, None]).reshape(-1, 3),
+                   (F1[None] + (np.arange(len(where)) * len(V1))[:, None, None]).reshape(-1, 3))
+    plastic = plain("lego_floor", bs.hex_to_linear(colour), 0.3, **{"Coat Weight": 0.15})
+    put(m, "surface", plastic)
+    put(studs, "studs", plastic, smooth=True)
 
 
 # ---------------------------------------------------------------------------- rooms
@@ -528,7 +575,8 @@ def light(x, kind):
 
 
 SURFACES = {"blue_mat": surface_blue_mat, "green_mat": surface_green_mat, "kraft": surface_kraft,
-            "oak": surface_oak, "baseplate": surface_baseplate}
+            "oak": surface_oak, "baseplate": surface_baseplate,
+            **{name: (lambda x, colour=colour: lego_floor(x, colour)) for name, colour in LEGO_FLOORS.items()}}
 ROOMS = {"workbench": room_workbench, "studio": room_studio, "window": room_window,
          "night": room_night, "bookshelf": room_bookshelf}
 

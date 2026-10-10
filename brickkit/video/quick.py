@@ -89,14 +89,19 @@ QUICK = {"set": "cutting_mat", "seconds": 14.0, "highlight": [], "close_ups": 2,
          "view": "filmic",
          "lens": 50.0, "samples": 32, "exposure": -1.0, "watermark": False}
 # the workshop's layers (render/quick_sets.py builds them), any with any, and named combos
-SURFACES = ("blue_mat", "green_mat", "kraft", "oak", "baseplate")
+SURFACES = ("blue_mat", "green_mat", "kraft", "oak", "baseplate",
+            "lego_yellow", "lego_blue", "lego_green", "lego_red")
 ROOMS = ("workbench", "studio", "window", "night", "bookshelf")
 LIGHTS = ("morning", "day", "evening")
 PRESETS = {"cutting_mat": ("blue_mat", "workbench", "morning"),
            "linen": ("kraft", "window", "day"),
            "studio": ("green_mat", "studio", "day"),
            "night_shift": ("oak", "night", "evening"),
-           "reading_nook": ("baseplate", "bookshelf", "morning")}
+           "reading_nook": ("baseplate", "bookshelf", "morning"),
+           "yellow_floor": ("lego_yellow", "studio", "day"),       # (the LEGO floors: an endless
+           "blue_floor": ("lego_blue", "bookshelf", "day"),        # studded mat in one colour)
+           "green_floor": ("lego_green", "window", "day"),
+           "red_floor": ("lego_red", "workbench", "morning")}
 SETS = tuple(PRESETS) + ("random",)
 PRE = 0.45            # s of the empty set before the first part flies in
 HERO = 2.0            # s from the last landing to the cut

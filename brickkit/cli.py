@@ -213,7 +213,7 @@ def main(argv=None) -> int:
     p.add_argument("slug")
     p.add_argument("--preview", action="store_true", help="540x960, 15 fps, low samples")
     p.add_argument("--set", help="a preset workshop or random (else [quick] set)")
-    p.add_argument("--surface", help="the surface layer (blue_mat, green_mat, kraft, oak, baseplate)")
+    p.add_argument("--surface", help="the surface layer (blue_mat, green_mat, kraft, oak, baseplate, lego_yellow, lego_blue, lego_green, lego_red)")
     p.add_argument("--room", help="the room layer (workbench, studio, window, night, bookshelf)")
     p.add_argument("--light", help="the light layer (morning, day, evening)")
     p.add_argument("--seed", type=int, help="for --set random")

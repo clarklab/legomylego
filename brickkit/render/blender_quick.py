@@ -7,7 +7,7 @@ job.json: {"plan": "plan.json", "frames": [[frame, "out.png"], ...], "size": [w,
 
 Photoreal (Cycles, the parts' plastic from blender_scene.SceneBuilder) in a little workshop at
 the model's real size, the model in the middle of it: the plan's surface, room and light, any
-with any (quick_sets.py: five surfaces, five rooms, three lights). The parts
+with any (quick_sets.py: nine surfaces, five rooms, three lights). The parts
 fly in on the plan's per-frame transforms (hidden before they launch, and all of them from the
 cut on: the empty set again - or, laid out, lying where the plan's `start` puts them before
 they launch and again from the cut on, the surface big enough for them all: `floor`; and on

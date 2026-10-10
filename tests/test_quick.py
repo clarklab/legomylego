@@ -59,6 +59,20 @@ def test_quick_layers():
     assert (a["surface"], a["room"], a["light"]) == (b["surface"], b["room"], b["light"])
 
 
+def test_quick_lego_floors():
+    """The LEGO floors: an endless studded mat in yellow, blue, green and red, each a surface
+    with a preset of its own; and every surface the planner knows is one Blender builds
+    (quick_sets.py runs inside Blender: read, not imported)."""
+    for colour in ("yellow", "blue", "green", "red"):
+        c = Q.quick_config({"quick": {"surface": f"lego_{colour}", "room": "studio", "light": "day"}})
+        assert (c["surface"], c["room"], c["light"]) == (f"lego_{colour}", "studio", "day")
+        assert Q.PRESETS[f"{colour}_floor"][0] == f"lego_{colour}"
+    text = (paths.ROOT / "brickkit" / "render" / "quick_sets.py").read_text()
+    for name in Q.SURFACES:
+        assert f'"{name}"' in text, name
+    assert "dotted=True" in text                       # the blue mat: white dots, not a grid
+
+
 def test_schedule():
     """Empty for PRE s, then a landing every so often, faster and faster (about RATE_RAMP
     times as often at the end), a pause before the last piece, room round a highlighted
