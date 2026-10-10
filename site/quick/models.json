@@ -11,7 +11,7 @@
       "poster": "/models/avocado/quick_poster.jpg?v=1ef2741fbdda",
       "instructions": "/models/avocado/booklet.pdf?v=379180d9884d",
       "url": "/quick/avocado/",
-      "model": "/models/avocado/model.json?v=0dce1dc979f4",
+      "model": "/models/avocado/model.json?v=de246ded0f2b",
       "geometry": "/models/avocado/model.glb?v=becb7ece243f"
     },
     {
@@ -25,7 +25,7 @@
       "poster": "/models/bat/quick_poster.jpg?v=7d6c65e1a961",
       "instructions": "/models/bat/booklet.pdf?v=d5d4cc70a83c",
       "url": "/quick/bat/",
-      "model": "/models/bat/model.json?v=5391abdc025b",
+      "model": "/models/bat/model.json?v=6aec25d55b35",
       "geometry": "/models/bat/model.glb?v=c1573b3e653a"
     },
     {
@@ -39,7 +39,7 @@
       "poster": "/models/birthday_cake/quick_poster.jpg?v=cb1d523712fa",
       "instructions": "/models/birthday_cake/booklet.pdf?v=031c83092bf6",
       "url": "/quick/birthday_cake/",
-      "model": "/models/birthday_cake/model.json?v=dee2d14fc411",
+      "model": "/models/birthday_cake/model.json?v=5c42ce0f6ea2",
       "geometry": "/models/birthday_cake/model.glb?v=61d0f99b4823"
     },
     {
@@ -53,7 +53,7 @@
       "poster": "/models/caldwell_mini/quick_poster.jpg?v=0973cdf30470",
       "instructions": "/models/caldwell_mini/booklet.pdf?v=7a85f7e72312",
       "url": "/quick/caldwell_mini/",
-      "model": "/models/caldwell_mini/model.json?v=632d078c03d4",
+      "model": "/models/caldwell_mini/model.json?v=7f57954fa678",
       "geometry": "/models/caldwell_mini/model.glb?v=982c063bf263"
     },
     {
@@ -67,7 +67,7 @@
       "poster": "/models/charmander/quick_poster.jpg?v=bdf98fb204c0",
       "instructions": "/models/charmander/booklet.pdf?v=6537bc8d173f",
       "url": "/quick/charmander/",
-      "model": "/models/charmander/model.json?v=59e42f5e98e5",
+      "model": "/models/charmander/model.json?v=ebd4b3c15ab9",
       "geometry": "/models/charmander/model.glb?v=86bea5fb0a68",
       "designer": "SwordBricks (RSierra)",
       "source": "https://rebrickable.com/mocs/MOC-220190/"
@@ -83,7 +83,7 @@
       "poster": "/models/crow/quick_poster.jpg?v=3a1687dee93c",
       "instructions": "/models/crow/booklet.pdf?v=8aed0c73e544",
       "url": "/quick/crow/",
-      "model": "/models/crow/model.json?v=e8c1728bacb3",
+      "model": "/models/crow/model.json?v=0c1d1675a713",
       "geometry": "/models/crow/model.glb?v=6bb08cf9b2c7",
       "designer": "Qrys.And.Reading",
       "source": "https://rebrickable.com/mocs/MOC-165060/"
@@ -99,7 +99,7 @@
       "poster": "/models/dinosaur/quick_poster.jpg?v=bdc4847ad868",
       "instructions": "/models/dinosaur/booklet.pdf?v=7f62f5bd5820",
       "url": "/quick/dinosaur/",
-      "model": "/models/dinosaur/model.json?v=e96db48203cf",
+      "model": "/models/dinosaur/model.json?v=7075e0f8599d",
       "geometry": "/models/dinosaur/model.glb?v=10fce31fc22f"
     },
     {
@@ -113,7 +113,7 @@
       "poster": "/models/dracula/quick_poster.jpg?v=df9cb1a0fe8e",
       "instructions": "/models/dracula/booklet.pdf?v=a5ab4c5407c5",
       "url": "/quick/dracula/",
-      "model": "/models/dracula/model.json?v=ad844c79ff94",
+      "model": "/models/dracula/model.json?v=f2bee5e8ce4a",
       "geometry": "/models/dracula/model.glb?v=1d73a8d9a362"
     },
     {
@@ -127,7 +127,7 @@
       "poster": "/models/finn_the_human/quick_poster.jpg?v=f31c2a4d6f9f",
       "instructions": "/models/finn_the_human/booklet.pdf?v=43eb8af8444a",
       "url": "/quick/finn_the_human/",
-      "model": "/models/finn_the_human/model.json?v=72ba2370f164",
+      "model": "/models/finn_the_human/model.json?v=49551265b3e3",
       "geometry": "/models/finn_the_human/model.glb?v=8b1c3ebcd0c3"
     },
     {
@@ -141,7 +141,7 @@
       "poster": "/models/frankenstein/quick_poster.jpg?v=a2eaeb0b1ac3",
       "instructions": "/models/frankenstein/booklet.pdf?v=340761fb0fe1",
       "url": "/quick/frankenstein/",
-      "model": "/models/frankenstein/model.json?v=624a7b848ee2",
+      "model": "/models/frankenstein/model.json?v=ce3dd35bf2dc",
       "geometry": "/models/frankenstein/model.glb?v=fa974ac48e22",
       "designer": "Agosami Brickworks",
       "source": "https://rebrickable.com/mocs/MOC-215912/"
@@ -157,9 +157,23 @@
       "poster": "/models/freddy_fazbear/quick_poster.jpg?v=ee568dab2405",
       "instructions": "/models/freddy_fazbear/booklet.pdf?v=1a24b425609a",
       "url": "/quick/freddy_fazbear/",
-      "model": "/models/freddy_fazbear/model.json?v=7b12929b3c2d",
+      "model": "/models/freddy_fazbear/model.json?v=77c1b604557d",
       "geometry": "/models/freddy_fazbear/model.glb?v=e81926d53f64",
       "source": "https://rebrickable.com/mocs/MOC-265184/"
+    },
+    {
+      "slug": "jake_the_dog",
+      "name": "Jake the Dog",
+      "description": "A round yellow Jake the Dog with big white eyes, a two-lobed muzzle and posable noodle limbs, scaled to stand beside Finn.",
+      "collection": "quick_bricks",
+      "pieces": 143,
+      "steps": 39,
+      "video": "/quick/jake_the_dog-1080x1920.mp4?v=6beb4a5c7e90",
+      "poster": "/models/jake_the_dog/quick_poster.jpg?v=65efd8435fe2",
+      "instructions": "/models/jake_the_dog/booklet.pdf?v=f44437c4d60b",
+      "url": "/quick/jake_the_dog/",
+      "model": "/models/jake_the_dog/model.json?v=e48cfccebe85",
+      "geometry": "/models/jake_the_dog/model.glb?v=04bd1cfe6eaf"
     },
     {
       "slug": "magikarp",
@@ -172,7 +186,7 @@
       "poster": "/models/magikarp/quick_poster.jpg?v=ae67a76b44e7",
       "instructions": "/models/magikarp/booklet.pdf?v=8113050ca8d1",
       "url": "/quick/magikarp/",
-      "model": "/models/magikarp/model.json?v=107dac34c545",
+      "model": "/models/magikarp/model.json?v=3f92abb84d21",
       "geometry": "/models/magikarp/model.glb?v=0d1b1ff49564",
       "designer": "Redverse",
       "source": "https://rebrickable.com/mocs/MOC-182443/"
@@ -188,7 +202,7 @@
       "poster": "/models/pikachu/quick_poster.jpg?v=08955b1300de",
       "instructions": "/models/pikachu/booklet.pdf?v=912151544e6f",
       "url": "/quick/pikachu/",
-      "model": "/models/pikachu/model.json?v=ac01b9cf81b8",
+      "model": "/models/pikachu/model.json?v=48b2df7afe8a",
       "geometry": "/models/pikachu/model.glb?v=318ab3dcdc0e",
       "credit": "Another builder's design: its plans do not name them. If it is yours, tell us and we will credit you."
     },
@@ -203,7 +217,7 @@
       "poster": "/models/porygon/quick_poster.jpg?v=f27d3769b13c",
       "instructions": "/models/porygon/booklet.pdf?v=d567eb0f2aab",
       "url": "/quick/porygon/",
-      "model": "/models/porygon/model.json?v=48d47d3206b8",
+      "model": "/models/porygon/model.json?v=e9a6e729879b",
       "geometry": "/models/porygon/model.glb?v=a46e853c1f37",
       "designer": "QSKSw",
       "source": "https://rebrickable.com/mocs/MOC-31400/"
@@ -219,7 +233,7 @@
       "poster": "/models/pumpkin/quick_poster.jpg?v=3b6711373bb6",
       "instructions": "/models/pumpkin/booklet.pdf?v=2f8b7c6e0092",
       "url": "/quick/pumpkin/",
-      "model": "/models/pumpkin/model.json?v=1f421dc1fce0",
+      "model": "/models/pumpkin/model.json?v=432f106e7433",
       "geometry": "/models/pumpkin/model.glb?v=41b0f2c90b61",
       "designer": "BrixBuild",
       "source": "https://rebrickable.com/mocs/MOC-163756/"
@@ -235,7 +249,7 @@
       "poster": "/models/taco/quick_poster.jpg?v=866f7d6848b3",
       "instructions": "/models/taco/booklet.pdf?v=0f928322195f",
       "url": "/quick/taco/",
-      "model": "/models/taco/model.json?v=17aa5e3d6dc7",
+      "model": "/models/taco/model.json?v=e98e6425be94",
       "geometry": "/models/taco/model.glb?v=ce5243fde9d0"
     },
     {
@@ -249,7 +263,7 @@
       "poster": "/models/watermelon_ice_lolly/quick_poster.jpg?v=b2b366f82784",
       "instructions": "/models/watermelon_ice_lolly/booklet.pdf?v=70953717d202",
       "url": "/quick/watermelon_ice_lolly/",
-      "model": "/models/watermelon_ice_lolly/model.json?v=ab43245ecd7b",
+      "model": "/models/watermelon_ice_lolly/model.json?v=d3f2673c3448",
       "geometry": "/models/watermelon_ice_lolly/model.glb?v=498362a0cc5b"
     },
     {

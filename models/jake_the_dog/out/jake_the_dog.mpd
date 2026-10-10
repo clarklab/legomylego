@@ -1,0 +1,275 @@
+0 FILE jake_the_dog.ldr
+0 Jake the Dog
+0 Name: jake_the_dog.ldr
+0 Author: brickkit
+
+0 // The hidden hips: a plate, two Technic bricks and a brick in front
+1 14 0 -72 0 1 0 0 0 1 0 0 0 1 3022.dat
+1 14 -10 -96 10 0 0 1 0 1 0 -1 0 0 6541.dat
+1 14 10 -96 10 0 0 1 0 1 0 -1 0 0 6541.dat
+1 14 0 -96 -10 1 0 0 0 1 0 0 0 1 3004.dat
+0 STEP
+0 // Tie the hips together and push in the two leg pins
+1 14 0 -104 0 1 0 0 0 1 0 0 0 1 3022.dat
+1 14 0 -112 0 1 0 0 0 1 0 0 0 1 3032.dat
+1 0 -20 -86 10 1 0 0 0 1 0 0 0 1 2780.dat
+1 0 20 -86 10 1 0 0 0 1 0 0 0 1 2780.dat
+0 STEP
+0 // Five plates make the rounded floor of the belly
+1 14 0 -120 0 0 0 1 0 1 0 -1 0 0 3795.dat
+1 14 30 -120 10 1 0 0 0 1 0 0 0 1 30357.dat
+1 14 30 -120 -10 0 0 1 0 1 0 -1 0 0 30357.dat
+1 14 -30 -120 -10 -1 0 0 0 1 0 0 0 -1 30357.dat
+1 14 -30 -120 10 0 0 -1 0 1 0 1 0 0 30357.dat
+0 STEP
+0 // Body ring 1: rounded corners, a front and back, and two sides
+1 14 50 -144 -30 1 0 0 0 1 0 0 0 1 85080.dat
+1 14 -50 -144 -30 0 0 1 0 1 0 -1 0 0 85080.dat
+1 14 -50 -144 30 -1 0 0 0 1 0 0 0 -1 85080.dat
+1 14 50 -144 30 0 0 -1 0 1 0 1 0 0 85080.dat
+1 14 0 -144 -50 1 0 0 0 1 0 0 0 1 3010.dat
+1 14 0 -144 50 -1 0 0 0 1 0 0 0 -1 3010.dat
+1 14 -70 -144 0 0 0 1 0 1 0 -1 0 0 3004.dat
+1 14 70 -144 0 0 0 -1 0 1 0 1 0 0 3004.dat
+0 STEP
+0 // Body ring 2: rounded corners, a front and back, and two sides
+1 14 50 -168 -30 1 0 0 0 1 0 0 0 1 85080.dat
+1 14 -50 -168 -30 0 0 1 0 1 0 -1 0 0 85080.dat
+1 14 -50 -168 30 -1 0 0 0 1 0 0 0 -1 85080.dat
+1 14 50 -168 30 0 0 -1 0 1 0 1 0 0 85080.dat
+1 14 0 -168 -50 1 0 0 0 1 0 0 0 1 3010.dat
+1 14 0 -168 50 -1 0 0 0 1 0 0 0 -1 30414.dat
+1 14 -70 -168 0 0 0 1 0 1 0 -1 0 0 3004.dat
+1 14 70 -168 0 0 0 -1 0 1 0 1 0 0 3004.dat
+0 STEP
+0 // Body ring 3: rounded corners, a front and back, and two sides
+1 14 50 -192 -30 1 0 0 0 1 0 0 0 1 85080.dat
+1 14 -50 -192 -30 0 0 1 0 1 0 -1 0 0 85080.dat
+1 14 -50 -192 30 -1 0 0 0 1 0 0 0 -1 85080.dat
+1 14 50 -192 30 0 0 -1 0 1 0 1 0 0 85080.dat
+1 14 0 -192 -50 1 0 0 0 1 0 0 0 1 3010.dat
+1 14 0 -192 50 -1 0 0 0 1 0 0 0 -1 3010.dat
+1 14 -70 -192 0 0 0 1 0 1 0 -1 0 0 3004.dat
+1 14 70 -192 0 0 0 -1 0 1 0 1 0 0 3004.dat
+0 STEP
+0 // Body ring 4: rounded corners, a front and back, and two sides
+1 14 50 -216 -30 1 0 0 0 1 0 0 0 1 85080.dat
+1 14 -50 -216 -30 0 0 1 0 1 0 -1 0 0 85080.dat
+1 14 -50 -216 30 -1 0 0 0 1 0 0 0 -1 85080.dat
+1 14 50 -216 30 0 0 -1 0 1 0 1 0 0 85080.dat
+1 14 0 -216 -50 1 0 0 0 1 0 0 0 1 3010.dat
+1 14 0 -216 50 -1 0 0 0 1 0 0 0 -1 3010.dat
+1 14 -70 -216 0 0 0 1 0 1 0 -1 0 0 3700.dat
+1 14 70 -216 0 0 0 -1 0 1 0 1 0 0 3700.dat
+0 STEP
+0 // Push a black shoulder pin into each side
+1 0 -80 -206 0 1 0 0 0 1 0 0 0 1 2780.dat
+1 0 80 -206 0 1 0 0 0 1 0 0 0 1 2780.dat
+0 STEP
+0 // Body ring 5: rounded corners, a front and back, and two sides
+1 14 50 -240 -30 1 0 0 0 1 0 0 0 1 85080.dat
+1 14 -50 -240 -30 0 0 1 0 1 0 -1 0 0 85080.dat
+1 14 -50 -240 30 -1 0 0 0 1 0 0 0 -1 85080.dat
+1 14 50 -240 30 0 0 -1 0 1 0 1 0 0 85080.dat
+1 14 0 -240 -50 1 0 0 0 1 0 0 0 1 30414.dat
+1 14 0 -240 50 -1 0 0 0 1 0 0 0 -1 3010.dat
+1 14 -70 -240 0 0 0 1 0 1 0 -1 0 0 3004.dat
+1 14 70 -240 0 0 0 -1 0 1 0 1 0 0 3004.dat
+0 STEP
+0 // Body ring 6: rounded corners, a front and back, and two sides
+1 14 50 -264 -30 1 0 0 0 1 0 0 0 1 85080.dat
+1 14 -50 -264 -30 0 0 1 0 1 0 -1 0 0 85080.dat
+1 14 -50 -264 30 -1 0 0 0 1 0 0 0 -1 85080.dat
+1 14 50 -264 30 0 0 -1 0 1 0 1 0 0 85080.dat
+1 14 0 -264 -50 1 0 0 0 1 0 0 0 1 3010.dat
+1 14 0 -264 50 -1 0 0 0 1 0 0 0 -1 3010.dat
+1 14 -70 -264 0 0 0 1 0 1 0 -1 0 0 11211.dat
+1 14 70 -264 0 0 0 -1 0 1 0 1 0 0 11211.dat
+0 STEP
+0 // Tie the walls together with another rounded layer of plates
+1 14 0 -272 0 0 0 1 0 1 0 -1 0 0 3795.dat
+1 14 30 -272 10 1 0 0 0 1 0 0 0 1 30357.dat
+1 14 30 -272 -10 0 0 1 0 1 0 -1 0 0 30357.dat
+1 14 -30 -272 -10 -1 0 0 0 1 0 0 0 -1 30357.dat
+1 14 -30 -272 10 0 0 -1 0 1 0 1 0 0 30357.dat
+0 STEP
+0 // Four dome corners round the top of his head
+1 14 30 -320 -10 1 0 0 0 1 0 0 0 1 88293.dat
+1 14 -30 -320 -10 0 0 1 0 1 0 -1 0 0 88293.dat
+1 14 -30 -320 10 -1 0 0 0 1 0 0 0 -1 88293.dat
+1 14 30 -320 10 0 0 -1 0 1 0 1 0 0 88293.dat
+0 STEP
+0 // Fill the middle of the crown and smooth its exposed studs
+1 14 0 -296 0 0 0 1 0 1 0 -1 0 0 2456.dat
+1 14 0 -320 -30 1 0 0 0 1 0 0 0 1 24309.dat
+1 14 0 -320 30 -1 0 0 0 1 0 0 0 -1 24309.dat
+1 14 -30 -328 -10 1 0 0 0 1 0 0 0 1 98138.dat
+1 14 -30 -328 10 1 0 0 0 1 0 0 0 1 98138.dat
+1 14 30 -328 -10 1 0 0 0 1 0 0 0 1 98138.dat
+1 14 30 -328 10 1 0 0 0 1 0 0 0 1 98138.dat
+0 STEP
+0 // Press a six-stud face plate onto the four front studs
+1 14 0 -240 -68 1 0 0 0 0 -1 0 1 0 3958.dat
+0 STEP
+0 // Smooth the forehead and cheeks with yellow tiles
+1 14 0 -290 -76 1 0 0 0 0 -1 0 1 0 6636.dat
+1 14 0 -250 -76 1 0 0 0 0 -1 0 1 0 3069b.dat
+1 14 0 -270 -76 1 0 0 0 0 -1 0 1 0 3069b.dat
+1 14 -50 -210 -76 0 0 1 1 0 0 0 1 0 63864.dat
+1 14 50 -210 -76 0 0 1 1 0 0 0 1 0 63864.dat
+0 STEP
+0 // A small black smile, with a support plate for each round jowl
+1 0 0 -190 -76 1 0 0 0 0 -1 0 1 0 1748.dat
+1 14 -20 -210 -76 1 0 0 0 0 -1 0 1 0 3023b.dat
+1 14 20 -210 -76 1 0 0 0 0 -1 0 1 0 3023b.dat
+0 STEP
+0 // Two yellow jumpers position the eyes; black round plates lift their rims clear
+1 14 -40 -260 -76 1 0 0 0 0 -1 0 1 0 87580.dat
+1 0 -40 -260 -84 1 0 0 0 0 -1 0 1 0 85861.dat
+1 14 40 -260 -76 1 0 0 0 0 -1 0 1 0 87580.dat
+1 0 40 -260 -84 1 0 0 0 0 -1 0 1 0 85861.dat
+0 STEP
+0 // Black dishes outline the two big white eyes
+1 0 -40 -260 -92 1 0 0 0 0 -1 0 1 0 43898.dat
+1 15 -40 -260 -100 1 0 0 0 0 -1 0 1 0 14769.dat
+1 0 40 -260 -92 1 0 0 0 0 -1 0 1 0 43898.dat
+1 15 40 -260 -100 1 0 0 0 0 -1 0 1 0 14769.dat
+0 STEP
+0 // Two narrow round bricks support the oval black nose
+1 14 -10 -230 -92 1 0 0 0 0 -1 0 1 0 3062b.dat
+1 14 10 -230 -92 1 0 0 0 0 -1 0 1 0 3062b.dat
+1 0 0 -230 -100 1 0 0 0 0 -1 0 1 0 1126.dat
+0 STEP
+0 // Stack a round plate and smooth round tile for each hanging jowl
+1 14 -20 -200 -84 1 0 0 0 0 -1 0 1 0 4032a.dat
+1 14 -20 -200 -92 1 0 0 0 0 -1 0 1 0 14769.dat
+1 14 20 -200 -84 1 0 0 0 0 -1 0 1 0 4032a.dat
+1 14 20 -200 -92 1 0 0 0 0 -1 0 1 0 14769.dat
+0 STEP
+0 // A short rounded ear on the side of the head
+1 14 -88 -244 -10 0 1 0 1 0 0 0 0 -1 3023b.dat
+1 14 -96 -244 -10 0 1 0 1 0 0 0 0 -1 1126.dat
+0 STEP
+0 // A short rounded ear on the side of the head
+1 14 88 -244 -10 0 -1 0 1 0 0 0 0 1 3023b.dat
+1 14 96 -244 -10 0 -1 0 1 0 0 0 0 1 1126.dat
+0 STEP
+0 // A small upturned tail: an open stud holding a yellow curved bar
+1 14 10 -158 68 1 0 0 0 0 1 0 -1 0 85861.dat
+1 14 10 -158 64 0 -1 0 0 0 1 -1 0 0 33085.dat
+0 STEP
+0 // Push a short leg onto its hidden hip pin
+1 16 -30 -86 10 1 0 0 0 1 0 0 0 1 right_leg.ldr
+0 STEP
+0 // Push a short leg onto its hidden hip pin
+1 16 30 -86 10 1 0 0 0 1 0 0 0 1 left_leg.ldr
+0 STEP
+0 // Attach the arm and pose the elbow
+1 16 -90 -206 0 1 0 0 0 1 0 0 0 1 right_arm.ldr
+0 STEP
+0 // Attach the arm and pose the elbow
+1 16 90 -206 0 1 0 0 0 1 0 0 0 1 left_arm.ldr
+0 STEP
+0 NOFILE
+
+0 FILE right_leg.ldr
+0 Right leg
+0 Name: right_leg.ldr
+0 Author: brickkit
+
+0 // A yellow foot: the sole, a plate for the toe and a jumper for the ankle
+1 14 0 78 -20 0 0 1 0 1 0 -1 0 0 3020.dat
+1 14 0 70 -30 1 0 0 0 1 0 0 0 1 3023b.dat
+1 14 0 70 0 1 0 0 0 1 0 0 0 1 87580.dat
+0 STEP
+0 // Round the toe, then stack two round bricks for the short leg
+1 14 0 78 -40 1 0 0 0 1 0 0 0 1 15068.dat
+1 14 0 46 0 1 0 0 0 1 0 0 0 1 3062b.dat
+1 14 0 22 0 1 0 0 0 1 0 0 0 1 3062b.dat
+0 STEP
+0 // The hip: a plate with a Technic brick above the leg and a slope in front
+1 14 0 14 -10 0 0 1 0 1 0 -1 0 0 3023b.dat
+1 14 0 -10 0 0 0 1 0 1 0 -1 0 0 6541.dat
+1 14 0 14 -20 1 0 0 0 1 0 0 0 1 54200.dat
+0 STEP
+0 NOFILE
+
+0 FILE left_leg.ldr
+0 Left leg
+0 Name: left_leg.ldr
+0 Author: brickkit
+
+0 // A yellow foot: the sole, a plate for the toe and a jumper for the ankle
+1 14 0 78 -20 0 0 1 0 1 0 -1 0 0 3020.dat
+1 14 0 70 -30 1 0 0 0 1 0 0 0 1 3023b.dat
+1 14 0 70 0 1 0 0 0 1 0 0 0 1 87580.dat
+0 STEP
+0 // Round the toe, then stack two round bricks for the short leg
+1 14 0 78 -40 1 0 0 0 1 0 0 0 1 15068.dat
+1 14 0 46 0 1 0 0 0 1 0 0 0 1 3062b.dat
+1 14 0 22 0 1 0 0 0 1 0 0 0 1 3062b.dat
+0 STEP
+0 // The hip: a plate with a Technic brick above the leg and a slope in front
+1 14 0 14 -10 0 0 1 0 1 0 -1 0 0 3023b.dat
+1 14 0 -10 0 0 0 1 0 1 0 -1 0 0 6541.dat
+1 14 0 14 -20 1 0 0 0 1 0 0 0 1 54200.dat
+0 STEP
+0 NOFILE
+
+0 FILE right_forearm.ldr
+0 Right forearm
+0 Name: right_forearm.ldr
+0 Author: brickkit
+
+0 // Push the elbow clip into two yellow round bricks
+1 14 0 0 0 0 0 1 0 1 0 -1 0 0 3484.dat
+1 14 0 14 0 1 0 0 0 1 0 0 0 1 3062b.dat
+1 14 0 38 0 1 0 0 0 1 0 0 0 1 3062b.dat
+0 STEP
+0 NOFILE
+
+0 FILE right_arm.ldr
+0 Right arm
+0 Name: right_arm.ldr
+0 Author: brickkit
+
+0 // The shoulder: a yellow Technic brick and tile, with two round bricks below
+1 14 0 -10 0 0 0 1 0 1 0 -1 0 0 6541.dat
+1 14 0 -18 0 1 0 0 0 1 0 0 0 1 3070b.dat
+1 14 0 14 0 1 0 0 0 1 0 0 0 1 3062b.dat
+1 14 0 38 0 1 0 0 0 1 0 0 0 1 3062b.dat
+1 14 0 62 0 0 0 1 0 1 0 -1 0 0 26047.dat
+0 STEP
+0 // Clip on the forearm and bend it up
+1 16 -20 64 0 0 -0.984808 -0.173648 0 -0.173648 0.984808 -1 0 0 right_forearm.ldr
+0 STEP
+0 NOFILE
+
+0 FILE left_forearm.ldr
+0 Left forearm
+0 Name: left_forearm.ldr
+0 Author: brickkit
+
+0 // Push the elbow clip into two yellow round bricks
+1 14 0 0 0 0 0 1 0 1 0 -1 0 0 3484.dat
+1 14 0 14 0 1 0 0 0 1 0 0 0 1 3062b.dat
+1 14 0 38 0 1 0 0 0 1 0 0 0 1 3062b.dat
+0 STEP
+0 NOFILE
+
+0 FILE left_arm.ldr
+0 Left arm
+0 Name: left_arm.ldr
+0 Author: brickkit
+
+0 // The shoulder: a yellow Technic brick and tile, with two round bricks below
+1 14 0 -10 0 0 0 1 0 1 0 -1 0 0 6541.dat
+1 14 0 -18 0 1 0 0 0 1 0 0 0 1 3070b.dat
+1 14 0 14 0 1 0 0 0 1 0 0 0 1 3062b.dat
+1 14 0 38 0 1 0 0 0 1 0 0 0 1 3062b.dat
+1 14 0 62 0 0 0 -1 0 1 0 1 0 0 26047.dat
+0 STEP
+0 // Clip on the forearm and bend it up
+1 16 20 64 0 0 0.766044 0.642788 0 -0.642788 0.766044 1 0 0 left_forearm.ldr
+0 STEP
+0 NOFILE

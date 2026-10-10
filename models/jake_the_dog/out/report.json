@@ -1,0 +1,94 @@
+{
+  "title": "Jake the Dog",
+  "status": "pass",
+  "checks": [
+    {
+      "name": "real_elements",
+      "status": "pass",
+      "summary": "39 part/colour combinations: 0 not real, 0 rare",
+      "items": [],
+      "stats": {
+        "combinations": 39,
+        "not_real": 0,
+        "rare": 0,
+        "hardware": 0,
+        "minifig_components": 0,
+        "stand_ins": 0,
+        "approximate": 0
+      }
+    },
+    {
+      "name": "connections",
+      "status": "pass",
+      "summary": "360 connections (339 stud, 16 pin, 3 bar, 2 clip); 1 separate piece(s)",
+      "items": [],
+      "stats": {
+        "connections": 360,
+        "by_kind": {
+          "stud": 339,
+          "pin": 16,
+          "bar": 3,
+          "clip": 2
+        },
+        "pieces": 1
+      }
+    },
+    {
+      "name": "collisions",
+      "status": "pass",
+      "summary": "0 overlapping pair(s) among 143 parts",
+      "items": [],
+      "stats": {
+        "pairs": 0
+      }
+    },
+    {
+      "name": "buildability",
+      "status": "pass",
+      "summary": "144 insertions tried across 7 submodel(s); 0 problem(s)",
+      "items": [],
+      "stats": {
+        "insertions": 144
+      }
+    },
+    {
+      "name": "stability",
+      "status": "pass",
+      "summary": "about 132 g; centre of mass inside the base (99% margin); tips at 11.4 deg",
+      "items": [],
+      "stats": {
+        "mass_g": 132.08021165276608,
+        "com": [
+          -0.0028907900011798716,
+          -196.4538176432651,
+          -9.604344235412063
+        ],
+        "approx_parts": 0,
+        "margin": 0.9901086058853016,
+        "tip_angle_deg": 11.397843737608468,
+        "com_height_ldu": 196.4538176432651
+      }
+    },
+    {
+      "name": "mechanism",
+      "status": "pass",
+      "summary": "no moving parts defined",
+      "items": [],
+      "stats": {}
+    },
+    {
+      "name": "electrics",
+      "status": "pass",
+      "summary": "no electrics in this model",
+      "items": [],
+      "stats": {}
+    },
+    {
+      "name": "technique",
+      "status": "pass",
+      "summary": "0 note(s)",
+      "items": [],
+      "stats": {}
+    }
+  ]
+}

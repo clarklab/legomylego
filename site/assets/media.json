@@ -19,8 +19,8 @@
      "size": 518264
     },
     "model.json": {
-     "v": "d784f2b7b2",
-     "size": 9103
+     "v": "f1be09b168",
+     "size": 9114
     },
     "parts.csv": {
      "v": "5702c8ef50",
@@ -192,8 +192,8 @@
      "size": 234720
     },
     "model.json": {
-     "v": "1cfdd58f50",
-     "size": 7804
+     "v": "a59282f217",
+     "size": 7815
     },
     "parts.csv": {
      "v": "d7587987e2",
@@ -233,8 +233,8 @@
      "size": 478648
     },
     "model.json": {
-     "v": "87c14d3b89",
-     "size": 9124
+     "v": "bb82880d9e",
+     "size": 9135
     },
     "parts.csv": {
      "v": "d5dd818b8e",
@@ -530,8 +530,8 @@
      "size": 2106160
     },
     "model.json": {
-     "v": "f187b0a617",
-     "size": 27971
+     "v": "c16dbc6f86",
+     "size": 27982
     },
     "parts.csv": {
      "v": "8f6fb1e7a3",
@@ -727,8 +727,8 @@
      "size": 275488
     },
     "model.json": {
-     "v": "a25df8dad7",
-     "size": 7013
+     "v": "1d8ca9488c",
+     "size": 7024
     },
     "parts.csv": {
      "v": "992a9ae25e",
@@ -799,8 +799,8 @@
      "size": 567216
     },
     "model.json": {
-     "v": "6e1664c474",
-     "size": 13609
+     "v": "9064652cb9",
+     "size": 13620
     },
     "parts.csv": {
      "v": "5284d90613",
@@ -911,8 +911,8 @@
      "size": 581608
     },
     "model.json": {
-     "v": "248d16a7eb",
-     "size": 14583
+     "v": "e3a8631724",
+     "size": 14594
     },
     "parts.csv": {
      "v": "fa1eb5c76b",
@@ -952,8 +952,8 @@
      "size": 172532
     },
     "model.json": {
-     "v": "5cfd4d003a",
-     "size": 9435
+     "v": "5df6009f73",
+     "size": 9446
     },
     "parts.csv": {
      "v": "089c136eba",
@@ -1102,8 +1102,8 @@
      "size": 2606684
     },
     "model.json": {
-     "v": "5fbd20a000",
-     "size": 35462
+     "v": "aa12c67faa",
+     "size": 35473
     },
     "parts.csv": {
      "v": "0dccfd18d2",
@@ -1204,8 +1204,8 @@
      "size": 342028
     },
     "model.json": {
-     "v": "ebff361101",
-     "size": 8219
+     "v": "2e4c05088d",
+     "size": 8230
     },
     "parts.csv": {
      "v": "be624f2c8b",
@@ -1266,8 +1266,8 @@
      "size": 904408
     },
     "model.json": {
-     "v": "741e8b1fc4",
-     "size": 17002
+     "v": "9b26c88eae",
+     "size": 17013
     },
     "parts.csv": {
      "v": "eaca605758",
@@ -1309,6 +1309,98 @@
     }
    }
   },
+  "jake_the_dog": {
+   "files": {
+    "booklet.pdf": {
+     "v": "94169b4899",
+     "size": 6286256
+    },
+    "bricklink_wanted.xml": {
+     "v": "4b22c41242",
+     "size": 3603
+    },
+    "jake_the_dog.mpd": {
+     "v": "20a3beea2b",
+     "size": 9886
+    },
+    "model.glb": {
+     "v": "3f87a9d0df",
+     "size": 2162148
+    },
+    "model.json": {
+     "v": "8de312e7b8",
+     "size": 32454
+    },
+    "parts.csv": {
+     "v": "e65c28c84b",
+     "size": 3047
+    },
+    "pick_a_brick.csv": {
+     "v": "55cdee67d4",
+     "size": 430
+    },
+    "price_estimate.md": {
+     "v": "c420be6485",
+     "size": 4062
+    },
+    "quick_poster.jpg": {
+     "v": "204b4c7d1e",
+     "size": 191439
+    },
+    "renders/renders_back.png": {
+     "v": "0a95c0834c",
+     "size": 515724
+    },
+    "renders/renders_front.png": {
+     "v": "1d68bec6f3",
+     "size": 528591
+    },
+    "renders/renders_side.png": {
+     "v": "fcb0e53082",
+     "size": 520128
+    },
+    "renders/renders_three_quarter.png": {
+     "v": "3e7e8ad0cb",
+     "size": 530714
+    },
+    "renders/renders_with_finn.png": {
+     "v": "7f3d47e95c",
+     "size": 1130075
+    }
+   },
+   "images": {
+    "renders/renders_back.png": {
+     "w": 700,
+     "h": 700,
+     "lg": "/assets/img/jake_the_dog/renders_back.webp?v=f2690feddf",
+     "sm": "/assets/img/jake_the_dog/renders_back-480.webp?v=3938f290de"
+    },
+    "renders/renders_front.png": {
+     "w": 700,
+     "h": 700,
+     "lg": "/assets/img/jake_the_dog/renders_front.webp?v=3a100c17a7",
+     "sm": "/assets/img/jake_the_dog/renders_front-480.webp?v=e0478fe1d5"
+    },
+    "renders/renders_side.png": {
+     "w": 700,
+     "h": 700,
+     "lg": "/assets/img/jake_the_dog/renders_side.webp?v=aea3f783e0",
+     "sm": "/assets/img/jake_the_dog/renders_side-480.webp?v=9eaf3c6973"
+    },
+    "renders/renders_three_quarter.png": {
+     "w": 700,
+     "h": 700,
+     "lg": "/assets/img/jake_the_dog/renders_three_quarter.webp?v=9611e5abf3",
+     "sm": "/assets/img/jake_the_dog/renders_three_quarter-480.webp?v=da4b35ba6f"
+    },
+    "renders/renders_with_finn.png": {
+     "w": 1200,
+     "h": 900,
+     "lg": "/assets/img/jake_the_dog/renders_with_finn.webp?v=51c7becf60",
+     "sm": "/assets/img/jake_the_dog/renders_with_finn-480.webp?v=cc047439ea"
+    }
+   }
+  },
   "magikarp": {
    "files": {
     "booklet.pdf": {
@@ -1328,8 +1420,8 @@
      "size": 670928
     },
     "model.json": {
-     "v": "6ed206a495",
-     "size": 14692
+     "v": "ef99b20fa3",
+     "size": 14703
     },
     "parts.csv": {
      "v": "d8aad51db5",
@@ -1630,8 +1722,8 @@
      "size": 775052
     },
     "model.json": {
-     "v": "1766080f0c",
-     "size": 14315
+     "v": "f54c4e26db",
+     "size": 14326
     },
     "parts.csv": {
      "v": "b3a003b5e9",
@@ -1712,8 +1804,8 @@
      "size": 243776
     },
     "model.json": {
-     "v": "aa19f869fc",
-     "size": 8126
+     "v": "b5933891ec",
+     "size": 8137
     },
     "parts.csv": {
      "v": "a22fc55969",
@@ -1814,8 +1906,8 @@
      "size": 626200
     },
     "model.json": {
-     "v": "668e645c33",
-     "size": 14632
+     "v": "e5b60a9cf0",
+     "size": 14643
     },
     "parts.csv": {
      "v": "1b618b41bf",
@@ -1886,8 +1978,8 @@
      "size": 450680
     },
     "model.json": {
-     "v": "e711f00860",
-     "size": 8970
+     "v": "7085c889e5",
+     "size": 8981
     },
     "parts.csv": {
      "v": "98bbda2282",
@@ -2069,8 +2161,8 @@
      "size": 415796
     },
     "model.json": {
-     "v": "7e7e498286",
-     "size": 9046
+     "v": "aed202c286",
+     "size": 9057
     },
     "parts.csv": {
      "v": "4183ff1ce0",

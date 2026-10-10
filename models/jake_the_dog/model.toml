@@ -1,0 +1,27 @@
+[model]
+name = "Jake the Dog"
+design = "design.py"
+description = "A round yellow Jake the Dog with big white eyes, a two-lobed muzzle and posable noodle limbs, scaled to stand beside Finn."
+collection = "quick_bricks"
+
+[palette]
+body = "Yellow"
+eye = "Black"
+white = "White"
+pin = "Black"
+
+[booklet]
+subtitle = "Finn's shorter, rounder best friend."
+intro = "Build the rounded body, then the two short legs and bent arms. Add the outlined white eyes, drooping muzzle, black nose and small ears, then connect the limbs on their hidden pins."
+
+[checks]
+enabled = ["real_elements", "connections", "collisions", "buildability", "stability", "mechanism", "electrics", "technique"]
+
+[quick]
+surface = "blue_mat"
+room = "window"
+light = "day"
+seconds = 22
+highlight = ["eyes", "muzzle", "nose", "ear"]
+close_ups = 2
+music = false
