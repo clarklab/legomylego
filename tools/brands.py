@@ -27,7 +27,7 @@ SRC = ROOT / "brands"
 OUT = ROOT / "site" / "assets" / "js" / "brands.js"
 
 NAMES = {"pez": "PEZ", "pokemon": "Pokémon", "spooky": "Spooky Season"}     # else: Title Case
-ORDER = ["pokemon", "star-wars", "pez", "adventure-time", "spooky", "snacks"]   # the cards' order
+ORDER = ["pokemon", "nintendo", "star-wars", "pez", "adventure-time", "spooky", "snacks"]   # the cards' order
 AREA = 2700.0             # px2 of card every logo gets
 MOST = (104.0, 38.0)      # ... but never wider or taller than this
 
