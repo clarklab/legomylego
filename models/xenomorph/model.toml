@@ -34,3 +34,7 @@ seconds = 15
 highlight = ["dome", "barb"]  # tags: the head's dome, the tail's tip
 close_ups = 2
 music = false                 # just the clicks
+ending = "audio/hiss_1.mp3"   # its own sound as the last piece goes on: a hiss that rises into a
+                              # screech (audio/sfx.toml), 2 s
+ending_level = -11.0          # (its peak in the mix; the mastering then brings the whole track up together)
+ending_at = -0.15             # the hiss starts as the sting clicks on, and the cry is over before the cut

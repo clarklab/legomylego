@@ -1,0 +1,54 @@
+{
+ "hiss_1.mp3": {
+  "bytes": 49572,
+  "generated": "2026-10-09",
+  "loop": false,
+  "model_id": "eleven_text_to_sound_v2",
+  "name": "hiss",
+  "output_format": "mp3_44100_192",
+  "prompt": "A monstrous insect-like alien creature, very close: a wet, rasping hiss that rises at once into a short, piercing, inhuman screech and stops dead. One creature, one cry, starting at once. Dry and close, no echo, no music, no footsteps, no voices, nothing else.",
+  "prompt_influence": 0.6,
+  "seconds": 2.0,
+  "sha1": "e4dbfc192a9f6ef90baa3ed7363767e8f1b8809d",
+  "source": "ElevenLabs sound generation API (Creator plan)"
+ },
+ "hiss_2.mp3": {
+  "bytes": 49572,
+  "generated": "2026-10-09",
+  "loop": false,
+  "model_id": "eleven_text_to_sound_v2",
+  "name": "hiss",
+  "output_format": "mp3_44100_192",
+  "prompt": "A monstrous insect-like alien creature, very close: a wet, rasping hiss that rises at once into a short, piercing, inhuman screech and stops dead. One creature, one cry, starting at once. Dry and close, no echo, no music, no footsteps, no voices, nothing else.",
+  "prompt_influence": 0.6,
+  "seconds": 2.0,
+  "sha1": "95e2a1d1496eefff4db2ad97f8cd464e93eed8fa",
+  "source": "ElevenLabs sound generation API (Creator plan)"
+ },
+ "hiss_3.mp3": {
+  "bytes": 49572,
+  "generated": "2026-10-09",
+  "loop": false,
+  "model_id": "eleven_text_to_sound_v2",
+  "name": "hiss",
+  "output_format": "mp3_44100_192",
+  "prompt": "A monstrous insect-like alien creature, very close: a wet, rasping hiss that rises at once into a short, piercing, inhuman screech and stops dead. One creature, one cry, starting at once. Dry and close, no echo, no music, no footsteps, no voices, nothing else.",
+  "prompt_influence": 0.6,
+  "seconds": 2.0,
+  "sha1": "7a47f093e74475df7ffabbc11e508102d4bc9314",
+  "source": "ElevenLabs sound generation API (Creator plan)"
+ },
+ "hiss_4.mp3": {
+  "bytes": 49572,
+  "generated": "2026-10-09",
+  "loop": false,
+  "model_id": "eleven_text_to_sound_v2",
+  "name": "hiss",
+  "output_format": "mp3_44100_192",
+  "prompt": "A monstrous insect-like alien creature, very close: a wet, rasping hiss that rises at once into a short, piercing, inhuman screech and stops dead. One creature, one cry, starting at once. Dry and close, no echo, no music, no footsteps, no voices, nothing else.",
+  "prompt_influence": 0.6,
+  "seconds": 2.0,
+  "sha1": "64bc443be7a9935c8382907c0c516e53fa1886d0",
+  "source": "ElevenLabs sound generation API (Creator plan)"
+ }
+}
