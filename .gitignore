@@ -26,6 +26,7 @@ showreel/work/
 models/*/out/quick_frames/
 models/*/out/quick_preview.mp4
 models/*/out/*_preview.mp4
+models/*/out/worksheet.html
 # scratch models (experiments), all but the tests' sample
 models/_*/
 !models/_sample/

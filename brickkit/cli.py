@@ -234,6 +234,9 @@ def main(argv=None) -> int:
     p.add_argument("slug")
     p.add_argument("--variant")
     p.add_argument("--no-render", action="store_true", help="reuse existing pictures")
+    p = sub.add_parser("worksheet", help="a class's sorting sheet (out/worksheet.pdf): every piece "
+                                         "as an outline at its real size, and a word about the model")
+    p.add_argument("slug")
     p = sub.add_parser("video", help="build video (out/SLUG-1080x1080.mp4) rendered with Blender")
     p.add_argument("slug")
     p.add_argument("--variant")
@@ -403,6 +406,10 @@ def main(argv=None) -> int:
         pdf = make_booklet(engine, proj, model, rerender=not args.no_render,
                            out_dir=_out(proj, model.variant))
         print(f"booklet -> {pdf}")
+        return 0
+    if args.cmd == "worksheet":
+        from .booklet.worksheet import make_worksheet
+        print(f"worksheet -> {make_worksheet(engine, proj, model)}")
         return 0
     if args.cmd == "video":
         from .video import make_video

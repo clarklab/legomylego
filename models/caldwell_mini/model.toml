@@ -26,6 +26,46 @@ page = "caldwell_courthouse/#mini"   # the mini is a section of the big courthou
 subtitle = "A small, quick build of the 1894 courthouse in Lockhart, Texas, with a clock on every side of its tower."
 intro = "The Caldwell County Courthouse in Lockhart, Texas, small enough to build in a few minutes: the stone walls with their red band, the corner pavilions with their slate roofs, and the clock tower in the middle, a clock on each of its four sides."
 
+# A class's sorting sheet (brickkit worksheet caldwell_mini -> out/worksheet.pdf): the pieces as
+# outlines to fill from the big bucket, under half a page about the real courthouse. The facts
+# are from the Texas Historical Commission's marker (1976) and the National Register listing
+[worksheet]
+title = "Build the Caldwell County Courthouse"
+lead = "The real one stands in the middle of the town square in Lockhart, Texas. Six things to know before you build it:"
+facts = [
+    "It was finished on March 19, 1894, so it is more than 130 years old.",
+    "It is the third courthouse on this spot. The first went up in 1848, when the county began. The county is named for Mathew Caldwell, a Texas Ranger who signed the Texas Declaration of Independence.",
+    "Its walls are cream-colored stone with red sandstone trim: the tan bricks and the dark red plates in your set.",
+    "The clock in its tower has four faces, one for each side of the square, so the whole town can see the time. Find the four clock tiles!",
+    "Up in the tower hangs a bell that weighs 900 pounds: about as much as a horse.",
+    "Nobody is sure who drew its plans. For years people said Alfred Giles; historians now think it was Henry Guindon. The courthouse in Goliad, Texas, was built from the same plans, so this one has a twin.",
+]
+sources = "Facts: Texas Historical Commission marker (1976); National Register of Historic Places."
+[worksheet.names]             # what a child calls each piece
+41539 = "8 x 8 plate: the lawn"
+"3069b/Light Bluish Gray" = "1 x 2 tile: the front walk"
+"3069b/Black" = "1 x 2 tile"
+15533 = "1 x 4 stone brick"
+98283 = "1 x 2 stone brick"
+2877 = "1 x 2 grille brick: the doors"
+3666 = "1 x 6 plate"
+3710 = "1 x 4 plate"
+3032 = "4 x 6 plate"
+3795 = "2 x 6 plate"
+3003 = "2 x 2 brick"
+3022 = "2 x 2 plate"
+3045 = "2 x 2 corner roof"
+3039 = "2 x 2 roof slope"
+59900 = "1 x 1 cone"
+26604 = "1 x 1 brick, studs on 2 sides"
+15573 = "1 x 2 plate with 1 stud"
+14769p0m = "round clock tile"
+3688 = "the spire"
+3878 = "top hat"
+973puc = "the clockmaster's body"
+3815b = "his legs"
+3626cp7e = "his head"
+
 [checks]
 enabled = ["real_elements", "connections", "collisions", "buildability", "stability",
            "mechanism", "electrics", "technique"]
