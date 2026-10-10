@@ -1,7 +1,7 @@
 [model]
 name = "Charmander Starter"
 design = "design.py"
-brands = ["pokemon"]   # the logo cards on the Quick Bricks page it is filed under (brands/)
+brands = ["pokemon", "nintendo"]   # the logo cards on the Quick Bricks page it is filed under (brands/)
 description = "Charmander from Pokémon in 37 pieces, 6.5 cm tall: an oversized head with bright eyes, a rounded tan belly, clawed feet, short reaching arms and a curling tail tipped with a flame."
 collection = "quick_bricks"
 

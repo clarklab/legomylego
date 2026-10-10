@@ -1,7 +1,7 @@
 [model]
 name = "Surprised Pikachu"
 design = "design.py"
-brands = ["pokemon"]   # the logo cards on the Quick Bricks page it is filed under (brands/)
+brands = ["pokemon", "nintendo"]   # the logo cards on the Quick Bricks page it is filed under (brands/)
 description = "The surprised Pikachu face in 50 pieces, 9 cm across the ears and 6 cm tall: wide eyes, red cheeks, a small black nose over an open pink mouth, and pointed black-tipped ears that swing on clips."
 credit = "Another builder's design: its plans do not name them. If it is yours, tell us and we will credit you."
 # designer = "..."           # not named in the plans it came from: fill in when known

@@ -65,7 +65,8 @@
       "model": "/models/bulbasaur/model.json?v=28c21660d55b",
       "geometry": "/models/bulbasaur/model.glb?v=10fefe93bb55",
       "brands": [
-        "pokemon"
+        "pokemon",
+        "nintendo"
       ]
     },
     {
@@ -96,7 +97,8 @@
       "model": "/models/charmander/model.json?v=ebd4b3c15ab9",
       "geometry": "/models/charmander/model.glb?v=86bea5fb0a68",
       "brands": [
-        "pokemon"
+        "pokemon",
+        "nintendo"
       ],
       "designer": "SwordBricks (RSierra)",
       "source": "https://rebrickable.com/mocs/MOC-220190/"
@@ -115,7 +117,8 @@
       "model": "/models/charmander_starter/model.json?v=b533d3f3cd50",
       "geometry": "/models/charmander_starter/model.glb?v=19df1a30fa8c",
       "brands": [
-        "pokemon"
+        "pokemon",
+        "nintendo"
       ]
     },
     {
@@ -253,7 +256,8 @@
       "model": "/models/magikarp/model.json?v=3f92abb84d21",
       "geometry": "/models/magikarp/model.glb?v=0d1b1ff49564",
       "brands": [
-        "pokemon"
+        "pokemon",
+        "nintendo"
       ],
       "designer": "Redverse",
       "source": "https://rebrickable.com/mocs/MOC-182443/"
@@ -272,7 +276,8 @@
       "model": "/models/pikachu/model.json?v=48b2df7afe8a",
       "geometry": "/models/pikachu/model.glb?v=318ab3dcdc0e",
       "brands": [
-        "pokemon"
+        "pokemon",
+        "nintendo"
       ],
       "credit": "Another builder's design: its plans do not name them. If it is yours, tell us and we will credit you."
     },
@@ -290,7 +295,8 @@
       "model": "/models/porygon/model.json?v=e9a6e729879b",
       "geometry": "/models/porygon/model.glb?v=a46e853c1f37",
       "brands": [
-        "pokemon"
+        "pokemon",
+        "nintendo"
       ],
       "designer": "QSKSw",
       "source": "https://rebrickable.com/mocs/MOC-31400/"
@@ -328,7 +334,8 @@
       "model": "/models/squirtle/model.json?v=d3df433e65c9",
       "geometry": "/models/squirtle/model.glb?v=73f173a0bab4",
       "brands": [
-        "pokemon"
+        "pokemon",
+        "nintendo"
       ]
     },
     {
