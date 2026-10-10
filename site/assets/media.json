@@ -862,6 +862,88 @@
     }
    }
   },
+  "charmander_starter": {
+   "files": {
+    "booklet.pdf": {
+     "v": "fbfd8eb06c",
+     "size": 2548001
+    },
+    "bricklink_wanted.xml": {
+     "v": "5d2251724b",
+     "size": 1864
+    },
+    "charmander_starter.mpd": {
+     "v": "95d2d9a969",
+     "size": 2900
+    },
+    "model.glb": {
+     "v": "25685be826",
+     "size": 599496
+    },
+    "model.json": {
+     "v": "3eaac5b437",
+     "size": 12672
+    },
+    "parts.csv": {
+     "v": "bb955f7ca9",
+     "size": 1640
+    },
+    "pick_a_brick.csv": {
+     "v": "4715fc41e5",
+     "size": 238
+    },
+    "price_estimate.md": {
+     "v": "505ba75823",
+     "size": 2464
+    },
+    "quick_poster.jpg": {
+     "v": "f0a070c76b",
+     "size": 138711
+    },
+    "renders/renders_back.png": {
+     "v": "945472be5e",
+     "size": 504243
+    },
+    "renders/renders_front.png": {
+     "v": "633bb12b40",
+     "size": 518544
+    },
+    "renders/renders_side.png": {
+     "v": "ef5d2c3348",
+     "size": 512936
+    },
+    "renders/renders_three_quarter.png": {
+     "v": "fa852c7930",
+     "size": 525904
+    }
+   },
+   "images": {
+    "renders/renders_back.png": {
+     "w": 700,
+     "h": 700,
+     "lg": "/assets/img/charmander_starter/renders_back.webp?v=2ddf9a034f",
+     "sm": "/assets/img/charmander_starter/renders_back-480.webp?v=1d5738284c"
+    },
+    "renders/renders_front.png": {
+     "w": 700,
+     "h": 700,
+     "lg": "/assets/img/charmander_starter/renders_front.webp?v=cebecb910a",
+     "sm": "/assets/img/charmander_starter/renders_front-480.webp?v=cc57411a6c"
+    },
+    "renders/renders_side.png": {
+     "w": 700,
+     "h": 700,
+     "lg": "/assets/img/charmander_starter/renders_side.webp?v=81cfbf0901",
+     "sm": "/assets/img/charmander_starter/renders_side-480.webp?v=40b9ba0974"
+    },
+    "renders/renders_three_quarter.png": {
+     "w": 700,
+     "h": 700,
+     "lg": "/assets/img/charmander_starter/renders_three_quarter.webp?v=2f601dcc3a",
+     "sm": "/assets/img/charmander_starter/renders_three_quarter-480.webp?v=4999176989"
+    }
+   }
+  },
   "crow": {
    "files": {
     "booklet.pdf": {

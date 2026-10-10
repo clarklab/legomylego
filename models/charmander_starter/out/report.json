@@ -1,0 +1,93 @@
+{
+  "title": "Charmander Starter",
+  "status": "pass",
+  "checks": [
+    {
+      "name": "real_elements",
+      "status": "pass",
+      "summary": "20 part/colour combinations: 0 not real, 0 rare",
+      "items": [],
+      "stats": {
+        "combinations": 20,
+        "not_real": 0,
+        "rare": 0,
+        "hardware": 0,
+        "minifig_components": 0,
+        "stand_ins": 0,
+        "approximate": 0
+      }
+    },
+    {
+      "name": "connections",
+      "status": "pass",
+      "summary": "80 connections (77 stud, 2 bar, 1 pin); 1 separate piece(s)",
+      "items": [],
+      "stats": {
+        "connections": 80,
+        "by_kind": {
+          "stud": 77,
+          "bar": 2,
+          "pin": 1
+        },
+        "pieces": 1
+      }
+    },
+    {
+      "name": "collisions",
+      "status": "pass",
+      "summary": "0 overlapping pair(s) among 37 parts",
+      "items": [],
+      "stats": {
+        "pairs": 0
+      }
+    },
+    {
+      "name": "buildability",
+      "status": "pass",
+      "summary": "35 insertions tried across 1 submodel(s); 0 problem(s)",
+      "items": [],
+      "stats": {
+        "insertions": 35
+      }
+    },
+    {
+      "name": "stability",
+      "status": "pass",
+      "summary": "about 28 g; centre of mass inside the base (84% margin); tips at 16.8 deg",
+      "items": [],
+      "stats": {
+        "mass_g": 27.5544751740645,
+        "com": [
+          1.618891364508581,
+          -75.10919204767588,
+          -5.110441510674474
+        ],
+        "approx_parts": 0,
+        "margin": 0.8370147170224824,
+        "tip_angle_deg": 16.811559582981527,
+        "com_height_ldu": 83.10919204767588
+      }
+    },
+    {
+      "name": "mechanism",
+      "status": "pass",
+      "summary": "no moving parts defined",
+      "items": [],
+      "stats": {}
+    },
+    {
+      "name": "electrics",
+      "status": "pass",
+      "summary": "no electrics in this model",
+      "items": [],
+      "stats": {}
+    },
+    {
+      "name": "technique",
+      "status": "pass",
+      "summary": "0 note(s)",
+      "items": [],
+      "stats": {}
+    }
+  ]
+}

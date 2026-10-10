@@ -87,6 +87,20 @@
       "source": "https://rebrickable.com/mocs/MOC-220190/"
     },
     {
+      "slug": "charmander_starter",
+      "name": "Charmander Starter",
+      "description": "Charmander from Pokémon in 37 pieces, 6.5 cm tall: an oversized head with bright eyes, a rounded tan belly, clawed feet, short reaching arms and a curling tail tipped with a flame.",
+      "collection": "quick_bricks",
+      "pieces": 37,
+      "steps": 15,
+      "video": "/quick/charmander_starter-1080x1920.mp4?v=459a27c8e9ef",
+      "poster": "/models/charmander_starter/quick_poster.jpg?v=be6ffa7ae86d",
+      "instructions": "/models/charmander_starter/booklet.pdf?v=88cefe484c17",
+      "url": "/quick/charmander_starter/",
+      "model": "/models/charmander_starter/model.json?v=b533d3f3cd50",
+      "geometry": "/models/charmander_starter/model.glb?v=19df1a30fa8c"
+    },
+    {
       "slug": "crow",
       "name": "Crow",
       "description": "A little black crow in 34 pieces, 7 cm from beak to tail: a pointed beak, half-closed eyes, two wings and two tail feathers on clips, and yellow feet. Designed by Qrys.And.Reading.",

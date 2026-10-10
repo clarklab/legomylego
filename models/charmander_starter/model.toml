@@ -1,0 +1,30 @@
+[model]
+name = "Charmander Starter"
+design = "design.py"
+description = "Charmander from Pokémon in 37 pieces, 6.5 cm tall: an oversized head with bright eyes, a rounded tan belly, clawed feet, short reaching arms and a curling tail tipped with a flame."
+collection = "quick_bricks"
+
+[palette]
+body = "Orange"
+belly = "Tan"
+claws = "White"
+eyes = "White"
+mouth = "Black"
+flame = "Trans-Orange"
+
+[booklet]
+subtitle = "A small fire starter with a very big personality."
+intro = "Build up from broad clawed feet to the rounded belly and oversized head. Add the little reaching arms, then the curling tail and its real LEGO flame. This is an original brick interpretation of the Pokémon character."
+
+[checks]
+enabled = ["real_elements", "connections", "collisions", "buildability", "stability",
+           "mechanism", "electrics", "technique"]
+
+[quick]
+surface = "blue_mat"
+room = "studio"
+light = "day"
+seconds = 14
+highlight = ["eyes", "tail_flame"]
+close_ups = 2
+music = false

@@ -347,6 +347,43 @@
       "status": "pass"
     },
     {
+      "slug": "charmander_starter",
+      "name": "Charmander Starter",
+      "description": "Charmander from Pok\u00e9mon in 37 pieces, 6.5 cm tall: an oversized head with bright eyes, a rounded tan belly, clawed feet, short reaching arms and a curling tail tipped with a flame.",
+      "collection": "quick_bricks",
+      "steps": 15,
+      "notice": "",
+      "parts": 37,
+      "pieces": 37,
+      "dims_mm": [
+        61.4,
+        65.0,
+        68.2
+      ],
+      "price": {
+        "low": 1.61,
+        "high": 5.57,
+        "currency": "USD",
+        "note": "A rough range from typical BrickLink prices per part type, not live market data.",
+        "source": "estimate",
+        "date": null,
+        "live_lines": 0,
+        "lines": 20
+      },
+      "features": {
+        "mechanism": false,
+        "lights": false,
+        "minifigs": 0
+      },
+      "variants": [
+        "Standard"
+      ],
+      "thumbnail": "renders/renders_back.png",
+      "video": null,
+      "poster": null,
+      "status": "pass"
+    },
+    {
       "slug": "crow",
       "name": "Crow",
       "description": "A little black crow in 34 pieces, 7 cm from beak to tail: a pointed beak, half-closed eyes, two wings and two tail feathers on clips, and yellow feet. Designed by Qrys.And.Reading.",
