@@ -1,0 +1,103 @@
+0 FILE mario.ldr
+0 Mario
+0 Name: mario.ldr
+0 Author: brickkit
+
+0 // The stand: two 2 x 4 plates side by side, and two 2 x 4 bricks across them
+1 4 0 -8 -20 1 0 0 0 1 0 0 0 1 3020.dat
+1 4 0 -8 20 1 0 0 0 1 0 0 0 1 3020.dat
+1 4 20 -32 0 0 0 1 0 1 0 -1 0 0 3001.dat
+1 4 -20 -32 0 0 0 1 0 1 0 -1 0 0 3001.dat
+0 STEP
+0 // Two 2 x 3 plates on the back three rows of studs, and on each the first plate of a shoe
+1 19 20 -40 10 0 0 1 0 1 0 -1 0 0 3021.dat
+1 19 -20 -40 10 0 0 1 0 1 0 -1 0 0 3021.dat
+1 70 20 -48 10 0 0 1 0 1 0 -1 0 0 3021.dat
+1 70 -20 -48 10 0 0 1 0 1 0 -1 0 0 3021.dat
+0 STEP
+0 // The rest of the shoes: a second plate, and a 1 x 2 tile across each toe
+1 70 20 -56 10 0 0 1 0 1 0 -1 0 0 3021.dat
+1 70 -20 -56 10 0 0 1 0 1 0 -1 0 0 3021.dat
+1 70 20 -64 -10 1 0 0 0 1 0 0 0 1 3069b.dat
+1 70 -20 -64 -10 1 0 0 0 1 0 0 0 1 3069b.dat
+0 STEP
+0 // The legs: three blue 2 x 4 bricks, one on another, behind the toes
+1 1 0 -80 20 1 0 0 0 1 0 0 0 1 3001.dat
+1 1 0 -104 20 1 0 0 0 1 0 0 0 1 3001.dat
+1 1 0 -128 20 1 0 0 0 1 0 0 0 1 3001.dat
+0 STEP
+0 // The bib and the shirt: a blue brick with a stud on its side at each front corner, studs forward, and a corner brick behind each
+1 1 30 -152 10 1 0 0 0 1 0 0 0 1 87087.dat
+1 1 -30 -152 10 1 0 0 0 1 0 0 0 1 87087.dat
+1 4 10 -152 30 0 0 1 0 1 0 -1 0 0 2357.dat
+1 4 -10 -152 30 -1 0 0 0 1 0 0 0 -1 2357.dat
+0 STEP
+0 // The same again with plain blue 1 x 1 bricks for the straps, then a yellow button on each stud on the front
+1 1 30 -176 10 1 0 0 0 1 0 0 0 1 3005.dat
+1 1 -30 -176 10 1 0 0 0 1 0 0 0 1 3005.dat
+1 4 10 -176 30 0 0 1 0 1 0 -1 0 0 2357.dat
+1 4 -10 -176 30 -1 0 0 0 1 0 0 0 -1 2357.dat
+1 14 30 -142 -8 1 0 0 0 0 -1 0 1 0 98138.dat
+1 14 -30 -142 -8 1 0 0 0 0 -1 0 1 0 98138.dat
+0 STEP
+0 // Hang an arm each side, its plate over the chest, and lock both with a 2 x 4 brick across the shoulders
+1 16 60 -104 20 1 0 0 0 1 0 0 0 1 arm.ldr
+1 16 -60 -104 20 -1 0 0 0 1 0 0 0 -1 arm.ldr
+1 4 0 -208 20 1 0 0 0 1 0 0 0 1 3001.dat
+0 STEP
+0 // The chin: two 2 x 4 plates front to back, then two across them
+1 19 20 -216 20 0 0 1 0 1 0 -1 0 0 3020.dat
+1 19 -20 -216 20 0 0 1 0 1 0 -1 0 0 3020.dat
+1 19 0 -224 0 1 0 0 0 1 0 0 0 1 3020.dat
+1 19 0 -224 40 1 0 0 0 1 0 0 0 1 3020.dat
+0 STEP
+0 // One more layer: the bracket in the middle of the front, its studs forward for the moustache, a corner plate either side of it, and a 2 x 4 plate at the back
+1 19 0 -232 -10 1 0 0 0 1 0 0 0 1 99781.dat
+1 19 30 -232 10 -1 0 0 0 1 0 0 0 -1 2420.dat
+1 19 -30 -232 10 0 0 1 0 1 0 -1 0 0 2420.dat
+1 19 0 -232 40 1 0 0 0 1 0 0 0 1 3020.dat
+0 STEP
+0 // The moustache: a curved slope on each of the bracket's studs, thick ends together. Behind it a 1 x 4 brick, and a 2 x 4 brick at the back
+1 70 20 -222 -24 0 0 1 1 0 0 0 1 0 11477.dat
+1 70 -20 -222 -24 0 0 -1 -1 0 0 0 1 0 11477.dat
+1 19 0 -256 10 1 0 0 0 1 0 0 0 1 3010.dat
+1 19 0 -256 40 1 0 0 0 1 0 0 0 1 3001.dat
+0 STEP
+0 // The eyes: a brick with a stud on its side at each end of the front row, studs forward, a 1 x 2 brick between them, and a black round tile on each stud
+1 19 30 -256 -10 1 0 0 0 1 0 0 0 1 87087.dat
+1 19 -30 -256 -10 1 0 0 0 1 0 0 0 1 87087.dat
+1 19 0 -256 -10 1 0 0 0 1 0 0 0 1 3004.dat
+1 0 30 -246 -28 1 0 0 0 0 -1 0 1 0 98138.dat
+1 0 -30 -246 -28 1 0 0 0 0 -1 0 1 0 98138.dat
+0 STEP
+0 // The forehead and the hair: a tan 2 x 4 brick at the front and a brown one behind it, then two brown 2 x 4 plates front to back across both
+1 19 0 -280 0 1 0 0 0 1 0 0 0 1 3001.dat
+1 70 0 -280 40 1 0 0 0 1 0 0 0 1 3001.dat
+1 70 20 -288 20 0 0 1 0 1 0 -1 0 0 3020.dat
+1 70 -20 -288 20 0 0 1 0 1 0 -1 0 0 3020.dat
+0 STEP
+0 // The cap: two 2 x 4 bricks front to back, sticking out over the face for the peak, and one across the back
+1 4 20 -312 -20 0 0 1 0 1 0 -1 0 0 3001.dat
+1 4 -20 -312 -20 0 0 1 0 1 0 -1 0 0 3001.dat
+1 4 0 -312 40 1 0 0 0 1 0 0 0 1 3001.dat
+0 STEP
+0 // The top of the cap: two 2 x 4 plates front to back, then two across them
+1 4 20 -320 20 0 0 1 0 1 0 -1 0 0 3020.dat
+1 4 -20 -320 20 0 0 1 0 1 0 -1 0 0 3020.dat
+1 4 0 -328 0 1 0 0 0 1 0 0 0 1 3020.dat
+1 4 0 -328 40 1 0 0 0 1 0 0 0 1 3020.dat
+0 STEP
+0 NOFILE
+
+0 FILE arm.ldr
+0 Arm
+0 Name: arm.ldr
+0 Author: brickkit
+
+0 // An arm: a white 2 x 2 brick for the glove, two more for the sleeve, and a 2 x 4 plate on top that sticks out to one side. Make two
+1 15 0 -24 0 1 0 0 0 1 0 0 0 1 3003.dat
+1 4 0 -48 0 1 0 0 0 1 0 0 0 1 3003.dat
+1 4 0 -72 0 1 0 0 0 1 0 0 0 1 3003.dat
+1 4 -20 -80 0 1 0 0 0 1 0 0 0 1 3020.dat
+0 STEP
+0 NOFILE

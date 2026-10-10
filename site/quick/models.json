@@ -263,6 +263,25 @@
       "source": "https://rebrickable.com/mocs/MOC-182443/"
     },
     {
+      "slug": "mario",
+      "name": "Mario",
+      "description": "Mario in 62 pieces, 13 cm tall: red cap with a peak, brown moustache on a tan face, blue overalls with two yellow buttons, white gloves, standing on a red stand.",
+      "collection": "quick_bricks",
+      "pieces": 62,
+      "steps": 15,
+      "video": "/quick/mario-1080x1920.mp4?v=eb34315f4be5",
+      "poster": "/models/mario/quick_poster.jpg?v=544eb3866326",
+      "instructions": "/models/mario/booklet.pdf?v=3bda6de97b9a",
+      "url": "/quick/mario/",
+      "model": "/models/mario/model.json?v=da45314bca59",
+      "geometry": "/models/mario/model.glb?v=7e1d5bccf840",
+      "brands": [
+        "nintendo"
+      ],
+      "designer": "JellsaTheBobJeffCreator",
+      "source": "https://rebrickable.com/mocs/MOC-249307/"
+    },
+    {
       "slug": "pikachu",
       "name": "Surprised Pikachu",
       "description": "The surprised Pikachu face in 50 pieces, 9 cm across the ears and 6 cm tall: wide eyes, red cheeks, a small black nose over an open pink mouth, and pointed black-tipped ears that swing on clips.",

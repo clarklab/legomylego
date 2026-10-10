@@ -1,0 +1,41 @@
+[model]
+name = "Mario"
+design = "design.py"
+description = "Mario in 62 pieces, 13 cm tall: red cap with a peak, brown moustache on a tan face, blue overalls with two yellow buttons, white gloves, standing on a red stand."
+designer = "JellsaTheBobJeffCreator"
+source = "https://rebrickable.com/mocs/MOC-249307/"
+brands = ["nintendo"]
+collection = "quick_bricks"
+
+[palette]                     # role -> a real colour name; brickkit/designs/mario.py places parts by role
+shirt = "Red"              # the cap, the shirt and the arms
+stand = "Red"              # the block he stands on
+stand_top = "Tan"             # the plates between the stand and his shoes
+overalls = "Blue"
+skin = "Tan"
+hair = "Reddish Brown"        # the hair, the moustache and the shoes
+glove = "White"
+button = "Yellow"             # the designer's file has a pearl yellow that LEGO never made this tile in
+eye = "Black"
+
+[booklet]
+subtitle = "Red cap, moustache, blue overalls and two yellow buttons, in 62 pieces."
+intro = "He goes together from the ground up: the stand, the shoes, three bricks of legs, the chest with its two buttons. Make the two arms and hang them from the shoulders, then build the head a layer at a time: chin, moustache, eyes, hair and cap."
+notes = ["The arms hang from the plates at their tops. Press the brick across the shoulders down firmly: it is what holds them on.",
+         "His head is deeper than his feet and he stands at the back of the stand, so a push from the front tips him. Stand him somewhere he will not be knocked."]
+
+[checks]
+enabled = ["real_elements", "connections", "collisions", "buildability", "stability",
+           "mechanism", "electrics", "technique"]
+[checks.stability]            # the designer's stand is 4 x 4 and his head overhangs it at the back:
+min_tilt_deg = 7              # he tips backwards at about 8 degrees (the check wants 10)
+
+# Quick Bricks video (brickkit quick mario): a floor the model stands out on
+[quick]
+surface = "lego_green"    # grass, and red's opposite
+room = "window"
+light = "day"
+seconds = 16
+highlight = ["eyes", "moustache", "buttons", "cap"]
+close_ups = 2
+music = false                 # just the clicks

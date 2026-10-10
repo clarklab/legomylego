@@ -1,0 +1,91 @@
+{
+  "title": "Mario",
+  "status": "pass",
+  "checks": [
+    {
+      "name": "real_elements",
+      "status": "pass",
+      "summary": "23 part/colour combinations: 0 not real, 0 rare",
+      "items": [],
+      "stats": {
+        "combinations": 23,
+        "not_real": 0,
+        "rare": 0,
+        "hardware": 0,
+        "minifig_components": 0,
+        "stand_ins": 0,
+        "approximate": 0
+      }
+    },
+    {
+      "name": "connections",
+      "status": "pass",
+      "summary": "278 connections (278 stud); 1 separate piece(s)",
+      "items": [],
+      "stats": {
+        "connections": 278,
+        "by_kind": {
+          "stud": 278
+        },
+        "pieces": 1
+      }
+    },
+    {
+      "name": "collisions",
+      "status": "pass",
+      "summary": "0 overlapping pair(s) among 62 parts",
+      "items": [],
+      "stats": {
+        "pairs": 0
+      }
+    },
+    {
+      "name": "buildability",
+      "status": "pass",
+      "summary": "57 insertions tried across 2 submodel(s); 0 problem(s)",
+      "items": [],
+      "stats": {
+        "insertions": 57
+      }
+    },
+    {
+      "name": "stability",
+      "status": "pass",
+      "summary": "about 83 g; centre of mass inside the base (65% margin); tips at 8.2 deg",
+      "items": [],
+      "stats": {
+        "mass_g": 83.26363747570196,
+        "com": [
+          -7.510595032249709e-17,
+          -180.11934294156652,
+          13.978379672438223
+        ],
+        "approx_parts": 0,
+        "margin": 0.6505405081890444,
+        "tip_angle_deg": 8.220574635186976,
+        "com_height_ldu": 180.11934294156652
+      }
+    },
+    {
+      "name": "mechanism",
+      "status": "pass",
+      "summary": "no moving parts defined",
+      "items": [],
+      "stats": {}
+    },
+    {
+      "name": "electrics",
+      "status": "pass",
+      "summary": "no electrics in this model",
+      "items": [],
+      "stats": {}
+    },
+    {
+      "name": "technique",
+      "status": "pass",
+      "summary": "0 note(s)",
+      "items": [],
+      "stats": {}
+    }
+  ]
+}

@@ -1667,6 +1667,88 @@
     }
    }
   },
+  "mario": {
+   "files": {
+    "booklet.pdf": {
+     "v": "8254c16493",
+     "size": 2862224
+    },
+    "bricklink_wanted.xml": {
+     "v": "cc04707d5f",
+     "size": 2130
+    },
+    "mario.mpd": {
+     "v": "c437604763",
+     "size": 4497
+    },
+    "model.glb": {
+     "v": "356200bfb4",
+     "size": 451488
+    },
+    "model.json": {
+     "v": "15b1ae9461",
+     "size": 15106
+    },
+    "parts.csv": {
+     "v": "34909cfbe1",
+     "size": 1535
+    },
+    "pick_a_brick.csv": {
+     "v": "24aade0674",
+     "size": 268
+    },
+    "price_estimate.md": {
+     "v": "eac84a27a2",
+     "size": 2333
+    },
+    "quick_poster.jpg": {
+     "v": "d8124ed22e",
+     "size": 197629
+    },
+    "renders/renders_back.png": {
+     "v": "ebb2cd5a28",
+     "size": 429815
+    },
+    "renders/renders_front.png": {
+     "v": "677a3a0b42",
+     "size": 415367
+    },
+    "renders/renders_side.png": {
+     "v": "df56b834ea",
+     "size": 419453
+    },
+    "renders/renders_three_quarter.png": {
+     "v": "e1882941cd",
+     "size": 441313
+    }
+   },
+   "images": {
+    "renders/renders_back.png": {
+     "w": 640,
+     "h": 640,
+     "lg": "/assets/img/mario/renders_back.webp?v=cc601dc93b",
+     "sm": "/assets/img/mario/renders_back-480.webp?v=c5fb8a4976"
+    },
+    "renders/renders_front.png": {
+     "w": 640,
+     "h": 640,
+     "lg": "/assets/img/mario/renders_front.webp?v=23e00f9994",
+     "sm": "/assets/img/mario/renders_front-480.webp?v=0295981bb6"
+    },
+    "renders/renders_side.png": {
+     "w": 640,
+     "h": 640,
+     "lg": "/assets/img/mario/renders_side.webp?v=3f00d9d6b6",
+     "sm": "/assets/img/mario/renders_side-480.webp?v=964a363c54"
+    },
+    "renders/renders_three_quarter.png": {
+     "w": 640,
+     "h": 640,
+     "lg": "/assets/img/mario/renders_three_quarter.webp?v=c7f0579b81",
+     "sm": "/assets/img/mario/renders_three_quarter-480.webp?v=247695c2af"
+    }
+   }
+  },
   "nautilus": {
    "files": {
     "booklet.pdf": {
