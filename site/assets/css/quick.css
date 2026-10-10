@@ -9,7 +9,8 @@
 .quick-collection-link > span { display: flex; align-items: center; gap: 14px; font-size: 14px; font-weight: 600; color: var(--ink); }
 .quick-collection-link:hover > span { text-decoration: underline; text-underline-offset: 5px; }
 .quick-side { display: grid; gap: 16px; justify-items: end; }
-.quick-brands { display: grid; grid-template-columns: repeat(3, 126px); gap: 8px; --brand-u: 1px; }
+/* the logo cards: two rows however many there are (quick.js sets --cols) */
+.quick-brands { display: grid; grid-template-columns: repeat(var(--cols, 3), 126px); gap: 8px; --brand-u: 1px; }
 .quick-brands[hidden] { display: none; }
 .quick-brand { display: grid; place-items: center; height: 58px; padding: 0; border: 1px solid var(--line); border-radius: 10px; background: var(--surface); color: var(--ink); --brand-paper: var(--surface); transition: background-color .12s, border-color .12s, transform .12s; }
 .quick-brand svg { display: block; width: calc(var(--w) * var(--brand-u)); height: calc(var(--h) * var(--brand-u)); }
@@ -60,13 +61,17 @@
 .quick-loading, .quick-message { grid-column: 1 / -1; min-height: 160px; padding-block: 42px; color: var(--muted); }
 .quick-message button { margin-top: 14px; }
 .quick-video-error { position: absolute; left: 10px; right: 10px; bottom: 48px; padding: 10px; border-radius: 6px; background: var(--surface); color: var(--ink); font-size: 12px; z-index: 3; }
-@media (max-width: 1050px) { .quick-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+@media (max-width: 1050px) {
+  .quick-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .quick-brands[data-wide] { grid-template-columns: repeat(var(--cols, 4), 104px); --brand-u: .82px; }
+}
 @media (max-width: 760px) {
   .quick-main { --quick-gap: 8px; }
   .quick-intro { padding-block: 24px 20px; flex-direction: column; align-items: stretch; gap: 18px; }
   .quick-collection-link { display: none; }
   .quick-side { justify-items: stretch; }
-  .quick-brands { grid-template-columns: repeat(3, minmax(0, 1fr)); --brand-u: .92px; }
+  .quick-brands { grid-template-columns: repeat(min(var(--cols, 3), 3), minmax(0, 1fr)); --brand-u: .92px; }
+  .quick-brands[data-wide] { grid-template-columns: repeat(4, minmax(0, 1fr)); --brand-u: .7px; }
   .quick-brand { height: 54px; }
   .quick-heading .eyebrow { font-size: 10px; }
   .quick-lede { margin-top: 10px; }

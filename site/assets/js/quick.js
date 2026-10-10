@@ -115,6 +115,9 @@ function showTheme(id, push = true) {
 function initBrands() {
   const have = brands.filter(b => models.some(m => (m.brands || []).includes(b.id)));
   brandBar.hidden = !have.length;
+  const cols = have.length <= 3 ? have.length : Math.ceil(have.length / 2);   // two rows
+  brandBar.style.setProperty('--cols', cols);
+  brandBar.toggleAttribute('data-wide', cols > 3);
   brandBar.innerHTML = have.map(b => `<button type="button" class="quick-brand" data-brand="${esc(b.id)}" aria-pressed="false" style="--w:${b.w};--h:${b.h}" title="${esc(b.name)}"><span class="visually-hidden">${esc(b.name)}</span>${b.svg}</button>`).join('');
   $$('svg', brandBar).forEach(s => { s.setAttribute('aria-hidden', 'true'); s.setAttribute('focusable', 'false'); });
   $$('button', brandBar).forEach(b => b.addEventListener('click', () => showTheme(b.dataset.brand === theme ? '' : b.dataset.brand)));
