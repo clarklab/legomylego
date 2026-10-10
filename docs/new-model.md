@@ -105,6 +105,9 @@ Write `design.py`: one `m.step("caption")` per page of the plans, and one `m.pla
 piece. The frame is LDraw's: a stud is 20 units, a plate 8, a brick 24; **-Y is up**; the
 front faces -Z. `models/dracula/design.py` and `models/bat/design.py` are good small examples;
 `models/dinosaur/design.py` shows sub-assemblies (`model.submodel`, `m.use`).
+A build that two models share lives in `brickkit/designs/` and each model's `design.py` calls
+it: `pez.py` is the stem and hinge of the three PEZ dispensers, `mario.py` is Mario and (with
+another palette) Luigi.
 
 ```bash
 .venv/bin/python -m brickkit inspect 87087      # a part's box and where its studs are
