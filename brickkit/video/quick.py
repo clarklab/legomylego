@@ -58,6 +58,10 @@ Configured by model.toml's [quick] (all optional):
     cover = 0                    # the cover picture (quick_poster.jpg): degrees from the model's
                                  # front it is seen from - the frame of the hero nearest to that
                                  # (45: three-quarters on, for a face that is on the side)
+    flex = 3.0                   # s: before the cut the finished model moves - its moving groups
+                                 # go through design.py's model.pose, t from 0 to 1 (legs take a
+                                 # step, a lid opens). That long is added before the cut: the
+                                 # build keeps its own time only if `seconds` is that much longer
 
 Planning is here (no Blender): `plan(engine, model, cfg)` -> the schedule, each part's moves
 (a 4 x 4 transform per frame while it moves), the camera per frame and the sound's cues;
@@ -85,7 +89,7 @@ FPS = 60              # the finals: the top rate Reels and TikTok take (every ti
 SIZE = (1080, 1920)
 QUICK = {"set": "cutting_mat", "seconds": 14.0, "highlight": [], "close_ups": 2, "music": False,
          "ending": None, "ending_level": -3.0, "ending_at": 0.25, "sound": [], "layout": "auto",
-         "cover": 0.0,
+         "cover": 0.0, "flex": 0.0,
          "view": "filmic",
          "lens": 50.0, "samples": 32, "exposure": -1.0, "watermark": False}
 # the workshop's layers (render/quick_sets.py builds them), any with any, and named combos
@@ -105,6 +109,7 @@ PRESETS = {"cutting_mat": ("blue_mat", "workbench", "morning"),
 SETS = tuple(PRESETS) + ("random",)
 PRE = 0.45            # s of the empty set before the first part flies in
 HERO = 2.0            # s from the last landing to the cut
+FLEX_HOLD = 0.4       # s the model stands still again after its own movement ([quick] flex), to the cut
 TAIL = 0.3            # s of the empty set after the cut (it runs on into the first frame)
 RATE_RAMP = 3.2       # the last parts land this many times as often as the first
 FLIGHT = (0.45, 0.24)  # s a part takes to fly in: the first, the last ones
@@ -249,7 +254,7 @@ def highlight_groups(placed, seq, cfg) -> list[list[int]]:
 
 # ---------------------------------------------------------------------------- the schedule
 def schedule(n: int, seconds: float, highlights: list[int] | None = None, fps: int = FPS,
-             laid: bool = False, slow: dict | None = None) -> dict:
+             laid: bool = False, slow: dict | None = None, flex: float = 0.0) -> dict:
     """When each part (in build order, 0..n-1) lands and how long it flies (s): the first after
     PRE s of the empty set, the rest faster and faster (RATE_RAMP), a pause before the last one,
     and CLOSE s of room round each highlighted landing (positions in the order); the last
@@ -258,10 +263,12 @@ def schedule(n: int, seconds: float, highlights: list[int] | None = None, fps: i
     hero (LAYOUT_HERO). `slow` {position: (s before it lands, s after, s it takes)}: what needs
     the table to itself (the build lifted for a piece, a unit joined): nothing else lands in
     that time, and it does not start until a close-up just before it is over (the camera
-    would be left looking at where the unit was)."""
+    would be left looking at where the unit was). `flex` (s): that much longer from the last
+    landing to the cut, for the finished model to move in ([quick] flex)."""
     highlights = sorted(set(highlights or []))
     u = np.arange(n) / max(1, n - 1)
     pre, fly, hero = (LAYOUT_PRE, FLOAT, LAYOUT_HERO) if laid else (PRE, FLIGHT, HERO)
+    hero += float(flex)
     flight = fly[0] + (fly[1] - fly[0]) * u
     gaps = 1.0 / (1.0 + (RATE_RAMP - 1.0) * u ** 1.4)     # relative, before each landing
     gaps[0] = 0.0
@@ -1089,6 +1096,29 @@ def motion(engine, placed, script: dict, sch: dict, cam: dict, laid: dict | None
     return out, lands, notes
 
 
+def flex_moves(model, placed, parts: list[dict], cut: float, flex: float, fps: int) -> tuple[int, int]:
+    """The finished model's own movement ([quick] flex, s), added to `parts` as one more move
+    for every part in a moving group: from where it stands, through design.py's model.pose
+    with t going evenly from 0 to 1 (the pose itself starts and ends gently, or it jerks),
+    over the `flex` s that end FLEX_HOLD s before the cut. A part stays where the pose leaves
+    it: a walk on the spot ends at rest, a lid ends open. Returns the move's (first, last)
+    frame."""
+    f1 = int(round((cut - FLEX_HOLD) * fps))
+    f0 = f1 - max(2, int(round(flex * fps)))
+    group = [model.group_of(p) for p in placed]
+    rest = {i: np.asarray((p["moves"][-1]["frames"] if p["moves"] else p["frames"])[-1], float).reshape(4, 4)
+            for i, p in enumerate(parts) if group[i] is not None}
+    frames = {i: [] for i in rest}
+    for f in range(f0, f1 + 1):
+        G = model.pose((f - f0) / (f1 - f0))
+        for i, M in rest.items():
+            g = G.get(group[i])
+            frames[i].append(np.round((M if g is None else np.asarray(g, float) @ M).reshape(-1), 4).tolist())
+    for i, Ms in frames.items():
+        parts[i]["moves"].append({"at": f0, "frames": Ms})
+    return f0, f1
+
+
 def unit_out(c, middle) -> np.ndarray:
     """Horizontal unit vector from the model's middle out to c (the front, if it is there)."""
     r = (np.asarray(c, float) - middle) * [1, 0, 1]
@@ -1235,12 +1265,15 @@ def plan(engine, model, cfg: dict, fps: int = FPS, size=SIZE, log=None) -> dict:
             for k, it in enumerate(items) if it.kind == "join" or it.carry}
     groups = highlight_groups(placed, order, cfg)
     seconds = float(cfg["seconds"])
+    flex = float(cfg.get("flex") or 0.0)
+    if flex and model.pose is None:
+        raise SystemExit("[quick] flex: the model has nothing that moves (design.py sets no model.pose)")
 
     def timed(picks):
         nonlocal seconds
         for _ in range(240):                           # (longer, if the build needs it)
             try:
-                si = schedule(len(items), seconds, picks, fps, bool(laid), slow)
+                si = schedule(len(items), seconds, picks, fps, bool(laid), slow, flex)
                 break
             except SystemExit:
                 if not slow:
@@ -1278,6 +1311,8 @@ def plan(engine, model, cfg: dict, fps: int = FPS, size=SIZE, log=None) -> dict:
         log(f"  quick: {seconds:g} s, not {float(cfg['seconds']):g}: the build takes that long "
             f"({len(slow)} lifts and joins)")
     fl, lands, notes = motion(engine, placed, script, si, cam, laid, fps, size)
+    if flex:
+        flex_moves(model, placed, fl, float(sch["cut"]), flex, fps)
     landed = np.array([lands[piece[i]] for i in order])         # (a moment late, some)
     scene = model_scene(engine, model, placed=placed)
     scene["lights"] = []

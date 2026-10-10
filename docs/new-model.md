@@ -170,6 +170,8 @@ model's in its `scene` column. Under 25 pieces the parts start laid out on the t
   kept both true.
 - Sound is clicks only by default. A sound of the model's own (`ending`, `[[quick.sound]]`)
   is optional; see the guide.
+- A model with something that moves (`model.pose` in `design.py`) can show it: `flex = 3.0`
+  in `[quick]` plays the pose for that many seconds before the cut.
 - Renders take turns on one GPU. Queue finals one after another; do not start two.
 - If a patch of a frame comes out flat black (the GPU now and then drops a material), the
   command sees it and renders those frames again by itself.

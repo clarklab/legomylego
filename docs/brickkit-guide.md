@@ -915,6 +915,12 @@ close_ups = 2                       # 0..3
                                     # or take (else its three-quarter view, either side)
 # cover = 45                       # the cover picture: degrees from the model's front it is seen
                                     # from (else 0, face on): the nearest frame of the hero
+# flex = 3.0                       # the finished model moves before the cut, for this long (s):
+                                    # its moving groups go through design.py's model.pose, t from
+                                    # 0 to 1 (the Guardian's legs walk on the spot). Add as much
+                                    # to `seconds`. The pose must start and end gently, and
+                                    # nothing may hit anything on the way: the plan's audit and
+                                    # the mechanism check both hold it to that
 layout = "auto"                     # true: the parts start laid out in a grid and float in;
                                     # false: they fly in; "auto": laid out under 25 pieces
 music = false                       # true: a light music bed under the clicks

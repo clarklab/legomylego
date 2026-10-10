@@ -613,3 +613,42 @@ def test_quick_ball_joints(engine):
     assert all(it.axis @ [1, 0, 0] > 0.99 for it in links)
     pl = Q.plan(engine, model, Q.quick_config({"quick": {"seconds": 8, "layout": False}}))
     assert Q.clashes(engine, placed, pl) == []
+
+
+def test_quick_flex(engine):
+    """[quick] flex: before the cut the finished model moves. The hero is that much longer;
+    every part in a moving group gets one more move, through the model's pose with t from 0
+    to 1, ending FLEX_HOLD s before the cut; nothing else moves; and the plan is still one
+    that builds (and moves) for real. A model with nothing that moves may not ask for it."""
+    from brickkit.ldraw.matrix import rot, translate
+    from brickkit.model.builder import Model
+    s = Q.schedule(20, 12.0, flex=2.5)
+    assert s["cut"] == pytest.approx(s["land"][-1] + Q.HERO + 2.5)
+
+    def lidded() -> Model:
+        model = Model("Box", "box", {}, engine.catalog)
+        m = model.main
+        m.place("3003", "Red", (0, -24, 0), tag="box")              # a 2 x 2 brick
+        m.step()
+        m.place("3022", "Blue", (0, -32, 0), tag="lid")             # a 2 x 2 plate on it
+        return model
+    model = lidded()
+    with pytest.raises(SystemExit):
+        Q.plan(engine, model, Q.quick_config({"quick": {"seconds": 6, "layout": False, "flex": 1.0}}))
+    model = lidded()
+    model.moving_group("lid", "lid", lifts_off=True)
+    model.pose = lambda t: {"lid": translate(0, -40 * np.sin(np.pi * t) ** 2, 0)}      # up and down again
+    placed = model.flatten()
+    pl = Q.plan(engine, model, Q.quick_config({"quick": {"seconds": 6, "layout": False, "flex": 1.0}}))
+    fps, cut = pl["fps"], pl["cut"]
+    box, lid = pl["parts"]
+    assert box["moves"] == [] and len(lid["moves"]) == 1
+    mv = lid["moves"][0]
+    assert mv["at"] + len(mv["frames"]) - 1 == round((pl["cut_s"] - Q.FLEX_HOLD) * fps)
+    assert len(mv["frames"]) == round(1.0 * fps) + 1
+    rest = np.asarray(placed[1].M, float)
+    ys = [np.array(M).reshape(4, 4)[1, 3] for M in mv["frames"]]
+    assert ys[0] == pytest.approx(rest[1, 3]) and ys[-1] == pytest.approx(rest[1, 3], abs=1e-3)
+    assert min(ys) == pytest.approx(rest[1, 3] - 40, abs=0.5)        # (-Y is up: it lifts 40)
+    assert np.allclose(Q.pose_at(pl, 1, cut - 1), rest, atol=1e-3)   # down again before the cut
+    assert Q.clashes(engine, placed, pl) == []
