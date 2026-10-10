@@ -1,0 +1,30 @@
+[model]
+name = "Bulbasaur"
+design = "design.py"
+description = "Bulbasaur from Pokémon in 48 pieces, 6.9 cm tall to the tips of its leaves: a low teal body on four white-toed paws, big red eyes, a wide grin and an oversized green bulb sprouting three leaves."
+collection = "quick_bricks"
+
+[palette]
+body = "Dark Turquoise"
+bulb = "Green"
+leaf = "Bright Green"
+spot = "Dark Green"
+white = "White"
+eye = "Dark Red"
+mouth = "Black"
+
+[booklet]
+subtitle = "A little plant pal with a big bulb."
+intro = "Start with four paws, bridge them with the belly, and stack the low body and broad head. Add the ears, wide eyes and grin, then plant the oversized bulb on its back."
+
+[checks]
+enabled = ["real_elements", "connections", "collisions", "buildability", "stability", "mechanism", "electrics", "technique"]
+
+[quick]
+surface = "oak"
+room = "window"
+light = "day"
+seconds = 14
+highlight = ["eyes", "bulb", "leaves", "mouth"]
+close_ups = 2
+music = false

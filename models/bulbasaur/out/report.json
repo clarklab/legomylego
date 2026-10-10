@@ -1,0 +1,91 @@
+{
+  "title": "Bulbasaur",
+  "status": "pass",
+  "checks": [
+    {
+      "name": "real_elements",
+      "status": "pass",
+      "summary": "21 part/colour combinations: 0 not real, 0 rare",
+      "items": [],
+      "stats": {
+        "combinations": 21,
+        "not_real": 0,
+        "rare": 0,
+        "hardware": 0,
+        "minifig_components": 0,
+        "stand_ins": 0,
+        "approximate": 0
+      }
+    },
+    {
+      "name": "connections",
+      "status": "pass",
+      "summary": "117 connections (117 stud); 1 separate piece(s)",
+      "items": [],
+      "stats": {
+        "connections": 117,
+        "by_kind": {
+          "stud": 117
+        },
+        "pieces": 1
+      }
+    },
+    {
+      "name": "collisions",
+      "status": "pass",
+      "summary": "0 overlapping pair(s) among 48 parts",
+      "items": [],
+      "stats": {
+        "pairs": 0
+      }
+    },
+    {
+      "name": "buildability",
+      "status": "pass",
+      "summary": "41 insertions tried across 2 submodel(s); 0 problem(s)",
+      "items": [],
+      "stats": {
+        "insertions": 41
+      }
+    },
+    {
+      "name": "stability",
+      "status": "pass",
+      "summary": "about 43 g; centre of mass inside the base (100% margin); tips at 28.4 deg",
+      "items": [],
+      "stats": {
+        "mass_g": 42.65237945380926,
+        "com": [
+          -0.006324606542800788,
+          -73.87806744862968,
+          4.22785161777919
+        ],
+        "approx_parts": 0,
+        "margin": 0.9998418848364301,
+        "tip_angle_deg": 28.42876910804573,
+        "com_height_ldu": 73.87806744862968
+      }
+    },
+    {
+      "name": "mechanism",
+      "status": "pass",
+      "summary": "no moving parts defined",
+      "items": [],
+      "stats": {}
+    },
+    {
+      "name": "electrics",
+      "status": "pass",
+      "summary": "no electrics in this model",
+      "items": [],
+      "stats": {}
+    },
+    {
+      "name": "technique",
+      "status": "pass",
+      "summary": "0 note(s)",
+      "items": [],
+      "stats": {}
+    }
+  ]
+}

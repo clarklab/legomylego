@@ -266,6 +266,88 @@
     }
    }
   },
+  "bulbasaur": {
+   "files": {
+    "booklet.pdf": {
+     "v": "3451352e41",
+     "size": 3169089
+    },
+    "bricklink_wanted.xml": {
+     "v": "99c79b54e8",
+     "size": 1962
+    },
+    "bulbasaur.mpd": {
+     "v": "2611f493d8",
+     "size": 3402
+    },
+    "model.glb": {
+     "v": "3871095a0e",
+     "size": 1430740
+    },
+    "model.json": {
+     "v": "085aa2bd7c",
+     "size": 14191
+    },
+    "parts.csv": {
+     "v": "175d6680fb",
+     "size": 1730
+    },
+    "pick_a_brick.csv": {
+     "v": "fe55d38425",
+     "size": 250
+    },
+    "price_estimate.md": {
+     "v": "f767c1865b",
+     "size": 2542
+    },
+    "quick_poster.jpg": {
+     "v": "3f8b8fdc24",
+     "size": 107855
+    },
+    "renders/renders_back.png": {
+     "v": "2bc12e9809",
+     "size": 507801
+    },
+    "renders/renders_front.png": {
+     "v": "1667b26c35",
+     "size": 507737
+    },
+    "renders/renders_side.png": {
+     "v": "66e3873bff",
+     "size": 520252
+    },
+    "renders/renders_three_quarter.png": {
+     "v": "8f4ba50e6b",
+     "size": 541604
+    }
+   },
+   "images": {
+    "renders/renders_back.png": {
+     "w": 700,
+     "h": 700,
+     "lg": "/assets/img/bulbasaur/renders_back.webp?v=041c279a0e",
+     "sm": "/assets/img/bulbasaur/renders_back-480.webp?v=b8b3c38469"
+    },
+    "renders/renders_front.png": {
+     "w": 700,
+     "h": 700,
+     "lg": "/assets/img/bulbasaur/renders_front.webp?v=f002d93879",
+     "sm": "/assets/img/bulbasaur/renders_front-480.webp?v=2007e5c916"
+    },
+    "renders/renders_side.png": {
+     "w": 700,
+     "h": 700,
+     "lg": "/assets/img/bulbasaur/renders_side.webp?v=55fe7e52c2",
+     "sm": "/assets/img/bulbasaur/renders_side-480.webp?v=accc3a9350"
+    },
+    "renders/renders_three_quarter.png": {
+     "w": 700,
+     "h": 700,
+     "lg": "/assets/img/bulbasaur/renders_three_quarter.webp?v=dba0ca36cf",
+     "sm": "/assets/img/bulbasaur/renders_three_quarter-480.webp?v=c2abedc8f1"
+    }
+   }
+  },
   "caldwell_courthouse": {
    "files": {
     "booklet.pdf": {

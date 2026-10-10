@@ -43,6 +43,20 @@
       "geometry": "/models/birthday_cake/model.glb?v=61d0f99b4823"
     },
     {
+      "slug": "bulbasaur",
+      "name": "Bulbasaur",
+      "description": "Bulbasaur from Pokémon in 48 pieces, 6.9 cm tall to the tips of its leaves: a low teal body on four white-toed paws, big red eyes, a wide grin and an oversized green bulb sprouting three leaves.",
+      "collection": "quick_bricks",
+      "pieces": 48,
+      "steps": 19,
+      "video": "/quick/bulbasaur-1080x1920.mp4?v=445ddd3357bc",
+      "poster": "/models/bulbasaur/quick_poster.jpg?v=25d4b0f74dd4",
+      "instructions": "/models/bulbasaur/booklet.pdf?v=fc77270ac73f",
+      "url": "/quick/bulbasaur/",
+      "model": "/models/bulbasaur/model.json?v=28c21660d55b",
+      "geometry": "/models/bulbasaur/model.glb?v=10fefe93bb55"
+    },
+    {
       "slug": "caldwell_mini",
       "name": "Caldwell County Courthouse Mini",
       "description": "A small, quick kids' build of the 1894 courthouse in Lockhart, Texas: buff stone walls with a red band, slate roofs on the four corner pavilions, and the clock tower with a clock on each side under a steep slate spire and a red finial. It comes with the clockmaster, a minifigure in a top hat. The big display version is The Caldwell County Courthouse.",
