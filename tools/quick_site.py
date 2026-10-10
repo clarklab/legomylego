@@ -136,6 +136,11 @@ def build_quick_site(site: Path = ROOT / "site", models_dir: Path = ROOT / "mode
             "url": f"/quick/{slug}/", "model": _asset_url(site, model_path),
             "geometry": _asset_url(site, model_dir / files.get("glb", "model.glb")),
         })
+        if cfg.get("brands"):                          # the page's logo cards filter by these
+            unknown = [b for b in cfg["brands"] if not (ROOT / "brands" / f"{b}.svg").exists()]
+            if unknown:
+                raise ValueError(f"{slug}: no logo in brands/ for {', '.join(unknown)}")
+            items[-1]["brands"] = list(cfg["brands"])
         for key in ("designer", "source", "credit"):   # (someone else's design: whose, and where)
             if cfg.get(key):
                 items[-1][key] = cfg[key]

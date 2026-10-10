@@ -1,6 +1,7 @@
 [model]
 name = "Bat"
 design = "design.py"
+brands = ["spooky"]   # the logo cards on the Quick Bricks page it is filed under (brands/)
 description = "A tiny bat in 22 pieces, 8 cm across its wings: angry yellow eyes, two white fangs, pointed ears and little clip feet."
 collection = "quick_bricks"   # a little Quick Bricks model (its own section on the site, soon)
 

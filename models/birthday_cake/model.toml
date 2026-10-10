@@ -1,6 +1,7 @@
 [model]
 name = "Birthday Cake"
 design = "design.py"
+brands = ["snacks"]   # the logo cards on the Quick Bricks page it is filed under (brands/)
 description = "The 20-piece birthday cake from LEGO Classic 11039: white frosting, sleepy eyes, a cherry and a candle."
 collection = "quick_bricks"
 

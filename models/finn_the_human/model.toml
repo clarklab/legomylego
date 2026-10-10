@@ -1,6 +1,7 @@
 [model]
 name = "Finn the Human"
 design = "design.py"
+brands = ["adventure-time"]   # the logo cards on the Quick Bricks page it is filed under (brands/)
 description = "Finn the Human from Adventure Time as a lanky, posable figure in 121 pieces, 19.4 cm tall: a white hat with two round ears, a wide grin, noodle arms and legs, a round green backpack and his golden sword."
 # designer = "..."            # someone else's design: who made it (the booklet says so),
 # source = "https://..."      # and where the original is

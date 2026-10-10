@@ -180,7 +180,12 @@ is left.
 
 Only when the owner says to publish.
 
-1. In `model.toml`, set `collection = "quick_bricks"`.
+1. In `model.toml`, set `collection = "quick_bricks"`, and `brands = ["pokemon"]` if it
+   belongs under one of the logo cards at the top of the Quick Bricks page (the names are the
+   files in `brands/`; a model can have two, or none). A new logo: drop its SVG into `brands/`
+   and run `.venv/bin/python tools/brands.py`, which cuts every logo to its ink, makes it one
+   colour and one size, and writes `site/assets/js/brands.js`. A card shows once a model
+   carries its name.
 2. Export and refresh the site's files:
 
 ```bash

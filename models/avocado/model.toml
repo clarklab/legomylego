@@ -1,6 +1,7 @@
 [model]
 name = "Avocado"
 design = "design.py"
+brands = ["snacks"]   # the logo cards on the Quick Bricks page it is filed under (brands/)
 description = "The smiling 23-piece avocado from LEGO Classic 11039 Creative Food Friends, with lime flesh, a round brown stone and squeezed-shut eyes."
 collection = "quick_bricks"
 

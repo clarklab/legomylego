@@ -1,6 +1,7 @@
 [model]
 name = "Crow"
 design = "design.py"
+brands = ["spooky"]   # the logo cards on the Quick Bricks page it is filed under (brands/)
 description = "A little black crow in 34 pieces, 7 cm from beak to tail: a pointed beak, half-closed eyes, two wings and two tail feathers on clips, and yellow feet. Designed by Qrys.And.Reading."
 designer = "Qrys.And.Reading"
 source = "https://rebrickable.com/mocs/MOC-165060/"

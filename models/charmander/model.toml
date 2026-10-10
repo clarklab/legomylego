@@ -1,6 +1,7 @@
 [model]
 name = "Charmander"
 design = "design.py"
+brands = ["pokemon"]   # the logo cards on the Quick Bricks page it is filed under (brands/)
 description = "A tiny Charmander in 14 pieces, about 4 cm long and 3 cm tall: an orange body on two round feet, a tan belly, a curved dome of a head with a black eye band, and a trans-orange flame on the end of its tail."
 designer = "SwordBricks (RSierra)"
 source = "https://rebrickable.com/mocs/MOC-220190/"

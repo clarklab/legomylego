@@ -1,6 +1,7 @@
 [model]
 name = "Freddy Fazbear"
 design = "design.py"
+brands = ["spooky"]   # the logo cards on the Quick Bricks page it is filed under (brands/)
 description = "A tiny Freddy Fazbear in 42 pieces, about 9 cm tall: a brown bear robot with a top hat, a black bow tie, big round eyes and a light snout, holding a microphone."
 source = "https://rebrickable.com/mocs/MOC-265184/"
 # designer = "..."           # not named in the plans it came from: fill in when known

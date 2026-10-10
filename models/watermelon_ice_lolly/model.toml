@@ -1,6 +1,7 @@
 [model]
 name = "Watermelon Ice Lolly"
 design = "design.py"
+brands = ["snacks"]   # the logo cards on the Quick Bricks page it is filed under (brands/)
 description = "The smiling watermelon ice lolly from LEGO Classic 11039: 23 pieces, with three black seeds, a lime rind and a tan stick."
 collection = "quick_bricks"
 

@@ -1,6 +1,7 @@
 [model]
 name = "Pumpkin"
 design = "design.py"
+brands = ["spooky"]   # the logo cards on the Quick Bricks page it is filed under (brands/)
 description = "A jack-o'-lantern pumpkin in 51 pieces, about 5.4 cm across and 6.8 cm tall with its leaf: a cube of plates built on its sides, with square black eyes, a toothy mouth and a green stem with a leaf (a design by BrixBuild)."
 designer = "BrixBuild"
 source = "https://rebrickable.com/mocs/MOC-163756/"

@@ -1,6 +1,7 @@
 [model]
 name = "Bulbasaur"
 design = "design.py"
+brands = ["pokemon"]   # the logo cards on the Quick Bricks page it is filed under (brands/)
 description = "Bulbasaur from Pokémon in 48 pieces, 6.9 cm tall to the tips of its leaves: a low teal body on four white-toed paws, big red eyes, a wide grin and an oversized green bulb sprouting three leaves."
 collection = "quick_bricks"
 

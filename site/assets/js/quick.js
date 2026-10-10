@@ -1,11 +1,15 @@
 import { initSite, $, $$, esc, fmtInt, getJSON } from './site.js';
 import { icon } from './icons.js';
+import { brands } from './brands.js';
 
 initSite();
 const grid = $('#quick-grid');
 const viewButtons = $$('[data-view]', $('.quick-view-switch'));
 const storageKey = 'quick-bricks-view';
+const brandBar = $('#quick-brands');
 let observer;
+let models = [];
+let theme = '';
 
 function setView(view, save = false) {
   view = view === 'single' ? 'single' : 'grid';
@@ -76,14 +80,55 @@ function initPlayers() {
   document.addEventListener('visibilitychange', () => { if (document.hidden) videos.forEach(v => v.pause()); });
 }
 
+// The logo cards: one for each theme that has a build. A click shows that theme's builds only;
+// a click on the card that is on shows them all again. ?theme=pokemon opens the page that way.
+function showTheme(id, push = true) {
+  const brand = brands.find(b => b.id === id && models.some(m => (m.brands || []).includes(b.id)));
+  theme = brand ? brand.id : '';
+  let shown = 0;
+  $$('.quick-card', grid).forEach(card => {
+    const m = models.find(x => x.slug === card.dataset.slug);
+    const on = !theme || (m.brands || []).includes(theme);
+    card.hidden = !on;
+    shown += on;
+    if (!on) $('video', card)?.pause();
+  });
+  $$('button', brandBar).forEach(b => b.setAttribute('aria-pressed', String(b.dataset.brand === theme)));
+  const builds = `${shown === 1 ? 'build' : 'builds'}`;
+  const count = $('#quick-count');
+  count.textContent = theme ? `${fmtInt(shown)} ${brand.name} ${builds}` : `${fmtInt(shown)} little ${builds} to make your own`;
+  if (theme) {
+    const all = document.createElement('button');
+    all.type = 'button';
+    all.className = 'quick-show-all';
+    all.textContent = 'Show all';
+    all.addEventListener('click', () => showTheme(''));
+    count.append(' ', all);
+  }
+  if (push) {
+    const url = new URL(location.href);
+    theme ? url.searchParams.set('theme', theme) : url.searchParams.delete('theme');
+    history.replaceState(null, '', url);
+  }
+}
+
+function initBrands() {
+  const have = brands.filter(b => models.some(m => (m.brands || []).includes(b.id)));
+  brandBar.hidden = !have.length;
+  brandBar.innerHTML = have.map(b => `<button type="button" class="quick-brand" data-brand="${esc(b.id)}" aria-pressed="false" style="--w:${b.w};--h:${b.h}" title="${esc(b.name)}"><span class="visually-hidden">${esc(b.name)}</span>${b.svg}</button>`).join('');
+  $$('svg', brandBar).forEach(s => { s.setAttribute('aria-hidden', 'true'); s.setAttribute('focusable', 'false'); });
+  $$('button', brandBar).forEach(b => b.addEventListener('click', () => showTheme(b.dataset.brand === theme ? '' : b.dataset.brand)));
+}
+
 async function main() {
   grid.setAttribute('aria-busy', 'true');
   try {
     const data = await getJSON('/quick/models.json');
-    const models = (data.models || []).slice().sort((a, b) => Number(!a.video) - Number(!b.video));
-    $('#quick-count').textContent = `${fmtInt(models.length)} little ${models.length === 1 ? 'build' : 'builds'} to make your own`;
+    models = (data.models || []).slice().sort((a, b) => Number(!a.video) - Number(!b.video));
     grid.innerHTML = models.length ? models.map(card).join('') : '<p class="quick-message">More little builds are on the way. <a href="/#models">Explore our models</a> in the meantime.</p>';
     initPlayers();
+    initBrands();
+    showTheme(new URLSearchParams(location.search).get('theme') || '', false);
   } catch {
     $('#quick-count').textContent = 'The collection is taking a moment.';
     grid.innerHTML = '<div class="quick-message"><p>We couldn’t load the builds. Please try again.</p><button type="button" class="btn btn-ghost" id="quick-retry">Try again</button></div>';

@@ -5,6 +5,8 @@ description = ""              # one sentence for the site: what it is, how many 
 # designer = "..."            # someone else's design: who made it (the booklet and its page
 # source = "https://..."      # say so), and where the original is; with no name to give,
 # credit = "..."              # our own sentence for it
+# brands = ["pokemon"]        # the logo cards on the Quick Bricks page it is filed under: a
+#                             # logo's file name in brands/ (more than one is fine; none is too)
 # collection = "quick_bricks" # uncomment when it is ready for the site (docs/new-model.md, stage 6)
 
 [palette]                     # role -> a real colour name; design.py places parts by role

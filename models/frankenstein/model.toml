@@ -1,6 +1,7 @@
 [model]
 name = "Frankenstein"
 design = "design.py"
+brands = ["spooky"]   # the logo cards on the Quick Bricks page it is filed under (brands/)
 description = "A tiny Frankenstein in 17 pieces, about 4.5 cm tall: a flat-topped grey head with sleepy white eyes, a grey brow bar and two white neck bolts, on a black body and base."
 designer = "Agosami Brickworks"
 source = "https://rebrickable.com/mocs/MOC-215912/"

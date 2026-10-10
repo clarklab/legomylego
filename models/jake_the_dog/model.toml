@@ -1,6 +1,7 @@
 [model]
 name = "Jake the Dog"
 design = "design.py"
+brands = ["adventure-time"]   # the logo cards on the Quick Bricks page it is filed under (brands/)
 description = "A round yellow Jake the Dog with big white eyes, a two-lobed muzzle and posable noodle limbs, scaled to stand beside Finn."
 collection = "quick_bricks"
 
