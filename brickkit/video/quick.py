@@ -55,6 +55,9 @@ Configured by model.toml's [quick] (all optional):
     view = "filmic"              # the render's film response: "filmic" (the parts' colours
                                  # true) or "agx" (softer; a bright yellow goes pale orange)
     watermark = false            # true: the Bricks logo, small and faint, top centre
+    cover = 0                    # the cover picture (quick_poster.jpg): degrees from the model's
+                                 # front it is seen from - the frame of the hero nearest to that
+                                 # (45: three-quarters on, for a face that is on the side)
 
 Planning is here (no Blender): `plan(engine, model, cfg)` -> the schedule, each part's moves
 (a 4 x 4 transform per frame while it moves), the camera per frame and the sound's cues;
@@ -82,6 +85,7 @@ FPS = 60              # the finals: the top rate Reels and TikTok take (every ti
 SIZE = (1080, 1920)
 QUICK = {"set": "cutting_mat", "seconds": 14.0, "highlight": [], "close_ups": 2, "music": False,
          "ending": None, "ending_level": -3.0, "ending_at": 0.25, "sound": [], "layout": "auto",
+         "cover": 0.0,
          "view": "filmic",
          "lens": 50.0, "samples": 32, "exposure": -1.0, "watermark": False}
 # the workshop's layers (render/quick_sets.py builds them), any with any, and named combos
@@ -192,6 +196,10 @@ def quick_config(config: dict, over: dict | None = None, slug: str = "") -> dict
         raise SystemExit('[quick] view: "filmic" or "agx"')
     if float(out["seconds"]) < 6:
         raise SystemExit("[quick] seconds: at least 6")
+    try:
+        out["cover"] = float(out["cover"])
+    except (TypeError, ValueError):
+        raise SystemExit("[quick] cover: degrees from the front, e.g. 0 or 45")
     if out.get("last_look") is not None:
         try:
             a, tol = (float(v) for v in out["last_look"])
@@ -1392,12 +1400,14 @@ def watermark(dst: Path, width: int, alpha: float = 0.42) -> Path:
 def make_quick(engine, proj, model, *, preview: bool = False, set_name: str | None = None,
                seconds: float | None = None, audio: bool = True, force: bool = False,
                stills: list[int] | None = None, device: str = "gpu", layers: dict | None = None,
-               work: Path | None = None, remix: bool = False, log=None) -> Path:
+               work: Path | None = None, remix: bool = False, cover: bool = False,
+               log=None) -> Path:
     """Plan, render (render/blender_quick.py, under the GPU lock, a chunk of frames per
     Blender process, frames already made kept), add the sound and the logo, encode. `remix`:
     no planning or rendering - the frames there are (and the plan they were made from, even
     if the planner or the scripts have changed since), with the sound mixed again from
-    [quick] as it is now (another ending, a bell, the music on or off)."""
+    [quick] as it is now (another ending, a bell, the music on or off). `cover`: nothing but
+    the cover picture, picked again from those frames ([quick] cover)."""
     from . import _run_blender
     log = log or (lambda m: print(m, flush=True))
     t_start = time.time()
@@ -1410,6 +1420,17 @@ def make_quick(engine, proj, model, *, preview: bool = False, set_name: str | No
     out_dir = proj.out
     work = Path(work) if work else out_dir / "quick_frames" / qn
     work.mkdir(parents=True, exist_ok=True)
+    if cover:
+        if preview or not (work / "plan.json").exists():
+            raise SystemExit(f"--cover: no full frames in {work} yet: render the video first")
+        pl = json.loads((work / "plan.json").read_text())
+        f = cover_frame(pl, cover_look(model, cfg))
+        if not (work / f"{f:05d}.png").exists():
+            raise SystemExit(f"--cover: frame {f} is missing in {work}: render the video first")
+        wm = watermark(work / "logo.png", int(round(pl["size"][0] * 0.13))) if cfg["watermark"] else None
+        poster(work, wm, pl, out_dir / "quick_poster.jpg", cover_look(model, cfg))
+        log(f"{model.name}: cover -> {out_dir / 'quick_poster.jpg'} (frame {f})")
+        return out_dir / "quick_poster.jpg"
     if remix:
         if not (work / "plan.json").exists():
             raise SystemExit(f"--remix: no frames in {work} yet: render the video first")
@@ -1464,6 +1485,11 @@ def make_quick(engine, proj, model, *, preview: bool = False, set_name: str | No
     return _finish(proj, model, cfg, pl, work, q, audio, preview, t_start, secs, log)
 
 
+def cover_look(model, cfg: dict) -> float:
+    """Where the cover is seen from (an azimuth): the model's front, [quick] cover from it."""
+    return float(model.meta.get("azimuth_offset", 0.0)) + float(cfg.get("cover") or 0.0)
+
+
 def _finish(proj, model, cfg: dict, pl: dict, work: Path, q: dict, audio: bool, preview: bool,
             t_start: float, secs: float, log) -> Path:
     """The frames in `work` (made from plan `pl`) -> the video: a check for blank frames, the
@@ -1502,7 +1528,7 @@ def _finish(proj, model, cfg: dict, pl: dict, work: Path, q: dict, audio: bool, 
         from .sizzle import check_sound
         log(f"sound in the video: true peak {check_sound(mp4, wav, log=log):.1f} dBTP")
     if not preview:
-        poster(work, wm, pl, out_dir / "quick_poster.jpg")
+        poster(work, wm, pl, out_dir / "quick_poster.jpg", cover_look(model, cfg))
     mb = mp4.stat().st_size / 1e6
     log(f"quick -> {mp4} ({mb:.1f} MB) in {(time.time() - t_start) / 60:.1f} min "
         f"(Blender {secs / 60:.1f} min)")
@@ -1585,13 +1611,39 @@ def encode(work: Path, fps: int, n: int, wm: Path | None, wav: Path | None, mp4:
     subprocess.run(cmd, check=True)
 
 
-def poster(work: Path, wm: Path | None, pl: dict, dst: Path) -> None:
-    """The finished model in the hero spin (half way from the last landing to the cut), with
-    the logo if there is a watermark."""
+def cover_frame(pl: dict, look: float = 0.0) -> int:
+    """The frame for the cover: of the hero the one the camera is nearest `look` in (an
+    azimuth, degrees: the model's front, or [quick] cover from it) - its face forward, not
+    whatever side the turn is on half way. The hero: from the last landing to the cut, the
+    frames in which the model is whole (every piece where it ends up: nothing still to be
+    joined) and framed as it is at the end (not still in a close-up, or on the way out of
+    one). Of frames as near (within a degree), the last."""
+    cam = pl["camera"]
+    pos, tgt = np.asarray(cam["pos"], float), np.asarray(cam["target"], float)
+    first, cut = int(pl["land"][-1]), int(pl["cut"])
+    last = cut - 1
+    d = pos - tgt
+    dist = np.linalg.norm(d, axis=1)
+    wide = dist / np.asarray(cam.get("lens") or np.ones(len(dist)), float)   # how much it takes in
+    ok = (wide >= 0.9 * wide[last]) & (np.linalg.norm(tgt - tgt[last], axis=1) <= 0.1 * dist[last])
+    for f in range(last - 1, first - 1, -1):           # back from the cut, to the last move
+        if not all(np.allclose(pose_at(pl, i, f), pose_at(pl, i, last), atol=1e-3)
+                   for i in range(len(pl.get("parts") or ()))):
+            first = f + 1
+            break
+    off = np.abs((np.degrees(np.arctan2(d[:, 0], -d[:, 2])) - look + 180.0) % 360.0 - 180.0)
+    off = np.where(ok, off, np.inf)[first:cut]
+    return first + int(np.flatnonzero(off <= off.min() + 1.0)[-1])
+
+
+def poster(work: Path, wm: Path | None, pl: dict, dst: Path, look: float = 0.0) -> int:
+    """The cover: the finished model, face forward (cover_frame), with the logo if there is a
+    watermark. Returns the frame."""
     from PIL import Image
-    f = int((pl["land"][-1] + pl["cut"]) / 2)
+    f = cover_frame(pl, look)
     im = Image.open(work / f"{f:05d}.png").convert("RGBA")
     if wm is not None:
         logo = Image.open(wm)
         im.alpha_composite(logo, ((im.width - logo.width) // 2, int(round(im.height * 0.045))))
     im.convert("RGB").save(dst, quality=90)
+    return f

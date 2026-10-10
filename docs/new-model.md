@@ -164,6 +164,10 @@ model's in its `scene` column. Under 25 pieces the parts start laid out on the t
 - Renders take turns on one GPU. Queue finals one after another; do not start two.
 - If a patch of a frame comes out flat black (the GPU now and then drops a material), the
   command sees it and renders those frames again by itself.
+- **Look at the cover**, `out/quick_poster.jpg`: the picture the site shows for the model. It
+  is the frame of the ending the model is most face on in. It has to show the face. If the
+  face is on the side of the head (Charmander's eyes), set `[quick] cover = 45` (degrees from
+  the front) and run `brickkit quick SLUG --cover`: it picks again, with nothing rendered.
 
 **The posts.** Each Quick Bricks video goes out as an Instagram post and a TikTok post. Write
 them in `SOCIAL.md` (scaffolded with the model; `models/bat/SOCIAL.md` is a finished one): a

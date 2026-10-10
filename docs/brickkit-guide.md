@@ -29,7 +29,7 @@ The cache location can be overridden with `BRICKKIT_CACHE` (useful in git worktr
 | `brickkit booklet SLUG [--no-render]` | instruction booklet `out/booklet.pdf` (pictures in `out/booklet/`) |
 | `brickkit viewer SLUG` | export `site/models/SLUG/` (GLB + model.json + files) for the viewer site |
 | `brickkit turntable SLUG [--preview]` | `out/turntable.mp4`: a 12 s photoreal (Cycles) orbit with the mechanism and lights working, muted and seamless; the site plays it where WebGL is missing (`meta["turntable"]`: `program` tap/swing/lights, `cycles`, `taps`). Its frames are kept and reused until the model, the size, the samples or the way of rendering changes |
-| `brickkit quick SLUG [--preview] [--set PRESET\|random] [--surface S] [--room R] [--light L] [--seed N] [--seconds S] [--stills F,F] [--layout\|--no-layout] [--remix]` | `out/SLUG-1080x1920.mp4` (+ `quick_poster.jpg`): Quick Bricks, a 14 s vertical (1080×1920, 60 fps) photoreal build video of a small model for TikTok and Instagram, made to loop (config `[quick]`; see Video) |
+| `brickkit quick SLUG [--preview] [--set PRESET\|random] [--surface S] [--room R] [--light L] [--seed N] [--seconds S] [--stills F,F] [--layout\|--no-layout] [--remix] [--cover]` | `out/SLUG-1080x1920.mp4` (+ `quick_poster.jpg`): Quick Bricks, a 14 s vertical (1080×1920, 60 fps) photoreal build video of a small model for TikTok and Instagram, made to loop (config `[quick]`; see Video) |
 | `brickkit sizzle [SLUG ...] [--stills F,F] [--preview]` | `showreel/sizzle.mp4`: one quick brand reel of several models cut on the music's beats, from their showreels' footage (config `showreel/sizzle.toml`; see Video) |
 | `python tools/hero.py SLUG` | hero stills: `out/hero/`, `out/hero_lit/` (lights), `out/hero_open/` (pose 1) |
 | `brickkit find "words" [--color C]` | search real LEGO parts by name, ranked by how many sets used them in that colour |
@@ -769,7 +769,10 @@ preview with `--stills`.
 `brickkit quick SLUG` turns a finished small model (a sub-$20 set) into a short vertical build
 video for TikTok and Instagram: `out/SLUG-1080x1920.mp4`, 1080×1920 at 60 fps (the top rate Reels and
 TikTok take), H.264 High profile (CRF 18, capped at 20 Mbit/s) + AAC 48 kHz, 14 s, under 50 MB,
-made to loop, and `out/quick_poster.jpg` (the finished model in its hero spin). The motion blur
+made to loop, and `out/quick_poster.jpg`, the cover: the frame of the hero the camera is most
+face on to the model in (its front; `[quick] cover = 45` asks for another angle, for a face that
+is on the side), with the model whole and not in a close-up. `--cover` picks it again from the
+frames there are, with nothing rendered or encoded. The motion blur
 is a 180° shutter (1/120 s). Every timing is in seconds, so a 30 or 15 fps run lands, cuts and
 clicks at the same moments. `--preview` makes `out/quick_preview.mp4` (540×960, 15 fps, 16
 samples) to iterate on;
@@ -907,6 +910,8 @@ highlight = ["14769p0m", "3688"]    # parts (numbers or tags) for the close-ups,
 close_ups = 2                       # 0..3
 # last_look = [0, 12]              # where the video ends: degrees from the model's front, give
                                     # or take (else its three-quarter view, either side)
+# cover = 45                       # the cover picture: degrees from the model's front it is seen
+                                    # from (else 0, face on): the nearest frame of the hero
 layout = "auto"                     # true: the parts start laid out in a grid and float in;
                                     # false: they fly in; "auto": laid out under 25 pieces
 music = false                       # true: a light music bed under the clicks

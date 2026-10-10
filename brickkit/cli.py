@@ -222,6 +222,9 @@ def main(argv=None) -> int:
     p.add_argument("--force", action="store_true", help="render every frame again")
     p.add_argument("--remix", action="store_true",
                    help="no rendering: the frames there are, with the sound mixed again")
+    p.add_argument("--cover", action="store_true",
+                   help="no rendering: just the cover picture, picked again from the frames "
+                        "there are ([quick] cover)")
     p.add_argument("--layout", action=argparse.BooleanOptionalAction, default=None,
                    help="start with the parts laid out in a grid (else [quick] layout: under "
                         "25 pieces)")
@@ -390,6 +393,7 @@ def main(argv=None) -> int:
         out = make_quick(engine, proj, model, preview=args.preview, set_name=args.set,
                          seconds=args.seconds, audio=not args.no_audio, force=args.force,
                          stills=stills, device=args.device, remix=args.remix,
+                         cover=args.cover,
                          layers={"surface": args.surface, "room": args.room, "light": args.light,
                                  "seed": args.seed, "layout": args.layout})
         print(f"quick -> {out}")

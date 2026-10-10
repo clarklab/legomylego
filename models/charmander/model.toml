@@ -36,3 +36,5 @@ seconds = 14
 highlight = ["face", "flame"] # tags worth a close-up, the one wanted most first
 close_ups = 2
 music = false                 # just the clicks
+cover = 45                    # the cover picture: three-quarters on (its eyes are on the sides
+                              # of its head; face on, only its belly shows)

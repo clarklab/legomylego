@@ -542,3 +542,31 @@ def test_route_keeps_clear(engine):
         assert world.free(A.poses([("3001.dat", seat)], path["c"], p, np.eye(3)))
     boxed = A.World(engine, [P] * 4, [(0, A.trans([0.0, -24.0 - 24.0, 60.0]))], 0.0)   # a brick on its place
     assert not A.route(boxed, [("3001.dat", seat)], start, None, [(np.array([0.0, -1.0, 0.0]), 20.0)])["clear"]
+
+
+def test_quick_cover_is_face_forward():
+    """The cover is the frame of the hero the camera is most face on in (the model's front, or
+    [quick] cover from it), not whatever side the turn shows half way; of frames as near, the
+    last. Not a frame of a close-up, and not one with a piece still to move."""
+    import math
+    n, land, cut = 120, 60, 110
+    az = [-170.0 + 2.0 * f for f in range(n)]          # one way round: the front (0) at frame 85
+    pos = [[300 * math.sin(math.radians(a)), -100.0, -300 * math.cos(math.radians(a))] for a in az]
+    pl = {"camera": {"pos": pos, "target": [[0.0, -40.0, 0.0]] * n, "lens": [50.0] * n},
+          "land": [10, land], "cut": cut}
+    assert Q.cover_frame(pl) == 85
+    assert Q.cover_frame(pl, look=30.0) == 100
+    assert Q.cover_frame(pl, look=-90.0) == land       # never in the hero: the nearest it gets
+    assert Q.cover_frame(pl, look=120.0) == cut - 1
+    close = dict(pl, camera=dict(pl["camera"], lens=[50.0] * 80 + [90.0] * 10 + [50.0] * 30))
+    assert Q.cover_frame(close) == 90                  # 80..89 are a close-up: the next
+    eye = np.eye(4).ravel().tolist()
+    up = np.eye(4); up[1, 3] = -50.0
+    moved = dict(pl, parts=[{"launch": 0, "land": 5, "frames": [eye]},
+                            {"launch": 0, "land": 5, "frames": [eye],
+                             "moves": [{"at": 70, "frames": [up.ravel().tolist()] * 18 + [eye]}]}])
+    assert Q.cover_frame(moved) == 88                  # the second piece is home at frame 88
+    assert Q.quick_config({"quick": {"cover": 45}})["cover"] == 45.0
+    assert Q.quick_config({})["cover"] == 0.0
+    with pytest.raises(SystemExit):
+        Q.quick_config({"quick": {"cover": "side"}})
