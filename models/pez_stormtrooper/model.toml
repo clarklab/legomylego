@@ -1,0 +1,39 @@
+[model]
+name = "Stormtrooper PEZ"
+design = "design.py"
+brands = ["pez", "star-wars"]   # the logo cards on the Quick Bricks page it is filed under (brands/)
+description = "A Stormtrooper PEZ dispenser in 56 pieces, 10.6 cm tall, about the size of a real one: a white helmet with two black eyes, a frown and grey vents on a white stem, and a head that tips back on a click hinge to show a pink sweet."
+# designer = "..."            # someone else's design: who made it (the booklet and its page
+# source = "https://..."      # say so), and where the original is; with no name to give,
+# credit = "..."              # our own sentence for it
+collection = "quick_bricks"
+
+[palette]                     # role -> a real colour name; design.py places parts by role
+stem = "White"                # the foot, the stem, the two hinge plates
+sweet = "Bright Pink"         # the sweet under the head
+head = "White"                # the helmet
+black = "Black"               # the eyes, the frown, the brow
+grey = "Light Bluish Gray"    # the vents on the cheeks and beside the frown
+
+[booklet]
+subtitle = "A white helmet on a white stem, with a head that tips back like the real thing, in 56 pieces."
+intro = "Start with the foot and the stem: four rounds of two plates and two bricks, four big tiles for the smooth sides, then the hinge plate and the sweet on top. The head is built by itself: the face on three tall bricks, a cheek for each side, then the brow and the dome. Its own hinge plate goes on the back last, and the head clicks onto the stem."
+notes = ["The head tips back on its hinge in clicks, up to three of them, and the sweet shows. Push it back gently from the front, and tip it forward again until it rests on the sweet.",
+         "It is tall on a small foot, like a real one, so a knock from the side tips it over. Stand it somewhere it will not be knocked."]
+
+[checks]
+enabled = ["real_elements", "connections", "collisions", "buildability", "stability",
+           "mechanism", "electrics", "technique"]
+[checks.stability]            # a PEZ dispenser is tall on a small foot, like the real one:
+min_tilt_deg = 6              # it tips at about 7 degrees to the side (the check wants 10)
+
+# Quick Bricks video (brickkit quick pez_stormtrooper): a floor the model stands out on
+[quick]
+surface = "blue_mat"      # the dark blue mat of white dots: stars
+room = "night"
+light = "day"                 # (the warm evening light turned the model cream or brown)
+seconds = 18
+flex = 2.8                    # before the cut the head tips back on its hinge, shows the sweet, and shuts
+highlight = ["eyes", "frown", "sweet"]
+close_ups = 3
+music = false                 # just the clicks
