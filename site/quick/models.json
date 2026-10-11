@@ -289,7 +289,7 @@
       "poster": "/models/luigi/quick_poster.jpg?v=1bd10b55dcd9",
       "instructions": "/models/luigi/booklet.pdf?v=b9f520a33357",
       "url": "/quick/luigi/",
-      "model": "/models/luigi/model.json?v=319cd6ff2f29",
+      "model": "/models/luigi/model.json?v=9bc88db12d22",
       "geometry": "/models/luigi/model.glb?v=7e1d5bccf840",
       "brands": [
         "nintendo"
@@ -335,6 +335,24 @@
       ],
       "designer": "JellsaTheBobJeffCreator",
       "source": "https://rebrickable.com/mocs/MOC-249307/"
+    },
+    {
+      "slug": "pez_stormtrooper",
+      "name": "Stormtrooper PEZ",
+      "description": "A Stormtrooper PEZ dispenser in 56 pieces, 10.6 cm tall, about the size of a real one: a white helmet with two black eyes, a frown and grey vents on a white stem, and a head that tips back on a click hinge to show a pink sweet.",
+      "collection": "quick_bricks",
+      "pieces": 56,
+      "steps": 18,
+      "video": "/quick/pez_stormtrooper-1080x1920.mp4?v=62c34036059b",
+      "poster": "/models/pez_stormtrooper/quick_poster.jpg?v=01ce01eee023",
+      "instructions": "/models/pez_stormtrooper/booklet.pdf?v=7a56cb856baa",
+      "url": "/quick/pez_stormtrooper/",
+      "model": "/models/pez_stormtrooper/model.json?v=16a14521bb12",
+      "geometry": "/models/pez_stormtrooper/model.glb?v=1744ae20e925",
+      "brands": [
+        "pez",
+        "star-wars"
+      ]
     },
     {
       "slug": "pikachu",
