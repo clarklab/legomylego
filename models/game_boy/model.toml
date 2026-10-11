@@ -1,0 +1,37 @@
+[model]
+name = "Game Boy"
+design = "design.py"
+description = "A micro Game Boy in 25 pieces, 4.5 cm tall: a clear screen in a dark frame, two magenta buttons, a D-pad that is the end of a black axle, and the one rounded corner at the bottom right."
+designer = "Phoenix_bricks"
+source = "https://rebrickable.com/mocs/MOC-238888/"
+brands = ["nintendo"]
+collection = "quick_bricks"
+
+[palette]                     # role -> a real colour name; design.py places parts by role
+body = "Light Bluish Gray"    # the case
+frame = "Dark Bluish Gray"    # the dark frame round the screen: four brackets and two plates
+glass = "Trans-Clear"         # the screen: three clear tiles over the frame
+button = "Magenta"            # A and B
+dpad = "Black"                # the axle whose end is the D-pad
+
+[booklet]
+subtitle = "A micro Game Boy with a clear screen, a D-pad and two buttons, in 25 pieces."
+intro = "The grey body goes together upside down: every piece presses on with its studs into the piece below. Two steps in, make the D-pad, an axle through two bricks, and press it on. Four brackets on their sides then turn the studs forward for the screen and up again for the top."
+notes = ["Upside down just means studs down. Hold the model any way up you like while you press a piece on: the pictures show it standing as it will when it is done.",
+         "It stands on an edge one stud deep, so stand it somewhere it will not be knocked, or lie it on its back."]
+
+[checks]
+enabled = ["real_elements", "connections", "collisions", "buildability", "stability",
+           "mechanism", "electrics", "technique"]
+[checks.stability]            # it stands on its bottom edge, one stud deep, like the real one
+min_tilt_deg = 8              # on end: it tips at about 9 degrees (the check wants 10)
+
+# Quick Bricks video (brickkit quick game_boy): a floor the model stands out on
+[quick]
+surface = "lego_blue"     # the grey stays grey on blue (yellow turns it beige), the buttons jump out
+room = "bookshelf"
+light = "day"
+seconds = 14
+highlight = ["screen", "buttons", "dpad"]
+close_ups = 2
+music = false                 # just the clicks

@@ -1565,6 +1565,88 @@
     }
    }
   },
+  "game_boy": {
+   "files": {
+    "booklet.pdf": {
+     "v": "791ab28862",
+     "size": 2349152
+    },
+    "bricklink_wanted.xml": {
+     "v": "e9bc39a610",
+     "size": 1414
+    },
+    "game_boy.mpd": {
+     "v": "9f9b479e09",
+     "size": 2686
+    },
+    "model.glb": {
+     "v": "d2aa6c3526",
+     "size": 297208
+    },
+    "model.json": {
+     "v": "f3542089e4",
+     "size": 10016
+    },
+    "parts.csv": {
+     "v": "f3724328e5",
+     "size": 1352
+    },
+    "pick_a_brick.csv": {
+     "v": "4868876e7d",
+     "size": 185
+    },
+    "price_estimate.md": {
+     "v": "909ae91185",
+     "size": 2061
+    },
+    "quick_poster.jpg": {
+     "v": "332ac591b6",
+     "size": 130853
+    },
+    "renders/renders_back.png": {
+     "v": "3010ffbd1b",
+     "size": 401442
+    },
+    "renders/renders_front.png": {
+     "v": "13d16f32d4",
+     "size": 441356
+    },
+    "renders/renders_side.png": {
+     "v": "8d979ca9c6",
+     "size": 400645
+    },
+    "renders/renders_three_quarter.png": {
+     "v": "38ecf8cbd8",
+     "size": 447765
+    }
+   },
+   "images": {
+    "renders/renders_back.png": {
+     "w": 640,
+     "h": 640,
+     "lg": "/assets/img/game_boy/renders_back.webp?v=60f2cdfafe",
+     "sm": "/assets/img/game_boy/renders_back-480.webp?v=8c57b2fb65"
+    },
+    "renders/renders_front.png": {
+     "w": 640,
+     "h": 640,
+     "lg": "/assets/img/game_boy/renders_front.webp?v=c21c2b7de9",
+     "sm": "/assets/img/game_boy/renders_front-480.webp?v=76623dd493"
+    },
+    "renders/renders_side.png": {
+     "w": 640,
+     "h": 640,
+     "lg": "/assets/img/game_boy/renders_side.webp?v=6c99f8ce61",
+     "sm": "/assets/img/game_boy/renders_side-480.webp?v=255891b855"
+    },
+    "renders/renders_three_quarter.png": {
+     "w": 640,
+     "h": 640,
+     "lg": "/assets/img/game_boy/renders_three_quarter.webp?v=57f2d0d868",
+     "sm": "/assets/img/game_boy/renders_three_quarter-480.webp?v=c812a6be28"
+    }
+   }
+  },
   "jake_the_dog": {
    "files": {
     "booklet.pdf": {
@@ -1656,6 +1738,47 @@
      "sm": "/assets/img/jake_the_dog/renders_with_finn-480.webp?v=cc047439ea"
     }
    }
+  },
+  "luigi": {
+   "files": {
+    "booklet.pdf": {
+     "v": "62153c5b39",
+     "size": 2869588
+    },
+    "bricklink_wanted.xml": {
+     "v": "e6192808ce",
+     "size": 2130
+    },
+    "luigi.mpd": {
+     "v": "61173371f5",
+     "size": 4497
+    },
+    "model.glb": {
+     "v": "356200bfb4",
+     "size": 451488
+    },
+    "model.json": {
+     "v": "62d4eb1347",
+     "size": 15004
+    },
+    "parts.csv": {
+     "v": "4205055a0a",
+     "size": 1544
+    },
+    "pick_a_brick.csv": {
+     "v": "4207a92d85",
+     "size": 269
+    },
+    "price_estimate.md": {
+     "v": "94605276e8",
+     "size": 2341
+    },
+    "quick_poster.jpg": {
+     "v": "3ad0b0f1bf",
+     "size": 205024
+    }
+   },
+   "images": {}
   },
   "magikarp": {
    "files": {

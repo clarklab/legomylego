@@ -243,6 +243,25 @@
       "source": "https://rebrickable.com/mocs/MOC-265184/"
     },
     {
+      "slug": "game_boy",
+      "name": "Game Boy",
+      "description": "A micro Game Boy in 25 pieces, 4.5 cm tall: a clear screen in a dark frame, two magenta buttons, a D-pad that is the end of a black axle, and the one rounded corner at the bottom right.",
+      "collection": "quick_bricks",
+      "pieces": 25,
+      "steps": 10,
+      "video": "/quick/game_boy-1080x1920.mp4?v=46c050bb59d2",
+      "poster": "/models/game_boy/quick_poster.jpg?v=308f54c49711",
+      "instructions": "/models/game_boy/booklet.pdf?v=8f5be1b3785e",
+      "url": "/quick/game_boy/",
+      "model": "/models/game_boy/model.json?v=7892c505b0fc",
+      "geometry": "/models/game_boy/model.glb?v=6ea7b17c22f3",
+      "brands": [
+        "nintendo"
+      ],
+      "designer": "Phoenix_bricks",
+      "source": "https://rebrickable.com/mocs/MOC-238888/"
+    },
+    {
       "slug": "jake_the_dog",
       "name": "Jake the Dog",
       "description": "A round yellow Jake the Dog with big white eyes, a two-lobed muzzle and posable noodle limbs, scaled to stand beside Finn.",
@@ -258,6 +277,25 @@
       "brands": [
         "adventure-time"
       ]
+    },
+    {
+      "slug": "luigi",
+      "name": "Luigi",
+      "description": "Luigi in 62 pieces, 13 cm tall: green cap with a peak, brown moustache on a tan face, blue overalls with two yellow buttons, white gloves, standing on a green stand.",
+      "collection": "quick_bricks",
+      "pieces": 62,
+      "steps": 15,
+      "video": "/quick/luigi-1080x1920.mp4?v=63b52bf65ac9",
+      "poster": "/models/luigi/quick_poster.jpg?v=1bd10b55dcd9",
+      "instructions": "/models/luigi/booklet.pdf?v=b9f520a33357",
+      "url": "/quick/luigi/",
+      "model": "/models/luigi/model.json?v=319cd6ff2f29",
+      "geometry": "/models/luigi/model.glb?v=7e1d5bccf840",
+      "brands": [
+        "nintendo"
+      ],
+      "source": "https://rebrickable.com/mocs/MOC-249307/",
+      "credit": "The build is JellsaTheBobJeffCreator's Mario; we swapped his red for Luigi's green."
     },
     {
       "slug": "magikarp",

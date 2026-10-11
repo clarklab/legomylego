@@ -1,0 +1,59 @@
+0 FILE game_boy.ldr
+0 Game Boy
+0 Name: game_boy.ldr
+0 Author: brickkit
+
+0 // Everything in the grey body goes on upside down. Start with the curved brick, round end down, and press the 1 x 2 tile onto its stud from below. Two 1 x 1 plates go on the tile's free end
+1 71 0 0 0 0 0 -1 0 -1 0 -1 0 0 6091.dat
+1 71 -10 0 0 -1 0 0 0 -1 0 0 0 1 3069b.dat
+1 71 -20 -8 0 -1 0 0 0 -1 0 0 0 1 3024.dat
+1 71 -20 -16 0 -1 0 0 0 -1 0 0 0 1 3024.dat
+0 STEP
+0 // Two bricks with a stud on the side, studs to the front: one on the ledge, one on the curved brick. A 1 x 1 plate tops the lower one
+1 71 0 -16 0 -1 0 0 0 -1 0 0 0 1 87087.dat
+1 71 20 -32 0 -1 0 0 0 -1 0 0 0 1 87087.dat
+1 71 0 -40 0 -1 0 0 0 -1 0 0 0 1 3024.dat
+0 STEP
+0 // Press the D-pad onto the two plates, its second brick hanging behind, and lock it in with the 1 x 2 plate across the top
+1 16 -20 0 0 1 0 0 0 1 0 0 0 1 dpad.ldr
+1 71 -10 -48 0 -1 0 0 0 -1 0 0 0 1 3023b.dat
+0 STEP
+0 // The screen's frame. Lay the two brackets with the upright end on their side studs, so their plates stand along the back with studs to the front: the 1 x 1 over the D-pad, the 1 x 2 beside it
+1 72 -20 -70 2 1 0 0 0 0 -1 0 1 0 36840.dat
+1 72 10 -70 2 1 0 0 0 0 -1 0 1 0 99780.dat
+0 STEP
+0 // Press the other two brackets onto those studs, plates to the front and side studs up: the 1 x 2 on the left this time, so the joins do not line up
+1 72 -10 -70 -6 -1 0 0 0 0 1 0 1 0 99781.dat
+1 72 20 -70 -6 -1 0 0 0 0 1 0 1 0 36841.dat
+0 STEP
+0 // Two 1 x 3 plates on the studs on top, then the top edge: a 1 x 1 plate on the left and a 1 x 2 tile
+1 72 0 -92 4 1 0 0 0 1 0 0 0 1 3623.dat
+1 72 0 -100 4 1 0 0 0 1 0 0 0 1 3623.dat
+1 71 -20 -108 4 1 0 0 0 1 0 0 0 1 3024.dat
+1 71 10 -108 4 1 0 0 0 1 0 0 0 1 3069b.dat
+0 STEP
+0 // The screen: three clear 1 x 2 tiles standing side by side, each on one of the studs facing forward
+1 47 -20 -80 -14 0 0 -1 -1 0 0 0 1 0 3069b.dat
+1 47 0 -80 -14 0 0 -1 -1 0 0 0 1 0 3069b.dat
+1 47 20 -80 -14 0 0 -1 -1 0 0 0 1 0 3069b.dat
+0 STEP
+0 // The A and B buttons: a round tile on each stud on the front
+1 26 0 -26 -18 1 0 0 0 0 -1 0 1 0 98138.dat
+1 26 20 -42 -18 1 0 0 0 0 -1 0 1 0 98138.dat
+0 STEP
+0 NOFILE
+
+0 FILE dpad.ldr
+0 D-pad
+0 Name: dpad.ldr
+0 Author: brickkit
+
+0 // The D-pad: push the black axle through a brick with a cross hole, held upside down, until a little of it shows at the front
+1 71 0 -24 0 -1 0 0 0 -1 0 0 0 1 73230.dat
+1 0 0 -34 4 0 0 -1 0 1 0 1 0 0 32062.dat
+0 STEP
+0 // Push a second cross-hole brick, right way up, onto the axle's long end, and put the little slope on it, high edge to the front
+1 71 0 -44 20 1 0 0 0 1 0 0 0 1 73230.dat
+1 71 0 -44 20 -1 0 0 0 1 0 0 0 -1 54200.dat
+0 STEP
+0 NOFILE
