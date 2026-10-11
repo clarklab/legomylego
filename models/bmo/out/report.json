@@ -1,0 +1,91 @@
+{
+  "title": "BMO",
+  "status": "pass",
+  "checks": [
+    {
+      "name": "real_elements",
+      "status": "pass",
+      "summary": "20 part/colour combinations: 0 not real, 0 rare",
+      "items": [],
+      "stats": {
+        "combinations": 20,
+        "not_real": 0,
+        "rare": 0,
+        "hardware": 0,
+        "minifig_components": 0,
+        "stand_ins": 0,
+        "approximate": 0
+      }
+    },
+    {
+      "name": "connections",
+      "status": "pass",
+      "summary": "70 connections (70 stud); 1 separate piece(s)",
+      "items": [],
+      "stats": {
+        "connections": 70,
+        "by_kind": {
+          "stud": 70
+        },
+        "pieces": 1
+      }
+    },
+    {
+      "name": "collisions",
+      "status": "pass",
+      "summary": "0 overlapping pair(s) among 44 parts",
+      "items": [],
+      "stats": {
+        "pairs": 0
+      }
+    },
+    {
+      "name": "buildability",
+      "status": "pass",
+      "summary": "42 insertions tried across 3 submodel(s); 0 problem(s)",
+      "items": [],
+      "stats": {
+        "insertions": 42
+      }
+    },
+    {
+      "name": "stability",
+      "status": "pass",
+      "summary": "about 22 g; centre of mass inside the base (97% margin); tips at 22.7 deg",
+      "items": [],
+      "stats": {
+        "mass_g": 21.911625887533674,
+        "com": [
+          -0.0675260009897061,
+          -69.48277071710542,
+          0.9517846670518825
+        ],
+        "approx_parts": 0,
+        "margin": 0.9682738444316039,
+        "tip_angle_deg": 22.688028140636536,
+        "com_height_ldu": 69.48277071710542
+      }
+    },
+    {
+      "name": "mechanism",
+      "status": "pass",
+      "summary": "no moving parts defined",
+      "items": [],
+      "stats": {}
+    },
+    {
+      "name": "electrics",
+      "status": "pass",
+      "summary": "no electrics in this model",
+      "items": [],
+      "stats": {}
+    },
+    {
+      "name": "technique",
+      "status": "pass",
+      "summary": "0 note(s)",
+      "items": [],
+      "stats": {}
+    }
+  ]
+}

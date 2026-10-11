@@ -266,6 +266,98 @@
     }
    }
   },
+  "bmo": {
+   "files": {
+    "bmo.mpd": {
+     "v": "4543063599",
+     "size": 4006
+    },
+    "booklet.pdf": {
+     "v": "5e1b918bba",
+     "size": 3392961
+    },
+    "bricklink_wanted.xml": {
+     "v": "6c1567fee5",
+     "size": 1887
+    },
+    "model.glb": {
+     "v": "6c681d3c76",
+     "size": 424516
+    },
+    "model.json": {
+     "v": "98e09e281b",
+     "size": 13975
+    },
+    "parts.csv": {
+     "v": "2fae9bf8a4",
+     "size": 1795
+    },
+    "pick_a_brick.csv": {
+     "v": "252bfe5fde",
+     "size": 238
+    },
+    "price_estimate.md": {
+     "v": "49a9fea676",
+     "size": 2581
+    },
+    "quick_poster.jpg": {
+     "v": "1100124a14",
+     "size": 157164
+    },
+    "renders/renders_back.png": {
+     "v": "abc58c9419",
+     "size": 419701
+    },
+    "renders/renders_close_eyes.png": {
+     "v": "849c871ac4",
+     "size": 477963
+    },
+    "renders/renders_front.png": {
+     "v": "45eaa5f7ac",
+     "size": 447334
+    },
+    "renders/renders_side.png": {
+     "v": "7eb9f76b8d",
+     "size": 406688
+    },
+    "renders/renders_three_quarter.png": {
+     "v": "fbf1ecb358",
+     "size": 450688
+    }
+   },
+   "images": {
+    "renders/renders_back.png": {
+     "w": 640,
+     "h": 640,
+     "lg": "/assets/img/bmo/renders_back.webp?v=6b571eba86",
+     "sm": "/assets/img/bmo/renders_back-480.webp?v=427342d92f"
+    },
+    "renders/renders_close_eyes.png": {
+     "w": 640,
+     "h": 640,
+     "lg": "/assets/img/bmo/renders_close_eyes.webp?v=15a32b1517",
+     "sm": "/assets/img/bmo/renders_close_eyes-480.webp?v=27acab5b8a"
+    },
+    "renders/renders_front.png": {
+     "w": 640,
+     "h": 640,
+     "lg": "/assets/img/bmo/renders_front.webp?v=4e9a373c7c",
+     "sm": "/assets/img/bmo/renders_front-480.webp?v=4a3492fe32"
+    },
+    "renders/renders_side.png": {
+     "w": 640,
+     "h": 640,
+     "lg": "/assets/img/bmo/renders_side.webp?v=5327ec61d6",
+     "sm": "/assets/img/bmo/renders_side-480.webp?v=96dea8feff"
+    },
+    "renders/renders_three_quarter.png": {
+     "w": 640,
+     "h": 640,
+     "lg": "/assets/img/bmo/renders_three_quarter.webp?v=0b62fb2290",
+     "sm": "/assets/img/bmo/renders_three_quarter-480.webp?v=1ab1745144"
+    }
+   }
+  },
   "bulbasaur": {
    "files": {
     "booklet.pdf": {

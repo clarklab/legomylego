@@ -1,0 +1,90 @@
+0 FILE bmo.ldr
+0 BMO
+0 Name: bmo.ldr
+0 Author: brickkit
+
+0 // Two feet: a 1 x 3 plate each, front to back, with a round brick on the middle stud for a leg. Join the legs with a 2 x 3 plate, its front row on them
+1 3 20 -8 0 0 0 1 0 1 0 -1 0 0 3623.dat
+1 3 -20 -8 0 0 0 1 0 1 0 -1 0 0 3623.dat
+1 3 20 -32 0 1 0 0 0 1 0 0 0 1 3062b.dat
+1 3 -20 -32 0 1 0 0 0 1 0 0 0 1 3062b.dat
+1 3 0 -40 10 1 0 0 0 1 0 0 0 1 3021.dat
+0 STEP
+0 // A second 2 x 3 plate, then the front row of the core: a grey brick with studs on two sides at each end, studs forward and out, and a teal one between them, stud forward
+1 3 0 -48 10 1 0 0 0 1 0 0 0 1 3021.dat
+1 71 -20 -72 0 0 0 1 0 1 0 -1 0 0 26604.dat
+1 3 0 -72 0 1 0 0 0 1 0 0 0 1 87087.dat
+1 71 20 -72 0 1 0 0 0 1 0 0 0 1 26604.dat
+0 STEP
+0 // The back row: a brick with a stud on its side at each end, studs out, and a plain one between. Two more 2 x 3 plates on top
+1 3 -20 -72 20 0 0 1 0 1 0 -1 0 0 87087.dat
+1 3 0 -72 20 1 0 0 0 1 0 0 0 1 3005.dat
+1 3 20 -72 20 0 0 -1 0 1 0 1 0 0 87087.dat
+1 3 0 -80 10 1 0 0 0 1 0 0 0 1 3021.dat
+1 3 0 -88 10 1 0 0 0 1 0 0 0 1 3021.dat
+0 STEP
+0 // The same six bricks again: the front row with studs forward and out, the back row with studs out
+1 71 -20 -112 0 0 0 1 0 1 0 -1 0 0 26604.dat
+1 3 0 -112 0 1 0 0 0 1 0 0 0 1 87087.dat
+1 71 20 -112 0 1 0 0 0 1 0 0 0 1 26604.dat
+1 3 -20 -112 20 0 0 1 0 1 0 -1 0 0 87087.dat
+1 3 0 -112 20 1 0 0 0 1 0 0 0 1 3005.dat
+1 3 20 -112 20 0 0 -1 0 1 0 1 0 0 87087.dat
+0 STEP
+0 // The lid: three 1 x 3 tiles side by side, front to back, each sticking out a stud over the front
+1 3 -20 -120 0 0 0 1 0 1 0 -1 0 0 63864.dat
+1 3 0 -120 0 0 0 1 0 1 0 -1 0 0 63864.dat
+1 3 20 -120 0 0 0 1 0 1 0 -1 0 0 63864.dat
+0 STEP
+0 // Press the buttons onto the lower row of studs on the front, and the screen onto the upper row, under the lid, eyes up
+1 16 0 -52 -18 1 0 0 0 0 -1 0 1 0 pad.ldr
+1 16 0 -92 -18 1 0 0 0 0 -1 0 1 0 screen.ldr
+0 STEP
+0 // His left side: the tile with one stud on the lower front studs, the plain 2 x 2 tile above it, and the 1 x 4 tile up the back. Then an arm on the one stud, thick end down
+1 3 38 -52 -10 0 -1 0 -1 0 0 0 0 -1 87580.dat
+1 3 38 -92 -10 0 -1 0 -1 0 0 0 0 -1 3068b.dat
+1 3 38 -72 20 0 -1 0 -1 0 0 0 0 -1 2431.dat
+1 3 38 -42 -10 0 -1 0 0 0 1 -1 0 0 11477.dat
+0 STEP
+0 // His right side, the same: the tile with one stud on the lower front studs, the plain 2 x 2 tile above it, and the 1 x 4 tile up the back. Then an arm on the one stud, thick end down
+1 3 -38 -52 -10 0 1 0 -1 0 0 0 0 1 87580.dat
+1 3 -38 -92 -10 0 1 0 -1 0 0 0 0 1 3068b.dat
+1 3 -38 -72 20 0 1 0 -1 0 0 0 0 1 2431.dat
+1 3 -38 -42 -10 0 1 0 0 0 1 1 0 0 11477.dat
+0 STEP
+0 NOFILE
+
+0 FILE screen.ldr
+0 Screen
+0 Name: screen.ldr
+0 Author: brickkit
+
+0 // The screen: on a light green 2 x 3 plate, a round tile with a black dot on each end of one long row for the eyes, each dot towards the other, and a light green tile between them
+1 323 0 0 0 1 0 0 0 1 0 0 0 1 3021.dat
+1 15 -20 -8 10 1 0 0 0 1 0 0 0 1 98138p2e.dat
+1 15 20 -8 10 -1 0 0 0 1 0 0 0 -1 98138p2e.dat
+1 323 0 -8 10 1 0 0 0 1 0 0 0 1 3070b.dat
+0 STEP
+0 // The other row: the round tile with a curved line in the middle, turned so it smiles, and a light green tile either side
+1 15 0 -8 -10 -1 0 0 0 1 0 0 0 -1 98138p2n.dat
+1 323 -20 -8 -10 1 0 0 0 1 0 0 0 1 3070b.dat
+1 323 20 -8 -10 1 0 0 0 1 0 0 0 1 3070b.dat
+0 STEP
+0 NOFILE
+
+0 FILE pad.ldr
+0 Buttons
+0 Name: pad.ldr
+0 Author: brickkit
+
+0 // The buttons: on a teal 2 x 3 plate, the grille tile along one long row for the slot, and the small green button beside it
+1 3 0 0 0 1 0 0 0 1 0 0 0 1 3021.dat
+1 0 -10 -8 10 1 0 0 0 1 0 0 0 1 2412b.dat
+1 10 20 -8 10 1 0 0 0 1 0 0 0 1 6141.dat
+0 STEP
+0 // The other row: the yellow D-pad (a 1 x 1 plate) under the slot's end, the blue triangle (a little slope, its high edge to the slot) and the big red button
+1 14 -20 -8 -10 1 0 0 0 1 0 0 0 1 3024.dat
+1 322 0 0 -10 1 0 0 0 1 0 0 0 1 54200.dat
+1 4 20 -8 -10 1 0 0 0 1 0 0 0 1 98138.dat
+0 STEP
+0 NOFILE

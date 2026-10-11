@@ -52,6 +52,23 @@
       ]
     },
     {
+      "slug": "bmo",
+      "name": "BMO",
+      "description": "BMO, the little living game console from Adventure Time, in 44 pieces, 3 cm wide and 4.8 cm tall: a pale green screen with two dot eyes and a smile, a D-pad and buttons, short legs and two arms that swing.",
+      "collection": "quick_bricks",
+      "pieces": 44,
+      "steps": 12,
+      "video": "/quick/bmo-1080x1920.mp4?v=f525a67e069a",
+      "poster": "/models/bmo/quick_poster.jpg?v=920aab15e02f",
+      "instructions": "/models/bmo/booklet.pdf?v=48408ad11d9c",
+      "url": "/quick/bmo/",
+      "model": "/models/bmo/model.json?v=303e54d155b0",
+      "geometry": "/models/bmo/model.glb?v=82246a33a447",
+      "brands": [
+        "adventure-time"
+      ]
+    },
+    {
       "slug": "bulbasaur",
       "name": "Bulbasaur",
       "description": "Bulbasaur from Pokémon in 48 pieces, 6.9 cm tall to the tips of its leaves: a low teal body on four white-toed paws, big red eyes, a wide grin and an oversized green bulb sprouting three leaves.",

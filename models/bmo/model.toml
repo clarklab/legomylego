@@ -1,0 +1,37 @@
+[model]
+name = "BMO"
+design = "design.py"
+description = "BMO, the little living game console from Adventure Time, in 44 pieces, 3 cm wide and 4.8 cm tall: a pale green screen with two dot eyes and a smile, a D-pad and buttons, short legs and two arms that swing."
+brands = ["adventure-time"]
+collection = "quick_bricks"
+
+[palette]                     # role -> a real colour name; design.py places parts by role
+body = "Dark Turquoise"       # the teal case, the arms and legs
+screen = "Light Aqua"         # the screen: a pale green plate and tiles
+print = "White"               # the eyes and the smile: printed round tiles
+slot = "Black"                # the slot under the screen: a grille tile (the teal one is long out of production)
+dpad = "Yellow"
+triangle = "Medium Azure"
+green = "Bright Green"
+red = "Red"
+core = "Light Bluish Gray"    # two kinds of brick inside that nobody sees
+
+[booklet]
+subtitle = "The little living game console, with a face, buttons and arms that swing, in 44 pieces."
+intro = "Build the body on its two legs first: a core of small bricks with studs on their sides, and the lid. Then make the buttons and the screen, each a 2 x 3 plate with tiles on, and press them onto the front. The side tiles go on last, and an arm on each side's one stud."
+notes = ["Most of the core's bricks have a stud on one side, and the two at the front corners have studs on two sides. Check each step's picture for which way the studs point.",
+         "Each arm is on a single stud: turn it to make BMO wave."]
+
+[checks]
+enabled = ["real_elements", "connections", "collisions", "buildability", "stability",
+           "mechanism", "electrics", "technique"]
+
+# Quick Bricks video (brickkit quick bmo): a floor the model stands out on
+[quick]
+surface = "lego_yellow"   # teal is at its brightest on yellow
+room = "studio"
+light = "day"
+seconds = 14
+highlight = ["eyes", "mouth", "arms", "dpad"]
+close_ups = 2
+music = false                 # just the clicks
