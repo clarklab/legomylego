@@ -585,6 +585,13 @@ def test_quick_cover_is_face_forward():
     jolt[170] = [jolt[170][0] + 40.0, jolt[170][1], jolt[170][2]]
     shaken = dict(pl, camera=dict(pl["camera"], pos=jolt))
     assert Q.cover_frame(shaken) == 173                # 169..171 are smeared: the nearest sharp ones
+    # a slow turn, the camera still pulling back out of a close-up as it passes the front
+    # (till frame 160): those frames are more smeared than the turn leaves the rest, so the
+    # cover waits for it to settle (a small model's cover came out soft, a few frames early)
+    out = [[(300.0 - 7.0 * max(0, 160 - f)) * math.sin(math.radians(0.5 * (f - 150))), -100.0,
+            -(300.0 - 7.0 * max(0, 160 - f)) * math.cos(math.radians(0.5 * (f - 150)))] for f in range(n)]
+    settling = dict(pl, camera=dict(pl["camera"], pos=out))
+    assert Q.cover_frame(settling) == 162              # (158 is nearer the front, and a smear)
     assert Q.quick_config({"quick": {"cover": 45}})["cover"] == 45.0
     assert Q.quick_config({})["cover"] == 0.0
     with pytest.raises(SystemExit):

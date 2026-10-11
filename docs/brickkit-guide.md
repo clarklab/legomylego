@@ -772,7 +772,8 @@ video for TikTok and Instagram: `out/SLUG-1080x1920.mp4`, 1080×1920 at 60 fps (
 TikTok take), H.264 High profile (CRF 18, capped at 20 Mbit/s) + AAC 48 kHz, 14 s, under 50 MB,
 made to loop, and `out/quick_poster.jpg`, the cover: the frame of the hero the camera is most
 face on to the model in (its front; `[quick] cover = 45` asks for another angle, for a face that
-is on the side), with the model whole and not in a close-up. `--cover` picks it again from the
+is on the side), with the model whole, not in a close-up, and the camera settled (a frame on
+its way out of a close-up is a smear). `--cover` picks it again from the
 frames there are, with nothing rendered or encoded. The motion blur
 is a 180° shutter (1/120 s). Every timing is in seconds, so a 30 or 15 fps run lands, cuts and
 clicks at the same moments. `--preview` makes `out/quick_preview.mp4` (540×960, 15 fps, 16

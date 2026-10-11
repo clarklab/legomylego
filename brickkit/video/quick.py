@@ -1662,6 +1662,7 @@ def encode(work: Path, fps: int, n: int, wm: Path | None, wav: Path | None, mp4:
 
 COVER_SHARP = 0.0075  # of the frame's width: the most the picture may move while the shutter is
 #                       open, in a frame fit for the cover (8 px at 1080)
+COVER_STILL = 0.003   # ... and a frame that moves no more than this is as still as any (3 px)
 
 
 def _cover_blur(pl: dict, first: int, last: int) -> np.ndarray:
@@ -1698,8 +1699,10 @@ def cover_frame(pl: dict, look: float = 0.0) -> int:
     whatever side the turn is on half way. The hero: from the last landing to the cut, the
     frames in which the model is whole (every piece where it ends up: nothing still to be
     joined), framed as it is at the end (not still in a close-up, or on the way out of
-    one) and sharp (COVER_SHARP; else the sharpest there is). Of frames as near (within a
-    degree), the last."""
+    one) and sharp: no more smeared than the turn leaves the hero (half again what is usual
+    in it, or COVER_STILL; never more than COVER_SHARP - the camera just out of a close-up is
+    still settling, and a frame or two on it has; else the sharpest there is). Of frames as
+    near (within a degree), the last."""
     cam = pl["camera"]
     pos, tgt = np.asarray(cam["pos"], float), np.asarray(cam["target"], float)
     first, cut = int(pl["land"][-1]), int(pl["cut"])
@@ -1715,7 +1718,7 @@ def cover_frame(pl: dict, look: float = 0.0) -> int:
             break
     ok = ok[first:cut]
     blur = _cover_blur(pl, first, last)
-    sharp = ok & (blur <= COVER_SHARP)
+    sharp = ok & (blur <= min(COVER_SHARP, max(1.5 * float(np.median(blur[ok])), COVER_STILL)))
     ok = sharp if sharp.any() else ok & (blur <= blur[ok].min() + 1e-9)
     off = np.abs((np.degrees(np.arctan2(d[:, 0], -d[:, 2])) - look + 180.0) % 360.0 - 180.0)
     off = np.where(ok, off[first:cut], np.inf)
