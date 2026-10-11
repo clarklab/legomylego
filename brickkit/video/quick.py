@@ -59,9 +59,9 @@ Configured by model.toml's [quick] (all optional):
                                  # front it is seen from - the frame of the hero nearest to that
                                  # (45: three-quarters on, for a face that is on the side)
     flex = 3.0                   # s: before the cut the finished model moves - its moving groups
-                                 # go through design.py's model.pose, t from 0 to 1 (legs take a
-                                 # step, a lid opens). That long is added before the cut: the
-                                 # build keeps its own time only if `seconds` is that much longer
+                                 # go through design.py's model.pose (legs walk on the spot; a
+                                 # lid opens and shuts again). That long is added before the cut:
+                                 # the build keeps its own time only if `seconds` is that much longer
 
 Planning is here (no Blender): `plan(engine, model, cfg)` -> the schedule, each part's moves
 (a 4 x 4 transform per frame while it moves), the camera per frame and the sound's cues;
@@ -110,6 +110,7 @@ SETS = tuple(PRESETS) + ("random",)
 PRE = 0.45            # s of the empty set before the first part flies in
 HERO = 2.0            # s from the last landing to the cut
 FLEX_HOLD = 0.4       # s the model stands still again after its own movement ([quick] flex), to the cut
+FLEX_OUT = 0.4        # of that movement's time: out to the pose's end (a lid open), and as long back
 TAIL = 0.3            # s of the empty set after the cut (it runs on into the first frame)
 RATE_RAMP = 3.2       # the last parts land this many times as often as the first
 FLIGHT = (0.45, 0.24)  # s a part takes to fly in: the first, the last ones
@@ -1098,19 +1099,27 @@ def motion(engine, placed, script: dict, sch: dict, cam: dict, laid: dict | None
 
 def flex_moves(model, placed, parts: list[dict], cut: float, flex: float, fps: int) -> tuple[int, int]:
     """The finished model's own movement ([quick] flex, s), added to `parts` as one more move
-    for every part in a moving group: from where it stands, through design.py's model.pose
-    with t going evenly from 0 to 1 (the pose itself starts and ends gently, or it jerks),
-    over the `flex` s that end FLEX_HOLD s before the cut. A part stays where the pose leaves
-    it: a walk on the spot ends at rest, a lid ends open. Returns the move's (first, last)
-    frame."""
+    for every part in a moving group: from where it stands, through design.py's model.pose,
+    over the `flex` s that end FLEX_HOLD s before the cut. The model always ends as it stands
+    in its booklet. A pose that comes round to where it began (a walk on the spot: pose(1)
+    moves nothing) is played once, t going evenly from 0 to 1: the pose itself starts and
+    ends gently, or it jerks. One that ends somewhere else (a lid open, a head tipped back)
+    is played there and back: eased out to t = 1 over FLEX_OUT of the time, held, and eased
+    home over as long. Returns the move's (first, last) frame."""
     f1 = int(round((cut - FLEX_HOLD) * fps))
     f0 = f1 - max(2, int(round(flex * fps)))
+    round_trip = all(np.allclose(np.asarray(G, float), np.eye(4), atol=1e-6) for G in model.pose(1.0).values())
+
+    def t_at(u: float) -> float:
+        if round_trip:
+            return u
+        return float(T.smootherstep(min(u, 1.0 - u) / FLEX_OUT)) if min(u, 1.0 - u) < FLEX_OUT else 1.0
     group = [model.group_of(p) for p in placed]
     rest = {i: np.asarray((p["moves"][-1]["frames"] if p["moves"] else p["frames"])[-1], float).reshape(4, 4)
             for i, p in enumerate(parts) if group[i] is not None}
     frames = {i: [] for i in rest}
     for f in range(f0, f1 + 1):
-        G = model.pose((f - f0) / (f1 - f0))
+        G = model.pose(t_at((f - f0) / (f1 - f0)))
         for i, M in rest.items():
             g = G.get(group[i])
             frames[i].append(np.round((M if g is None else np.asarray(g, float) @ M).reshape(-1), 4).tolist())

@@ -652,3 +652,14 @@ def test_quick_flex(engine):
     assert min(ys) == pytest.approx(rest[1, 3] - 40, abs=0.5)        # (-Y is up: it lifts 40)
     assert np.allclose(Q.pose_at(pl, 1, cut - 1), rest, atol=1e-3)   # down again before the cut
     assert Q.clashes(engine, placed, pl) == []
+    # a pose that ends somewhere else (the lid off) is played there and back: out, held, home
+    model = lidded()
+    model.moving_group("lid", "lid", lifts_off=True)
+    model.pose = lambda t: {"lid": translate(0, -40 * t, 0)}
+    pl = Q.plan(engine, model, Q.quick_config({"quick": {"seconds": 6, "layout": False, "flex": 1.0}}))
+    ys = np.array([np.array(M).reshape(4, 4)[1, 3] for M in pl["parts"][1]["moves"][0]["frames"]])
+    n = len(ys)
+    assert ys[0] == pytest.approx(rest[1, 3]) and ys[-1] == pytest.approx(rest[1, 3])
+    assert np.allclose(ys[int(n * 0.42):int(n * 0.58)], rest[1, 3] - 40, atol=1e-3)      # held open
+    assert np.all(np.diff(ys[:int(n * 0.4)]) <= 1e-6) and np.all(np.diff(ys[int(n * 0.6):]) >= -1e-6)
+    assert abs(ys[1] - ys[0]) < 0.5 and abs(ys[-1] - ys[-2]) < 0.5       # gently off and gently home

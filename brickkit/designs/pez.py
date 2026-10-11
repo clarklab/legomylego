@@ -146,9 +146,11 @@ def dome_slopes(head, role, h, tag="dome"):
 
 def dome_top(head, h, parts=(("3024", "head"), ("3070b", "head")), tag="dome"):
     """The middle of the dome: `parts` [(part, role)] stacked on the middle stud, a plate
-    high each (a plate under a tile brings it level with the slopes)."""
+    high each (a plate under a tile brings it level with the slopes). They go straight down
+    into the well the four slopes leave (said, so the video brings them in that way: from the
+    side one clipped a slope)."""
     for k, (part, role) in enumerate(parts):
-        head.place(part, role, (0, y(h + 8 * (k + 1)), ROWS[1]), tag=tag)
+        head.place(part, role, (0, y(h + 8 * (k + 1)), ROWS[1]), tag=tag, insert=(0, -1, 0))
 
 
 def head_hinge(head, role: str = "stem") -> None:
