@@ -2209,6 +2209,88 @@
    },
    "og": "/assets/og/nautilus_crew.png?v=0273587d77"
   },
+  "pez_darth_vader": {
+   "files": {
+    "booklet.pdf": {
+     "v": "0941715b08",
+     "size": 2973689
+    },
+    "bricklink_wanted.xml": {
+     "v": "2b593b98a5",
+     "size": 1787
+    },
+    "model.glb": {
+     "v": "784009237e",
+     "size": 618932
+    },
+    "model.json": {
+     "v": "7fba378737",
+     "size": 18306
+    },
+    "parts.csv": {
+     "v": "a83b8d786c",
+     "size": 1619
+    },
+    "pez_darth_vader.mpd": {
+     "v": "2584edecb7",
+     "size": 4509
+    },
+    "pick_a_brick.csv": {
+     "v": "5b56b04139",
+     "size": 224
+    },
+    "price_estimate.md": {
+     "v": "2431c69d0f",
+     "size": 2363
+    },
+    "quick_poster.jpg": {
+     "v": "2db9ac68d7",
+     "size": 198549
+    },
+    "renders/renders_close_head.png": {
+     "v": "6267b0b985",
+     "size": 505829
+    },
+    "renders/renders_front.png": {
+     "v": "75e4f70527",
+     "size": 481809
+    },
+    "renders/renders_side.png": {
+     "v": "99552ce6f7",
+     "size": 477793
+    },
+    "renders/renders_three_quarter.png": {
+     "v": "0aa68bb9e7",
+     "size": 491778
+    }
+   },
+   "images": {
+    "renders/renders_close_head.png": {
+     "w": 700,
+     "h": 700,
+     "lg": "/assets/img/pez_darth_vader/renders_close_head.webp?v=461461a22b",
+     "sm": "/assets/img/pez_darth_vader/renders_close_head-480.webp?v=c95b569420"
+    },
+    "renders/renders_front.png": {
+     "w": 700,
+     "h": 700,
+     "lg": "/assets/img/pez_darth_vader/renders_front.webp?v=089b54da3f",
+     "sm": "/assets/img/pez_darth_vader/renders_front-480.webp?v=a9d4b49add"
+    },
+    "renders/renders_side.png": {
+     "w": 700,
+     "h": 700,
+     "lg": "/assets/img/pez_darth_vader/renders_side.webp?v=f65701f3f7",
+     "sm": "/assets/img/pez_darth_vader/renders_side-480.webp?v=5c48640eef"
+    },
+    "renders/renders_three_quarter.png": {
+     "w": 700,
+     "h": 700,
+     "lg": "/assets/img/pez_darth_vader/renders_three_quarter.webp?v=54515f41fa",
+     "sm": "/assets/img/pez_darth_vader/renders_three_quarter-480.webp?v=f538607ebe"
+    }
+   }
+  },
   "pez_stormtrooper": {
    "files": {
     "booklet.pdf": {

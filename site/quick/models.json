@@ -337,6 +337,24 @@
       "source": "https://rebrickable.com/mocs/MOC-249307/"
     },
     {
+      "slug": "pez_darth_vader",
+      "name": "Darth Vader PEZ",
+      "description": "A Darth Vader PEZ dispenser in 53 pieces, 10.6 cm tall, about the size of a real one: a black helmet with flared sides and a silver mouth grille on a black stem, and a head that tips back on a click hinge to show a pink sweet.",
+      "collection": "quick_bricks",
+      "pieces": 53,
+      "steps": 18,
+      "video": "/quick/pez_darth_vader-1080x1920.mp4?v=fe64e923dbf4",
+      "poster": "/models/pez_darth_vader/quick_poster.jpg?v=3f42f9da29d3",
+      "instructions": "/models/pez_darth_vader/booklet.pdf?v=1dae53d6f924",
+      "url": "/quick/pez_darth_vader/",
+      "model": "/models/pez_darth_vader/model.json?v=0d9b951eb26c",
+      "geometry": "/models/pez_darth_vader/model.glb?v=5dad2051e4a0",
+      "brands": [
+        "pez",
+        "star-wars"
+      ]
+    },
+    {
       "slug": "pez_stormtrooper",
       "name": "Stormtrooper PEZ",
       "description": "A Stormtrooper PEZ dispenser in 56 pieces, 10.6 cm tall, about the size of a real one: a white helmet with two black eyes, a frown and grey vents on a white stem, and a head that tips back on a click hinge to show a pink sweet.",
