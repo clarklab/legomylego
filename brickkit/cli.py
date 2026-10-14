@@ -66,19 +66,22 @@ def _bom(engine, proj, model) -> None:
     write_pick_a_brick_csv(lines, out / "pick_a_brick.csv")
     import json
     from .bom.live_price import live_prices
-    from .bom.price import estimate, hardware_summary, summary, write_estimate_md
+    from .bom.pab_price import pab_prices
+    from .bom.price import estimate, hardware_summary, headline, summary, write_estimate_md
     live = None
     try:
         live = live_prices(lines)
     except Exception as e:                        # no network, refused keys: say so, go on
         print(f"live prices unavailable ({e}); using price bands")
     day = live["day"] if live else None
-    priced = estimate(lines, engine.catalog, live)
+    pab = pab_prices(lines)
+    pab_day = pab["day"] if pab else None
+    priced = estimate(lines, engine.catalog, live, pab)
     from .bom.bom import minifig_count
     n_figs = minifig_count(model)
     low, high = write_estimate_md(model.name, priced, out / "price_estimate.md", day, hardware,
-                                  minifigs=n_figs)
-    s = summary(priced, day)
+                                  minifigs=n_figs, pab_day=pab_day)
+    s = summary(priced, day, pab_day)
     if n_figs:
         s["minifigs"] = n_figs
     if hardware:
@@ -86,8 +89,7 @@ def _bom(engine, proj, model) -> None:
     (out / "price.json").write_text(json.dumps(s, indent=1))
     print(f"parts list: {sum(l.qty for l in lines)} pieces in {len(lines)} lines"
           + (f" ({n_figs} minifigure(s))" if n_figs else "") + " "
-          f"-> {out / 'parts.csv'}; price ${low:,.0f}-${high:,.0f}"
-          f"{f' (BrickLink, {day})' if day else ' (rough estimate)'}")
+          f"-> {out / 'parts.csv'}; {headline(s)}")
     if hardware:
         h = s["hardware"]
         print(f"hardware (not LEGO): {h['items']} item(s) in {h['lines']} line(s) -> "

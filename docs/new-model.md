@@ -130,7 +130,7 @@ Pick a Brick), `bricklink_wanted.xml` (upload to BrickLink) and `price_estimate.
 
 - The `real_elements` check must pass: every part exists in its colour and has an element ID.
   If a part does not, pick another with `brickkit find`, or record it in NOTES.md.
-- Put the piece count, the number of lines and the price range in NOTES.md.
+- Put the piece count, the number of lines and the two prices (BrickLink, Pick a Brick) in NOTES.md.
 - Never put anything in a cart or buy anything.
 
 ## Stage 4: Instructions

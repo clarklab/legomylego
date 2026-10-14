@@ -116,12 +116,33 @@ class PriceGuide:
             raise PermissionError("BrickLink refused the credentials: " + out["error"])
         return out
 
+    def mapped(self, element_id: str) -> tuple[str, int] | None:
+        """BrickLink's own item number and colour for a LEGO element ID (its catalogue files some
+        parts under another number than LDraw's: 3070b is 3070, 6141 is 4073), or None."""
+        key = f"MAP/{element_id}"
+        if key not in self.cache:
+            url = f"{API}/item_mapping/{urllib.parse.quote(str(element_id))}"
+            req = urllib.request.Request(url, headers={
+                "Authorization": _auth_header("GET", url, {}, self.cred), "Accept": "application/json"})
+            try:
+                with urllib.request.urlopen(req, timeout=30) as r:
+                    body = json.loads(r.read().decode())
+            except urllib.error.HTTPError as e:
+                body = {"meta": {"code": e.code}}
+            self.calls += 1
+            data = body.get("data") or []
+            hit = next((d for d in data if (d.get("item") or {}).get("type") == "PART"), None)
+            self.cache[key] = ({"no": hit["item"]["no"], "color": hit.get("color_id")} if hit
+                               else {"none": True})
+        m = self.cache[key]
+        return None if m.get("none") else (m["no"], m["color"])
+
 
 def live_prices(lines, day: str | None = None, log=print) -> dict | None:
     """{(bl_type, bl_part, bl_colour): {"stock": {...}, "sold": {...}}} for BOM lines, or None
     when no BrickLink credentials are set up."""
     cred = credentials()
-    if not cred:
+    if not cred or os.environ.get("BRICKKIT_NO_BRICKLINK"):
         return None
     guide = PriceGuide(cred, day)
     out = {}
@@ -129,7 +150,13 @@ def live_prices(lines, day: str | None = None, log=print) -> dict | None:
         for l in lines:
             col = l.color.bl_id if l.bl_type == "P" else None
             key = (l.bl_type, l.bl_part, col)
-            out[key] = {g: guide.lookup(l.bl_type, l.bl_part, col, g) for g in ("stock", "sold")}
+            got = {g: guide.lookup(l.bl_type, l.bl_part, col, g) for g in ("stock", "sold")}
+            missing = all(str(v.get("error", "")).startswith("404") for v in got.values())
+            if missing and l.bl_type == "P" and getattr(l, "element_id", ""):
+                m = guide.mapped(l.element_id)            # BrickLink knows it by another number
+                if m and m != (l.bl_part, col):
+                    got = {g: guide.lookup("P", m[0], m[1], g) for g in ("stock", "sold")}
+            out[key] = got
     finally:
         guide.save()
     log(f"BrickLink price guide: {len(out)} lines, {guide.calls} new lookups, dated {guide.day}")

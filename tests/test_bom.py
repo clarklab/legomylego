@@ -46,8 +46,37 @@ def test_live_prices_used_and_dated(engine, tmp_path):
     assert first.live and (first.low, first.high) == (0.08, 0.12)
     s = summary(priced, "2026-09-25")
     assert s["source"] == "bricklink" and s["date"] == "2026-09-25" and s["live_lines"] == 1
+    # the BrickLink price: the six-month sold average; a line with no data is named, not guessed
+    bl = s["bricklink"]
+    assert bl["usd"] == round(0.08 * lines[0].qty, 2) and bl["lines"] == 1 and len(bl["missing"]) == 1
+    assert s["pick_a_brick"] is None
     write_estimate_md("Test", priced, tmp_path / "p.md", "2026-09-25")
-    assert "Priced 2026-09-25" in (tmp_path / "p.md").read_text()
+    md = (tmp_path / "p.md").read_text()
+    assert "**BrickLink: $" in md and "2026-09-25" in md and "Not priced" in md
+
+
+def test_pick_a_brick_price(engine, tmp_path):
+    """The Pick a Brick price: each element at its price that day; a line Pick a Brick doesn't
+    sell is named, and a Standard (not Bestseller) piece is pointed out."""
+    from brickkit.bom.price import estimate, headline, summary, write_estimate_md
+    lines = build_bom(make(engine).flatten(), engine.catalog)
+    a, b = lines[0], lines[1]
+    pab = {"day": "2026-10-14", "prices": {
+        a.element_id: {"ok": True, "usd": 0.25, "bestseller": True},
+        b.element_id: {"ok": True, "usd": 0.1, "bestseller": False}}}
+    s = summary(estimate(lines, engine.catalog, None, pab), None, "2026-10-14")
+    pb = s["pick_a_brick"]
+    assert pb["usd"] == round(0.25 * a.qty + 0.1 * b.qty, 2) and pb["date"] == "2026-10-14"
+    assert pb["lines"] == 2 and not pb["missing"] and len(pb["standard"]) == 1
+    assert s["bricklink"] is None and "Pick a Brick $" in headline(s)
+    gone = {"day": "2026-10-14", "prices": {a.element_id: {"ok": False, "error": "not on Pick a Brick"},
+                                             b.element_id: {"ok": True, "usd": 0.1, "bestseller": True}}}
+    priced = estimate(lines, engine.catalog, None, gone)
+    pb = summary(priced, None, "2026-10-14")["pick_a_brick"]
+    assert pb["lines"] == 1 and len(pb["missing"]) == 1 and not pb["standard"]
+    write_estimate_md("Test", priced, tmp_path / "p.md", pab_day="2026-10-14")
+    md = (tmp_path / "p.md").read_text()
+    assert "**Pick a Brick: $" in md and "Not sold there" in md and "one parcel" in md
 
 
 def test_bricklink_oauth_header(monkeypatch):

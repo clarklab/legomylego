@@ -267,7 +267,7 @@ function renderDownloads() {
     out.push(item('pick_a_brick_csv', 'cart', 'Pick a Brick list (.csv)', 'LEGO element IDs and quantities'));
     out.push(item('parts_csv', 'list', 'Parts list (.csv)', 'Every part, colour and quantity'));
   }
-  out.push(item('price_estimate', 'tag', 'Price estimate (.md)', 'Rough cost range, line by line', '', { newTab: true }));
+  out.push(item('price_estimate', 'tag', 'Prices (.md)', 'BrickLink and Pick a Brick, line by line', '', { newTab: true }));
   out.push(item('glb', 'cube', '3D model (.glb)', 'For 3D viewers and Blender', 'dark'));
   $('#downloads-grid').innerHTML = out.join('');
   const def = d.variants?.[0]?.title || 'default';
@@ -441,9 +441,10 @@ function flashRow(part, name, colour) {
   }, reduceMotion ? 0 : 450);
 }
 
-// ---------- price estimate ----------
-// Uses a structured `price` {low, high, currency, note} if the export provides one, else the first
-// paragraphs of files.price_estimate (markdown written by brickkit).
+// ---------- price ----------
+// Two prices when brickkit had them: `price.bricklink` {usd, date, missing} (BrickLink's price
+// guide) and `price.pick_a_brick` {usd, date, missing, standard} (LEGO Pick a Brick). Without
+// them, the rough range {low, high, note}, else the first paragraphs of files.price_estimate.
 
 function mdInline(s) {
   return esc(s).replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>').replace(/`([^`]+)`/g, '<code>$1</code>').replace(/\*(.+?)\*/g, '<em>$1</em>');
@@ -460,10 +461,36 @@ function hardwareNote(d) {
   }).join(' ');
 }
 
+function twoPrices(p) {
+  const bl = p.bricklink, pb = p.pick_a_brick;
+  if (!bl && !pb) return null;
+  const cents = (v) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(v);
+  const whole = (v) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(v);
+  const day = (t) => (t ? ` on ${esc(fmtDay(t))}` : '');
+  const heads = [], notes = [], shorts = [];
+  if (bl) {
+    heads.push(`<strong>${cents(bl.usd)}</strong> on BrickLink`);
+    shorts.push(`${whole(bl.usd)} BrickLink`);
+    notes.push(`BrickLink: new parts at the average each sold for over the last six months, from its price guide${day(bl.date)}.`
+      + (bl.missing?.length ? ` ${plural(bl.missing.length, 'line')} had no BrickLink price and ${bl.missing.length === 1 ? 'is' : 'are'} left out.` : ''));
+  }
+  if (pb) {
+    heads.push(`<strong>${cents(pb.usd)}</strong> on LEGO Pick a Brick`);
+    shorts.push(`${whole(pb.usd)} Pick a Brick`);
+    notes.push(`Pick a Brick: LEGO's own prices${day(pb.date)}`
+      + (pb.missing?.length ? `; ${plural(pb.missing.length, 'line')} ${pb.missing.length === 1 ? 'isn’t' : 'aren’t'} sold there (get ${pb.missing.length === 1 ? 'it' : 'them'} on BrickLink)` : ', every line sold there')
+      + (pb.standard?.length ? `; ${plural(pb.standard.length, 'line')} ${pb.standard.length === 1 ? 'comes' : 'come'} later, in a parcel of ${pb.standard.length === 1 ? 'its' : 'their'} own.` : ', all in one parcel.'));
+  }
+  return { head: `${heads.join(' · ')}, before shipping.`, note: notes.map(esc).join(' '), short: shorts.join(' · ') };
+}
+
 async function renderPrice(d) {
   const f = d.files || {};
   let head = '', note = '', short = '';
-  if (d.price && d.price.low != null) {
+  const two = d.price ? twoPrices(d.price) : null;
+  if (two) {
+    ({ head, note, short } = two);
+  } else if (d.price && d.price.low != null) {
     const money = (v) => new Intl.NumberFormat('en-US', { style: 'currency', currency: d.price.currency || 'USD', maximumFractionDigits: 0 }).format(v);
     short = `${money(d.price.low)} – ${money(d.price.high)}`;
     head = `<strong>Roughly ${short}</strong> in new parts, before shipping.`;
@@ -495,7 +522,7 @@ async function renderPrice(d) {
   if (short) {
     const el = $('#price-summary');
     if (!el) return;
-    el.innerHTML = `<span class="ring price">${icon('cart')}</span><span><strong>${esc(short)}</strong><span>Estimated parts cost, before shipping</span></span><span class="chev">${icon('chevronRight')}</span>`;
+    el.innerHTML = `<span class="ring price">${icon('cart')}</span><span><strong>${esc(short)}</strong><span>${two ? 'Parts, new, before shipping' : 'Estimated parts cost, before shipping'}</span></span><span class="chev">${icon('chevronRight')}</span>`;
     el.hidden = false;
   }
 }
