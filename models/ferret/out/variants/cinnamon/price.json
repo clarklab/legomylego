@@ -16,25 +16,19 @@
   "basis": "new parts, the average each sold for over the last six months (the average asking price where nothing sold), before shipping"
  },
  "pick_a_brick": {
-  "usd": 90.86,
+  "usd": 96.2,
   "date": "2026-10-14",
-  "lines": 77,
+  "lines": 83,
   "of": 83,
-  "missing": [
-   "1 x Turntable 2 x 2 Plate, Base (3680), Black",
-   "2 x Bar 3L (87994), Black",
-   "35 x Brick 1 x 2 (3004), Reddish Brown",
-   "12 x Plate 2 x 2 (3022), Reddish Brown",
-   "2 x Plate 2 x 2 (3022), White",
-   "3 x Plate 1 x 4 (3710), White"
-  ],
+  "missing": [],
   "standard": [
    "1 x Tile Round 1 x 1 Half Circle (24246), Coral",
    "1 x Tile Round 1 x 2 Half Circle (1748), Dark Pink",
    "1 x Turntable 2 x 2 Plate - Top (3679), Light Bluish Gray",
    "25 x Plate 1 x 2 (3023), Medium Nougat",
    "12 x Brick Curved 3 x 1 No Studs (50950), Medium Nougat",
-   "2 x Brick Curved 2 x 2 x 2/3 (15068), Reddish Brown"
+   "2 x Brick Curved 2 x 2 x 2/3 (15068), Reddish Brown",
+   "12 x Plate 2 x 2 (3022), Reddish Brown"
   ],
   "basis": "LEGO Pick a Brick, US shop, before shipping"
  }

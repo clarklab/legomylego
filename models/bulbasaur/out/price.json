@@ -16,16 +16,16 @@
   "basis": "new parts, the average each sold for over the last six months (the average asking price where nothing sold), before shipping"
  },
  "pick_a_brick": {
-  "usd": 4.41,
+  "usd": 4.69,
   "date": "2026-10-14",
-  "lines": 18,
+  "lines": 19,
   "of": 21,
   "missing": [
-   "4 x Brick 1 x 1 (3005), Dark Turquoise",
    "1 x Plate 4 x 6 (3032), Dark Turquoise",
    "4 x Brick Round, Curved 2 x 2 x 1 1/3, Corner (67810), Green"
   ],
   "standard": [
+   "4 x Brick 1 x 1 (3005), Dark Turquoise",
    "6 x Brick Special 1 x 1 with Stud on 1 Side (87087), Dark Turquoise"
   ],
   "basis": "LEGO Pick a Brick, US shop, before shipping"

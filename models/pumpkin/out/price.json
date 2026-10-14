@@ -16,12 +16,11 @@
   "basis": "new parts, the average each sold for over the last six months (the average asking price where nothing sold), before shipping"
  },
  "pick_a_brick": {
-  "usd": 4.44,
+  "usd": 4.71,
   "date": "2026-10-14",
-  "lines": 19,
+  "lines": 20,
   "of": 22,
   "missing": [
-   "3 x Plate 2 x 2 (3022), Orange",
    "4 x Plate 4 x 4 (3031), Orange",
    "2 x Plate Special 1 x 2 with 1 Stud with Groove (Jumper) (3794b), Orange"
   ],

@@ -16,15 +16,15 @@
   "basis": "new parts, the average each sold for over the last six months (the average asking price where nothing sold), before shipping"
  },
  "pick_a_brick": {
-  "usd": 3.77,
+  "usd": 3.91,
   "date": "2026-10-14",
-  "lines": 18,
+  "lines": 19,
   "of": 20,
   "missing": [
-   "2 x Brick 1 x 1 (3005), Dark Turquoise",
    "2 x Tile Round 1 x 1 with Black Off-Center Dot/Circle/Eye print (98138pb265), White"
   ],
   "standard": [
+   "2 x Brick 1 x 1 (3005), Dark Turquoise",
    "3 x Tile 1 x 3 (63864), Dark Turquoise",
    "6 x Brick Special 1 x 1 with Stud on 1 Side (87087), Dark Turquoise",
    "1 x Tile Round 1 x 1 with Thin Black Halve Circle / Closed Eye print (98138pb364), White"

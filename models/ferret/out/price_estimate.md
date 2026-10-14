@@ -4,7 +4,7 @@
 
 **BrickLink: $70.74** for new parts, before shipping, from BrickLink's price guide on 2026-10-14: each line at the average it sold for over the last six months (the average asking price where nothing sold), weighted by quantity.
 
-**Pick a Brick: $90.01** at LEGO Pick a Brick (US shop) on 2026-10-14, before shipping. Not sold there: 1 x Turntable 2 x 2 Plate, Base (3680), Black; 2 x Bar 3L (87994), Black; 19 x Brick 2 x 4 (3001), Dark Brown; 12 x Brick Curved 3 x 1 No Studs (50950), Tan; 2 x Plate 2 x 2 (3022), White; 3 x Plate 1 x 4 (3710), White. Standard pieces, sent later in a parcel of their own: 1 x Tile Round 1 x 1 Half Circle (24246), Coral; 1 x Turntable 2 x 2 Plate - Top (3679), Light Bluish Gray.
+**Pick a Brick: $92.21** at LEGO Pick a Brick (US shop) on 2026-10-14, before shipping. Not sold there: 19 x Brick 2 x 4 (3001), Dark Brown. Standard pieces, sent later in a parcel of their own: 1 x Tile Round 1 x 1 Half Circle (24246), Coral; 1 x Turntable 2 x 2 Plate - Top (3679), Light Bluish Gray.
 
 Order with `bricklink_wanted.xml` (upload as a BrickLink Wanted List, then Easy Buy) or `pick_a_brick.csv` (upload on Pick a Brick).
 
@@ -36,7 +36,7 @@ Order with `bricklink_wanted.xml` (upload as a BrickLink Wanted List, then Easy 
 | 25 | 3023 Plate 1 x 2 | Tan | 0.04 | 0.98 | 0.08 | 2.00 |
 | 15 | 3003 Brick 2 x 2 | Tan | 0.06 | 0.90 | 0.13 | 1.95 |
 | 4 | 3623 Plate 1 x 3 | Dark Brown | 0.22 | 0.88 | 0.08 | 0.32 |
-| 12 | 50950 Brick Curved 3 x 1 No Studs | Tan | 0.07 | 0.80 | - | - |
+| 12 | 50950 Brick Curved 3 x 1 No Studs | Tan | 0.07 | 0.80 | 0.12 | 1.44 |
 | 6 | 3004 Brick 1 x 2 | Light Bluish Gray | 0.10 | 0.61 | 0.10 | 0.60 |
 | 8 | 3795 Plate 2 x 6 | Tan | 0.07 | 0.60 | 0.19 | 1.52 |
 | 3 | 3010 Brick 1 x 4 | Light Bluish Gray | 0.14 | 0.42 | 0.15 | 0.45 |
@@ -54,13 +54,13 @@ Order with `bricklink_wanted.xml` (upload as a BrickLink Wanted List, then Easy 
 | 3 | 3020 Plate 2 x 4 | Dark Brown | 0.07 | 0.21 | 0.14 | 0.42 |
 | 2 | 15068 Brick Curved 2 x 2 x 2/3 | Dark Brown | 0.10 | 0.19 | 0.12 | 0.24 |
 | 2 | 3021 Plate 2 x 3 | White | 0.10 | 0.19 | 0.13 | 0.26 |
-| 3 | 3710 Plate 1 x 4 | White | 0.06 | 0.19 | - | - |
+| 3 | 3710 Plate 1 x 4 | White | 0.06 | 0.19 | 0.11 | 0.33 |
 | 4 | 3023 Plate 1 x 2 | White | 0.05 | 0.18 | 0.08 | 0.32 |
 | 3 | 3795 Plate 2 x 6 | Dark Brown | 0.05 | 0.15 | 0.19 | 0.57 |
 | 4 | 3024 Plate 1 x 1 | White | 0.04 | 0.15 | 0.06 | 0.24 |
 | 3 | 3020 Plate 2 x 4 | Tan | 0.04 | 0.13 | 0.14 | 0.42 |
 | 1 | 3001 Brick 2 x 4 | White | 0.12 | 0.12 | 0.21 | 0.21 |
-| 2 | 87994 Bar 3L | Black | 0.06 | 0.12 | - | - |
+| 2 | 87994 Bar 3L | Black | 0.06 | 0.12 | 0.07 | 0.14 |
 | 1 | 3666 Plate 1 x 6 | White | 0.12 | 0.12 | 0.16 | 0.16 |
 | 2 | 3710 Plate 1 x 4 | Dark Brown | 0.05 | 0.11 | 0.11 | 0.22 |
 | 2 | 4740 Dish 2 x 2 Inverted [Radar] | White | 0.05 | 0.10 | 0.06 | 0.12 |
@@ -68,13 +68,13 @@ Order with `bricklink_wanted.xml` (upload as a BrickLink Wanted List, then Easy 
 | 2 | 15712 Tile Special 1 x 1 with Clip with Rounded Edges | White | 0.05 | 0.09 | 0.13 | 0.26 |
 | 2 | 85984 Brick Sloped 30° 1 x 2 x 2/3 | Dark Brown | 0.04 | 0.09 | 0.08 | 0.16 |
 | 1 | 87087 Brick Special 1 x 1 with Stud on 1 Side | White | 0.09 | 0.09 | 0.11 | 0.11 |
-| 1 | 3680 Turntable 2 x 2 Plate, Base | Black | 0.08 | 0.08 | - | - |
+| 1 | 3680 Turntable 2 x 2 Plate, Base | Black | 0.08 | 0.08 | 0.11 | 0.11 |
 | 1 | 11211 Brick Special 1 x 2 with 2 Studs on 1 Side | White | 0.08 | 0.08 | 0.13 | 0.13 |
 | 2 | 3023 Plate 1 x 2 | Dark Brown | 0.04 | 0.08 | 0.08 | 0.16 |
 | 2 | 4740 Dish 2 x 2 Inverted [Radar] | Black | 0.04 | 0.08 | 0.06 | 0.12 |
 | 2 | 3069 Tile 1 x 2 with Groove | White | 0.04 | 0.07 | 0.08 | 0.16 |
 | 1 | 3710 Plate 1 x 4 | Light Bluish Gray | 0.07 | 0.07 | 0.11 | 0.11 |
-| 2 | 3022 Plate 2 x 2 | White | 0.03 | 0.07 | - | - |
+| 2 | 3022 Plate 2 x 2 | White | 0.03 | 0.07 | 0.09 | 0.18 |
 | 1 | 3460 Plate 1 x 8 | Dark Brown | 0.06 | 0.06 | 0.18 | 0.18 |
 | 2 | 32828 Plate Special Round 1 x 1 with Hollow Stud and Horizontal Bar 1L | Tan | 0.03 | 0.06 | 0.06 | 0.12 |
 | 2 | 32828 Plate Special Round 1 x 1 with Hollow Stud and Horizontal Bar 1L | Black | 0.03 | 0.06 | 0.06 | 0.12 |

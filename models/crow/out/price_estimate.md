@@ -4,7 +4,7 @@
 
 **BrickLink: $3.63** for new parts, before shipping, from BrickLink's price guide on 2026-10-14: each line at the average it sold for over the last six months (the average asking price where nothing sold), weighted by quantity.
 
-**Pick a Brick: $2.30** at LEGO Pick a Brick (US shop) on 2026-10-14, before shipping. Not sold there: 2 x Plate Special 1 x 1 with Clip Vertical [Thick U Clip] (4085c), Black; 1 x Brick Curved 1 x 2 x 1 1/3 with Curved Top (6091), Black; 2 x Tile Round 1 x 1 with Half Open Eye print (98138pb098), White; 2 x Plate Special 1 x 2, Top Clip [Split] (92280), Yellow. All of it is in the Bestseller range, so it comes as one parcel.
+**Pick a Brick: $2.39** at LEGO Pick a Brick (US shop) on 2026-10-14, before shipping. Not sold there: 2 x Plate Special 1 x 1 with Clip Vertical [Thick U Clip] (4085c), Black; 2 x Tile Round 1 x 1 with Half Open Eye print (98138pb098), White; 2 x Plate Special 1 x 2, Top Clip [Split] (92280), Yellow. All of it is in the Bestseller range, so it comes as one parcel.
 
 Order with `bricklink_wanted.xml` (upload as a BrickLink Wanted List, then Easy Buy) or `pick_a_brick.csv` (upload on Pick a Brick).
 
@@ -17,7 +17,7 @@ Order with `bricklink_wanted.xml` (upload as a BrickLink Wanted List, then Easy 
 | 2 | 26047 Plate Special 1 x 1 Rounded with Handle | Black | 0.08 | 0.16 | 0.08 | 0.16 |
 | 1 | 47457 Brick Curved 2 x 2 x 2/3 Two Studs and Curved Slope End | Black | 0.14 | 0.14 | 0.15 | 0.15 |
 | 1 | 47905 Brick Special 1 x 1 with Studs on 2 Sides | Black | 0.13 | 0.13 | 0.12 | 0.12 |
-| 1 | 6091 Brick Curved 1 x 2 x 1 1/3 with Curved Top | Black | 0.08 | 0.08 | - | - |
+| 1 | 6091 Brick Curved 1 x 2 x 1 1/3 with Curved Top | Black | 0.08 | 0.08 | 0.09 | 0.09 |
 | 2 | 92280 Plate Special 1 x 2, Top Clip [Split] | Yellow | 0.04 | 0.08 | - | - |
 | 1 | 99781 Bracket 1 x 2 - 1 x 2 | Black | 0.08 | 0.08 | 0.11 | 0.11 |
 | 1 | 15573 Plate Special 1 x 2 with 1 Stud with Groove and Inside Stud Holder (Jumper) | Dark Bluish Gray | 0.06 | 0.06 | 0.06 | 0.06 |

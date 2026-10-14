@@ -32,13 +32,11 @@
           "basis": "new parts, the average each sold for over the last six months (the average asking price where nothing sold), before shipping"
         },
         "pick_a_brick": {
-          "usd": 2.84,
+          "usd": 3.04,
           "date": "2026-10-14",
-          "lines": 12,
+          "lines": 13,
           "of": 13,
-          "missing": [
-            "2 x Brick 1 x 2 (3004), Lime"
-          ],
+          "missing": [],
           "standard": [
             "1 x Brick 1 x 2 with Black Curved Line / Smile print (3004pb302), Lime",
             "4 x Brick Sloped Inverted 45\u00b0 2 x 1 (3665), Lime",
@@ -218,12 +216,11 @@
           "basis": "new parts, the average each sold for over the last six months (the average asking price where nothing sold), before shipping"
         },
         "pick_a_brick": {
-          "usd": 2.03,
+          "usd": 2.13,
           "date": "2026-10-14",
-          "lines": 12,
+          "lines": 13,
           "of": 14,
           "missing": [
-            "1 x Brick 1 x 2 (3004), White",
             "1 x Brick 1 x 2 with Black Curved Line / Smile print (3004pb302), White"
           ],
           "standard": [],
@@ -275,15 +272,15 @@
           "basis": "new parts, the average each sold for over the last six months (the average asking price where nothing sold), before shipping"
         },
         "pick_a_brick": {
-          "usd": 3.77,
+          "usd": 3.91,
           "date": "2026-10-14",
-          "lines": 18,
+          "lines": 19,
           "of": 20,
           "missing": [
-            "2 x Brick 1 x 1 (3005), Dark Turquoise",
             "2 x Tile Round 1 x 1 with Black Off-Center Dot/Circle/Eye print (98138pb265), White"
           ],
           "standard": [
+            "2 x Brick 1 x 1 (3005), Dark Turquoise",
             "3 x Tile 1 x 3 (63864), Dark Turquoise",
             "6 x Brick Special 1 x 1 with Stud on 1 Side (87087), Dark Turquoise",
             "1 x Tile Round 1 x 1 with Thin Black Halve Circle / Closed Eye print (98138pb364), White"
@@ -336,16 +333,16 @@
           "basis": "new parts, the average each sold for over the last six months (the average asking price where nothing sold), before shipping"
         },
         "pick_a_brick": {
-          "usd": 4.41,
+          "usd": 4.69,
           "date": "2026-10-14",
-          "lines": 18,
+          "lines": 19,
           "of": 21,
           "missing": [
-            "4 x Brick 1 x 1 (3005), Dark Turquoise",
             "1 x Plate 4 x 6 (3032), Dark Turquoise",
             "4 x Brick Round, Curved 2 x 2 x 1 1/3, Corner (67810), Green"
           ],
           "standard": [
+            "4 x Brick 1 x 1 (3005), Dark Turquoise",
             "6 x Brick Special 1 x 1 with Stud on 1 Side (87087), Dark Turquoise"
           ],
           "basis": "LEGO Pick a Brick, US shop, before shipping"
@@ -396,33 +393,25 @@
           "basis": "new parts, the average each sold for over the last six months (the average asking price where nothing sold), before shipping"
         },
         "pick_a_brick": {
-          "usd": 872.63,
+          "usd": 917.55,
           "date": "2026-10-14",
-          "lines": 149,
+          "lines": 159,
           "of": 164,
           "missing": [
-            "8 x Brick 2 x 2 (3003), Black",
-            "1 x Top Hat (3878), Black",
-            "16 x Glass for Window 1 x 2 x 3 Flat Front (60602), Black",
-            "5 x Bar 3L (87994), Black",
             "1 x Hips and Dark Brown Legs (970c00), Dark Brown",
             "12 x Plate Round 6 x 6 with Hole (11213), Dark Red",
             "8 x Brick Arch 1 x 6 x 2 - Thin Top without Reinforced Underside [New Version] (15254), Dark Red",
             "16 x Tile 4 x 4 Curved, Macaroni (27507), Dark Red",
-            "2 x Brick 1 x 4 (3010), Dark Red",
-            "188 x Brick Sloped Inverted 45\u00b0 2 x 1 (3665), Dark Red",
-            "16 x Brick Sloped 30\u00b0 1 x 1 x 2/3 (Cheese Slope) (54200), Dark Red",
-            "4 x Plate 6 x 16 (3027), Green",
-            "4 x Tile, Star with Stud Holder, Pin Hole (11609), Red",
-            "36 x Glass for Window 1 x 2 x 2 Flat (60601), Trans-Clear",
-            "72 x Glass for Window 1 x 2 x 3 Flat Front (60602), Trans-Clear"
+            "4 x Tile, Star with Stud Holder, Pin Hole (11609), Red"
           ],
           "standard": [
+            "16 x Glass for Window 1 x 2 x 3 Flat Front (60602), Black",
             "92 x Brick Arch 1 x 4 (3659), Dark Red",
             "15 x Plate 1 x 12 (60479), Dark Red",
             "48 x Plate Round Corner 3 x 3 with 2 x 2 Round Cutout (68568), Dark Red",
             "4 x Plant, Plate 1 x 1 Round with 3 Leaves (32607), Olive Green",
-            "4 x Dish 2 x 2 Inverted [Radar] (4740), Tan"
+            "4 x Dish 2 x 2 Inverted [Radar] (4740), Tan",
+            "72 x Glass for Window 1 x 2 x 3 Flat Front (60602), Trans-Clear"
           ],
           "basis": "LEGO Pick a Brick, US shop, before shipping"
         },
@@ -481,12 +470,11 @@
           "basis": "new parts, the average each sold for over the last six months (the average asking price where nothing sold), before shipping"
         },
         "pick_a_brick": {
-          "usd": 11.33,
+          "usd": 11.68,
           "date": "2026-10-14",
-          "lines": 21,
+          "lines": 22,
           "of": 23,
           "missing": [
-            "1 x Top Hat (3878), Black",
             "1 x Hips and Dark Brown Legs (970c00), Dark Brown"
           ],
           "standard": [],
@@ -524,14 +512,41 @@
         114.2
       ],
       "price": {
-        "low": 30.95,
-        "high": 113.28,
+        "low": 100.79,
+        "high": 152.32,
         "currency": "USD",
-        "note": "A rough range from typical BrickLink prices per part type, not live market data.",
-        "source": "estimate",
-        "date": null,
-        "live_lines": 0,
-        "lines": 193
+        "note": "BrickLink price guide, 2026-10-14: 193 of 193 part lines priced live (six-month sold average to current asking average, new, USD).",
+        "source": "bricklink",
+        "date": "2026-10-14",
+        "live_lines": 193,
+        "lines": 193,
+        "bricklink": {
+          "usd": 100.79,
+          "date": "2026-10-14",
+          "lines": 193,
+          "of": 193,
+          "missing": [],
+          "basis": "new parts, the average each sold for over the last six months (the average asking price where nothing sold), before shipping"
+        },
+        "pick_a_brick": {
+          "usd": 122.3,
+          "date": "2026-10-14",
+          "lines": 188,
+          "of": 193,
+          "missing": [
+            "16 x Technic Brick 1 x 1 with Pin Hole (6541), Dark Blue",
+            "2 x Technic Brick Special 2 x 2 with Ball Socket Wide and Axle Hole, No Arm Holes (67696), Dark Blue",
+            "2 x Brick 2 x 4 (3001), Dark Brown",
+            "1 x Brick Special 2 x 4 with 3 Axle Holes (39789), White",
+            "2 x Plate 6 x 6 (3958), Yellow"
+          ],
+          "standard": [
+            "2 x Tile 1 x 2 with Groove (3069), Tan",
+            "4 x Brick Curved 2 x 2 x 2/3 (15068), White",
+            "3 x Plate 2 x 6 (3795), Yellow"
+          ],
+          "basis": "LEGO Pick a Brick, US shop, before shipping"
+        }
       },
       "features": {
         "mechanism": true,
@@ -635,13 +650,11 @@
           "basis": "new parts, the average each sold for over the last six months (the average asking price where nothing sold), before shipping"
         },
         "pick_a_brick": {
-          "usd": 3.71,
+          "usd": 4.0,
           "date": "2026-10-14",
-          "lines": 17,
+          "lines": 19,
           "of": 20,
           "missing": [
-            "2 x Brick 1 x 2 (3004), Orange",
-            "1 x Plate 2 x 2 (3022), Orange",
             "1 x Animal Body Part / Plant, Tail / Claw / Horn / Branch / Tentacle, End Section (40379), Orange"
           ],
           "standard": [
@@ -695,13 +708,12 @@
           "basis": "new parts, the average each sold for over the last six months (the average asking price where nothing sold), before shipping"
         },
         "pick_a_brick": {
-          "usd": 2.3,
+          "usd": 2.39,
           "date": "2026-10-14",
-          "lines": 17,
+          "lines": 18,
           "of": 21,
           "missing": [
             "2 x Plate Special 1 x 1 with Clip Vertical [Thick U Clip] (4085c), Black",
-            "1 x Brick Curved 1 x 2 x 1 1/3 with Curved Top (6091), Black",
             "2 x Tile Round 1 x 1 with Half Open Eye print (98138pb098), White",
             "2 x Plate Special 1 x 2, Top Clip [Split] (92280), Yellow"
           ],
@@ -754,14 +766,12 @@
           "basis": "new parts, the average each sold for over the last six months (the average asking price where nothing sold), before shipping"
         },
         "pick_a_brick": {
-          "usd": 2.96,
+          "usd": 3.24,
           "date": "2026-10-14",
-          "lines": 19,
+          "lines": 21,
           "of": 23,
           "missing": [
-            "1 x Brick 1 x 2 (3004), Orange",
             "2 x Brick Sloped Inverted 45\u00b0 2 x 1 (3665), Orange",
-            "2 x Plate 2 x 2 (3022), Red",
             "2 x Brick Special 1 x 2 with Pin (2458), Tan"
           ],
           "standard": [
@@ -871,17 +881,12 @@
           "basis": "new parts, the average each sold for over the last six months (the average asking price where nothing sold), before shipping"
         },
         "pick_a_brick": {
-          "usd": 90.01,
+          "usd": 92.21,
           "date": "2026-10-14",
-          "lines": 66,
+          "lines": 71,
           "of": 72,
           "missing": [
-            "1 x Turntable 2 x 2 Plate, Base (3680), Black",
-            "2 x Bar 3L (87994), Black",
-            "19 x Brick 2 x 4 (3001), Dark Brown",
-            "12 x Brick Curved 3 x 1 No Studs (50950), Tan",
-            "2 x Plate 2 x 2 (3022), White",
-            "3 x Plate 1 x 4 (3710), White"
+            "19 x Brick 2 x 4 (3001), Dark Brown"
           ],
           "standard": [
             "1 x Tile Round 1 x 1 Half Circle (24246), Coral",
@@ -920,14 +925,40 @@
         38.4
       ],
       "price": {
-        "low": 5.72,
-        "high": 20.61,
+        "low": 15.68,
+        "high": 23.57,
         "currency": "USD",
-        "note": "A rough range from typical BrickLink prices per part type, not live market data.",
-        "source": "estimate",
-        "date": null,
-        "live_lines": 0,
-        "lines": 59
+        "note": "BrickLink price guide, 2026-10-14: 59 of 59 part lines priced live (six-month sold average to current asking average, new, USD).",
+        "source": "bricklink",
+        "date": "2026-10-14",
+        "live_lines": 59,
+        "lines": 59,
+        "bricklink": {
+          "usd": 15.68,
+          "date": "2026-10-14",
+          "lines": 59,
+          "of": 59,
+          "missing": [],
+          "basis": "new parts, the average each sold for over the last six months (the average asking price where nothing sold), before shipping"
+        },
+        "pick_a_brick": {
+          "usd": 13.08,
+          "date": "2026-10-14",
+          "lines": 59,
+          "of": 59,
+          "missing": [],
+          "standard": [
+            "1 x Wedge Plate 2 x 4 (51739), Green",
+            "1 x Turntable 2 x 2 Plate - Top (3679), Light Bluish Gray",
+            "1 x Plate Special 1 x 2 with Clip Horizontal on Side (11476), Light Nougat",
+            "22 x Brick Round 1 x 1 Open Stud (3062), Light Nougat",
+            "1 x Brick Curved 2 x 4 x 2/3 No Studs, with Bottom Tubes (88930), Lime",
+            "2 x Technic Brick 1 x 2 [1 Pin Hole] (3700), Medium Azure",
+            "2 x Technic Brick 1 x 1 with Pin Hole (6541), Medium Azure",
+            "2 x Brick Curved 2 x 2 x 2/3 (15068), White"
+          ],
+          "basis": "LEGO Pick a Brick, US shop, before shipping"
+        }
       },
       "features": {
         "mechanism": false,
@@ -1028,14 +1059,14 @@
           "basis": "new parts, the average each sold for over the last six months (the average asking price where nothing sold), before shipping"
         },
         "pick_a_brick": {
-          "usd": 3.79,
+          "usd": 3.97,
           "date": "2026-10-14",
-          "lines": 24,
+          "lines": 25,
           "of": 25,
-          "missing": [
+          "missing": [],
+          "standard": [
             "2 x Plate 2 x 2 (3022), Reddish Brown"
           ],
-          "standard": [],
           "basis": "LEGO Pick a Brick, US shop, before shipping"
         }
       },
@@ -1140,16 +1171,12 @@
           "basis": "new parts, the average each sold for over the last six months (the average asking price where nothing sold), before shipping"
         },
         "pick_a_brick": {
-          "usd": 14.38,
+          "usd": 21.38,
           "date": "2026-10-14",
-          "lines": 26,
+          "lines": 30,
           "of": 31,
           "missing": [
-            "30 x Plate Special 1 x 2 with 5.9mm Towball Socket and Towball (14419), Dark Bluish Gray",
-            "6 x Plate Special 1 x 2 5.9mm Centre Side Towball Socket (14704), Dark Bluish Gray",
-            "6 x Plate Special 1 x 2 with End Towball (22890), Dark Bluish Gray",
-            "1 x Brick Round 4 x 4 with 4 Side Pin Holes and Center Axle Hole (6222), Dark Bluish Gray",
-            "4 x Technic Pin 1/2 without Friction Ridges (4274), Light Bluish Gray"
+            "1 x Brick Round 4 x 4 with 4 Side Pin Holes and Center Axle Hole (6222), Dark Bluish Gray"
           ],
           "standard": [
             "1 x Brick Round 2 x 2 with Axle Hole (3941), Dark Bluish Gray",
@@ -1186,14 +1213,35 @@
         80.7
       ],
       "price": {
-        "low": 6.08,
-        "high": 21.32,
+        "low": 11.24,
+        "high": 18.58,
         "currency": "USD",
-        "note": "A rough range from typical BrickLink prices per part type, not live market data.",
-        "source": "estimate",
-        "date": null,
-        "live_lines": 0,
-        "lines": 39
+        "note": "BrickLink price guide, 2026-10-14: 39 of 39 part lines priced live (six-month sold average to current asking average, new, USD).",
+        "source": "bricklink",
+        "date": "2026-10-14",
+        "live_lines": 39,
+        "lines": 39,
+        "bricklink": {
+          "usd": 11.24,
+          "date": "2026-10-14",
+          "lines": 39,
+          "of": 39,
+          "missing": [],
+          "basis": "new parts, the average each sold for over the last six months (the average asking price where nothing sold), before shipping"
+        },
+        "pick_a_brick": {
+          "usd": 16.32,
+          "date": "2026-10-14",
+          "lines": 38,
+          "of": 39,
+          "missing": [
+            "1 x Plate 6 x 6 (3958), Yellow"
+          ],
+          "standard": [
+            "2 x Plate 2 x 6 (3795), Yellow"
+          ],
+          "basis": "LEGO Pick a Brick, US shop, before shipping"
+        }
       },
       "features": {
         "mechanism": false,
@@ -1240,14 +1288,11 @@
           "basis": "new parts, the average each sold for over the last six months (the average asking price where nothing sold), before shipping"
         },
         "pick_a_brick": {
-          "usd": 7.47,
+          "usd": 8.36,
           "date": "2026-10-14",
-          "lines": 21,
+          "lines": 23,
           "of": 23,
-          "missing": [
-            "3 x Brick 2 x 4 (3001), Blue",
-            "2 x Brick 2 x 2 (3003), White"
-          ],
+          "missing": [],
           "standard": [],
           "basis": "LEGO Pick a Brick, US shop, before shipping"
         }
@@ -1299,14 +1344,12 @@
           "basis": "new parts, the average each sold for over the last six months (the average asking price where nothing sold), before shipping"
         },
         "pick_a_brick": {
-          "usd": 3.26,
+          "usd": 3.51,
           "date": "2026-10-14",
-          "lines": 19,
+          "lines": 21,
           "of": 22,
           "missing": [
-            "1 x Bar 3L (87994), Black",
-            "1 x Equipment Dish Rectangular [Kitchen Implements Kit] (97785), Lavender",
-            "2 x Plate 2 x 2 (3022), Red"
+            "1 x Equipment Dish Rectangular [Kitchen Implements Kit] (97785), Lavender"
           ],
           "standard": [
             "3 x Brick Curved 2 x 2 with Lip, No Studs (30602), Red",
@@ -1361,16 +1404,11 @@
           "basis": "new parts, the average each sold for over the last six months (the average asking price where nothing sold), before shipping"
         },
         "pick_a_brick": {
-          "usd": 6.35,
+          "usd": 8.36,
           "date": "2026-10-14",
-          "lines": 19,
+          "lines": 23,
           "of": 23,
-          "missing": [
-            "3 x Brick 2 x 4 (3001), Blue",
-            "4 x Brick 2 x 2 Corner (2357), Red",
-            "4 x Brick 2 x 2 (3003), Red",
-            "2 x Brick 2 x 2 (3003), White"
-          ],
+          "missing": [],
           "standard": [],
           "basis": "LEGO Pick a Brick, US shop, before shipping"
         }
@@ -1403,74 +1441,54 @@
         272.0
       ],
       "price": {
-        "low": 846.4,
-        "high": 1226.51,
+        "low": 846.36,
+        "high": 1226.21,
         "currency": "USD",
-        "note": "BrickLink price guide, 2026-10-14: 406 of 408 part lines priced live (six-month sold average to current asking average, new, USD); the rest estimated from typical prices.",
+        "note": "BrickLink price guide, 2026-10-14: 407 of 408 part lines priced live (six-month sold average to current asking average, new, USD); the rest estimated from typical prices.",
         "source": "bricklink",
         "date": "2026-10-14",
-        "live_lines": 406,
+        "live_lines": 407,
         "lines": 408,
         "bricklink": {
-          "usd": 838.66,
+          "usd": 838.77,
           "date": "2026-10-14",
-          "lines": 406,
+          "lines": 407,
           "of": 408,
           "missing": [
-            "1 x Light Unit, LED with Black Cable, Power Functions (8870), Black",
-            "3 x Brick Sloped Inverted 34\u00b0 3 x 1 with Internal Stopper (4287b), Reddish Brown"
+            "1 x Light Unit, LED with Black Cable, Power Functions (8870), Black"
           ],
           "basis": "new parts, the average each sold for over the last six months (the average asking price where nothing sold), before shipping"
         },
         "pick_a_brick": {
-          "usd": 982.67,
+          "usd": 1019.37,
           "date": "2026-10-14",
-          "lines": 359,
+          "lines": 378,
           "of": 408,
           "missing": [
             "1 x Equipment Magnifying Glass with Thick Frame, Solid Handle, Trans-Clear Lens Pattern (10830c01), Black",
-            "75 x Brick 2 x 2 (3003), Black",
             "1 x Weapon Spear Gun with Rounded Trigger and Thin Spear Base (30088), Black",
             "1 x Hips and Black Legs (970c00), Black",
             "1 x Light Unit, LED with Black Cable, Power Functions (8870), Black",
             "1 x Torso Boat Captain, Suit Double Breasted and Gold Anchor Logo Print, Black Arms, Yellow Hands (973pb0049c01), Black",
-            "6 x Brick 2 x 4 (3001), Blue",
-            "2 x Brick 2 x 2 (3003), Blue",
-            "18 x Brick 1 x 2 (3004), Blue",
             "1 x Brick 1 x 8 (3008), Blue",
-            "4 x Brick 2 x 4 (3001), Dark Azure",
-            "3 x Brick 2 x 2 (3003), Dark Azure",
             "1 x Plate Round 4 x 4 with 2 x 2 Round Opening (11833), Dark Blue",
             "1 x Hips and Dark Blue Legs (970c00), Dark Blue",
             "1 x Hips and Medium Nougat Legs with Reddish Brown Kneepads Print (970c150pb02), Dark Bluish Gray",
-            "31 x Tile 1 x 8 with Groove (4162), Dark Bluish Gray",
             "1 x Wire with Brick 2 x 2 x 2/3 with 1 x 2 Studs and Power Functions and 9V Connectors, 50cm, One Light Bluish Gray End (58118), Dark Bluish Gray",
-            "1 x Brick 1 x 4 (3010), Dark Red",
-            "1 x Plate 2 x 4 (3020), Dark Tan",
             "1 x Tile 2 x 2 with Sailing Ship and Moon Print (3068pb0408), Dark Tan",
             "1 x Hips and Light Bluish Gray Legs (970c00), Light Bluish Gray",
             "1 x Battery Box, Power Functions, with Dark Bluish Gray Bottom [Non-Rechargeable] (87513c01), Light Bluish Gray",
-            "16 x Tile Round 1 x 1 Quarter (25269), Medium Azure",
             "1 x Torso Diving Suit with Crossed Belts and Weight Belt Print, Medium Nougat Arms, Dark Bluish Gray Hands (973pb1240c01), Medium Nougat",
             "1 x Helmet Underwater Deep Diver with Trans-Clear Glass (10165c01), Pearl Gold",
-            "1 x Bar, Ring 7L Diameter, with 2 Axle Connectors (79851), Pearl Gold",
             "1 x Animal Body Part / Plant, Tail / Neck / Branch / Trunk, Middle Section with Pin, Round Pin Hole (40378), Red",
             "1 x Animal / Creature Body Part, Tail / Claw / Horn / Branch / Tentacle, End Section, Large (67361), Red",
-            "2 x Wedge Plate 3 x 3 Cut Corner (2450), Reddish Brown",
-            "18 x Brick 2 x 6 (2456), Reddish Brown",
-            "30 x Brick 1 x 2 (3004), Reddish Brown",
-            "48 x Plate 2 x 2 (3022), Reddish Brown",
             "5 x Brick Sloped 45\u00b0 2 x 4 (3037), Reddish Brown",
             "1 x Tile 2 x 2 with Portrait of Male Minifig with Gray Hair and Beard, Black Suit print (3068pb0699), Reddish Brown",
-            "3 x Brick 1 x 3 (3622), Reddish Brown",
             "1 x Brick Wedged, Curved 6 x 2 Right, Inner Ridges (41747), Reddish Brown",
             "1 x Brick Wedged, Curved 6 x 2 Left, Inner Ridges (41748), Reddish Brown",
-            "3 x Brick Sloped Inverted 34\u00b0 3 x 1 with Internal Stopper (4287b), Reddish Brown",
             "1 x Tile 2 x 2 with Nautical Map and Red 'X' Print (3068pb0315), Tan",
             "2 x Windscreen 6 x 6 x 3 Canopy Half Sphere with Dual 2 Fingers (50747), Trans-Clear",
-            "2 x Dome Hemisphere 4 x 4 (86500), Trans-Clear",
             "8 x Brick Curved 3 x 2 No Studs (24309), White",
-            "5 x Plate 2 x 2 (3022), White",
             "1 x Tile 2 x 2 with Music Sheet Print (3068pb1291), White",
             "1 x Torso Tank Top with Blue and White Stripes, Belt Print, Yellow Arms and Hands (973pb3974c01), White",
             "1 x Minifig Head, Beard with Gray Hair, Moustache, and Angry Eyebrows Print (3626px132), Yellow",
@@ -1479,6 +1497,7 @@
             "1 x Minifig Head, Stubble, Brown Eyebrows, Crooked Smile and Scar Print [Hollow Stud] (3626pb0495), Yellow"
           ],
           "standard": [
+            "3 x Brick 2 x 2 (3003), Dark Azure",
             "11 x Brick Sloped Inverted 45\u00b0 2 x 1 (3665), Dark Azure",
             "66 x Brick Curved 3 x 1 No Studs (50950), Dark Azure",
             "1 x Plate 6 x 8 (3036), Dark Blue",
@@ -1489,9 +1508,11 @@
             "1 x Brick Curved 2 x 4 x 2/3 No Studs, with Bottom Tubes (88930), Medium Azure",
             "8 x Tile 4 x 4 Curved, Macaroni (27507), Pearl Gold",
             "1 x Propeller 3 Blade 3 Diameter with Pin Hole (65768), Pearl Gold",
+            "1 x Bar, Ring 7L Diameter, with 2 Axle Connectors (79851), Pearl Gold",
             "1 x Animal Body Part / Plant, Tail / Claw / Horn / Branch / Tentacle, End Section (40379), Red",
             "13 x Brick Curved 2 x 2 x 2/3 (15068), Reddish Brown",
             "2 x Brick Sloped Inverted 45\u00b0 2 x 1 with 2/3 Cutout (2310), Reddish Brown",
+            "48 x Plate 2 x 2 (3022), Reddish Brown",
             "20 x Plate 6 x 12 (3028), Reddish Brown",
             "2 x Brick Wedged, Curved 8 x 3 x 2 Open Right (41749), Reddish Brown",
             "2 x Brick Wedged, Curved 8 x 3 x 2 Open Left (41750), Reddish Brown",
@@ -1787,14 +1808,12 @@
           "basis": "new parts, the average each sold for over the last six months (the average asking price where nothing sold), before shipping"
         },
         "pick_a_brick": {
-          "usd": 3.53,
+          "usd": 4.08,
           "date": "2026-10-14",
-          "lines": 22,
+          "lines": 24,
           "of": 26,
           "missing": [
             "2 x Tile Round 1 x 1 with White Circle Print (98138pb074), Black",
-            "1 x Brick 1 x 2 (3004), Yellow",
-            "5 x Plate 2 x 2 (3022), Yellow",
             "1 x Brick Wedged, Sloped 45\u00b0 4 x 2 Right (43720), Yellow"
           ],
           "standard": [
@@ -1906,12 +1925,11 @@
           "basis": "new parts, the average each sold for over the last six months (the average asking price where nothing sold), before shipping"
         },
         "pick_a_brick": {
-          "usd": 4.44,
+          "usd": 4.71,
           "date": "2026-10-14",
-          "lines": 19,
+          "lines": 20,
           "of": 22,
           "missing": [
-            "3 x Plate 2 x 2 (3022), Orange",
             "4 x Plate 4 x 4 (3031), Orange",
             "2 x Plate Special 1 x 2 with 1 Stud with Groove (Jumper) (3794b), Orange"
           ],
@@ -1964,14 +1982,12 @@
           "basis": "new parts, the average each sold for over the last six months (the average asking price where nothing sold), before shipping"
         },
         "pick_a_brick": {
-          "usd": 4.11,
+          "usd": 4.51,
           "date": "2026-10-14",
-          "lines": 17,
+          "lines": 19,
           "of": 21,
           "missing": [
             "3 x Brick Round 1 x 1 diameter Tube with 90 Degree Elbow (2 x 2 x 1) and Axle Holes (Crossholes) at each end (25214), Medium Azure",
-            "1 x Plate 2 x 4 (3020), Medium Azure",
-            "2 x Plate 2 x 3 (3021), Medium Azure",
             "1 x Dish 4 x 4 Inverted [Radar] (3960), Tan"
           ],
           "standard": [

@@ -4,7 +4,7 @@
 
 **BrickLink: $3.53** for new parts, before shipping, from BrickLink's price guide on 2026-10-14: each line at the average it sold for over the last six months (the average asking price where nothing sold), weighted by quantity.
 
-**Pick a Brick: $4.11** at LEGO Pick a Brick (US shop) on 2026-10-14, before shipping. Not sold there: 3 x Brick Round 1 x 1 diameter Tube with 90 Degree Elbow (2 x 2 x 1) and Axle Holes (Crossholes) at each end (25214), Medium Azure; 1 x Plate 2 x 4 (3020), Medium Azure; 2 x Plate 2 x 3 (3021), Medium Azure; 1 x Dish 4 x 4 Inverted [Radar] (3960), Tan. Standard pieces, sent later in a parcel of their own: 2 x Brick Curved 1 x 2 x 1 No Studs (37352), Medium Azure.
+**Pick a Brick: $4.51** at LEGO Pick a Brick (US shop) on 2026-10-14, before shipping. Not sold there: 3 x Brick Round 1 x 1 diameter Tube with 90 Degree Elbow (2 x 2 x 1) and Axle Holes (Crossholes) at each end (25214), Medium Azure; 1 x Dish 4 x 4 Inverted [Radar] (3960), Tan. Standard pieces, sent later in a parcel of their own: 2 x Brick Curved 1 x 2 x 1 No Studs (37352), Medium Azure.
 
 Order with `bricklink_wanted.xml` (upload as a BrickLink Wanted List, then Easy Buy) or `pick_a_brick.csv` (upload on Pick a Brick).
 
@@ -22,9 +22,9 @@ Order with `bricklink_wanted.xml` (upload as a BrickLink Wanted List, then Easy 
 | 1 | 1748 Tile Round 1 x 2 Half Circle | Black | 0.08 | 0.08 | 0.13 | 0.13 |
 | 2 | 3023 Plate 1 x 2 | Medium Azure | 0.04 | 0.07 | 0.08 | 0.16 |
 | 1 | 14769 Tile Round 2 x 2 with Bottom Stud Holder | Tan | 0.06 | 0.06 | 0.08 | 0.08 |
-| 2 | 3021 Plate 2 x 3 | Medium Azure | 0.03 | 0.06 | - | - |
+| 2 | 3021 Plate 2 x 3 | Medium Azure | 0.03 | 0.06 | 0.13 | 0.26 |
 | 1 | 3010 Brick 1 x 4 | Medium Azure | 0.06 | 0.06 | 0.15 | 0.15 |
-| 1 | 3020 Plate 2 x 4 | Medium Azure | 0.04 | 0.04 | - | - |
+| 1 | 3020 Plate 2 x 4 | Medium Azure | 0.04 | 0.04 | 0.14 | 0.14 |
 | 1 | 87580 Plate Special 2 x 2 with Groove and Center Stud (Jumper) | Tan | 0.04 | 0.04 | 0.09 | 0.09 |
 | 1 | 98138 Tile Round 1 x 1 | Reddish Brown | 0.04 | 0.04 | 0.05 | 0.05 |
 | 2 | 32062 Technic Axle 2 Notched | Red | 0.01 | 0.03 | 0.06 | 0.12 |

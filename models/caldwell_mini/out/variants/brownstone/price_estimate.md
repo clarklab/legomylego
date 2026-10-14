@@ -4,7 +4,7 @@
 
 **BrickLink: $9.19** for new parts, before shipping, from BrickLink's price guide on 2026-10-14: each line at the average it sold for over the last six months (the average asking price where nothing sold), weighted by quantity.
 
-**Pick a Brick: $11.15** at LEGO Pick a Brick (US shop) on 2026-10-14, before shipping. Not sold there: 1 x Top Hat (3878), Black; 1 x Hips and Dark Brown Legs (970c00), Dark Brown; 2 x Plate 2 x 2 (3022), Reddish Brown. All of it is in the Bestseller range, so it comes as one parcel.
+**Pick a Brick: $11.68** at LEGO Pick a Brick (US shop) on 2026-10-14, before shipping. Not sold there: 1 x Hips and Dark Brown Legs (970c00), Dark Brown. Standard pieces, sent later in a parcel of their own: 2 x Plate 2 x 2 (3022), Reddish Brown.
 
 Order with `bricklink_wanted.xml` (upload as a BrickLink Wanted List, then Easy Buy) or `pick_a_brick.csv` (upload on Pick a Brick).
 
@@ -23,13 +23,13 @@ Order with `bricklink_wanted.xml` (upload as a BrickLink Wanted List, then Easy 
 | 1 | 3626pb2534 Minifig Head Wheeler, Glasses, Gray Eyebrows and Stubble, Medium Nougat Cheek Lines and Chin Dimple Print | Yellow | 0.28 | 0.28 | 0.30 | 0.30 |
 | 4 | 3069 Tile 1 x 2 with Groove | Black | 0.06 | 0.24 | 0.08 | 0.32 |
 | 4 | 26604 Brick Special 1 x 1 with Studs on 2 Adjacent Sides | Tan | 0.06 | 0.23 | 0.11 | 0.44 |
-| 1 | 3878 Top Hat | Black | 0.22 | 0.22 | - | - |
+| 1 | 3878 Top Hat | Black | 0.22 | 0.22 | 0.35 | 0.35 |
 | 5 | 4589b Cone 1 x 1 [Top Groove] | Reddish Brown | 0.03 | 0.15 | 0.06 | 0.30 |
 | 4 | 15573 Plate Special 1 x 2 with 1 Stud with Groove and Inside Stud Holder (Jumper) | Reddish Brown | 0.03 | 0.14 | 0.06 | 0.24 |
 | 1 | 3032 Plate 4 x 6 | Reddish Brown | 0.13 | 0.13 | 0.40 | 0.40 |
 | 2 | 3666 Plate 1 x 6 | Reddish Brown | 0.06 | 0.12 | 0.16 | 0.32 |
 | 1 | 3069 Tile 1 x 2 with Groove | Light Bluish Gray | 0.08 | 0.08 | 0.08 | 0.08 |
 | 2 | 3710 Plate 1 x 4 | Reddish Brown | 0.04 | 0.08 | 0.11 | 0.22 |
-| 2 | 3022 Plate 2 x 2 | Reddish Brown | 0.04 | 0.07 | - | - |
+| 2 | 3022 Plate 2 x 2 | Reddish Brown | 0.04 | 0.07 | 0.09 (Standard) | 0.18 |
 | 1 | 2877 Brick Special 1 x 2 with Grille | Reddish Brown | 0.06 | 0.06 | 0.15 | 0.15 |
 | 1 | 3795 Plate 2 x 6 | Reddish Brown | 0.06 | 0.06 | 0.19 | 0.19 |

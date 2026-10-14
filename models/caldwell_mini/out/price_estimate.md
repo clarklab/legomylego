@@ -4,7 +4,7 @@
 
 **BrickLink: $9.43** for new parts, before shipping, from BrickLink's price guide on 2026-10-14: each line at the average it sold for over the last six months (the average asking price where nothing sold), weighted by quantity.
 
-**Pick a Brick: $11.33** at LEGO Pick a Brick (US shop) on 2026-10-14, before shipping. Not sold there: 1 x Top Hat (3878), Black; 1 x Hips and Dark Brown Legs (970c00), Dark Brown. All of it is in the Bestseller range, so it comes as one parcel.
+**Pick a Brick: $11.68** at LEGO Pick a Brick (US shop) on 2026-10-14, before shipping. Not sold there: 1 x Hips and Dark Brown Legs (970c00), Dark Brown. All of it is in the Bestseller range, so it comes as one parcel.
 
 Order with `bricklink_wanted.xml` (upload as a BrickLink Wanted List, then Easy Buy) or `pick_a_brick.csv` (upload on Pick a Brick).
 
@@ -24,7 +24,7 @@ Order with `bricklink_wanted.xml` (upload as a BrickLink Wanted List, then Easy 
 | 4 | 3069 Tile 1 x 2 with Groove | Black | 0.06 | 0.24 | 0.08 | 0.32 |
 | 5 | 4589b Cone 1 x 1 [Top Groove] | Dark Red | 0.05 | 0.23 | 0.06 | 0.30 |
 | 4 | 26604 Brick Special 1 x 1 with Studs on 2 Adjacent Sides | Tan | 0.06 | 0.23 | 0.11 | 0.44 |
-| 1 | 3878 Top Hat | Black | 0.22 | 0.22 | - | - |
+| 1 | 3878 Top Hat | Black | 0.22 | 0.22 | 0.35 | 0.35 |
 | 1 | 3032 Plate 4 x 6 | Dark Red | 0.18 | 0.18 | 0.40 | 0.40 |
 | 4 | 15573 Plate Special 1 x 2 with 1 Stud with Groove and Inside Stud Holder (Jumper) | Dark Red | 0.04 | 0.18 | 0.06 | 0.24 |
 | 2 | 3666 Plate 1 x 6 | Dark Red | 0.06 | 0.12 | 0.16 | 0.32 |

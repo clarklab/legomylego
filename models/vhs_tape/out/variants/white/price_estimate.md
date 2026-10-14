@@ -4,7 +4,7 @@
 
 **BrickLink: $37.53** for new parts, before shipping, from BrickLink's price guide on 2026-10-14: each line at the average it sold for over the last six months (the average asking price where nothing sold), weighted by quantity.
 
-**Pick a Brick: $43.95** at LEGO Pick a Brick (US shop) on 2026-10-14, before shipping. Not sold there: 2 x Brick 1 x 1 (3005), White; 1 x Plate 2 x 2 (3022), White; 29 x Plate 1 x 4 (3710), White; 1 x Brick Round 2 x 2 with Axle Hole (3941), White. All of it is in the Bestseller range, so it comes as one parcel.
+**Pick a Brick: $47.47** at LEGO Pick a Brick (US shop) on 2026-10-14, before shipping: every line is sold there. All of it is in the Bestseller range, so it comes as one parcel.
 
 Order with `bricklink_wanted.xml` (upload as a BrickLink Wanted List, then Easy Buy) or `pick_a_brick.csv` (upload on Pick a Brick).
 
@@ -16,7 +16,7 @@ Order with `bricklink_wanted.xml` (upload as a BrickLink Wanted List, then Easy 
 | 8 | 79393 Tile 3 x 3 Curved, Macaroni | Black | 0.29 | 2.28 | 0.28 | 2.24 |
 | 46 | 3023 Plate 1 x 2 | White | 0.05 | 2.12 | 0.08 | 3.68 |
 | 12 | 3386 Plate Special 1 x 1 x 2/3 Half Round with Side Stud | White | 0.16 | 1.95 | 0.09 | 1.08 |
-| 29 | 3710 Plate 1 x 4 | White | 0.06 | 1.80 | - | - |
+| 29 | 3710 Plate 1 x 4 | White | 0.06 | 1.80 | 0.11 | 3.19 |
 | 11 | 3666 Plate 1 x 6 | White | 0.12 | 1.32 | 0.16 | 1.76 |
 | 12 | 6636 Tile 1 x 6 with Groove | White | 0.09 | 1.13 | 0.15 | 1.80 |
 | 5 | 60479 Plate 1 x 12 | White | 0.22 | 1.08 | 0.26 | 1.30 |
@@ -51,9 +51,9 @@ Order with `bricklink_wanted.xml` (upload as a BrickLink Wanted List, then Easy 
 | 5 | 4032 Plate Round 2 x 2 with Axle Hole Type 1 (+ Opening) | White | 0.03 | 0.14 | 0.07 | 0.35 |
 | 2 | 18677 Plate Special 1 x 2 with Pin Hole Underneath | White | 0.06 | 0.13 | 0.07 | 0.14 |
 | 1 | 26603 Tile 2 x 3 | White | 0.13 | 0.13 | 0.12 | 0.12 |
-| 2 | 3005 Brick 1 x 1 | White | 0.06 | 0.12 | - | - |
+| 2 | 3005 Brick 1 x 1 | White | 0.06 | 0.12 | 0.07 | 0.14 |
 | 2 | 3070 Tile 1 x 1 with Groove | Light Bluish Gray | 0.05 | 0.10 | 0.05 | 0.10 |
-| 1 | 3941 Brick Round 2 x 2 with Axle Hole | White | 0.09 | 0.09 | - | - |
+| 1 | 3941 Brick Round 2 x 2 with Axle Hole | White | 0.09 | 0.09 | 0.10 | 0.10 |
 | 5 | 4073 Plate Round 1 x 1 with Solid Stud | Flat Silver | 0.02 | 0.09 | 0.05 | 0.25 |
 | 1 | 3709 Technic Plate 2 x 4 [3 Holes] | White | 0.09 | 0.09 | 0.13 | 0.13 |
 | 1 | 3623 Plate 1 x 3 | Black | 0.08 | 0.08 | 0.08 | 0.08 |
@@ -62,6 +62,6 @@ Order with `bricklink_wanted.xml` (upload as a BrickLink Wanted List, then Easy 
 | 2 | 11458 Plate Special 1 x 2 with Pin Hole on Top | White | 0.03 | 0.05 | 0.09 | 0.18 |
 | 1 | 3070 Tile 1 x 1 with Groove | Black | 0.05 | 0.05 | 0.05 | 0.05 |
 | 1 | 3069 Tile 1 x 2 with Groove | White | 0.04 | 0.04 | 0.08 | 0.08 |
-| 1 | 3022 Plate 2 x 2 | White | 0.03 | 0.03 | - | - |
+| 1 | 3022 Plate 2 x 2 | White | 0.03 | 0.03 | 0.09 | 0.09 |
 | 2 | 32062 Technic Axle 2 Notched | Red | 0.01 | 0.03 | 0.06 | 0.12 |
 | 2 | 2780 Technic Pin with Friction Ridges Lengthwise and Center Slots | Black | 0.01 | 0.03 | 0.06 | 0.12 |

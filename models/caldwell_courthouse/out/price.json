@@ -16,33 +16,25 @@
   "basis": "new parts, the average each sold for over the last six months (the average asking price where nothing sold), before shipping"
  },
  "pick_a_brick": {
-  "usd": 872.63,
+  "usd": 917.55,
   "date": "2026-10-14",
-  "lines": 149,
+  "lines": 159,
   "of": 164,
   "missing": [
-   "8 x Brick 2 x 2 (3003), Black",
-   "1 x Top Hat (3878), Black",
-   "16 x Glass for Window 1 x 2 x 3 Flat Front (60602), Black",
-   "5 x Bar 3L (87994), Black",
    "1 x Hips and Dark Brown Legs (970c00), Dark Brown",
    "12 x Plate Round 6 x 6 with Hole (11213), Dark Red",
    "8 x Brick Arch 1 x 6 x 2 - Thin Top without Reinforced Underside [New Version] (15254), Dark Red",
    "16 x Tile 4 x 4 Curved, Macaroni (27507), Dark Red",
-   "2 x Brick 1 x 4 (3010), Dark Red",
-   "188 x Brick Sloped Inverted 45\u00b0 2 x 1 (3665), Dark Red",
-   "16 x Brick Sloped 30\u00b0 1 x 1 x 2/3 (Cheese Slope) (54200), Dark Red",
-   "4 x Plate 6 x 16 (3027), Green",
-   "4 x Tile, Star with Stud Holder, Pin Hole (11609), Red",
-   "36 x Glass for Window 1 x 2 x 2 Flat (60601), Trans-Clear",
-   "72 x Glass for Window 1 x 2 x 3 Flat Front (60602), Trans-Clear"
+   "4 x Tile, Star with Stud Holder, Pin Hole (11609), Red"
   ],
   "standard": [
+   "16 x Glass for Window 1 x 2 x 3 Flat Front (60602), Black",
    "92 x Brick Arch 1 x 4 (3659), Dark Red",
    "15 x Plate 1 x 12 (60479), Dark Red",
    "48 x Plate Round Corner 3 x 3 with 2 x 2 Round Cutout (68568), Dark Red",
    "4 x Plant, Plate 1 x 1 Round with 3 Leaves (32607), Olive Green",
-   "4 x Dish 2 x 2 Inverted [Radar] (4740), Tan"
+   "4 x Dish 2 x 2 Inverted [Radar] (4740), Tan",
+   "72 x Glass for Window 1 x 2 x 3 Flat Front (60602), Trans-Clear"
   ],
   "basis": "LEGO Pick a Brick, US shop, before shipping"
  },

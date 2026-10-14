@@ -16,14 +16,14 @@
   "basis": "new parts, the average each sold for over the last six months (the average asking price where nothing sold), before shipping"
  },
  "pick_a_brick": {
-  "usd": 3.79,
+  "usd": 3.97,
   "date": "2026-10-14",
-  "lines": 24,
+  "lines": 25,
   "of": 25,
-  "missing": [
+  "missing": [],
+  "standard": [
    "2 x Plate 2 x 2 (3022), Reddish Brown"
   ],
-  "standard": [],
   "basis": "LEGO Pick a Brick, US shop, before shipping"
  }
 }

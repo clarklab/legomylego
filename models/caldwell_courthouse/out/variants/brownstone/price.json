@@ -16,28 +16,21 @@
   "basis": "new parts, the average each sold for over the last six months (the average asking price where nothing sold), before shipping"
  },
  "pick_a_brick": {
-  "usd": 889.91,
+  "usd": 915.87,
   "date": "2026-10-14",
-  "lines": 151,
+  "lines": 161,
   "of": 164,
   "missing": [
-   "8 x Brick 2 x 2 (3003), Black",
-   "1 x Top Hat (3878), Black",
-   "16 x Glass for Window 1 x 2 x 3 Flat Front (60602), Black",
-   "5 x Bar 3L (87994), Black",
    "1 x Hips and Dark Brown Legs (970c00), Dark Brown",
-   "4 x Plate 6 x 16 (3027), Green",
    "4 x Tile, Star with Stud Holder, Pin Hole (11609), Red",
-   "2 x Brick 1 x 2 (3004), Reddish Brown",
-   "2 x Plate 2 x 2 (3022), Reddish Brown",
-   "4 x Brick 1 x 3 (3622), Reddish Brown",
-   "24 x Brick Sloped 75\u00b0 2 x 2 x 3 Double Convex (3685), Reddish Brown",
-   "36 x Glass for Window 1 x 2 x 2 Flat (60601), Trans-Clear",
-   "72 x Glass for Window 1 x 2 x 3 Flat Front (60602), Trans-Clear"
+   "24 x Brick Sloped 75\u00b0 2 x 2 x 3 Double Convex (3685), Reddish Brown"
   ],
   "standard": [
+   "16 x Glass for Window 1 x 2 x 3 Flat Front (60602), Black",
    "4 x Plant, Plate 1 x 1 Round with 3 Leaves (32607), Olive Green",
-   "4 x Dish 2 x 2 Inverted [Radar] (4740), Tan"
+   "2 x Plate 2 x 2 (3022), Reddish Brown",
+   "4 x Dish 2 x 2 Inverted [Radar] (4740), Tan",
+   "72 x Glass for Window 1 x 2 x 3 Flat Front (60602), Trans-Clear"
   ],
   "basis": "LEGO Pick a Brick, US shop, before shipping"
  },

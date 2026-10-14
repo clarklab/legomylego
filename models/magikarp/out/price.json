@@ -18,14 +18,12 @@
   "basis": "new parts, the average each sold for over the last six months (the average asking price where nothing sold), before shipping"
  },
  "pick_a_brick": {
-  "usd": 3.26,
+  "usd": 3.51,
   "date": "2026-10-14",
-  "lines": 19,
+  "lines": 21,
   "of": 22,
   "missing": [
-   "1 x Bar 3L (87994), Black",
-   "1 x Equipment Dish Rectangular [Kitchen Implements Kit] (97785), Lavender",
-   "2 x Plate 2 x 2 (3022), Red"
+   "1 x Equipment Dish Rectangular [Kitchen Implements Kit] (97785), Lavender"
   ],
   "standard": [
    "3 x Brick Curved 2 x 2 with Lip, No Studs (30602), Red",

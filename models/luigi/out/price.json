@@ -16,14 +16,11 @@
   "basis": "new parts, the average each sold for over the last six months (the average asking price where nothing sold), before shipping"
  },
  "pick_a_brick": {
-  "usd": 7.47,
+  "usd": 8.36,
   "date": "2026-10-14",
-  "lines": 21,
+  "lines": 23,
   "of": 23,
-  "missing": [
-   "3 x Brick 2 x 4 (3001), Blue",
-   "2 x Brick 2 x 2 (3003), White"
-  ],
+  "missing": [],
   "standard": [],
   "basis": "LEGO Pick a Brick, US shop, before shipping"
  }

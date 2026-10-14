@@ -16,14 +16,12 @@
   "basis": "new parts, the average each sold for over the last six months (the average asking price where nothing sold), before shipping"
  },
  "pick_a_brick": {
-  "usd": 3.53,
+  "usd": 4.08,
   "date": "2026-10-14",
-  "lines": 22,
+  "lines": 24,
   "of": 26,
   "missing": [
    "2 x Tile Round 1 x 1 with White Circle Print (98138pb074), Black",
-   "1 x Brick 1 x 2 (3004), Yellow",
-   "5 x Plate 2 x 2 (3022), Yellow",
    "1 x Brick Wedged, Sloped 45\u00b0 4 x 2 Right (43720), Yellow"
   ],
   "standard": [

@@ -4,7 +4,7 @@
 
 **BrickLink: $3.97** for new parts, before shipping, from BrickLink's price guide on 2026-10-14: each line at the average it sold for over the last six months (the average asking price where nothing sold), weighted by quantity.
 
-**Pick a Brick: $3.77** at LEGO Pick a Brick (US shop) on 2026-10-14, before shipping. Not sold there: 2 x Brick 1 x 1 (3005), Dark Turquoise; 2 x Tile Round 1 x 1 with Black Off-Center Dot/Circle/Eye print (98138pb265), White. Standard pieces, sent later in a parcel of their own: 3 x Tile 1 x 3 (63864), Dark Turquoise; 6 x Brick Special 1 x 1 with Stud on 1 Side (87087), Dark Turquoise; 1 x Tile Round 1 x 1 with Thin Black Halve Circle / Closed Eye print (98138pb364), White.
+**Pick a Brick: $3.91** at LEGO Pick a Brick (US shop) on 2026-10-14, before shipping. Not sold there: 2 x Tile Round 1 x 1 with Black Off-Center Dot/Circle/Eye print (98138pb265), White. Standard pieces, sent later in a parcel of their own: 2 x Brick 1 x 1 (3005), Dark Turquoise; 3 x Tile 1 x 3 (63864), Dark Turquoise; 6 x Brick Special 1 x 1 with Stud on 1 Side (87087), Dark Turquoise; 1 x Tile Round 1 x 1 with Thin Black Halve Circle / Closed Eye print (98138pb364), White.
 
 Order with `bricklink_wanted.xml` (upload as a BrickLink Wanted List, then Easy Buy) or `pick_a_brick.csv` (upload on Pick a Brick).
 
@@ -22,7 +22,7 @@ Order with `bricklink_wanted.xml` (upload as a BrickLink Wanted List, then Easy 
 | 3 | 3070 Tile 1 x 1 with Groove | Light Aqua | 0.03 | 0.08 | 0.05 | 0.15 |
 | 2 | 11477 Brick Curved 2 x 1 No Studs [1/2 Bow] | Dark Turquoise | 0.03 | 0.07 | 0.07 | 0.14 |
 | 1 | 3021 Plate 2 x 3 | Light Aqua | 0.06 | 0.06 | 0.13 | 0.13 |
-| 2 | 3005 Brick 1 x 1 | Dark Turquoise | 0.02 | 0.05 | - | - |
+| 2 | 3005 Brick 1 x 1 | Dark Turquoise | 0.02 | 0.05 | 0.07 (Standard) | 0.14 |
 | 2 | 3062 Brick Round 1 x 1 Open Stud | Dark Turquoise | 0.02 | 0.05 | 0.06 | 0.12 |
 | 1 | 98138 Tile Round 1 x 1 | Red | 0.04 | 0.04 | 0.05 | 0.05 |
 | 1 | 2412b Tile Special 1 x 2 Grille with Bottom Groove | Black | 0.03 | 0.03 | 0.06 | 0.06 |

@@ -16,12 +16,11 @@
   "basis": "new parts, the average each sold for over the last six months (the average asking price where nothing sold), before shipping"
  },
  "pick_a_brick": {
-  "usd": 2.03,
+  "usd": 2.13,
   "date": "2026-10-14",
-  "lines": 12,
+  "lines": 13,
   "of": 14,
   "missing": [
-   "1 x Brick 1 x 2 (3004), White",
    "1 x Brick 1 x 2 with Black Curved Line / Smile print (3004pb302), White"
   ],
   "standard": [],

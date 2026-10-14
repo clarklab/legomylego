@@ -16,13 +16,11 @@
   "basis": "new parts, the average each sold for over the last six months (the average asking price where nothing sold), before shipping"
  },
  "pick_a_brick": {
-  "usd": 2.84,
+  "usd": 3.04,
   "date": "2026-10-14",
-  "lines": 12,
+  "lines": 13,
   "of": 13,
-  "missing": [
-   "2 x Brick 1 x 2 (3004), Lime"
-  ],
+  "missing": [],
   "standard": [
    "1 x Brick 1 x 2 with Black Curved Line / Smile print (3004pb302), Lime",
    "4 x Brick Sloped Inverted 45\u00b0 2 x 1 (3665), Lime",

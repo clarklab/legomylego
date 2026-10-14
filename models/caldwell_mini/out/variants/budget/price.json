@@ -16,12 +16,11 @@
   "basis": "new parts, the average each sold for over the last six months (the average asking price where nothing sold), before shipping"
  },
  "pick_a_brick": {
-  "usd": 10.81,
+  "usd": 11.16,
   "date": "2026-10-14",
-  "lines": 19,
+  "lines": 20,
   "of": 21,
   "missing": [
-   "1 x Top Hat (3878), Black",
    "1 x Hips and Dark Brown Legs (970c00), Dark Brown"
   ],
   "standard": [],

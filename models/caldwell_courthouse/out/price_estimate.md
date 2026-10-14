@@ -4,7 +4,7 @@
 
 **BrickLink: $748.27** for new parts, before shipping, from BrickLink's price guide on 2026-10-14: each line at the average it sold for over the last six months (the average asking price where nothing sold), weighted by quantity.
 
-**Pick a Brick: $872.63** at LEGO Pick a Brick (US shop) on 2026-10-14, before shipping. Not sold there: 8 x Brick 2 x 2 (3003), Black; 1 x Top Hat (3878), Black; 16 x Glass for Window 1 x 2 x 3 Flat Front (60602), Black; 5 x Bar 3L (87994), Black; 1 x Hips and Dark Brown Legs (970c00), Dark Brown; 12 x Plate Round 6 x 6 with Hole (11213), Dark Red; 8 x Brick Arch 1 x 6 x 2 - Thin Top without Reinforced Underside [New Version] (15254), Dark Red; 16 x Tile 4 x 4 Curved, Macaroni (27507), Dark Red; 2 x Brick 1 x 4 (3010), Dark Red; 188 x Brick Sloped Inverted 45° 2 x 1 (3665), Dark Red; 16 x Brick Sloped 30° 1 x 1 x 2/3 (Cheese Slope) (54200), Dark Red; 4 x Plate 6 x 16 (3027), Green; 4 x Tile, Star with Stud Holder, Pin Hole (11609), Red; 36 x Glass for Window 1 x 2 x 2 Flat (60601), Trans-Clear; 72 x Glass for Window 1 x 2 x 3 Flat Front (60602), Trans-Clear. Standard pieces, sent later in a parcel of their own: 92 x Brick Arch 1 x 4 (3659), Dark Red; 15 x Plate 1 x 12 (60479), Dark Red; 48 x Plate Round Corner 3 x 3 with 2 x 2 Round Cutout (68568), Dark Red; 4 x Plant, Plate 1 x 1 Round with 3 Leaves (32607), Olive Green; 4 x Dish 2 x 2 Inverted [Radar] (4740), Tan.
+**Pick a Brick: $917.55** at LEGO Pick a Brick (US shop) on 2026-10-14, before shipping. Not sold there: 1 x Hips and Dark Brown Legs (970c00), Dark Brown; 12 x Plate Round 6 x 6 with Hole (11213), Dark Red; 8 x Brick Arch 1 x 6 x 2 - Thin Top without Reinforced Underside [New Version] (15254), Dark Red; 16 x Tile 4 x 4 Curved, Macaroni (27507), Dark Red; 4 x Tile, Star with Stud Holder, Pin Hole (11609), Red. Standard pieces, sent later in a parcel of their own: 16 x Glass for Window 1 x 2 x 3 Flat Front (60602), Black; 92 x Brick Arch 1 x 4 (3659), Dark Red; 15 x Plate 1 x 12 (60479), Dark Red; 48 x Plate Round Corner 3 x 3 with 2 x 2 Round Cutout (68568), Dark Red; 4 x Plant, Plate 1 x 1 Round with 3 Leaves (32607), Olive Green; 4 x Dish 2 x 2 Inverted [Radar] (4740), Tan; 72 x Glass for Window 1 x 2 x 3 Flat Front (60602), Trans-Clear.
 
 Order with `bricklink_wanted.xml` (upload as a BrickLink Wanted List, then Easy Buy) or `pick_a_brick.csv` (upload on Pick a Brick).
 
@@ -25,7 +25,7 @@ Order with `bricklink_wanted.xml` (upload as a BrickLink Wanted List, then Easy 
 | 92 | 3659 Brick Arch 1 x 4 | Dark Red | 0.14 | 13.05 | 0.15 (Standard) | 13.80 |
 | 174 | 3004 Brick 1 x 2 | Tan | 0.07 | 12.93 | 0.10 | 17.40 |
 | 4 | 91405 Plate 16 x 16 | Light Bluish Gray | 3.18 | 12.72 | 3.29 | 13.16 |
-| 4 | 3027 Plate 6 x 16 | Green | 3.11 | 12.43 | - | - |
+| 4 | 3027 Plate 6 x 16 | Green | 3.11 | 12.43 | 2.33 | 9.32 |
 | 24 | 3685 Brick Sloped 75° 2 x 2 x 3 Double Convex | Dark Red | 0.50 | 12.05 | 0.47 | 11.28 |
 | 6 | 92438 Plate 8 x 16 | Green | 1.65 | 9.88 | 2.40 | 14.40 |
 | 132 | 3710 Plate 1 x 4 | Light Bluish Gray | 0.07 | 9.73 | 0.11 | 14.52 |
@@ -33,8 +33,8 @@ Order with `bricklink_wanted.xml` (upload as a BrickLink Wanted List, then Easy 
 | 16 | 3685 Brick Sloped 75° 2 x 2 x 3 Double Convex | Black | 0.60 | 9.53 | 0.47 | 7.52 |
 | 48 | 68568 Plate Round Corner 3 x 3 with 2 x 2 Round Cutout | Dark Red | 0.18 | 8.83 | 0.15 (Standard) | 7.20 |
 | 5 | 3688 Brick Sloped 75° 2 x 2 x 2 Quadruple Convex | Black | 1.62 | 8.09 | 0.31 | 1.55 |
-| 188 | 3665 Brick Sloped Inverted 45° 2 x 1 | Dark Red | 0.04 | 8.08 | - | - |
-| 72 | 60602 Glass for Window 1 x 2 x 3 Flat Front | Trans-Clear | 0.11 | 7.74 | - | - |
+| 188 | 3665 Brick Sloped Inverted 45° 2 x 1 | Dark Red | 0.04 | 8.08 | 0.10 | 18.80 |
+| 72 | 60602 Glass for Window 1 x 2 x 3 Flat Front | Trans-Clear | 0.11 | 7.74 | 0.13 (Standard) | 9.36 |
 | 72 | 3010 Brick 1 x 4 | Tan | 0.11 | 7.73 | 0.15 | 10.80 |
 | 34 | 3008 Brick 1 x 8 | Tan | 0.21 | 7.21 | 0.26 | 8.84 |
 | 2 | 91405 Plate 16 x 16 | Green | 3.61 | 7.21 | 3.29 | 6.58 |
@@ -66,7 +66,7 @@ Order with `bricklink_wanted.xml` (upload as a BrickLink Wanted List, then Easy 
 | 20 | 26604 Brick Special 1 x 1 with Studs on 2 Adjacent Sides | Light Bluish Gray | 0.15 | 2.99 | 0.11 | 2.20 |
 | 16 | 27507 Tile 4 x 4 Curved, Macaroni | Dark Red | 0.17 | 2.75 | - | - |
 | 32 | 87087 Brick Special 1 x 1 with Stud on 1 Side | Light Bluish Gray | 0.09 | 2.74 | 0.11 | 3.52 |
-| 16 | 60602 Glass for Window 1 x 2 x 3 Flat Front | Black | 0.16 | 2.54 | - | - |
+| 16 | 60602 Glass for Window 1 x 2 x 3 Flat Front | Black | 0.16 | 2.54 | 0.13 (Standard) | 2.08 |
 | 3 | 41539 Plate 8 x 8 | Light Bluish Gray | 0.84 | 2.53 | 1.10 | 3.30 |
 | 48 | 3062 Brick Round 1 x 1 Open Stud | Tan | 0.05 | 2.46 | 0.06 | 2.88 |
 | 37 | 3623 Plate 1 x 3 | Light Bluish Gray | 0.07 | 2.43 | 0.08 | 2.96 |
@@ -97,7 +97,7 @@ Order with `bricklink_wanted.xml` (upload as a BrickLink Wanted List, then Easy 
 | 11 | 4477 Plate 1 x 10 | Light Bluish Gray | 0.14 | 1.50 | 0.18 | 1.98 |
 | 20 | 2423 Plant, Leaves 4 x 3 | Green | 0.07 | 1.46 | 0.16 | 3.20 |
 | 24 | 3062 Brick Round 1 x 1 Open Stud | Black | 0.06 | 1.45 | 0.06 | 1.44 |
-| 36 | 60601 Glass for Window 1 x 2 x 2 Flat | Trans-Clear | 0.04 | 1.36 | - | - |
+| 36 | 60601 Glass for Window 1 x 2 x 2 Flat | Trans-Clear | 0.04 | 1.36 | 0.07 | 2.52 |
 | 22 | 3666 Plate 1 x 6 | Tan | 0.06 | 1.34 | 0.16 | 3.52 |
 | 4 | 3958 Plate 6 x 6 | Black | 0.33 | 1.31 | 0.60 | 2.40 |
 | 8 | 60593 Window 1 x 2 x 3 Flat Front | Reddish Brown | 0.16 | 1.28 | 0.19 | 1.52 |
@@ -118,13 +118,13 @@ Order with `bricklink_wanted.xml` (upload as a BrickLink Wanted List, then Easy 
 | 7 | 3034 Plate 2 x 8 | Green | 0.11 | 0.77 | 0.28 | 1.96 |
 | 4 | 87079 Tile 2 x 4 with Groove | Light Bluish Gray | 0.19 | 0.76 | 0.18 | 0.72 |
 | 1 | 973pb3159c01 Torso Vest with White Shirt and Blue Tie, Buttons Print, White Arms, Yellow Hands | Black | 0.76 | 0.76 | 1.16 | 1.16 |
-| 16 | 54200 Brick Sloped 30° 1 x 1 x 2/3 (Cheese Slope) | Dark Red | 0.05 | 0.75 | - | - |
+| 16 | 54200 Brick Sloped 30° 1 x 1 x 2/3 (Cheese Slope) | Dark Red | 0.05 | 0.75 | 0.05 | 0.80 |
 | 4 | 87079 Tile 2 x 4 with Groove | Black | 0.18 | 0.73 | 0.18 | 0.72 |
 | 6 | 4477 Plate 1 x 10 | Dark Red | 0.11 | 0.69 | 0.18 | 1.08 |
 | 4 | 4162 Tile 1 x 8 with Groove | Light Bluish Gray | 0.17 | 0.67 | 0.16 | 0.64 |
 | 4 | 3622 Brick 1 x 3 | Dark Red | 0.17 | 0.67 | 0.14 | 0.56 |
 | 12 | 3062 Brick Round 1 x 1 Open Stud | Reddish Brown | 0.06 | 0.66 | 0.06 | 0.72 |
-| 8 | 3003 Brick 2 x 2 | Black | 0.08 | 0.66 | - | - |
+| 8 | 3003 Brick 2 x 2 | Black | 0.08 | 0.66 | 0.13 | 1.04 |
 | 16 | 4073 Plate Round 1 x 1 with Solid Stud | Dark Red | 0.04 | 0.64 | 0.05 | 0.80 |
 | 4 | 15332 Fence Spindled 1 x 4 x 2 [4 Top Studs] | White | 0.15 | 0.59 | 0.37 | 1.48 |
 | 2 | 19121 Fence Ornamented 1 x 4 x 2 with 4 Studs | Black | 0.26 | 0.53 | 0.39 | 0.78 |
@@ -146,15 +146,15 @@ Order with `bricklink_wanted.xml` (upload as a BrickLink Wanted List, then Easy 
 | 16 | 4589b Cone 1 x 1 [Top Groove] | Black | 0.02 | 0.35 | 0.06 | 0.96 |
 | 4 | 2423 Plant, Leaves 4 x 3 | Olive Green | 0.09 | 0.34 | 0.16 | 0.64 |
 | 4 | 4740 Dish 2 x 2 Inverted [Radar] | Tan | 0.08 | 0.32 | 0.06 (Standard) | 0.24 |
-| 5 | 87994 Bar 3L | Black | 0.06 | 0.30 | - | - |
-| 2 | 3010 Brick 1 x 4 | Dark Red | 0.15 | 0.30 | - | - |
+| 5 | 87994 Bar 3L | Black | 0.06 | 0.30 | 0.07 | 0.35 |
+| 2 | 3010 Brick 1 x 4 | Dark Red | 0.15 | 0.30 | 0.15 | 0.30 |
 | 1 | 3626pb2534 Minifig Head Wheeler, Glasses, Gray Eyebrows and Stubble, Medium Nougat Cheek Lines and Chin Dimple Print | Yellow | 0.28 | 0.28 | 0.30 | 0.30 |
 | 2 | 3009 Brick 1 x 6 | Dark Red | 0.14 | 0.28 | 0.24 | 0.48 |
 | 2 | 3031 Plate 4 x 4 | Light Bluish Gray | 0.13 | 0.26 | 0.23 | 0.46 |
 | 6 | 3062 Brick Round 1 x 1 Open Stud | White | 0.04 | 0.26 | 0.06 | 0.36 |
 | 3 | 63965 Bar 6L with Stop Ring | White | 0.08 | 0.23 | 0.10 | 0.30 |
 | 2 | 63864 Tile 1 x 3 | Black | 0.11 | 0.23 | 0.12 | 0.24 |
-| 1 | 3878 Top Hat | Black | 0.22 | 0.22 | - | - |
+| 1 | 3878 Top Hat | Black | 0.22 | 0.22 | 0.35 | 0.35 |
 | 1 | 4495b Flag 4 x 1 Wavy [First Wave Right] | Dark Blue | 0.21 | 0.21 | 0.22 | 0.22 |
 | 4 | 32607 Plant, Plate 1 x 1 Round with 3 Leaves | Olive Green | 0.04 | 0.18 | 0.07 (Standard) | 0.28 |
 | 4 | 3023 Plate 1 x 2 | Green | 0.04 | 0.17 | 0.08 | 0.32 |

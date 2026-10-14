@@ -16,16 +16,12 @@
   "basis": "new parts, the average each sold for over the last six months (the average asking price where nothing sold), before shipping"
  },
  "pick_a_brick": {
-  "usd": 14.38,
+  "usd": 21.38,
   "date": "2026-10-14",
-  "lines": 26,
+  "lines": 30,
   "of": 31,
   "missing": [
-   "30 x Plate Special 1 x 2 with 5.9mm Towball Socket and Towball (14419), Dark Bluish Gray",
-   "6 x Plate Special 1 x 2 5.9mm Centre Side Towball Socket (14704), Dark Bluish Gray",
-   "6 x Plate Special 1 x 2 with End Towball (22890), Dark Bluish Gray",
-   "1 x Brick Round 4 x 4 with 4 Side Pin Holes and Center Axle Hole (6222), Dark Bluish Gray",
-   "4 x Technic Pin 1/2 without Friction Ridges (4274), Light Bluish Gray"
+   "1 x Brick Round 4 x 4 with 4 Side Pin Holes and Center Axle Hole (6222), Dark Bluish Gray"
   ],
   "standard": [
    "1 x Brick Round 2 x 2 with Axle Hole (3941), Dark Bluish Gray",

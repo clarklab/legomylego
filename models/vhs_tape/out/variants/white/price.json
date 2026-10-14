@@ -16,16 +16,11 @@
   "basis": "new parts, the average each sold for over the last six months (the average asking price where nothing sold), before shipping"
  },
  "pick_a_brick": {
-  "usd": 43.95,
+  "usd": 47.47,
   "date": "2026-10-14",
-  "lines": 51,
+  "lines": 55,
   "of": 55,
-  "missing": [
-   "2 x Brick 1 x 1 (3005), White",
-   "1 x Plate 2 x 2 (3022), White",
-   "29 x Plate 1 x 4 (3710), White",
-   "1 x Brick Round 2 x 2 with Axle Hole (3941), White"
-  ],
+  "missing": [],
   "standard": [],
   "basis": "LEGO Pick a Brick, US shop, before shipping"
  }

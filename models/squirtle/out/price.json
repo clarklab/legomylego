@@ -16,14 +16,12 @@
   "basis": "new parts, the average each sold for over the last six months (the average asking price where nothing sold), before shipping"
  },
  "pick_a_brick": {
-  "usd": 4.11,
+  "usd": 4.51,
   "date": "2026-10-14",
-  "lines": 17,
+  "lines": 19,
   "of": 21,
   "missing": [
    "3 x Brick Round 1 x 1 diameter Tube with 90 Degree Elbow (2 x 2 x 1) and Axle Holes (Crossholes) at each end (25214), Medium Azure",
-   "1 x Plate 2 x 4 (3020), Medium Azure",
-   "2 x Plate 2 x 3 (3021), Medium Azure",
    "1 x Dish 4 x 4 Inverted [Radar] (3960), Tan"
   ],
   "standard": [

@@ -16,21 +16,11 @@
   "basis": "new parts, the average each sold for over the last six months (the average asking price where nothing sold), before shipping"
  },
  "pick_a_brick": {
-  "usd": 68.52,
+  "usd": 96.2,
   "date": "2026-10-14",
-  "lines": 43,
+  "lines": 52,
   "of": 52,
-  "missing": [
-   "1 x Turntable 2 x 2 Plate, Base (3680), Black",
-   "21 x Brick 2 x 6 (2456), White",
-   "1 x Brick 2 x 3 (3002), White",
-   "45 x Brick 2 x 2 (3003), White",
-   "75 x Brick 1 x 2 (3004), White",
-   "64 x Brick 1 x 1 (3005), White",
-   "2 x Brick 1 x 6 (3009), White",
-   "14 x Plate 2 x 2 (3022), White",
-   "12 x Plate 1 x 4 (3710), White"
-  ],
+  "missing": [],
   "standard": [
    "1 x Tile Round 1 x 2 Half Circle (1748), Bright Pink",
    "1 x Tile Round 1 x 1 Half Circle (24246), Coral",

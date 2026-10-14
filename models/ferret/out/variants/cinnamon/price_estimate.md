@@ -4,7 +4,7 @@
 
 **BrickLink: $65.59** for new parts, before shipping, from BrickLink's price guide on 2026-10-14: each line at the average it sold for over the last six months (the average asking price where nothing sold), weighted by quantity.
 
-**Pick a Brick: $90.86** at LEGO Pick a Brick (US shop) on 2026-10-14, before shipping. Not sold there: 1 x Turntable 2 x 2 Plate, Base (3680), Black; 2 x Bar 3L (87994), Black; 35 x Brick 1 x 2 (3004), Reddish Brown; 12 x Plate 2 x 2 (3022), Reddish Brown; 2 x Plate 2 x 2 (3022), White; 3 x Plate 1 x 4 (3710), White. Standard pieces, sent later in a parcel of their own: 1 x Tile Round 1 x 1 Half Circle (24246), Coral; 1 x Tile Round 1 x 2 Half Circle (1748), Dark Pink; 1 x Turntable 2 x 2 Plate - Top (3679), Light Bluish Gray; 25 x Plate 1 x 2 (3023), Medium Nougat; 12 x Brick Curved 3 x 1 No Studs (50950), Medium Nougat; 2 x Brick Curved 2 x 2 x 2/3 (15068), Reddish Brown.
+**Pick a Brick: $96.20** at LEGO Pick a Brick (US shop) on 2026-10-14, before shipping: every line is sold there. Standard pieces, sent later in a parcel of their own: 1 x Tile Round 1 x 1 Half Circle (24246), Coral; 1 x Tile Round 1 x 2 Half Circle (1748), Dark Pink; 1 x Turntable 2 x 2 Plate - Top (3679), Light Bluish Gray; 25 x Plate 1 x 2 (3023), Medium Nougat; 12 x Brick Curved 3 x 1 No Studs (50950), Medium Nougat; 2 x Brick Curved 2 x 2 x 2/3 (15068), Reddish Brown; 12 x Plate 2 x 2 (3022), Reddish Brown.
 
 Order with `bricklink_wanted.xml` (upload as a BrickLink Wanted List, then Easy Buy) or `pick_a_brick.csv` (upload on Pick a Brick).
 
@@ -17,7 +17,7 @@ Order with `bricklink_wanted.xml` (upload as a BrickLink Wanted List, then Easy 
 | 12 | 3008 Brick 1 x 8 | Medium Nougat | 0.24 | 2.88 | 0.26 | 3.12 |
 | 17 | 2456 Brick 2 x 6 | Medium Nougat | 0.17 | 2.86 | 0.31 | 5.27 |
 | 12 | 50950 Brick Curved 3 x 1 No Studs | Medium Nougat | 0.22 | 2.62 | 0.12 (Standard) | 1.44 |
-| 35 | 3004 Brick 1 x 2 | Reddish Brown | 0.07 | 2.57 | - | - |
+| 35 | 3004 Brick 1 x 2 | Reddish Brown | 0.07 | 2.57 | 0.10 | 3.50 |
 | 19 | 3001 Brick 2 x 4 | Reddish Brown | 0.11 | 2.00 | 0.21 | 3.99 |
 | 30 | 3003 Brick 2 x 2 | Reddish Brown | 0.06 | 1.84 | 0.13 | 3.90 |
 | 8 | 3008 Brick 1 x 8 | Tan | 0.21 | 1.70 | 0.26 | 2.08 |
@@ -45,7 +45,7 @@ Order with `bricklink_wanted.xml` (upload as a BrickLink Wanted List, then Easy 
 | 7 | 3710 Plate 1 x 4 | Medium Nougat | 0.06 | 0.45 | 0.11 | 0.77 |
 | 4 | 3010 Brick 1 x 4 | Tan | 0.11 | 0.43 | 0.15 | 0.60 |
 | 3 | 3010 Brick 1 x 4 | Light Bluish Gray | 0.14 | 0.42 | 0.15 | 0.45 |
-| 12 | 3022 Plate 2 x 2 | Reddish Brown | 0.04 | 0.42 | - | - |
+| 12 | 3022 Plate 2 x 2 | Reddish Brown | 0.04 | 0.42 | 0.09 (Standard) | 1.08 |
 | 3 | 3795 Plate 2 x 6 | White | 0.13 | 0.39 | 0.19 | 0.57 |
 | 3 | 3001 Brick 2 x 4 | Light Bluish Gray | 0.13 | 0.39 | 0.21 | 0.63 |
 | 6 | 3005 Brick 1 x 1 | Light Bluish Gray | 0.06 | 0.37 | 0.07 | 0.42 |
@@ -59,7 +59,7 @@ Order with `bricklink_wanted.xml` (upload as a BrickLink Wanted List, then Easy 
 | 3 | 3622 Brick 1 x 3 | Light Bluish Gray | 0.07 | 0.21 | 0.14 | 0.42 |
 | 4 | 3623 Plate 1 x 3 | Reddish Brown | 0.05 | 0.21 | 0.08 | 0.32 |
 | 2 | 3021 Plate 2 x 3 | White | 0.10 | 0.19 | 0.13 | 0.26 |
-| 3 | 3710 Plate 1 x 4 | White | 0.06 | 0.19 | - | - |
+| 3 | 3710 Plate 1 x 4 | White | 0.06 | 0.19 | 0.11 | 0.33 |
 | 4 | 3023 Plate 1 x 2 | White | 0.05 | 0.18 | 0.08 | 0.32 |
 | 1 | 3009 Brick 1 x 6 | Medium Nougat | 0.18 | 0.18 | 0.24 | 0.24 |
 | 1 | 3009 Brick 1 x 6 | Tan | 0.17 | 0.17 | 0.24 | 0.24 |
@@ -68,7 +68,7 @@ Order with `bricklink_wanted.xml` (upload as a BrickLink Wanted List, then Easy 
 | 4 | 3024 Plate 1 x 1 | White | 0.04 | 0.15 | 0.06 | 0.24 |
 | 3 | 3020 Plate 2 x 4 | Reddish Brown | 0.05 | 0.14 | 0.14 | 0.42 |
 | 1 | 3001 Brick 2 x 4 | White | 0.12 | 0.12 | 0.21 | 0.21 |
-| 2 | 87994 Bar 3L | Black | 0.06 | 0.12 | - | - |
+| 2 | 87994 Bar 3L | Black | 0.06 | 0.12 | 0.07 | 0.14 |
 | 1 | 3666 Plate 1 x 6 | White | 0.12 | 0.12 | 0.16 | 0.16 |
 | 2 | 3666 Plate 1 x 6 | Reddish Brown | 0.06 | 0.12 | 0.16 | 0.32 |
 | 1 | 3021 Plate 2 x 3 | Medium Nougat | 0.11 | 0.11 | 0.13 | 0.13 |
@@ -82,13 +82,13 @@ Order with `bricklink_wanted.xml` (upload as a BrickLink Wanted List, then Easy 
 | 4 | 54200 Brick Sloped 30° 1 x 1 x 2/3 (Cheese Slope) | Tan | 0.02 | 0.09 | 0.05 | 0.20 |
 | 1 | 87087 Brick Special 1 x 1 with Stud on 1 Side | White | 0.09 | 0.09 | 0.11 | 0.11 |
 | 2 | 3710 Plate 1 x 4 | Reddish Brown | 0.04 | 0.08 | 0.11 | 0.22 |
-| 1 | 3680 Turntable 2 x 2 Plate, Base | Black | 0.08 | 0.08 | - | - |
+| 1 | 3680 Turntable 2 x 2 Plate, Base | Black | 0.08 | 0.08 | 0.11 | 0.11 |
 | 1 | 11211 Brick Special 1 x 2 with 2 Studs on 1 Side | White | 0.08 | 0.08 | 0.13 | 0.13 |
 | 2 | 3023 Plate 1 x 2 | Reddish Brown | 0.04 | 0.08 | 0.08 | 0.16 |
 | 2 | 4740 Dish 2 x 2 Inverted [Radar] | Black | 0.04 | 0.08 | 0.06 | 0.12 |
 | 2 | 3069 Tile 1 x 2 with Groove | White | 0.04 | 0.07 | 0.08 | 0.16 |
 | 1 | 3710 Plate 1 x 4 | Light Bluish Gray | 0.07 | 0.07 | 0.11 | 0.11 |
-| 2 | 3022 Plate 2 x 2 | White | 0.03 | 0.07 | - | - |
+| 2 | 3022 Plate 2 x 2 | White | 0.03 | 0.07 | 0.09 | 0.18 |
 | 2 | 32828 Plate Special Round 1 x 1 with Hollow Stud and Horizontal Bar 1L | Black | 0.03 | 0.06 | 0.06 | 0.12 |
 | 1 | 3679 Turntable 2 x 2 Plate - Top | Light Bluish Gray | 0.05 | 0.05 | 0.08 (Standard) | 0.08 |
 | 2 | 98138 Tile Round 1 x 1 | Bright Pink | 0.02 | 0.03 | 0.05 | 0.10 |

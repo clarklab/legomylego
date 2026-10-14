@@ -4,7 +4,7 @@
 
 **BrickLink: $11.86** for new parts, before shipping, from BrickLink's price guide on 2026-10-14: each line at the average it sold for over the last six months (the average asking price where nothing sold), weighted by quantity.
 
-**Pick a Brick: $4.44** at LEGO Pick a Brick (US shop) on 2026-10-14, before shipping. Not sold there: 3 x Plate 2 x 2 (3022), Orange; 4 x Plate 4 x 4 (3031), Orange; 2 x Plate Special 1 x 2 with 1 Stud with Groove (Jumper) (3794b), Orange. All of it is in the Bestseller range, so it comes as one parcel.
+**Pick a Brick: $4.71** at LEGO Pick a Brick (US shop) on 2026-10-14, before shipping. Not sold there: 4 x Plate 4 x 4 (3031), Orange; 2 x Plate Special 1 x 2 with 1 Stud with Groove (Jumper) (3794b), Orange. All of it is in the Bestseller range, so it comes as one parcel.
 
 Order with `bricklink_wanted.xml` (upload as a BrickLink Wanted List, then Easy Buy) or `pick_a_brick.csv` (upload on Pick a Brick).
 
@@ -21,7 +21,7 @@ Order with `bricklink_wanted.xml` (upload as a BrickLink Wanted List, then Easy 
 | 1 | 3001 Brick 2 x 4 | Light Bluish Gray | 0.13 | 0.13 | 0.21 | 0.21 |
 | 2 | 3794b Plate Special 1 x 2 with 1 Stud with Groove (Jumper) | Orange | 0.06 | 0.13 | - | - |
 | 1 | 14719 Tile 2 x 2 Corner | Green | 0.13 | 0.13 | 0.07 | 0.07 |
-| 3 | 3022 Plate 2 x 2 | Orange | 0.03 | 0.10 | - | - |
+| 3 | 3022 Plate 2 x 2 | Orange | 0.03 | 0.10 | 0.09 | 0.27 |
 | 2 | 3070 Tile 1 x 1 with Groove | Black | 0.05 | 0.09 | 0.05 | 0.10 |
 | 2 | 2420 Plate 2 x 2 Corner | Orange | 0.04 | 0.09 | 0.07 | 0.14 |
 | 1 | 16770 Creature Body Part, Barb Large (Claw, Talon) with Clip | Bright Green | 0.09 | 0.09 | 0.19 | 0.19 |

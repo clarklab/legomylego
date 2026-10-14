@@ -16,14 +16,12 @@
   "basis": "new parts, the average each sold for over the last six months (the average asking price where nothing sold), before shipping"
  },
  "pick_a_brick": {
-  "usd": 2.96,
+  "usd": 3.24,
   "date": "2026-10-14",
-  "lines": 19,
+  "lines": 21,
   "of": 23,
   "missing": [
-   "1 x Brick 1 x 2 (3004), Orange",
    "2 x Brick Sloped Inverted 45\u00b0 2 x 1 (3665), Orange",
-   "2 x Plate 2 x 2 (3022), Red",
    "2 x Brick Special 1 x 2 with Pin (2458), Tan"
   ],
   "standard": [

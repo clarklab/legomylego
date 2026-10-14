@@ -16,13 +16,11 @@
   "basis": "new parts, the average each sold for over the last six months (the average asking price where nothing sold), before shipping"
  },
  "pick_a_brick": {
-  "usd": 3.71,
+  "usd": 4.0,
   "date": "2026-10-14",
-  "lines": 17,
+  "lines": 19,
   "of": 20,
   "missing": [
-   "2 x Brick 1 x 2 (3004), Orange",
-   "1 x Plate 2 x 2 (3022), Orange",
    "1 x Animal Body Part / Plant, Tail / Claw / Horn / Branch / Tentacle, End Section (40379), Orange"
   ],
   "standard": [

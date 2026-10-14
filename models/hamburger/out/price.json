@@ -16,16 +16,13 @@
   "basis": "new parts, the average each sold for over the last six months (the average asking price where nothing sold), before shipping"
  },
  "pick_a_brick": {
-  "usd": 72.25,
+  "usd": 73.07,
   "date": "2026-10-14",
-  "lines": 93,
+  "lines": 96,
   "of": 98,
   "missing": [
    "4 x Plate Special 1 x 2 with Clips Horizontal [Open O Clips] (60470b), Bright Light Orange",
-   "1 x Plate Round 6 x 6 with Hole (11213), Medium Nougat",
-   "4 x Plate 1 x 3 (3623), Medium Nougat",
-   "4 x Tile 1 x 2 with Groove (3069), Red",
-   "2 x Plate 2 x 2 (3022), Reddish Brown"
+   "1 x Plate Round 6 x 6 with Hole (11213), Medium Nougat"
   ],
   "standard": [
    "2 x Tile Round 2 x 2 with Bottom Stud Holder (14769), Coral",
@@ -35,6 +32,7 @@
    "12 x Plate Round 1 x 1 with Solid Stud (4073), Medium Nougat",
    "6 x Tile 4 x 4 Curved, Macaroni (27507), Red",
    "8 x Brick Curved 2 x 2 x 2/3 (15068), Reddish Brown",
+   "2 x Plate 2 x 2 (3022), Reddish Brown",
    "9 x Tile Round 1 x 1 Quarter (25269), White"
   ],
   "basis": "LEGO Pick a Brick, US shop, before shipping"

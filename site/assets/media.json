@@ -19,20 +19,20 @@
      "size": 518264
     },
     "model.json": {
-     "v": "be748b81c5",
-     "size": 9893
+     "v": "16514e6112",
+     "size": 9863
     },
     "parts.csv": {
-     "v": "5702c8ef50",
+     "v": "3b87a5fa20",
      "size": 1138
     },
     "pick_a_brick.csv": {
-     "v": "a85cfe6cf1",
+     "v": "d7b6cc802a",
      "size": 163
     },
     "price_estimate.md": {
-     "v": "2574935d67",
-     "size": 2147
+     "v": "5e86ab894d",
+     "size": 2133
     },
     "quick_poster.jpg": {
      "v": "bfc9216d5e",
@@ -233,20 +233,20 @@
      "size": 478648
     },
     "model.json": {
-     "v": "80c8cef456",
-     "size": 9657
+     "v": "5ade33057a",
+     "size": 9625
     },
     "parts.csv": {
-     "v": "75d77d752e",
-     "size": 1311
+     "v": "6638a2cf1f",
+     "size": 1310
     },
     "pick_a_brick.csv": {
-     "v": "e3e71c2159",
-     "size": 173
+     "v": "fd79724128",
+     "size": 172
     },
     "price_estimate.md": {
-     "v": "e6c8fc1e45",
-     "size": 2036
+     "v": "e318bee668",
+     "size": 2011
     },
     "quick_poster.jpg": {
      "v": "a456398cb8",
@@ -285,20 +285,20 @@
      "size": 424516
     },
     "model.json": {
-     "v": "11628cc461",
+     "v": "b87916e959",
      "size": 14717
     },
     "parts.csv": {
-     "v": "325dbac116",
+     "v": "1fb4151285",
      "size": 1792
     },
     "pick_a_brick.csv": {
-     "v": "252bfe5fde",
+     "v": "3d49c64621",
      "size": 238
     },
     "price_estimate.md": {
-     "v": "86c9471193",
-     "size": 2782
+     "v": "104cd8e26b",
+     "size": 2799
     },
     "quick_poster.jpg": {
      "v": "1100124a14",
@@ -377,20 +377,20 @@
      "size": 1430740
     },
     "model.json": {
-     "v": "015ff0509f",
+     "v": "37a66c3e8c",
      "size": 14819
     },
     "parts.csv": {
-     "v": "18255c99a5",
+     "v": "409394224e",
      "size": 1727
     },
     "pick_a_brick.csv": {
-     "v": "fe55d38425",
+     "v": "b913e058a3",
      "size": 250
     },
     "price_estimate.md": {
-     "v": "ba9b82a6ab",
-     "size": 2612
+     "v": "fb4eaf0cf9",
+     "size": 2629
     },
     "quick_poster.jpg": {
      "v": "3f8b8fdc24",
@@ -479,11 +479,11 @@
      "size": 1991
     },
     "companions/caldwell_mini/budget_parts.csv": {
-     "v": "4b502f2d7a",
+     "v": "f6c5fca06f",
      "size": 1894
     },
     "companions/caldwell_mini/budget_pick_a_brick.csv": {
-     "v": "3e66554da4",
+     "v": "d9d64c1e98",
      "size": 251
     },
     "companions/caldwell_mini/budget_pick_a_brick_x5.csv": {
@@ -495,11 +495,11 @@
      "size": 1100269
     },
     "companions/caldwell_mini/parts.csv": {
-     "v": "8f6fb1e7a3",
+     "v": "a622272b5a",
      "size": 2083
     },
     "companions/caldwell_mini/pick_a_brick.csv": {
-     "v": "240eaabf2a",
+     "v": "05e7d62d4a",
      "size": 271
     },
     "companions/caldwell_mini/pick_a_brick_x5.csv": {
@@ -523,20 +523,20 @@
      "size": 5999336
     },
     "model.json": {
-     "v": "578fc43fd4",
-     "size": 946994
+     "v": "2cbe79fd8c",
+     "size": 946642
     },
     "parts.csv": {
-     "v": "83976682bd",
-     "size": 12023
+     "v": "9980f0712f",
+     "size": 12022
     },
     "pick_a_brick.csv": {
-     "v": "2393173e75",
-     "size": 1911
+     "v": "9601fbac5e",
+     "size": 1910
     },
     "price_estimate.md": {
-     "v": "fb4ce8b3da",
-     "size": 15014
+     "v": "4fb04abc4e",
+     "size": 14761
     },
     "renders/hero_hero.png": {
      "v": "f0c3dffea9",
@@ -704,20 +704,20 @@
      "size": 2106160
     },
     "model.json": {
-     "v": "012945d126",
-     "size": 28480
+     "v": "8b07e30dc6",
+     "size": 28452
     },
     "parts.csv": {
-     "v": "8f6fb1e7a3",
+     "v": "a622272b5a",
      "size": 2083
     },
     "pick_a_brick.csv": {
-     "v": "240eaabf2a",
+     "v": "05e7d62d4a",
      "size": 271
     },
     "price_estimate.md": {
-     "v": "5af3b340ac",
-     "size": 2808
+     "v": "cd01941691",
+     "size": 2787
     },
     "quick_poster.jpg": {
      "v": "600cafb00f",
@@ -778,8 +778,8 @@
      "size": 22210519
     },
     "bricklink_wanted.xml": {
-     "v": "9c55e3e44d",
-     "size": 17804
+     "v": "c0b32d220e",
+     "size": 17781
     },
     "chainsaw_face-1080x1080.mp4": {
      "v": "12716d52ae",
@@ -794,20 +794,20 @@
      "size": 4040712
     },
     "model.json": {
-     "v": "caab2cf31e",
-     "size": 213927
+     "v": "302c4e0c73",
+     "size": 214780
     },
     "parts.csv": {
-     "v": "a3854aa92b",
-     "size": 13171
+     "v": "2d01f783e1",
+     "size": 13348
     },
     "pick_a_brick.csv": {
-     "v": "8facaf613d",
-     "size": 2081
+     "v": "135d3fd1f5",
+     "size": 2098
     },
     "price_estimate.md": {
-     "v": "21e6bca841",
-     "size": 15832
+     "v": "4bb7f27000",
+     "size": 15241
     },
     "renders/hero_hero.png": {
      "v": "1fe3689c9f",
@@ -973,20 +973,20 @@
      "size": 599496
     },
     "model.json": {
-     "v": "73e5b71b13",
-     "size": 13308
+     "v": "e1f8539eac",
+     "size": 13241
     },
     "parts.csv": {
-     "v": "bb955f7ca9",
+     "v": "55bda5411b",
      "size": 1640
     },
     "pick_a_brick.csv": {
-     "v": "4715fc41e5",
+     "v": "6b7b77e67c",
      "size": 238
     },
     "price_estimate.md": {
-     "v": "72254dc99a",
-     "size": 2516
+     "v": "a862164706",
+     "size": 2464
     },
     "quick_poster.jpg": {
      "v": "f0a070c76b",
@@ -1055,20 +1055,20 @@
      "size": 567216
     },
     "model.json": {
-     "v": "a2ea95aa22",
-     "size": 14302
+     "v": "143d5f298d",
+     "size": 14240
     },
     "parts.csv": {
-     "v": "5284d90613",
+     "v": "d0e0192e10",
      "size": 1968
     },
     "pick_a_brick.csv": {
-     "v": "7af4ba4822",
+     "v": "71f5734eda",
      "size": 248
     },
     "price_estimate.md": {
-     "v": "ee4f828d24",
-     "size": 2876
+     "v": "4879ec5e60",
+     "size": 2820
     },
     "quick_poster.jpg": {
      "v": "856381f657",
@@ -1167,20 +1167,20 @@
      "size": 581608
     },
     "model.json": {
-     "v": "e4a13e9539",
-     "size": 15229
+     "v": "4e3df22613",
+     "size": 15166
     },
     "parts.csv": {
-     "v": "6993c8e564",
-     "size": 1718
+     "v": "6b0fed814f",
+     "size": 1717
     },
     "pick_a_brick.csv": {
-     "v": "0a7dc17118",
-     "size": 268
+     "v": "1bd79021bb",
+     "size": 267
     },
     "price_estimate.md": {
-     "v": "f0193de74a",
-     "size": 2630
+     "v": "c53fa31941",
+     "size": 2581
     },
     "quick_poster.jpg": {
      "v": "482b5ece0f",
@@ -1261,20 +1261,20 @@
      "size": 773008
     },
     "model.json": {
-     "v": "d9937d940a",
-     "size": 167949
+     "v": "e8606c856e",
+     "size": 167761
     },
     "parts.csv": {
-     "v": "f3a6eb9da9",
-     "size": 4922
+     "v": "5553449085",
+     "size": 4921
     },
     "pick_a_brick.csv": {
-     "v": "e598e11147",
-     "size": 823
+     "v": "8119ea1e06",
+     "size": 822
     },
     "price_estimate.md": {
-     "v": "674691b365",
-     "size": 6135
+     "v": "3bc12dc9a2",
+     "size": 5982
     },
     "renders/hero_hero.png": {
      "v": "95fb83fa3f",
@@ -1346,8 +1346,8 @@
      "size": 7055004
     },
     "bricklink_wanted.xml": {
-     "v": "b370409de8",
-     "size": 5460
+     "v": "1106956d23",
+     "size": 5454
     },
     "finn_the_human.mpd": {
      "v": "21e2b7a768",
@@ -1358,20 +1358,20 @@
      "size": 2606684
     },
     "model.json": {
-     "v": "0b1911e494",
-     "size": 35467
+     "v": "62a46c7abe",
+     "size": 36359
     },
     "parts.csv": {
-     "v": "0dccfd18d2",
-     "size": 4517
+     "v": "bfe3e055e8",
+     "size": 4508
     },
     "pick_a_brick.csv": {
-     "v": "0dd3d8577c",
-     "size": 644
+     "v": "661cf0f518",
+     "size": 652
     },
     "price_estimate.md": {
-     "v": "f4a9fea09e",
-     "size": 5795
+     "v": "3e803598c5",
+     "size": 5940
     },
     "quick_poster.jpg": {
      "v": "ea89d1c755",
@@ -1522,20 +1522,20 @@
      "size": 904408
     },
     "model.json": {
-     "v": "582259bc4f",
+     "v": "ee5fdf7637",
      "size": 17470
     },
     "parts.csv": {
-     "v": "c92d32f5ef",
+     "v": "f8c04ae1e0",
      "size": 2423
     },
     "pick_a_brick.csv": {
-     "v": "fc1ae37f0b",
+     "v": "9ba920b1d4",
      "size": 292
     },
     "price_estimate.md": {
-     "v": "87aad401dd",
-     "size": 3128
+     "v": "2f9fade4a9",
+     "size": 3144
     },
     "quick_poster.jpg": {
      "v": "32fa643607",
@@ -1666,20 +1666,20 @@
      "size": 2339160
     },
     "model.json": {
-     "v": "3f0045731a",
-     "size": 52576
+     "v": "5b3e946c5d",
+     "size": 52259
     },
     "parts.csv": {
-     "v": "4ed79c8de5",
+     "v": "be248ad8bc",
      "size": 2816
     },
     "pick_a_brick.csv": {
-     "v": "e18275e139",
+     "v": "09c75da8ef",
      "size": 362
     },
     "price_estimate.md": {
-     "v": "5b7a3c216d",
-     "size": 4025
+     "v": "e2774799be",
+     "size": 3736
     },
     "quick_poster.jpg": {
      "v": "458f80c6e5",
@@ -1746,8 +1746,8 @@
      "size": 6286256
     },
     "bricklink_wanted.xml": {
-     "v": "4b22c41242",
-     "size": 3603
+     "v": "f28e8b7f3b",
+     "size": 3602
     },
     "jake_the_dog.mpd": {
      "v": "20a3beea2b",
@@ -1758,20 +1758,20 @@
      "size": 2162148
     },
     "model.json": {
-     "v": "cf9ac2e759",
-     "size": 32453
+     "v": "b684da6772",
+     "size": 32938
     },
     "parts.csv": {
-     "v": "e65c28c84b",
-     "size": 3047
+     "v": "3d986317af",
+     "size": 3043
     },
     "pick_a_brick.csv": {
-     "v": "55cdee67d4",
-     "size": 430
+     "v": "0b7cf7cac9",
+     "size": 438
     },
     "price_estimate.md": {
-     "v": "c420be6485",
-     "size": 4062
+     "v": "0b7c4e2db5",
+     "size": 3898
     },
     "quick_poster.jpg": {
      "v": "2a9b9b6be5",
@@ -1850,20 +1850,20 @@
      "size": 451488
     },
     "model.json": {
-     "v": "1cc8261155",
-     "size": 15601
+     "v": "736c89aa63",
+     "size": 15539
     },
     "parts.csv": {
-     "v": "4205055a0a",
-     "size": 1544
+     "v": "4d96e7576c",
+     "size": 1543
     },
     "pick_a_brick.csv": {
-     "v": "4207a92d85",
-     "size": 269
+     "v": "99f19be2aa",
+     "size": 268
     },
     "price_estimate.md": {
-     "v": "35c81f0e8e",
-     "size": 2312
+     "v": "cb407f1684",
+     "size": 2273
     },
     "quick_poster.jpg": {
      "v": "3ad0b0f1bf",
@@ -1932,20 +1932,20 @@
      "size": 670928
     },
     "model.json": {
-     "v": "14d47af870",
-     "size": 15564
+     "v": "44bcac3baa",
+     "size": 15506
     },
     "parts.csv": {
-     "v": "7a20ca6205",
-     "size": 1819
+     "v": "b368a59e6f",
+     "size": 1818
     },
     "pick_a_brick.csv": {
-     "v": "7ca8fe1e21",
-     "size": 246
+     "v": "0d4a45469c",
+     "size": 245
     },
     "price_estimate.md": {
-     "v": "7c7b536e6a",
-     "size": 2967
+     "v": "3309ec936f",
+     "size": 2923
     },
     "quick_poster.jpg": {
      "v": "7397611872",
@@ -2034,20 +2034,20 @@
      "size": 451488
     },
     "model.json": {
-     "v": "a8a97ad2ee",
-     "size": 15653
+     "v": "f9ea0e672d",
+     "size": 15524
     },
     "parts.csv": {
-     "v": "34909cfbe1",
-     "size": 1535
+     "v": "9c98ca25b9",
+     "size": 1533
     },
     "pick_a_brick.csv": {
-     "v": "24aade0674",
-     "size": 268
+     "v": "217ad8ee57",
+     "size": 266
     },
     "price_estimate.md": {
-     "v": "a8109c1afa",
-     "size": 2357
+     "v": "fbd5c292ad",
+     "size": 2265
     },
     "quick_poster.jpg": {
      "v": "d8124ed22e",
@@ -2104,16 +2104,16 @@
      "size": 40988369
     },
     "bricklink_wanted.xml": {
-     "v": "5b6e407562",
-     "size": 38014
+     "v": "31226c58c4",
+     "size": 38013
     },
     "model.glb": {
      "v": "5ea332f9c6",
      "size": 9352532
     },
     "model.json": {
-     "v": "4b5eff004a",
-     "size": 1007117
+     "v": "9e9f0be98f",
+     "size": 1006469
     },
     "nautilus-1080x1080.mp4": {
      "v": "b8357ec294",
@@ -2124,16 +2124,16 @@
      "size": 1293722
     },
     "parts.csv": {
-     "v": "5545df21bf",
-     "size": 32366
+     "v": "29e17e60e0",
+     "size": 32404
     },
     "pick_a_brick.csv": {
-     "v": "dec9bc979c",
-     "size": 4599
+     "v": "b467720fe2",
+     "size": 4617
     },
     "price_estimate.md": {
-     "v": "ae0e8fbc98",
-     "size": 38668
+     "v": "714760f40d",
+     "size": 38097
     },
     "renders/hero_hero.png": {
      "v": "49ff3bbc08",
@@ -2193,20 +2193,20 @@
      "size": 2776564
     },
     "model.json": {
-     "v": "c8d92c3146",
-     "size": 36865
+     "v": "b81991b7dc",
+     "size": 36872
     },
     "nautilus_crew.mpd": {
      "v": "f94beee648",
      "size": 923731
     },
     "parts.csv": {
-     "v": "3f937767aa",
-     "size": 5356
+     "v": "76d3818978",
+     "size": 5363
     },
     "pick_a_brick.csv": {
-     "v": "95b412d123",
-     "size": 560
+     "v": "2fdf3ed5e7",
+     "size": 571
     },
     "price_estimate.md": {
      "v": "62a058bbfd",
@@ -2562,24 +2562,24 @@
      "size": 775052
     },
     "model.json": {
-     "v": "6b874598bb",
-     "size": 15056
+     "v": "a8ff80f470",
+     "size": 14990
     },
     "parts.csv": {
-     "v": "57253107c7",
-     "size": 2091
+     "v": "b9d690626e",
+     "size": 2089
     },
     "pick_a_brick.csv": {
-     "v": "9d5b4f84d7",
-     "size": 300
+     "v": "180ab1e35b",
+     "size": 298
     },
     "pikachu.mpd": {
      "v": "8371bcb7e2",
      "size": 3777
     },
     "price_estimate.md": {
-     "v": "3437e55b47",
-     "size": 3083
+     "v": "d7e3249bae",
+     "size": 3031
     },
     "quick_poster.jpg": {
      "v": "14935ae913",
@@ -2746,20 +2746,20 @@
      "size": 626200
     },
     "model.json": {
-     "v": "1177ea010f",
-     "size": 15203
+     "v": "4babbd52d2",
+     "size": 15170
     },
     "parts.csv": {
-     "v": "83f6f2d807",
+     "v": "f1e9345769",
      "size": 1688
     },
     "pick_a_brick.csv": {
-     "v": "ef62e8094e",
+     "v": "eb2761a475",
      "size": 260
     },
     "price_estimate.md": {
-     "v": "8d1d86a26b",
-     "size": 2507
+     "v": "30d86bd06b",
+     "size": 2481
     },
     "pumpkin.mpd": {
      "v": "4d3952d2b5",
@@ -2818,20 +2818,20 @@
      "size": 876984
     },
     "model.json": {
-     "v": "da8b9bddde",
-     "size": 14715
+     "v": "f08fc8e01b",
+     "size": 14637
     },
     "parts.csv": {
-     "v": "7c537544ca",
+     "v": "d923acc332",
      "size": 1860
     },
     "pick_a_brick.csv": {
-     "v": "761ed31007",
+     "v": "5cb59c2324",
      "size": 251
     },
     "price_estimate.md": {
-     "v": "ed0ef2c6c5",
-     "size": 2779
+     "v": "4c49ffae09",
+     "size": 2715
     },
     "quick_poster.jpg": {
      "v": "b6a26ef520",

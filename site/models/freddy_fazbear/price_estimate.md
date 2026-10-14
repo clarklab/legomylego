@@ -4,7 +4,7 @@
 
 **BrickLink: $2.04** for new parts, before shipping, from BrickLink's price guide on 2026-10-14: each line at the average it sold for over the last six months (the average asking price where nothing sold), weighted by quantity.
 
-**Pick a Brick: $3.79** at LEGO Pick a Brick (US shop) on 2026-10-14, before shipping. Not sold there: 2 x Plate 2 x 2 (3022), Reddish Brown. All of it is in the Bestseller range, so it comes as one parcel.
+**Pick a Brick: $3.97** at LEGO Pick a Brick (US shop) on 2026-10-14, before shipping: every line is sold there. Standard pieces, sent later in a parcel of their own: 2 x Plate 2 x 2 (3022), Reddish Brown.
 
 Order with `bricklink_wanted.xml` (upload as a BrickLink Wanted List, then Easy Buy) or `pick_a_brick.csv` (upload on Pick a Brick).
 
@@ -18,7 +18,7 @@ Order with `bricklink_wanted.xml` (upload as a BrickLink Wanted List, then Easy 
 | 1 | 48336 Plate Special 1 x 2 [Side Handle Closed Ends] | Reddish Brown | 0.11 | 0.11 | 0.07 | 0.07 |
 | 1 | 90370pb05 Musical Instrument Microphone with Silver Top Half Screen Print | Black | 0.11 | 0.11 | 0.50 | 0.50 |
 | 2 | 98313 Arm Mechanical with Clip [Thick Support] | Reddish Brown | 0.05 | 0.11 | 0.17 | 0.34 |
-| 2 | 3022 Plate 2 x 2 | Reddish Brown | 0.04 | 0.07 | - | - |
+| 2 | 3022 Plate 2 x 2 | Reddish Brown | 0.04 | 0.07 | 0.09 (Standard) | 0.18 |
 | 2 | 20482 Tile Special Round 1 x 1 with Hollow Bar | Reddish Brown | 0.03 | 0.06 | 0.05 | 0.10 |
 | 1 | 3062 Brick Round 1 x 1 Open Stud | Black | 0.06 | 0.06 | 0.06 | 0.06 |
 | 1 | 14769 Tile Round 2 x 2 with Bottom Stud Holder | Tan | 0.06 | 0.06 | 0.08 | 0.08 |

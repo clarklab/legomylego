@@ -16,13 +16,12 @@
   "basis": "new parts, the average each sold for over the last six months (the average asking price where nothing sold), before shipping"
  },
  "pick_a_brick": {
-  "usd": 2.3,
+  "usd": 2.39,
   "date": "2026-10-14",
-  "lines": 17,
+  "lines": 18,
   "of": 21,
   "missing": [
    "2 x Plate Special 1 x 1 with Clip Vertical [Thick U Clip] (4085c), Black",
-   "1 x Brick Curved 1 x 2 x 1 1/3 with Curved Top (6091), Black",
    "2 x Tile Round 1 x 1 with Half Open Eye print (98138pb098), White",
    "2 x Plate Special 1 x 2, Top Clip [Split] (92280), Yellow"
   ],
