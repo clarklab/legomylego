@@ -116,6 +116,25 @@ class PriceGuide:
             raise PermissionError("BrickLink refused the credentials: " + out["error"])
         return out
 
+    def elements_for(self, item_no: str, color_id: int) -> list[str]:
+        """The LEGO element IDs BrickLink maps to one of its parts in one colour."""
+        key = f"ELEMENTS/{item_no}/{color_id}"
+        if key not in self.cache:
+            url = f"{API}/item_mapping/PART/{urllib.parse.quote(str(item_no))}"
+            params = {"color_id": str(color_id)}
+            req = urllib.request.Request(url + "?" + urllib.parse.urlencode(params), headers={
+                "Authorization": _auth_header("GET", url, params, self.cred),
+                "Accept": "application/json"})
+            try:
+                with urllib.request.urlopen(req, timeout=30) as r:
+                    body = json.loads(r.read().decode())
+            except urllib.error.HTTPError as e:
+                body = {"meta": {"code": e.code}}
+            self.calls += 1
+            self.cache[key] = [str(d["element_id"]) for d in body.get("data") or []
+                               if d.get("element_id")]
+        return self.cache[key]
+
     def mapped(self, element_id: str) -> tuple[str, int] | None:
         """BrickLink's own item number and colour for a LEGO element ID (its catalogue files some
         parts under another number than LDraw's: 3070b is 3070, 6141 is 4073), or None."""

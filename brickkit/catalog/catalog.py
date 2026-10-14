@@ -148,6 +148,12 @@ class Catalog:
         learned from BrickLink's API by tools/bricklink_numbers.py."""
         return _data("bricklink_numbers.json").get("parts", {})
 
+    @cached_property
+    def bricklink_elements(self) -> dict:
+        """"Rebrickable part/colour name" -> LEGO element IDs BrickLink knows where Rebrickable's
+        data has none (the Tan long pin 32556: 4514554, 6321305): data/bricklink_numbers.json."""
+        return _data("bricklink_numbers.json").get("elements", {})
+
     def bl_type(self, part: str) -> str:
         return self._pm(part).get("bricklink_type", "P")
 
@@ -200,7 +206,7 @@ class Catalog:
         if c.rb_id is None:
             return None
         key = (self.rb_part(part), c.rb_id)
-        ids = self.rb.elements.get(key, [])
+        ids = self.rb.elements.get(key, []) or self.bricklink_elements.get(f"{key[0]}/{c.name}", [])
         sets = self.rb.set_count.get(key, 0)
         if not ids and not sets:
             return None

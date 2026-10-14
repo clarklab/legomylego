@@ -87,3 +87,32 @@ def pab_prices(lines, day: str | None = None, log=print) -> dict | None:
         pab.save()
     log(f"Pick a Brick: {len(out)} elements, {pab.calls} new lookups, dated {pab.day}")
     return {"day": pab.day, "prices": out}
+
+
+def prefer_sold(lines, pab: dict | None, catalog, log=print) -> int:
+    """Where a line's element ID isn't sold on Pick a Brick but another ID for the same part in the
+    same colour is (LEGO re-numbers a piece when it changes a mould or a supplier), use the one
+    Pick a Brick sells, so pick_a_brick.csv uploads whole. Returns how many lines changed."""
+    if not pab:
+        return 0
+    guide = PickABrick(pab["day"])
+    swapped = 0
+    try:
+        for l in lines:
+            got = pab["prices"].get(l.element_id) if l.element_id else None
+            if not got or got.get("ok") or getattr(l, "kind", ""):
+                continue
+            e = catalog.element(l.ldraw_part + ".dat", l.color)
+            for other in sorted(e.element_ids if e else [], key=lambda x: -int(x) if x.isdigit() else 0):
+                if other == l.element_id:
+                    continue
+                r = guide.lookup(other)
+                if r.get("ok"):
+                    log(f"  Pick a Brick sells {l.rb_part} in {l.color.name} as {other}, not {l.element_id}")
+                    pab["prices"][other] = r
+                    l.element_id = other
+                    swapped += 1
+                    break
+    finally:
+        guide.save()
+    return swapped

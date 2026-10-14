@@ -1,3 +1,4 @@
+import pytest
 from brickkit.bom.bom import build_bom, write_bricklink_xml, write_parts_csv, write_pick_a_brick_csv
 from tests.test_builder import make
 
@@ -126,3 +127,25 @@ def test_bricklink_numbers(engine):
     assert cat.rb_part("3070b.dat") == "3070b" and cat.bl_part("3070b.dat") == "3070"
     assert cat.bl_part("6141.dat") == "4073" and cat.bl_part("4032a.dat") == "4032"
     assert cat.bl_part("3001.dat") == "3001"
+
+
+def test_prefer_what_pick_a_brick_sells(engine, monkeypatch):
+    """A line whose element ID Pick a Brick doesn't sell takes another ID for the same part and
+    colour that it does (LEGO renumbers pieces); a line Pick a Brick sells is left alone."""
+    from brickkit.bom import pab_price
+    from brickkit.bom.bom import BomLine
+    white = engine.catalog.color("White")
+    e = engine.catalog.element("3004.dat", white)                 # a White 1 x 2 brick: several IDs
+    assert len(e.element_ids) > 1
+    l = BomLine("3004", "3004", "3004", "Brick 1 x 2", white, 2, e.element_ids[0], False)
+    lines = [l] + build_bom(make(engine).flatten(), engine.catalog)
+    sold = e.element_ids[-1]
+    monkeypatch.setattr(pab_price.PickABrick, "lookup",
+                        lambda self, el: {"ok": True, "usd": 0.1, "bestseller": True} if el == sold
+                        else {"ok": False, "error": "not on Pick a Brick"})
+    monkeypatch.setattr(pab_price.PickABrick, "save", lambda self: None)
+    pab = {"day": "2026-10-14", "prices": {x.element_id: ({"ok": True, "usd": 0.1} if x is not l
+                                                         else {"ok": False}) for x in lines}}
+    before = [x.element_id for x in lines]
+    assert pab_price.prefer_sold(lines, pab, engine.catalog, log=lambda m: None) == 1
+    assert l.element_id == sold and [x.element_id for x in lines[1:]] == before[1:]

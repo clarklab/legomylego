@@ -6,8 +6,10 @@ number (Tile 1 x 1 with Groove: Rebrickable 3070b, BrickLink 3070; Plate Round 1
 under our number; where BrickLink doesn't know it, it asks which BrickLink item the line's LEGO
 element is (the API's element mapping) and records Rebrickable number -> BrickLink number. The
 catalogue then puts BrickLink's number in parts.csv and bricklink_wanted.xml, so the lists come
-out the same on a machine without keys. Needs the BrickLink API keys (brickkit/bom/live_price.py);
-answers are cached a day, like the prices.
+out the same on a machine without keys. A line with no LEGO element ID (Rebrickable's data has
+none for that part in that colour) gets the element IDs BrickLink maps to it, where it has any.
+Needs the BrickLink API keys (brickkit/bom/live_price.py); answers are cached a day, like the
+prices.
 
     .venv/bin/python tools/bricklink_numbers.py        # then: brickkit bom SLUG for each model
 """
@@ -32,6 +34,7 @@ def main() -> int:
     guide = PriceGuide(cred)
     data = json.loads(OUT.read_text()) if OUT.exists() else {}
     found: dict = dict(data.get("parts", {}))
+    elements: dict = dict(data.get("elements", {}))
     seen, unresolved, clash = set(), [], []
     try:
         for f in sorted(paths.MODELS_DIR.glob("*/out/parts.csv")) + \
@@ -41,6 +44,13 @@ def main() -> int:
             for r in csv.DictReader(open(f)):
                 rb, bl, col, el = (r.get("rebrickable_part", ""), r.get("bricklink_part", ""),
                                    r.get("bricklink_colour", ""), r.get("element_id", ""))
+                if bl and col and not el and f"{rb}/{r.get('colour', '')}" not in elements:
+                    got_els = guide.elements_for(found.get(rb, bl), int(col))
+                    if got_els:
+                        elements[f"{rb}/{r.get('colour', '')}"] = sorted(set(got_els), key=int)
+                    else:
+                        unresolved.append(f"{rb} in {r.get('colour', '')}: no LEGO element "
+                                          f"number on Rebrickable or BrickLink ({f.parts[-3]})")
                 if not bl or not col or (bl, col) in seen or bl in found.values():
                     continue
                 seen.add((bl, col))
@@ -68,8 +78,10 @@ def main() -> int:
                    "mapping) by tools/bricklink_numbers.py; brickkit's catalogue uses it for the "
                    "BrickLink number in parts.csv and bricklink_wanted.xml."),
         "checked": dt.date.today().isoformat(),
-        "parts": dict(sorted(found.items()))}, indent=1) + "\n")
-    print(f"{len(found)} part numbers BrickLink files differently -> {OUT}")
+        "parts": dict(sorted(found.items())),
+        "elements": dict(sorted(elements.items()))}, indent=1) + "\n")
+    print(f"{len(found)} part numbers BrickLink files differently, {len(elements)} element numbers "
+          f"from BrickLink -> {OUT}")
     for u in unresolved:
         print("  not found on BrickLink, and no element to map:", u)
     for c in clash:

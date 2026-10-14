@@ -1,33 +1,38 @@
 {
-  "62498c01": {
-    "bom": false,
-    "note": "LED head, counted with its 8870 light unit"
-  },
-  "62501c01": {
-    "rebrickable": "61930",
-    "bricklink": "8870",
-    "bricklink_type": "S",
-    "note": "Power Functions LED light unit 8870 (junction box + 2 LEDs + cable)"
-  },
-  "2429": {
-    "rebrickable": "73983",
-    "bricklink": "73983",
-    "note": "swivel hinge base half: with its top half (2430) it is the complete hinge 73983, sold as one piece"
-  },
-  "2430": {
-    "bom": false,
-    "note": "swivel hinge top half, counted with its base half 2429 as 73983"
-  },
-  "59900": {
-    "bricklink": "4589b",
-    "note": "Cone 1 x 1 with top groove: BrickLink files it as 4589b (checked on BrickLink, Oct 2026)"
-  },
-  "14769p0m": {
-    "bricklink": "14769pb0356",
-    "note": "Tile round 2 x 2, clock with red second hand: BrickLink's number is zero-padded (the LDraw header says 14769pb356; checked on BrickLink, Oct 2026)"
-  },
-  "3069b": {
-    "bricklink": "3069",
-    "note": "Tile 1 x 2 with groove: BrickLink's number is now 3069 (its wanted-list upload accepted 3069 and has no 3069b price guide; checked Oct 2026)"
-  }
+ "62498c01": {
+  "bom": false,
+  "note": "LED head, counted with its 8870 light unit"
+ },
+ "62501c01": {
+  "rebrickable": "61930",
+  "bricklink": "8870",
+  "bricklink_type": "S",
+  "note": "Power Functions LED light unit 8870 (junction box + 2 LEDs + cable)"
+ },
+ "2429": {
+  "rebrickable": "73983",
+  "bricklink": "73983",
+  "note": "swivel hinge base half: with its top half (2430) it is the complete hinge 73983, sold as one piece"
+ },
+ "2430": {
+  "bom": false,
+  "note": "swivel hinge top half, counted with its base half 2429 as 73983"
+ },
+ "59900": {
+  "bricklink": "4589b",
+  "note": "Cone 1 x 1 with top groove: BrickLink files it as 4589b (checked on BrickLink, Oct 2026)"
+ },
+ "14769p0m": {
+  "bricklink": "14769pb0356",
+  "note": "Tile round 2 x 2, clock with red second hand: BrickLink's number is zero-padded (the LDraw header says 14769pb356; checked on BrickLink, Oct 2026)"
+ },
+ "3069b": {
+  "bricklink": "3069",
+  "note": "Tile 1 x 2 with groove: BrickLink's number is now 3069 (its wanted-list upload accepted 3069 and has no 3069b price guide; checked Oct 2026)"
+ },
+ "4287b": {
+  "rebrickable": "4287c",
+  "bricklink": "4287",
+  "note": "Slope 33 3 x 1 inverted, thick front: LEGO now makes it as the thin-front 4287c (element 4211195 in Reddish Brown, on Pick a Brick), which builds the same; the lists name what is sold (2026-10-14)"
+ }
 }

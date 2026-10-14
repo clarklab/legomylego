@@ -54,6 +54,9 @@ def _bom(engine, proj, model) -> None:
     lines = build_bom(placed, engine.catalog, model.extras)
     hardware = build_hardware(placed, engine.catalog, model.hardware_items)
     out = _out(proj, model.variant)
+    from .bom.pab_price import pab_prices, prefer_sold
+    pab = pab_prices(lines)                      # (first: the lists name what Pick a Brick sells)
+    prefer_sold(lines, pab, engine.catalog)
     write_parts_csv(lines, out / "parts.csv")
     if hardware:
         write_hardware_csv(hardware, out / "hardware.csv")
@@ -66,7 +69,6 @@ def _bom(engine, proj, model) -> None:
     write_pick_a_brick_csv(lines, out / "pick_a_brick.csv")
     import json
     from .bom.live_price import live_prices
-    from .bom.pab_price import pab_prices
     from .bom.price import estimate, hardware_summary, headline, summary, write_estimate_md
     live = None
     try:
@@ -74,7 +76,6 @@ def _bom(engine, proj, model) -> None:
     except Exception as e:                        # no network, refused keys: say so, go on
         print(f"live prices unavailable ({e}); using price bands")
     day = live["day"] if live else None
-    pab = pab_prices(lines)
     pab_day = pab["day"] if pab else None
     priced = estimate(lines, engine.catalog, live, pab)
     from .bom.bom import minifig_count
