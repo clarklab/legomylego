@@ -199,7 +199,7 @@
       "poster": "/models/finn_the_human/quick_poster.jpg?v=3ff81c893d6c",
       "instructions": "/models/finn_the_human/booklet.pdf?v=43eb8af8444a",
       "url": "/quick/finn_the_human/",
-      "model": "/models/finn_the_human/model.json?v=49551265b3e3",
+      "model": "/models/finn_the_human/model.json?v=10c1024d7faa",
       "geometry": "/models/finn_the_human/model.glb?v=8b1c3ebcd0c3",
       "brands": [
         "adventure-time"
@@ -272,7 +272,7 @@
       "poster": "/models/jake_the_dog/quick_poster.jpg?v=a8c7d5a20dfc",
       "instructions": "/models/jake_the_dog/booklet.pdf?v=f44437c4d60b",
       "url": "/quick/jake_the_dog/",
-      "model": "/models/jake_the_dog/model.json?v=e48cfccebe85",
+      "model": "/models/jake_the_dog/model.json?v=54c4606b8981",
       "geometry": "/models/jake_the_dog/model.glb?v=04bd1cfe6eaf",
       "brands": [
         "adventure-time"
@@ -367,6 +367,24 @@
       "url": "/quick/pez_stormtrooper/",
       "model": "/models/pez_stormtrooper/model.json?v=16a14521bb12",
       "geometry": "/models/pez_stormtrooper/model.glb?v=1744ae20e925",
+      "brands": [
+        "pez",
+        "star-wars"
+      ]
+    },
+    {
+      "slug": "pez_yoda",
+      "name": "Yoda PEZ",
+      "description": "A Yoda PEZ dispenser in 60 pieces, 10.6 cm tall, about the size of a real one: a sand green head with two printed eyes and long ears on a tan stem, and a head that tips back on a click hinge to show an orange sweet.",
+      "collection": "quick_bricks",
+      "pieces": 60,
+      "steps": 19,
+      "video": "/quick/pez_yoda-1080x1920.mp4?v=27483b53574a",
+      "poster": "/models/pez_yoda/quick_poster.jpg?v=ac37509de7c2",
+      "instructions": "/models/pez_yoda/booklet.pdf?v=6fe27e239f98",
+      "url": "/quick/pez_yoda/",
+      "model": "/models/pez_yoda/model.json?v=3af6d8f893bc",
+      "geometry": "/models/pez_yoda/model.glb?v=2eab64f102a5",
       "brands": [
         "pez",
         "star-wars"

@@ -1,0 +1,118 @@
+0 FILE pez_yoda.ldr
+0 Yoda PEZ
+0 Name: pez_yoda.ldr
+0 Author: brickkit
+
+0 // The foot: a 2 x 4 plate, long from front to back. On its middle two plates with one stud each, side by side across it, and a 1 x 2 tile at each end
+1 19 0 -8 0 0 0 1 0 1 0 -1 0 0 3020.dat
+1 19 0 -16 -10 1 0 0 0 1 0 0 0 1 15573.dat
+1 19 0 -16 10 1 0 0 0 1 0 0 0 1 15573.dat
+1 19 0 -16 -30 1 0 0 0 1 0 0 0 1 3069b.dat
+1 19 0 -16 30 1 0 0 0 1 0 0 0 1 3069b.dat
+0 STEP
+0 // The stem stands on the foot's two studs, one stud wide and two deep. Two 1 x 2 plates, then two bricks with a stud on each side, studs to the left and the right
+1 19 0 -24 0 0 0 1 0 1 0 -1 0 0 3023b.dat
+1 19 0 -32 0 0 0 1 0 1 0 -1 0 0 3023b.dat
+1 19 0 -56 -10 0 0 1 0 1 0 -1 0 0 47905.dat
+1 19 0 -56 10 0 0 1 0 1 0 -1 0 0 47905.dat
+0 STEP
+0 // Two more plates and two more of those bricks
+1 19 0 -64 0 0 0 1 0 1 0 -1 0 0 3023b.dat
+1 19 0 -72 0 0 0 1 0 1 0 -1 0 0 3023b.dat
+1 19 0 -96 -10 0 0 1 0 1 0 -1 0 0 47905.dat
+1 19 0 -96 10 0 0 1 0 1 0 -1 0 0 47905.dat
+0 STEP
+0 // The same again
+1 19 0 -104 0 0 0 1 0 1 0 -1 0 0 3023b.dat
+1 19 0 -112 0 0 0 1 0 1 0 -1 0 0 3023b.dat
+1 19 0 -136 -10 0 0 1 0 1 0 -1 0 0 47905.dat
+1 19 0 -136 10 0 0 1 0 1 0 -1 0 0 47905.dat
+0 STEP
+0 // And once more: the stem's full height
+1 19 0 -144 0 0 0 1 0 1 0 -1 0 0 3023b.dat
+1 19 0 -152 0 0 0 1 0 1 0 -1 0 0 3023b.dat
+1 19 0 -176 -10 0 0 1 0 1 0 -1 0 0 47905.dat
+1 19 0 -176 10 0 0 1 0 1 0 -1 0 0 47905.dat
+0 STEP
+0 // Press two 2 x 4 tiles onto the studs of one side, one above the other: the stem's smooth side
+1 19 -18 -56 0 0 1 0 -1 0 0 0 0 1 87079.dat
+1 19 -18 -136 0 0 1 0 -1 0 0 0 0 1 87079.dat
+0 STEP
+0 // And two on the other side
+1 19 18 -56 0 0 -1 0 -1 0 0 0 0 -1 87079.dat
+1 19 18 -136 0 0 -1 0 -1 0 0 0 0 -1 87079.dat
+0 STEP
+0 // On top: the hinge plate with two fingers, fingers past the back of the stem, and on it a 1 x 2 tile: the sweet
+1 19 0 -184 0 0 0 -1 0 1 0 1 0 0 54657.dat
+1 191 0 -192 0 0 0 1 0 1 0 -1 0 0 3069b.dat
+0 STEP
+0 // Click the head's hinge finger between the two fingers at the back of the stem, and tip the head forward until it rests on the sweet. Tip it back: it clicks, like the real thing
+1 16 0 -192 0 1 0 0 0 1 0 0 0 1 head.ldr
+0 STEP
+0 NOFILE
+
+0 FILE cheek.ldr
+0 Cheek
+0 Name: cheek.ldr
+0 Author: brickkit
+
+0 // A cheek: two tall bricks side by side, studs to the same side, joined by a green 2 x 2 tile on their four studs. Make two
+1 378 0 -40 -10 0 0 -1 0 1 0 1 0 0 32952.dat
+1 378 0 -40 10 0 0 -1 0 1 0 1 0 0 32952.dat
+1 378 18 -20 0 0 -1 0 1 0 0 0 0 1 3068b.dat
+0 STEP
+0 NOFILE
+
+0 FILE head.ldr
+0 Head
+0 Name: head.ldr
+0 Author: brickkit
+
+0 // The face: three tall bricks side by side, studs forward, joined by a green 1 x 3 plate across their lower studs
+1 378 -20 -40 -26 1 0 0 0 1 0 0 0 1 32952.dat
+1 378 0 -40 -26 1 0 0 0 1 0 0 0 1 32952.dat
+1 378 20 -40 -26 1 0 0 0 1 0 0 0 1 32952.dat
+1 378 0 -10 -44 1 0 0 0 0 -1 0 1 0 3623.dat
+0 STEP
+0 // On that plate: a round plate in the middle, the nose, and a tile either side
+1 378 0 -10 -52 1 0 0 0 0 -1 0 1 0 6141.dat
+1 378 -20 -10 -52 1 0 0 0 0 -1 0 1 0 3070b.dat
+1 378 20 -10 -52 1 0 0 0 0 -1 0 1 0 3070b.dat
+0 STEP
+0 // On the upper studs: the two eyes, their glints at the top, and a cheese slope between them, its high edge up: the brow
+1 15 -20 -30 -44 0.707107 0 0.707107 0.707107 0 -0.707107 0 1 0 98138p2j.dat
+1 15 20 -30 -44 0.707107 0 0.707107 0.707107 0 -0.707107 0 1 0 98138p2j.dat
+1 378 0 -30 -36 1 0 0 0 0 -1 0 1 0 54200.dat
+0 STEP
+0 // Stand a cheek each side behind the face, tiles out, and the last tall brick between them at the back, studs to the back. Press a 2 x 3 plate down on the front and middle rows, and a 1 x 3 plate on the back row
+1 16 20 0 4 1 0 0 0 1 0 0 0 1 cheek.ldr
+1 16 -20 0 4 -1 0 0 0 1 0 0 0 -1 cheek.ldr
+1 378 0 -40 14 -1 0 0 0 1 0 0 0 -1 32952.dat
+1 378 0 -48 -16 1 0 0 0 1 0 0 0 1 3021.dat
+1 378 0 -48 14 1 0 0 0 1 0 0 0 1 3623.dat
+0 STEP
+0 // The ears: a 1 x 3 plate each side of the middle row, two studs of it sticking out, and a 1 x 1 plate between them
+1 378 -40 -56 -6 1 0 0 0 1 0 0 0 1 3623.dat
+1 378 40 -56 -6 1 0 0 0 1 0 0 0 1 3623.dat
+1 378 0 -56 -6 1 0 0 0 1 0 0 0 1 3024.dat
+0 STEP
+0 // A 1 x 3 plate along the front and one along the back, and a curved slope on each ear, thin end out: the tip
+1 378 0 -56 -26 1 0 0 0 1 0 0 0 1 3623.dat
+1 378 0 -56 14 1 0 0 0 1 0 0 0 1 3623.dat
+1 378 -50 -56 -6 0 0 1 0 1 0 -1 0 0 11477.dat
+1 378 50 -56 -6 0 0 -1 0 1 0 1 0 0 11477.dat
+0 STEP
+0 // The top of the head: four curved slopes round the edge, each with its thick end at the middle of a side
+1 378 -10 -56 -26 0 0 1 0 1 0 -1 0 0 11477.dat
+1 378 20 -56 -16 1 0 0 0 1 0 0 0 1 11477.dat
+1 378 10 -56 14 0 0 -1 0 1 0 1 0 0 11477.dat
+1 378 -20 -56 4 -1 0 0 0 1 0 0 0 -1 11477.dat
+0 STEP
+0 // A plate and a tile in the middle
+1 378 0 -64 -6 1 0 0 0 1 0 0 0 1 3024.dat
+1 378 0 -72 -6 1 0 0 0 1 0 0 0 1 3070b.dat
+0 STEP
+0 // The head's hinge plate, the one with a single finger: upright on the two studs at the back, finger down
+1 19 0 -20 32 0 0 -1 1 0 0 0 -1 0 44301b.dat
+0 STEP
+0 NOFILE

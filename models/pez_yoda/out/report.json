@@ -1,0 +1,94 @@
+{
+  "title": "Yoda PEZ",
+  "status": "pass",
+  "checks": [
+    {
+      "name": "real_elements",
+      "status": "pass",
+      "summary": "19 part/colour combinations: 0 not real, 0 rare",
+      "items": [],
+      "stats": {
+        "combinations": 19,
+        "not_real": 0,
+        "rare": 0,
+        "hardware": 0,
+        "minifig_components": 0,
+        "stand_ins": 0,
+        "approximate": 0
+      }
+    },
+    {
+      "name": "connections",
+      "status": "pass",
+      "summary": "97 connections (96 stud, 1 hinge); 1 separate piece(s)",
+      "items": [],
+      "stats": {
+        "connections": 97,
+        "by_kind": {
+          "stud": 96,
+          "hinge": 1
+        },
+        "pieces": 1
+      }
+    },
+    {
+      "name": "collisions",
+      "status": "pass",
+      "summary": "0 overlapping pair(s) among 60 parts",
+      "items": [],
+      "stats": {
+        "pairs": 0
+      }
+    },
+    {
+      "name": "buildability",
+      "status": "pass",
+      "summary": "54 insertions tried across 3 submodel(s); 0 problem(s)",
+      "items": [],
+      "stats": {
+        "insertions": 54
+      }
+    },
+    {
+      "name": "stability",
+      "status": "pass",
+      "summary": "about 32 g; centre of mass inside the base (100% margin); tips at 7.2 deg",
+      "items": [],
+      "stats": {
+        "mass_g": 31.97023387332632,
+        "com": [
+          1.1357505819350963e-16,
+          -158.64183218448505,
+          -3.88093361318885
+        ],
+        "approx_parts": 0,
+        "margin": 1.0,
+        "tip_angle_deg": 7.1853802949463015,
+        "com_height_ldu": 158.64183218448505
+      }
+    },
+    {
+      "name": "mechanism",
+      "status": "pass",
+      "summary": "24 poses swept for 1 moving group(s); 0 gear pair(s); 0 problem(s)",
+      "items": [],
+      "stats": {
+        "poses": 24
+      }
+    },
+    {
+      "name": "electrics",
+      "status": "pass",
+      "summary": "no electrics in this model",
+      "items": [],
+      "stats": {}
+    },
+    {
+      "name": "technique",
+      "status": "pass",
+      "summary": "0 note(s)",
+      "items": [],
+      "stats": {}
+    }
+  ]
+}

@@ -1358,7 +1358,7 @@
      "size": 2606684
     },
     "model.json": {
-     "v": "aa12c67faa",
+     "v": "da133c0bc4",
      "size": 35473
     },
     "parts.csv": {
@@ -1666,7 +1666,7 @@
      "size": 2162148
     },
     "model.json": {
-     "v": "8de312e7b8",
+     "v": "7fc0ff8f42",
      "size": 32454
     },
     "parts.csv": {
@@ -2370,6 +2370,88 @@
      "h": 700,
      "lg": "/assets/img/pez_stormtrooper/renders_three_quarter.webp?v=afd063e1e5",
      "sm": "/assets/img/pez_stormtrooper/renders_three_quarter-480.webp?v=8297a9d8f0"
+    }
+   }
+  },
+  "pez_yoda": {
+   "files": {
+    "booklet.pdf": {
+     "v": "d0d11ba2a6",
+     "size": 3322563
+    },
+    "bricklink_wanted.xml": {
+     "v": "306856aac9",
+     "size": 1782
+    },
+    "model.glb": {
+     "v": "07b61f58b7",
+     "size": 608992
+    },
+    "model.json": {
+     "v": "b4aa483905",
+     "size": 19169
+    },
+    "parts.csv": {
+     "v": "9b119cb066",
+     "size": 1723
+    },
+    "pez_yoda.mpd": {
+     "v": "2057c21e6b",
+     "size": 5058
+    },
+    "pick_a_brick.csv": {
+     "v": "6af9195536",
+     "size": 229
+    },
+    "price_estimate.md": {
+     "v": "cd2945fb8a",
+     "size": 2462
+    },
+    "quick_poster.jpg": {
+     "v": "7807d86528",
+     "size": 198813
+    },
+    "renders/renders_close_head.png": {
+     "v": "1a064f85a5",
+     "size": 508096
+    },
+    "renders/renders_front.png": {
+     "v": "469fa55813",
+     "size": 495212
+    },
+    "renders/renders_side.png": {
+     "v": "94d91665f5",
+     "size": 482495
+    },
+    "renders/renders_three_quarter.png": {
+     "v": "163d006502",
+     "size": 507909
+    }
+   },
+   "images": {
+    "renders/renders_close_head.png": {
+     "w": 700,
+     "h": 700,
+     "lg": "/assets/img/pez_yoda/renders_close_head.webp?v=e6f74375ab",
+     "sm": "/assets/img/pez_yoda/renders_close_head-480.webp?v=a30cf94a81"
+    },
+    "renders/renders_front.png": {
+     "w": 700,
+     "h": 700,
+     "lg": "/assets/img/pez_yoda/renders_front.webp?v=5d415645bf",
+     "sm": "/assets/img/pez_yoda/renders_front-480.webp?v=ee2f3dbed6"
+    },
+    "renders/renders_side.png": {
+     "w": 700,
+     "h": 700,
+     "lg": "/assets/img/pez_yoda/renders_side.webp?v=4c96a837ad",
+     "sm": "/assets/img/pez_yoda/renders_side-480.webp?v=6512846ff8"
+    },
+    "renders/renders_three_quarter.png": {
+     "w": 700,
+     "h": 700,
+     "lg": "/assets/img/pez_yoda/renders_three_quarter.webp?v=4fc0e2d0ba",
+     "sm": "/assets/img/pez_yoda/renders_three_quarter-480.webp?v=5144c99626"
     }
    }
   },
