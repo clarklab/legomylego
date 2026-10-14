@@ -20,7 +20,7 @@ except one warning: the Power Functions battery box is rare (last in a set in 20
   a real LEGO element and no latch mechanism is needed. The button is also the bottom stop:
   the tap travels about 10.5 LDU (4.2 mm); the bridge under the tube would stop it at 16.
 - **It springs back.** Two push rods hang from a flange under the tube. Each ends in a
-  Technic brick whose pin pulls two Technic rubber belts (85544, medium) down between two
+  Technic brick whose pin pulls two Technic rubber belts (85544, medium, Red: the colour LEGO sells it in) down between two
   fixed pins under the bridge, a V that pulls straight up. The belts are pre-stretched
   (about 1.3x), and the stroke only lengthens them about 7%. So they pull almost evenly:
   enough to hold the 1.2 kg body up against the stand's top plate, where the flange stops,

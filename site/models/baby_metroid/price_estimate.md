@@ -2,9 +2,9 @@
 
 2,903 pieces in 61 lines.
 
-**BrickLink: $181.56** for new parts, before shipping, from BrickLink's price guide on 2026-10-14: each line at the average it sold for over the last six months (the average asking price where nothing sold), weighted by quantity. Not priced (no BrickLink data): 2 x Light Unit, LED with Black Cable, Power Functions (8870), Black; 4 x Technic Rubber Belt Medium [24mm ID] [Round Cross Section] (85544), Blue.
+**BrickLink: $190.81** for new parts, before shipping, from BrickLink's price guide on 2026-10-14: each line at the average it sold for over the last six months (the average asking price where nothing sold), weighted by quantity. Not priced (no BrickLink data): 2 x Light Unit, LED with Black Cable, Power Functions (8870), Black.
 
-**Pick a Brick: $282.84** at LEGO Pick a Brick (US shop) on 2026-10-14, before shipping. Not sold there: 10 x Brick 2 x 2 (3003), Black; 2 x Light Unit, LED with Black Cable, Power Functions (8870), Black; 4 x Technic Rubber Belt Medium [24mm ID] [Round Cross Section] (85544), Blue; 4 x Brick 1 x 4 (3010), Dark Red; 4 x Plate Round 4 x 4 with Pin Hole (60474), Dark Red; 1 x Battery Box, Power Functions, with Dark Bluish Gray Bottom [Non-Rechargeable] (87513c01), Light Bluish Gray; 1 x Dish 6 x 6 Inverted, Radar / Webbed [Anti-studs at 90°] (4285b), Trans-Light Blue; 8 x Technic Tooth 1 x 3 with Axle Hole [Rounded Underside] (x346), White. Standard pieces, sent later in a parcel of their own: 4 x Technic Axle 4 (3705), Black.
+**Pick a Brick: $294.94** at LEGO Pick a Brick (US shop) on 2026-10-14, before shipping. Not sold there: 2 x Light Unit, LED with Black Cable, Power Functions (8870), Black; 4 x Plate Round 4 x 4 with Pin Hole (60474), Dark Red; 1 x Battery Box, Power Functions, with Dark Bluish Gray Bottom [Non-Rechargeable] (87513c01), Light Bluish Gray; 1 x Dish 6 x 6 Inverted, Radar / Webbed [Anti-studs at 90°] (4285b), Trans-Light Blue; 8 x Technic Tooth 1 x 3 with Axle Hole [Rounded Underside] (x346), White. Standard pieces, sent later in a parcel of their own: 4 x Technic Axle 4 (3705), Black; 4 x Technic Rubber Belt Medium [24mm ID] [Round Cross Section] (85544), Red.
 
 Order with `bricklink_wanted.xml` (upload as a BrickLink Wanted List, then Easy Buy) or `pick_a_brick.csv` (upload on Pick a Brick).
 
@@ -15,6 +15,7 @@ Order with `bricklink_wanted.xml` (upload as a BrickLink Wanted List, then Easy 
 | 252 | 3065 Brick 1 x 2 without Bottom Tube | Trans-Light Blue | 0.07 | 17.14 | 0.14 | 35.28 |
 | 2 | 8870 Light Unit, LED with Black Cable, Power Functions | Black | - | - | - | - |
 | 158 | 3004 Brick 1 x 2 | Black | 0.06 | 9.76 | 0.10 | 15.80 |
+| 4 | 85544 Technic Rubber Belt Medium [24mm ID] [Round Cross Section] | Red | 2.31 | 9.25 | 2.55 (Standard) | 10.20 |
 | 143 | 3666 Plate 1 x 6 | Black | 0.06 | 8.85 | 0.16 | 22.88 |
 | 162 | 3024 Plate 1 x 1 | Trans-Light Blue | 0.04 | 6.76 | 0.06 | 9.72 |
 | 262 | 3070 Tile 1 x 1 with Groove | Trans-Light Blue | 0.03 | 6.55 | 0.05 | 13.10 |
@@ -41,10 +42,10 @@ Order with `bricklink_wanted.xml` (upload as a BrickLink Wanted List, then Easy 
 | 4 | 60474 Plate Round 4 x 4 with Pin Hole | Dark Red | 0.27 | 1.07 | - | - |
 | 66 | 4073 Plate Round 1 x 1 with Solid Stud | Trans-Red | 0.01 | 0.96 | 0.05 | 3.30 |
 | 1 | 50451 Technic Axle 16 | Black | 0.90 | 0.90 | 1.00 | 1.00 |
-| 10 | 3003 Brick 2 x 2 | Black | 0.08 | 0.82 | - | - |
+| 10 | 3003 Brick 2 x 2 | Black | 0.08 | 0.82 | 0.13 | 1.30 |
 | 16 | 3070 Tile 1 x 1 with Groove | Black | 0.05 | 0.76 | 0.05 | 0.80 |
 | 10 | 3069 Tile 1 x 2 with Groove | Black | 0.06 | 0.60 | 0.08 | 0.80 |
-| 4 | 3010 Brick 1 x 4 | Dark Red | 0.15 | 0.59 | - | - |
+| 4 | 3010 Brick 1 x 4 | Dark Red | 0.15 | 0.59 | 0.15 | 0.60 |
 | 36 | 54200 Brick Sloped 30° 1 x 1 x 2/3 (Cheese Slope) | Trans-Red | 0.01 | 0.54 | 0.08 | 2.88 |
 | 4 | 3701 Technic Brick 1 x 4 [3 Pin Holes] | Black | 0.13 | 0.52 | 0.16 | 0.64 |
 | 10 | 3022 Plate 2 x 2 | Black | 0.05 | 0.47 | 0.09 | 0.90 |
@@ -58,7 +59,6 @@ Order with `bricklink_wanted.xml` (upload as a BrickLink Wanted List, then Easy 
 | 6 | 3700 Technic Brick 1 x 2 [1 Pin Hole] | Dark Bluish Gray | 0.05 | 0.29 | 0.11 | 0.66 |
 | 12 | 3024 Plate 1 x 1 | Trans-Red | 0.02 | 0.29 | 0.06 | 0.72 |
 | 8 | 32062 Technic Axle 2 Notched | Black | 0.04 | 0.29 | 0.06 | 0.48 |
-| 4 | 85544 Technic Rubber Belt Medium [24mm ID] [Round Cross Section] | Blue | - | - | - | - |
 | 4 | 3004 Brick 1 x 2 | Dark Red | 0.06 | 0.24 | 0.10 | 0.40 |
 | 2 | 3941 Brick Round 2 x 2 with Axle Hole | Black | 0.11 | 0.21 | 0.10 | 0.20 |
 | 4 | 32316 Technic Beam 1 x 5 Thick | Black | 0.05 | 0.20 | 0.18 | 0.72 |

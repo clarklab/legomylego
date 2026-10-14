@@ -75,42 +75,39 @@
         176.0
       ],
       "price": {
-        "low": 197.78,
-        "high": 329.32,
+        "low": 206.75,
+        "high": 340.54,
         "currency": "USD",
-        "note": "BrickLink price guide, 2026-10-14: 59 of 61 part lines priced live (six-month sold average to current asking average, new, USD); the rest estimated from typical prices.",
+        "note": "BrickLink price guide, 2026-10-14: 60 of 61 part lines priced live (six-month sold average to current asking average, new, USD); the rest estimated from typical prices.",
         "source": "bricklink",
         "date": "2026-10-14",
-        "live_lines": 59,
+        "live_lines": 60,
         "lines": 61,
         "bricklink": {
-          "usd": 181.56,
+          "usd": 190.81,
           "date": "2026-10-14",
-          "lines": 59,
+          "lines": 60,
           "of": 61,
           "missing": [
-            "2 x Light Unit, LED with Black Cable, Power Functions (8870), Black",
-            "4 x Technic Rubber Belt Medium [24mm ID] [Round Cross Section] (85544), Blue"
+            "2 x Light Unit, LED with Black Cable, Power Functions (8870), Black"
           ],
           "basis": "new parts, the average each sold for over the last six months (the average asking price where nothing sold), before shipping"
         },
         "pick_a_brick": {
-          "usd": 282.84,
+          "usd": 294.94,
           "date": "2026-10-14",
-          "lines": 53,
+          "lines": 56,
           "of": 61,
           "missing": [
-            "10 x Brick 2 x 2 (3003), Black",
             "2 x Light Unit, LED with Black Cable, Power Functions (8870), Black",
-            "4 x Technic Rubber Belt Medium [24mm ID] [Round Cross Section] (85544), Blue",
-            "4 x Brick 1 x 4 (3010), Dark Red",
             "4 x Plate Round 4 x 4 with Pin Hole (60474), Dark Red",
             "1 x Battery Box, Power Functions, with Dark Bluish Gray Bottom [Non-Rechargeable] (87513c01), Light Bluish Gray",
             "1 x Dish 6 x 6 Inverted, Radar / Webbed [Anti-studs at 90\u00b0] (4285b), Trans-Light Blue",
             "8 x Technic Tooth 1 x 3 with Axle Hole [Rounded Underside] (x346), White"
           ],
           "standard": [
-            "4 x Technic Axle 4 (3705), Black"
+            "4 x Technic Axle 4 (3705), Black",
+            "4 x Technic Rubber Belt Medium [24mm ID] [Round Cross Section] (85544), Red"
           ],
           "basis": "LEGO Pick a Brick, US shop, before shipping"
         }

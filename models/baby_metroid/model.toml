@@ -21,7 +21,8 @@ stand_column = "Trans-Clear"
 stand_base = "Black"
 stand_top = "Dark Bluish Gray"
 battery = "Light Bluish Gray"
-belt = "Blue"
+belt = "Red"                  # hidden in the stand. Red is the medium belt LEGO sells (element 4544143);
+                              # the blue one was only ever in sets, with no element number to order
 
 [checks]
 enabled = ["real_elements", "connections", "collisions", "buildability", "stability",
