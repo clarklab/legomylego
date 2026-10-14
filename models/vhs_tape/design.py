@@ -391,12 +391,10 @@ def flap(model):
     top row is the upper half of 2 x N tiles hanging over the plates, so the flap's top edge
     is thin and swings clear of the top shell.
 
-    Built to be handled (the first one, built with real bricks, came apart along its length
-    and popped off its pivots). Behind the tiles is one 2 x 16 plate, so the flap cannot fold
-    at a seam, and a 2 x 3 plate at each end that reaches the top row: the tile at that end
-    holds it by six studs. On the back of each of those, two studs deep, is the flap's hinge: a
-    1 x 2 plate with a pin hole under one end (it was a 1 x 1 Technic brick on one stud). The
-    hole is where the brick's was, so the flap swings as before."""
+    Built to be handled: behind the tiles is one 2 x 16 plate, so the flap cannot fold at a
+    seam, and a 2 x 3 plate at each end that reaches the top row: the tile at that end holds it
+    by six studs. On the back of each of those, on two studs side by side, is the flap's hinge:
+    a 1 x 2 plate with a pin hole under one end, the hole on the pivot axis."""
     sub = model.submodel("flap", "Dust flap")
     b = Batch()
 
