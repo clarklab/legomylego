@@ -27,7 +27,7 @@ Order with `bricklink_wanted.xml` (upload as a BrickLink Wanted List, then Easy 
 | 17 | 3622 Brick 1 x 3 | White | 0.09 | 1.49 | 0.14 | 2.38 |
 | 31 | 3023 Plate 1 x 2 | White | 0.05 | 1.43 | 0.08 | 2.48 |
 | 4 | 3007 Brick 2 x 8 | White | 0.34 | 1.36 | 0.39 | 1.56 |
-| 30 | 3070b Tile 1 x 1 with Groove | White | 0.04 | 1.20 | 0.05 | 1.50 |
+| 30 | 3070 Tile 1 x 1 with Groove | White | 0.04 | 1.20 | 0.05 | 1.50 |
 | 9 | 3020 Plate 2 x 4 | White | 0.11 | 0.97 | 0.14 | 1.26 |
 | 12 | 50950 Brick Curved 3 x 1 No Studs | White | 0.07 | 0.81 | 0.12 | 1.44 |
 | 12 | 3710 Plate 1 x 4 | White | 0.06 | 0.75 | - | - |

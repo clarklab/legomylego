@@ -38,7 +38,7 @@ Order with `bricklink_wanted.xml` (upload as a BrickLink Wanted List, then Easy 
 | 2 | 4162 Tile 1 x 8 with Groove | Light Bluish Gray | 0.17 | 0.33 | 0.16 | 0.32 |
 | 1 | 4282 Plate 2 x 16 | White | 0.33 | 0.33 | 0.56 | 0.56 |
 | 7 | 2431 Tile 1 x 4 with Groove | White | 0.05 | 0.33 | 0.13 | 0.91 |
-| 8 | 3070b Tile 1 x 1 with Groove | White | 0.04 | 0.32 | 0.05 | 0.40 |
+| 8 | 3070 Tile 1 x 1 with Groove | White | 0.04 | 0.32 | 0.05 | 0.40 |
 | 2 | 30414 Brick Special 1 x 4 with 4 Studs on One Side | White | 0.15 | 0.30 | 0.17 | 0.34 |
 | 3 | 3021 Plate 2 x 3 | White | 0.10 | 0.29 | 0.13 | 0.39 |
 | 2 | 3460 Plate 1 x 8 | Black | 0.14 | 0.28 | 0.18 | 0.36 |
@@ -47,20 +47,20 @@ Order with `bricklink_wanted.xml` (upload as a BrickLink Wanted List, then Easy 
 | 2 | 4162 Tile 1 x 8 with Groove | White | 0.12 | 0.24 | 0.16 | 0.32 |
 | 2 | 63864 Tile 1 x 3 | Black | 0.11 | 0.23 | 0.12 | 0.24 |
 | 2 | 3020 Plate 2 x 4 | White | 0.11 | 0.21 | 0.14 | 0.28 |
-| 4 | 3062b Brick Round 1 x 1 Open Stud | White | 0.04 | 0.18 | 0.06 | 0.24 |
-| 5 | 4032a Plate Round 2 x 2 with Axle Hole Type 1 (+ Opening) | White | 0.03 | 0.14 | 0.07 | 0.35 |
+| 4 | 3062 Brick Round 1 x 1 Open Stud | White | 0.04 | 0.18 | 0.06 | 0.24 |
+| 5 | 4032 Plate Round 2 x 2 with Axle Hole Type 1 (+ Opening) | White | 0.03 | 0.14 | 0.07 | 0.35 |
 | 2 | 18677 Plate Special 1 x 2 with Pin Hole Underneath | White | 0.06 | 0.13 | 0.07 | 0.14 |
 | 1 | 26603 Tile 2 x 3 | White | 0.13 | 0.13 | 0.12 | 0.12 |
 | 2 | 3005 Brick 1 x 1 | White | 0.06 | 0.12 | - | - |
-| 2 | 3070b Tile 1 x 1 with Groove | Light Bluish Gray | 0.05 | 0.10 | 0.05 | 0.10 |
+| 2 | 3070 Tile 1 x 1 with Groove | Light Bluish Gray | 0.05 | 0.10 | 0.05 | 0.10 |
 | 1 | 3941 Brick Round 2 x 2 with Axle Hole | White | 0.09 | 0.09 | - | - |
-| 5 | 6141 Plate Round 1 x 1 with Solid Stud | Flat Silver | 0.02 | 0.09 | 0.05 | 0.25 |
+| 5 | 4073 Plate Round 1 x 1 with Solid Stud | Flat Silver | 0.02 | 0.09 | 0.05 | 0.25 |
 | 1 | 3709 Technic Plate 2 x 4 [3 Holes] | White | 0.09 | 0.09 | 0.13 | 0.13 |
 | 1 | 3623 Plate 1 x 3 | Black | 0.08 | 0.08 | 0.08 | 0.08 |
 | 1 | 32124 Technic Plate 1 x 5 with Smooth Ends, 4 Studs and Centre Axle Hole | White | 0.08 | 0.08 | 0.11 | 0.11 |
-| 4 | 6141 Plate Round 1 x 1 with Solid Stud | White | 0.02 | 0.07 | 0.05 | 0.20 |
+| 4 | 4073 Plate Round 1 x 1 with Solid Stud | White | 0.02 | 0.07 | 0.05 | 0.20 |
 | 2 | 11458 Plate Special 1 x 2 with Pin Hole on Top | White | 0.03 | 0.05 | 0.09 | 0.18 |
-| 1 | 3070b Tile 1 x 1 with Groove | Black | 0.05 | 0.05 | 0.05 | 0.05 |
+| 1 | 3070 Tile 1 x 1 with Groove | Black | 0.05 | 0.05 | 0.05 | 0.05 |
 | 1 | 3069 Tile 1 x 2 with Groove | White | 0.04 | 0.04 | 0.08 | 0.08 |
 | 1 | 3022 Plate 2 x 2 | White | 0.03 | 0.03 | - | - |
 | 2 | 32062 Technic Axle 2 Notched | Red | 0.01 | 0.03 | 0.06 | 0.12 |

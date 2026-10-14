@@ -138,7 +138,15 @@ class Catalog:
             return self.approximate[part_id(part)]["bricklink"]
         if part_id(part) not in self.rb.parts and self.xref.bl_for(part_id(part)):
             return self.xref.bl_for(part_id(part))     # a printed part: its header's number
-        return self.rb_part(part)
+        rb = self.rb_part(part)
+        return self.bricklink_numbers.get(rb, rb)        # BrickLink's own number, where it differs
+
+    @cached_property
+    def bricklink_numbers(self) -> dict:
+        """Rebrickable part number -> BrickLink's own item number, where BrickLink files the
+        part under another one (3070b is 3070, 6141 is 4073): data/bricklink_numbers.json,
+        learned from BrickLink's API by tools/bricklink_numbers.py."""
+        return _data("bricklink_numbers.json").get("parts", {})
 
     def bl_type(self, part: str) -> str:
         return self._pm(part).get("bricklink_type", "P")

@@ -16,13 +16,13 @@ Order with `bricklink_wanted.xml` (upload as a BrickLink Wanted List, then Easy 
 | 1 | 44301b Hinge Plate 1 x 2 Locking with 1 Finger On End, without Groove | Tan | 0.53 | 0.53 | 0.15 (Standard) | 0.15 |
 | 6 | 3623 Plate 1 x 3 | Sand Green | 0.05 | 0.33 | 0.08 | 0.48 |
 | 8 | 3023 Plate 1 x 2 | Tan | 0.04 | 0.31 | 0.08 | 0.64 |
-| 2 | 3068b Tile 2 x 2 with Groove | Sand Green | 0.13 | 0.27 | 0.09 | 0.18 |
-| 1 | 54657 Hinge Plate 1 x 2 Locking with 2 Fingers On End, without Groove, 7 Teeth | Tan | 0.21 | 0.21 | 0.11 | 0.11 |
+| 2 | 3068 Tile 2 x 2 with Groove | Sand Green | 0.13 | 0.27 | 0.09 | 0.18 |
+| 1 | 44302 Hinge Plate 1 x 2 Locking with 2 Fingers On End, without Groove, 7 Teeth | Tan | 0.21 | 0.21 | 0.11 | 0.11 |
 | 6 | 11477 Brick Curved 2 x 1 No Studs [1/2 Bow] | Sand Green | 0.03 | 0.20 | 0.07 | 0.42 |
 | 2 | 3069 Tile 1 x 2 with Groove | Tan | 0.08 | 0.16 | 0.08 (Standard) | 0.16 |
-| 3 | 3070b Tile 1 x 1 with Groove | Sand Green | 0.04 | 0.12 | 0.05 | 0.15 |
+| 3 | 3070 Tile 1 x 1 with Groove | Sand Green | 0.04 | 0.12 | 0.05 | 0.15 |
 | 2 | 15573 Plate Special 1 x 2 with 1 Stud with Groove and Inside Stud Holder (Jumper) | Tan | 0.05 | 0.10 | 0.06 | 0.12 |
-| 1 | 6141 Plate Round 1 x 1 with Solid Stud | Sand Green | 0.08 | 0.08 | 0.05 | 0.05 |
+| 1 | 4073 Plate Round 1 x 1 with Solid Stud | Sand Green | 0.08 | 0.08 | 0.05 | 0.05 |
 | 1 | 3021 Plate 2 x 3 | Sand Green | 0.07 | 0.07 | 0.13 | 0.13 |
 | 2 | 3024 Plate 1 x 1 | Sand Green | 0.04 | 0.07 | 0.06 | 0.12 |
 | 2 | 98138pb367 Tile Round 1 x 1 with Black Eye with Two Pupils Print | White | 0.03 | 0.07 | 0.13 | 0.26 |

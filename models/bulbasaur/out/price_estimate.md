@@ -12,7 +12,7 @@ Order with `bricklink_wanted.xml` (upload as a BrickLink Wanted List, then Easy 
 |---:|---|---|---:|---:|---:|---:|
 | 4 | 67810 Brick Round, Curved 2 x 2 x 1 1/3, Corner | Green | 0.21 | 0.85 | - | - |
 | 6 | 87087 Brick Special 1 x 1 with Stud on 1 Side | Dark Turquoise | 0.10 | 0.57 | 0.11 (Standard) | 0.66 |
-| 1 | 6255 Plant, 1 x 1 x 2/3 - 3 Large Leaves | Bright Green | 0.52 | 0.52 | 0.46 | 0.46 |
+| 1 | x8 Plant, 1 x 1 x 2/3 - 3 Large Leaves | Bright Green | 0.52 | 0.52 | 0.46 | 0.46 |
 | 1 | 87081 Brick Round 4 x 4 Centre Hole | Green | 0.33 | 0.33 | 0.35 | 0.35 |
 | 2 | 3001 Brick 2 x 4 | Dark Turquoise | 0.14 | 0.28 | 0.21 | 0.42 |
 | 1 | 3032 Plate 4 x 6 | Dark Turquoise | 0.26 | 0.26 | - | - |
@@ -30,4 +30,4 @@ Order with `bricklink_wanted.xml` (upload as a BrickLink Wanted List, then Easy 
 | 2 | 18674 Plate Special Round 2 x 2 with Center Stud (Jumper Plate) | White | 0.03 | 0.05 | 0.07 | 0.14 |
 | 1 | 3069 Tile 1 x 2 with Groove | Dark Turquoise | 0.04 | 0.04 | 0.08 | 0.08 |
 | 1 | 87580 Plate Special 2 x 2 with Groove and Center Stud (Jumper) | Green | 0.04 | 0.04 | 0.06 | 0.06 |
-| 2 | 3070b Tile 1 x 1 with Groove | Dark Turquoise | 0.02 | 0.04 | 0.05 | 0.10 |
+| 2 | 3070 Tile 1 x 1 with Groove | Dark Turquoise | 0.02 | 0.04 | 0.05 | 0.10 |

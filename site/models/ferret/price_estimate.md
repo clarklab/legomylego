@@ -31,7 +31,7 @@ Order with `bricklink_wanted.xml` (upload as a BrickLink Wanted List, then Easy 
 | 32 | 3024 Plate 1 x 1 | Dark Brown | 0.04 | 1.24 | 0.06 | 1.92 |
 | 17 | 3622 Brick 1 x 3 | Tan | 0.07 | 1.23 | 0.14 | 2.38 |
 | 3 | 3006 Brick 2 x 10 | Tan | 0.37 | 1.12 | 0.69 | 2.07 |
-| 22 | 3070b Tile 1 x 1 with Groove | Tan | 0.05 | 1.06 | 0.05 | 1.10 |
+| 22 | 3070 Tile 1 x 1 with Groove | Tan | 0.05 | 1.06 | 0.05 | 1.10 |
 | 4 | 3007 Brick 2 x 8 | Tan | 0.25 | 1.01 | 0.39 | 1.56 |
 | 25 | 3023 Plate 1 x 2 | Tan | 0.04 | 0.98 | 0.08 | 2.00 |
 | 15 | 3003 Brick 2 x 2 | Tan | 0.06 | 0.90 | 0.13 | 1.95 |
@@ -46,7 +46,7 @@ Order with `bricklink_wanted.xml` (upload as a BrickLink Wanted List, then Easy 
 | 6 | 3005 Brick 1 x 1 | Light Bluish Gray | 0.06 | 0.37 | 0.07 | 0.42 |
 | 2 | 3009 Brick 1 x 6 | Tan | 0.17 | 0.34 | 0.24 | 0.48 |
 | 3 | 3020 Plate 2 x 4 | White | 0.11 | 0.32 | 0.14 | 0.42 |
-| 8 | 3070b Tile 1 x 1 with Groove | White | 0.04 | 0.32 | 0.05 | 0.40 |
+| 8 | 3070 Tile 1 x 1 with Groove | White | 0.04 | 0.32 | 0.05 | 0.40 |
 | 2 | 22885 Brick Special 1 x 2 x 1 2/3 with 4 Studs on 1 Side | Light Bluish Gray | 0.15 | 0.29 | 0.19 | 0.38 |
 | 2 | 3666 Plate 1 x 6 | Dark Brown | 0.11 | 0.23 | 0.16 | 0.32 |
 | 1 | 3009 Brick 1 x 6 | Light Bluish Gray | 0.23 | 0.23 | 0.24 | 0.24 |

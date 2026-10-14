@@ -4,7 +4,7 @@
 
 **BrickLink: $56.89** for new parts, before shipping, from BrickLink's price guide on 2026-10-14: each line at the average it sold for over the last six months (the average asking price where nothing sold), weighted by quantity.
 
-**Pick a Brick: $72.25** at LEGO Pick a Brick (US shop) on 2026-10-14, before shipping. Not sold there: 4 x Plate Special 1 x 2 with Clips Horizontal [Open O Clips] (60470b), Bright Light Orange; 1 x Plate Round 6 x 6 with Hole (11213), Medium Nougat; 4 x Plate 1 x 3 (3623), Medium Nougat; 4 x Tile 1 x 2 with Groove (3069), Red; 2 x Plate 2 x 2 (3022), Reddish Brown. Standard pieces, sent later in a parcel of their own: 2 x Tile Round 2 x 2 with Bottom Stud Holder (14769), Coral; 6 x Tile 2 x 2 Curved, Macaroni (27925), Coral; 8 x Plate 1 x 2 (3023), Medium Nougat; 20 x Brick Curved 1 x 2 x 1 No Studs (37352), Medium Nougat; 12 x Plate Round 1 x 1 with Solid Stud (6141), Medium Nougat; 6 x Tile 4 x 4 Curved, Macaroni (27507), Red; 8 x Brick Curved 2 x 2 x 2/3 (15068), Reddish Brown; 9 x Tile Round 1 x 1 Quarter (25269), White.
+**Pick a Brick: $72.25** at LEGO Pick a Brick (US shop) on 2026-10-14, before shipping. Not sold there: 4 x Plate Special 1 x 2 with Clips Horizontal [Open O Clips] (60470b), Bright Light Orange; 1 x Plate Round 6 x 6 with Hole (11213), Medium Nougat; 4 x Plate 1 x 3 (3623), Medium Nougat; 4 x Tile 1 x 2 with Groove (3069), Red; 2 x Plate 2 x 2 (3022), Reddish Brown. Standard pieces, sent later in a parcel of their own: 2 x Tile Round 2 x 2 with Bottom Stud Holder (14769), Coral; 6 x Tile 2 x 2 Curved, Macaroni (27925), Coral; 8 x Plate 1 x 2 (3023), Medium Nougat; 20 x Brick Curved 1 x 2 x 1 No Studs (37352), Medium Nougat; 12 x Plate Round 1 x 1 with Solid Stud (4073), Medium Nougat; 6 x Tile 4 x 4 Curved, Macaroni (27507), Red; 8 x Brick Curved 2 x 2 x 2/3 (15068), Reddish Brown; 9 x Tile Round 1 x 1 Quarter (25269), White.
 
 Order with `bricklink_wanted.xml` (upload as a BrickLink Wanted List, then Easy Buy) or `pick_a_brick.csv` (upload on Pick a Brick).
 
@@ -26,7 +26,7 @@ Order with `bricklink_wanted.xml` (upload as a BrickLink Wanted List, then Easy 
 | 10 | 3666 Plate 1 x 6 | Medium Nougat | 0.11 | 1.14 | 0.16 | 1.60 |
 | 4 | 5852 Brick Round Corner, Curved 2 x 2 x 2/3 Quarter Circle With 1 x 1 Bottom Cutout | Medium Nougat | 0.29 | 1.14 | 0.25 | 1.00 |
 | 6 | 27507 Tile 4 x 4 Curved, Macaroni | Red | 0.18 | 1.08 | 0.16 (Standard) | 0.96 |
-| 20 | 3070b Tile 1 x 1 with Groove | Medium Nougat | 0.05 | 1.07 | 0.05 | 1.00 |
+| 20 | 3070 Tile 1 x 1 with Groove | Medium Nougat | 0.05 | 1.07 | 0.05 | 1.00 |
 | 12 | 15469 Plant, Leaves, Round 2 x 2 x 2/3 with + Axle Hole and 4 Leaf Extensions | Bright Green | 0.09 | 1.06 | 0.17 | 2.04 |
 | 8 | 2431 Tile 1 x 4 with Groove | Reddish Brown | 0.13 | 1.04 | 0.13 | 1.04 |
 | 21 | 54200 Brick Sloped 30° 1 x 1 x 2/3 (Cheese Slope) | Medium Nougat | 0.05 | 0.98 | 0.05 | 1.05 |
@@ -56,14 +56,14 @@ Order with `bricklink_wanted.xml` (upload as a BrickLink Wanted List, then Easy 
 | 4 | 2431 Tile 1 x 4 with Groove | Bright Light Orange | 0.08 | 0.33 | 0.13 | 0.52 |
 | 1 | 3031 Plate 4 x 4 | Medium Nougat | 0.32 | 0.32 | 0.23 | 0.23 |
 | 2 | 3001 Brick 2 x 4 | Medium Nougat | 0.15 | 0.31 | 0.21 | 0.42 |
-| 12 | 6141 Plate Round 1 x 1 with Solid Stud | Medium Nougat | 0.02 | 0.30 | 0.05 (Standard) | 0.60 |
+| 12 | 4073 Plate Round 1 x 1 with Solid Stud | Medium Nougat | 0.02 | 0.30 | 0.05 (Standard) | 0.60 |
 | 4 | 3460 Plate 1 x 8 | Tan | 0.07 | 0.29 | 0.18 | 0.72 |
 | 2 | 87079 Tile 2 x 4 with Groove | Tan | 0.14 | 0.27 | 0.18 | 0.36 |
 | 10 | 3023 Plate 1 x 2 | Bright Light Orange | 0.03 | 0.27 | 0.08 | 0.80 |
 | 6 | 3022 Plate 2 x 2 | Medium Nougat | 0.04 | 0.26 | 0.09 | 0.54 |
-| 8 | 3070b Tile 1 x 1 with Groove | Bright Light Orange | 0.03 | 0.26 | 0.05 | 0.40 |
+| 8 | 3070 Tile 1 x 1 with Groove | Bright Light Orange | 0.03 | 0.26 | 0.05 | 0.40 |
 | 2 | 87079 Tile 2 x 4 with Groove | Reddish Brown | 0.13 | 0.26 | 0.18 | 0.36 |
-| 5 | 3070b Tile 1 x 1 with Groove | Reddish Brown | 0.05 | 0.26 | 0.05 | 0.25 |
+| 5 | 3070 Tile 1 x 1 with Groove | Reddish Brown | 0.05 | 0.26 | 0.05 | 0.25 |
 | 8 | 87580 Plate Special 2 x 2 with Groove and Center Stud (Jumper) | Medium Nougat | 0.03 | 0.24 | 0.09 | 0.72 |
 | 4 | 3666 Plate 1 x 6 | Reddish Brown | 0.06 | 0.24 | 0.16 | 0.64 |
 | 5 | 25269 Tile Round 1 x 1 Quarter | Medium Nougat | 0.05 | 0.24 | 0.05 | 0.25 |
@@ -87,16 +87,16 @@ Order with `bricklink_wanted.xml` (upload as a BrickLink Wanted List, then Easy 
 | 6 | 27925 Tile 2 x 2 Curved, Macaroni | Coral | 0.02 | 0.15 | 0.10 (Standard) | 0.60 |
 | 4 | 3024 Plate 1 x 1 | Reddish Brown | 0.04 | 0.15 | 0.06 | 0.24 |
 | 1 | 3031 Plate 4 x 4 | Bright Green | 0.14 | 0.14 | 0.23 | 0.23 |
-| 2 | 3068b Tile 2 x 2 with Groove | Reddish Brown | 0.07 | 0.14 | 0.09 | 0.18 |
+| 2 | 3068 Tile 2 x 2 with Groove | Reddish Brown | 0.07 | 0.14 | 0.09 | 0.18 |
 | 4 | 3024 Plate 1 x 1 | Bright Light Orange | 0.03 | 0.14 | 0.06 | 0.24 |
 | 4 | 60470b Plate Special 1 x 2 with Clips Horizontal [Open O Clips] | Bright Light Orange | 0.03 | 0.13 | - | - |
 | 1 | 3031 Plate 4 x 4 | Reddish Brown | 0.13 | 0.13 | 0.23 | 0.23 |
 | 2 | 3666 Plate 1 x 6 | Tan | 0.06 | 0.12 | 0.16 | 0.32 |
-| 4 | 6141 Plate Round 1 x 1 with Solid Stud | Reddish Brown | 0.03 | 0.11 | 0.05 | 0.20 |
+| 4 | 4073 Plate Round 1 x 1 with Solid Stud | Reddish Brown | 0.03 | 0.11 | 0.05 | 0.20 |
 | 2 | 15573 Plate Special 1 x 2 with 1 Stud with Groove and Inside Stud Holder (Jumper) | Medium Nougat | 0.06 | 0.11 | 0.06 | 0.12 |
 | 2 | 3710 Plate 1 x 4 | Tan | 0.06 | 0.11 | 0.11 | 0.22 |
 | 5 | 24246 Tile Round 1 x 1 Half Circle | White | 0.02 | 0.11 | 0.07 | 0.35 |
-| 1 | 3068b Tile 2 x 2 with Groove | Tan | 0.10 | 0.10 | 0.09 | 0.09 |
+| 1 | 3068 Tile 2 x 2 with Groove | Tan | 0.10 | 0.10 | 0.09 | 0.09 |
 | 4 | 98138 Tile Round 1 x 1 | White | 0.02 | 0.10 | 0.05 | 0.20 |
 | 2 | 3004 Brick 1 x 2 | Medium Nougat | 0.05 | 0.09 | 0.10 | 0.20 |
 | 1 | 3031 Plate 4 x 4 | Red | 0.09 | 0.09 | 0.23 | 0.23 |

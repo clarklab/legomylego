@@ -29,5 +29,5 @@ Order with `bricklink_wanted.xml` (upload as a BrickLink Wanted List, then Easy 
 | 1 | 98138 Tile Round 1 x 1 | Reddish Brown | 0.04 | 0.04 | 0.05 | 0.05 |
 | 2 | 32062 Technic Axle 2 Notched | Red | 0.01 | 0.03 | 0.06 | 0.12 |
 | 2 | 98138pb007 Tile Round 1 x 1 with Offset Black Eye Print | White | 0.01 | 0.03 | 0.13 | 0.26 |
-| 1 | 6141 Plate Round 1 x 1 with Solid Stud | Tan | 0.02 | 0.02 | 0.05 | 0.05 |
+| 1 | 4073 Plate Round 1 x 1 with Solid Stud | Tan | 0.02 | 0.02 | 0.05 | 0.05 |
 | 1 | 87580 Plate Special 2 x 2 with Groove and Center Stud (Jumper) | Medium Azure | 0.02 | 0.02 | 0.06 | 0.06 |

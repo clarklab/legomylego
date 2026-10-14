@@ -27,7 +27,7 @@ Order with `bricklink_wanted.xml` (upload as a BrickLink Wanted List, then Easy 
 | 40 | 54200 Brick Sloped 30° 1 x 1 x 2/3 (Cheese Slope) | Reddish Brown | 0.03 | 1.21 | 0.05 | 2.00 |
 | 10 | 3622 Brick 1 x 3 | Medium Nougat | 0.12 | 1.20 | 0.14 | 1.40 |
 | 32 | 3024 Plate 1 x 1 | Reddish Brown | 0.04 | 1.18 | 0.06 | 1.92 |
-| 22 | 3070b Tile 1 x 1 with Groove | Medium Nougat | 0.05 | 1.18 | 0.05 | 1.10 |
+| 22 | 3070 Tile 1 x 1 with Groove | Medium Nougat | 0.05 | 1.18 | 0.05 | 1.10 |
 | 3 | 3006 Brick 2 x 10 | Tan | 0.37 | 1.12 | 0.69 | 2.07 |
 | 23 | 3005 Brick 1 x 1 | Reddish Brown | 0.05 | 1.11 | 0.07 | 1.61 |
 | 7 | 3001 Brick 2 x 4 | Medium Nougat | 0.15 | 1.08 | 0.21 | 1.47 |
@@ -51,7 +51,7 @@ Order with `bricklink_wanted.xml` (upload as a BrickLink Wanted List, then Easy 
 | 6 | 3005 Brick 1 x 1 | Light Bluish Gray | 0.06 | 0.37 | 0.07 | 0.42 |
 | 6 | 3003 Brick 2 x 2 | Tan | 0.06 | 0.36 | 0.13 | 0.78 |
 | 3 | 3020 Plate 2 x 4 | White | 0.11 | 0.32 | 0.14 | 0.42 |
-| 8 | 3070b Tile 1 x 1 with Groove | White | 0.04 | 0.32 | 0.05 | 0.40 |
+| 8 | 3070 Tile 1 x 1 with Groove | White | 0.04 | 0.32 | 0.05 | 0.40 |
 | 1 | 1748 Tile Round 1 x 2 Half Circle | Dark Pink | 0.32 | 0.32 | 0.13 (Standard) | 0.13 |
 | 2 | 22885 Brick Special 1 x 2 x 1 2/3 with 4 Studs on 1 Side | Light Bluish Gray | 0.15 | 0.29 | 0.19 | 0.38 |
 | 3 | 3020 Plate 2 x 4 | Medium Nougat | 0.09 | 0.26 | 0.14 | 0.42 |

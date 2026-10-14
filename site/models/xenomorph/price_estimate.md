@@ -20,15 +20,15 @@ Order with `bricklink_wanted.xml` (upload as a BrickLink Wanted List, then Easy 
 | 1 | 50950 Brick Curved 3 x 1 No Studs | Black | 0.13 | 0.13 | 0.12 | 0.12 |
 | 3 | 3024 Plate 1 x 1 | Black | 0.04 | 0.12 | 0.06 | 0.18 |
 | 1 | 30553 Hinge Cylinder 1 x 2 Locking with 2 Click Fingers and Axle Hole, 9 Teeth | Black | 0.11 | 0.11 | - | - |
-| 3 | 60897 Plate Special 1 x 1 with Clip Vertical [Thick Open O Clip] | Black | 0.03 | 0.10 | 0.08 | 0.24 |
+| 3 | 4085d Plate Special 1 x 1 with Clip Vertical [Thick Open O Clip] | Black | 0.03 | 0.10 | 0.08 | 0.24 |
 | 2 | 3023 Plate 1 x 2 | Black | 0.05 | 0.09 | 0.08 | 0.16 |
 | 2 | 98313 Arm Mechanical with Clip [Thick Support] | Black | 0.04 | 0.07 | 0.17 | 0.34 |
 | 2 | 4081b Plate Special 1 x 1 with Clip Light, Bar Hole [Thick Ring] | Black | 0.03 | 0.06 | 0.11 | 0.22 |
 | 3 | 54200 Brick Sloped 30° 1 x 1 x 2/3 (Cheese Slope) | Black | 0.02 | 0.06 | 0.05 | 0.15 |
 | 2 | 61252 Plate Special 1 x 1 with Clip Horizontal [Thick Open O Clip] | Black | 0.03 | 0.06 | 0.13 | 0.26 |
-| 1 | 3070b Tile 1 x 1 with Groove | Black | 0.05 | 0.05 | 0.05 | 0.05 |
+| 1 | 3070 Tile 1 x 1 with Groove | Black | 0.05 | 0.05 | 0.05 | 0.05 |
 | 1 | 15712 Tile Special 1 x 1 with Clip with Rounded Edges | Black | 0.04 | 0.04 | 0.13 | 0.13 |
 | 1 | 30383 Hinge Plate 1 x 2 Locking with 1 Finger On Top | Black | 0.03 | 0.03 | 0.12 | 0.12 |
 | 1 | 87747 Animal Body Part, Barb / Claw / Tooth / Talon / Horn, Medium | Black | 0.02 | 0.02 | 0.09 | 0.09 |
 | 1 | 60478 Plate Special 1 x 2 with Handle on End [Closed Ends] | Black | 0.02 | 0.02 | 0.06 | 0.06 |
-| 1 | 6141 Plate Round 1 x 1 with Solid Stud | Flat Silver | 0.02 | 0.02 | 0.05 | 0.05 |
+| 1 | 4073 Plate Round 1 x 1 with Solid Stud | Flat Silver | 0.02 | 0.02 | 0.05 | 0.05 |

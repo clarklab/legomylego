@@ -20,7 +20,7 @@ Order with `bricklink_wanted.xml` (upload as a BrickLink Wanted List, then Easy 
 | 1 | 3003 Brick 2 x 2 | Reddish Brown | 0.06 | 0.06 | 0.13 | 0.13 |
 | 1 | 3020 Plate 2 x 4 | Reddish Brown | 0.05 | 0.05 | 0.14 | 0.14 |
 | 2 | 76959 Brick Sloped Inverted 45° 2 x 2 [Round Hollow Bottom Pin, Bar-sized Stud Holes] | Reddish Brown | 0.02 | 0.04 | 0.14 | 0.28 |
-| 1 | 3262 Brick Round 2 x 2 Dome Top, Vented Stud | Red | 0.04 | 0.04 | 0.13 | 0.13 |
+| 1 | 553 Brick Round 2 x 2 Dome Top, Vented Stud | Red | 0.04 | 0.04 | 0.13 | 0.13 |
 | 1 | 37762 Equipment Candlestick | White | 0.04 | 0.04 | 0.08 | 0.08 |
 | 2 | 98138pb366 Tile Round 1 x 1 with Black Eye with Central Pupil Partially Closed Print | White | 0.02 | 0.04 | 0.13 | 0.26 |
 | 1 | 37775 Wave / Flame Small with Pin | Trans-Orange | 0.01 | 0.01 | 0.10 | 0.10 |

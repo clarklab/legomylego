@@ -17,6 +17,6 @@ Order with `bricklink_wanted.xml` (upload as a BrickLink Wanted List, then Easy 
 | 1 | 3024 Plate 1 x 1 | Black | 0.04 | 0.04 | 0.06 | 0.06 |
 | 2 | 54200 Brick Sloped 30° 1 x 1 x 2/3 (Cheese Slope) | Orange | 0.02 | 0.03 | 0.05 | 0.10 |
 | 1 | 15573 Plate Special 1 x 2 with 1 Stud with Groove and Inside Stud Holder (Jumper) | Orange | 0.03 | 0.03 | 0.06 | 0.06 |
-| 2 | 6141 Plate Round 1 x 1 with Solid Stud | Orange | 0.02 | 0.03 | 0.05 | 0.10 |
+| 2 | 4073 Plate Round 1 x 1 with Solid Stud | Orange | 0.02 | 0.03 | 0.05 | 0.10 |
 | 1 | 4589b Cone 1 x 1 [Top Groove] | Orange | 0.02 | 0.02 | 0.06 | 0.06 |
 | 1 | 64647 Flame / Headwear Accessory Plume / Feather, Triple Point | Trans-Orange | 0.02 | 0.02 | 0.19 | 0.19 |

@@ -33,10 +33,10 @@ Order with `bricklink_wanted.xml` (upload as a BrickLink Wanted List, then Easy 
 | 1 | 3626pb1965 Minifig Head, Beard Stubble, Raised Eyebrow, White Pupils Print, Stubble Goatee [Hollow Stud] | Yellow | 0.40 | 0.40 | - | - |
 | 1 | 21268 Hair Short Swept Back with Sideburns and Widow's Peak | Light Bluish Gray | 0.39 | 0.39 | 0.45 | 0.45 |
 | 1 | 3626pb1879 Minifig Head Chan Kong-Sang / Jia / Roby, Eyebrows, White Pupils, Scared / Lopside Smile Print | Yellow | 0.36 | 0.36 | 0.30 (Standard) | 0.30 |
-| 6 | 3070b Tile 1 x 1 with Groove | Reddish Brown | 0.05 | 0.31 | 0.05 | 0.30 |
+| 6 | 3070 Tile 1 x 1 with Groove | Reddish Brown | 0.05 | 0.31 | 0.05 | 0.30 |
 | 2 | 6636 Tile 1 x 6 with Groove | Dark Brown | 0.15 | 0.30 | 0.15 | 0.30 |
 | 6 | 3005 Brick 1 x 1 | Reddish Brown | 0.05 | 0.29 | 0.07 | 0.42 |
-| 4 | 3068b Tile 2 x 2 with Groove | Reddish Brown | 0.07 | 0.29 | 0.09 | 0.36 |
+| 4 | 3068 Tile 2 x 2 with Groove | Reddish Brown | 0.07 | 0.29 | 0.09 | 0.36 |
 | 1 | 41879 Legs Short | Dark Bluish Gray | 0.28 | 0.28 | 0.50 | 0.50 |
 | 1 | 3626pb2199 Minifig Head, Grey Beard, Moustache and Eyebrows | Yellow | 0.27 | 0.27 | - | - |
 | 3 | 30414 Brick Special 1 x 4 with 4 Studs on One Side | Reddish Brown | 0.09 | 0.26 | 0.17 | 0.51 |

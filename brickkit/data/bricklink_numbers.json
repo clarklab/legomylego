@@ -1,0 +1,26 @@
+{
+ "_about": "Rebrickable part number -> BrickLink's own item number, where BrickLink files the part under another one. Learned from BrickLink's API (an element's item mapping) by tools/bricklink_numbers.py; brickkit's catalogue uses it for the BrickLink number in parts.csv and bricklink_wanted.xml.",
+ "checked": "2026-10-14",
+ "parts": {
+  "15672": "92946",
+  "18759": "2341",
+  "30367c": "553",
+  "3040b": "3040",
+  "3062b": "3062",
+  "3068b": "3068",
+  "3069b": "3069",
+  "3070b": "3070",
+  "32123b": "4265c",
+  "3262": "553",
+  "3484": "48729b",
+  "4032a": "4032",
+  "41669": "x346",
+  "4287c": "4287",
+  "54657": "44302",
+  "60897": "4085d",
+  "6141": "4073",
+  "61930": "61930c01",
+  "6255": "x8",
+  "64228": "87513c01"
+ }
+}

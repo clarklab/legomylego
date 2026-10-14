@@ -24,7 +24,7 @@ Order with `bricklink_wanted.xml` (upload as a BrickLink Wanted List, then Easy 
 | 6 | 98138 Tile Round 1 x 1 | Magenta | 0.04 | 0.24 | 0.05 | 0.30 |
 | 6 | 54200 Brick Sloped 30° 1 x 1 x 2/3 (Cheese Slope) | White | 0.03 | 0.19 | 0.05 | 0.30 |
 | 2 | 87087 Brick Special 1 x 1 with Stud on 1 Side | Dark Bluish Gray | 0.08 | 0.17 | 0.11 | 0.22 |
-| 8 | 3062b Brick Round 1 x 1 Open Stud | Magenta | 0.02 | 0.16 | 0.06 | 0.48 |
+| 8 | 3062 Brick Round 1 x 1 Open Stud | Magenta | 0.02 | 0.16 | 0.06 | 0.48 |
 | 6 | 49668 Plate Special 1 x 1 with Tooth | White | 0.03 | 0.16 | 0.07 | 0.42 |
 | 1 | 87081 Brick Round 4 x 4 Centre Hole | Dark Bluish Gray | 0.14 | 0.14 | 0.35 | 0.35 |
 | 4 | 4274 Technic Pin 1/2 without Friction Ridges | Light Bluish Gray | 0.03 | 0.12 | - | - |
@@ -33,7 +33,7 @@ Order with `bricklink_wanted.xml` (upload as a BrickLink Wanted List, then Easy 
 | 2 | 54200 Brick Sloped 30° 1 x 1 x 2/3 (Cheese Slope) | Magenta | 0.04 | 0.08 | 0.05 | 0.10 |
 | 2 | 60474 Plate Round 4 x 4 with Pin Hole | Dark Bluish Gray | 0.04 | 0.07 | 0.17 | 0.34 |
 | 1 | 60474 Plate Round 4 x 4 with Pin Hole | Tan | 0.06 | 0.06 | 0.17 | 0.17 |
-| 1 | 4032a Plate Round 2 x 2 with Axle Hole Type 1 (+ Opening) | Dark Pink | 0.05 | 0.05 | 0.07 | 0.07 |
+| 1 | 4032 Plate Round 2 x 2 with Axle Hole Type 1 (+ Opening) | Dark Pink | 0.05 | 0.05 | 0.07 | 0.07 |
 | 1 | 60474 Plate Round 4 x 4 with Pin Hole | Magenta | 0.05 | 0.05 | 0.17 (Standard) | 0.17 |
 | 3 | 98138 Tile Round 1 x 1 | Trans-Dark Pink | 0.02 | 0.05 | 0.05 | 0.15 |
 | 1 | 60474 Plate Round 4 x 4 with Pin Hole | Dark Tan | 0.05 | 0.05 | 0.17 | 0.17 |

@@ -21,4 +21,4 @@ Order with `bricklink_wanted.xml` (upload as a BrickLink Wanted List, then Easy 
 | 1 | 33909 Plate Special 2 x 2 with Only 2 studs | Black | 0.06 | 0.06 | 0.07 | 0.07 |
 | 1 | 3023 Plate 1 x 2 | Black | 0.05 | 0.05 | 0.08 | 0.08 |
 | 2 | 98138pb366 Tile Round 1 x 1 with Black Eye with Central Pupil Partially Closed Print | White | 0.02 | 0.04 | 0.13 | 0.26 |
-| 2 | 6141 Plate Round 1 x 1 with Solid Stud | White | 0.02 | 0.03 | 0.05 | 0.10 |
+| 2 | 4073 Plate Round 1 x 1 with Solid Stud | White | 0.02 | 0.03 | 0.05 | 0.10 |

@@ -26,7 +26,7 @@ Order with `bricklink_wanted.xml` (upload as a BrickLink Wanted List, then Easy 
 | 2 | 3024 Plate 1 x 1 | Black | 0.04 | 0.08 | 0.06 | 0.12 |
 | 1 | 3623 Plate 1 x 3 | Yellow | 0.08 | 0.08 | 0.08 | 0.08 |
 | 2 | 98138 Tile Round 1 x 1 | Red | 0.04 | 0.07 | 0.05 | 0.10 |
-| 2 | 3070b Tile 1 x 1 with Groove | Yellow | 0.03 | 0.07 | 0.05 | 0.10 |
+| 2 | 3070 Tile 1 x 1 with Groove | Yellow | 0.03 | 0.07 | 0.05 | 0.10 |
 | 1 | 3020 Plate 2 x 4 | Yellow | 0.06 | 0.06 | 0.14 | 0.14 |
 | 2 | 63868 Plate Special 1 x 2 with Clip Horizontal on End | Yellow | 0.03 | 0.06 | 0.14 | 0.28 |
 | 1 | 93274 Bracket 1 x 2 - 2 x 4 | Yellow | 0.06 | 0.06 | 0.14 | 0.14 |

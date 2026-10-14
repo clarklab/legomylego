@@ -117,3 +117,12 @@ def test_pick_a_brick_csv_leaves_out_unavailable(tmp_path, monkeypatch):
     write_pick_a_brick_csv(lines, tmp_path / "p.csv")
     rows = list(csv.reader(open(tmp_path / "p.csv")))
     assert rows == [["elementId", "quantity"], ["300126", "3"]]
+
+
+def test_bricklink_numbers(engine):
+    """BrickLink files some parts under another number than Rebrickable (data/bricklink_numbers.json):
+    its lists use BrickLink's, the Rebrickable column keeps Rebrickable's."""
+    cat = engine.catalog
+    assert cat.rb_part("3070b.dat") == "3070b" and cat.bl_part("3070b.dat") == "3070"
+    assert cat.bl_part("6141.dat") == "4073" and cat.bl_part("4032a.dat") == "4032"
+    assert cat.bl_part("3001.dat") == "3001"

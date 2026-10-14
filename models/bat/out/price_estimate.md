@@ -13,10 +13,10 @@ Order with `bricklink_wanted.xml` (upload as a BrickLink Wanted List, then Easy 
 | 2 | 1748 Tile Round 1 x 2 Half Circle | Yellow | 0.21 | 0.43 | 0.13 (Standard) | 0.26 |
 | 2 | 87087 Brick Special 1 x 1 with Stud on 1 Side | Black | 0.14 | 0.27 | 0.11 | 0.22 |
 | 2 | 2431 Tile 1 x 4 with Groove | Black | 0.09 | 0.17 | 0.13 | 0.26 |
-| 2 | 4287c Brick Sloped Inverted 33° 3 x 1 with Internal Stopper and No Front Stud Connection | Black | 0.05 | 0.11 | 0.14 | 0.28 |
+| 2 | 4287 Brick Sloped Inverted 33° 3 x 1 with Internal Stopper and No Front Stud Connection | Black | 0.05 | 0.11 | 0.14 | 0.28 |
 | 2 | 3665 Brick Sloped Inverted 45° 2 x 1 | Black | 0.04 | 0.08 | 0.10 | 0.20 |
 | 2 | 3024 Plate 1 x 1 | Black | 0.04 | 0.08 | 0.06 | 0.12 |
-| 2 | 3040b Brick Sloped 45° 2 x 1 with Bottom Pin | Black | 0.04 | 0.07 | 0.10 | 0.20 |
+| 2 | 3040 Brick Sloped 45° 2 x 1 with Bottom Pin | Black | 0.04 | 0.07 | 0.10 | 0.20 |
 | 2 | 15070 Plate Special 1 x 1 with Vertical Tooth | White | 0.03 | 0.06 | 0.10 | 0.20 |
 | 1 | 3004 Brick 1 x 2 | Black | 0.06 | 0.06 | 0.10 | 0.10 |
 | 2 | 61252 Plate Special 1 x 1 with Clip Horizontal [Thick Open O Clip] | Black | 0.03 | 0.06 | 0.13 | 0.26 |

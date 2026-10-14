@@ -16,7 +16,7 @@ Order with `bricklink_wanted.xml` (upload as a BrickLink Wanted List, then Easy 
 | 8 | 3023 Plate 1 x 2 | Black | 0.05 | 0.38 | 0.08 | 0.64 |
 | 2 | 11212 Plate 3 x 3 | Black | 0.13 | 0.26 | 0.13 | 0.26 |
 | 4 | 11477 Brick Curved 2 x 1 No Studs [1/2 Bow] | Black | 0.06 | 0.23 | 0.07 | 0.28 |
-| 3 | 3070b Tile 1 x 1 with Groove | Black | 0.05 | 0.14 | 0.05 | 0.15 |
+| 3 | 3070 Tile 1 x 1 with Groove | Black | 0.05 | 0.14 | 0.05 | 0.15 |
 | 2 | 3069 Tile 1 x 2 with Groove | Black | 0.06 | 0.12 | 0.08 | 0.16 |
 | 2 | 15068 Brick Curved 2 x 2 x 2/3 | Black | 0.06 | 0.11 | 0.12 | 0.24 |
 | 2 | 15573 Plate Special 1 x 2 with 1 Stud with Groove and Inside Stud Holder (Jumper) | Black | 0.04 | 0.08 | 0.06 | 0.12 |
@@ -25,7 +25,7 @@ Order with `bricklink_wanted.xml` (upload as a BrickLink Wanted List, then Easy 
 | 1 | 3020 Plate 2 x 4 | Black | 0.06 | 0.06 | 0.14 | 0.14 |
 | 2 | 98138 Tile Round 1 x 1 | Black | 0.03 | 0.06 | 0.05 | 0.10 |
 | 1 | 54200 Brick Sloped 30° 1 x 1 x 2/3 (Cheese Slope) | Dark Bluish Gray | 0.05 | 0.05 | 0.05 | 0.05 |
-| 1 | 54657 Hinge Plate 1 x 2 Locking with 2 Fingers On End, without Groove, 7 Teeth | Black | 0.05 | 0.05 | 0.11 | 0.11 |
+| 1 | 44302 Hinge Plate 1 x 2 Locking with 2 Fingers On End, without Groove, 7 Teeth | Black | 0.05 | 0.05 | 0.11 | 0.11 |
 | 1 | 3024 Plate 1 x 1 | Black | 0.04 | 0.04 | 0.06 | 0.06 |
 | 1 | 3069 Tile 1 x 2 with Groove | Dark Pink | 0.03 | 0.03 | 0.08 | 0.08 |
 | 1 | 49668 Plate Special 1 x 1 with Tooth | Flat Silver | 0.02 | 0.02 | 0.07 | 0.07 |

@@ -16,13 +16,13 @@ Order with `bricklink_wanted.xml` (upload as a BrickLink Wanted List, then Easy 
 | 8 | 3023 Plate 1 x 2 | White | 0.05 | 0.37 | 0.08 | 0.64 |
 | 4 | 11477 Brick Curved 2 x 1 No Studs [1/2 Bow] | White | 0.05 | 0.18 | 0.07 | 0.28 |
 | 4 | 3069 Tile 1 x 2 with Groove | White | 0.04 | 0.15 | 0.08 | 0.32 |
-| 1 | 54657 Hinge Plate 1 x 2 Locking with 2 Fingers On End, without Groove, 7 Teeth | White | 0.14 | 0.14 | 0.11 | 0.11 |
+| 1 | 44302 Hinge Plate 1 x 2 Locking with 2 Fingers On End, without Groove, 7 Teeth | White | 0.14 | 0.14 | 0.11 | 0.11 |
 | 1 | 44301b Hinge Plate 1 x 2 Locking with 1 Finger On End, without Groove | White | 0.12 | 0.12 | 0.15 | 0.15 |
 | 1 | 3020 Plate 2 x 4 | White | 0.11 | 0.11 | 0.14 | 0.14 |
 | 1 | 3021 Plate 2 x 3 | White | 0.10 | 0.10 | 0.13 | 0.13 |
 | 1 | 11212 Plate 3 x 3 | White | 0.09 | 0.09 | 0.13 | 0.13 |
 | 1 | 3623 Plate 1 x 3 | Black | 0.08 | 0.08 | 0.08 | 0.08 |
-| 2 | 3070b Tile 1 x 1 with Groove | White | 0.04 | 0.08 | 0.05 | 0.10 |
+| 2 | 3070 Tile 1 x 1 with Groove | White | 0.04 | 0.08 | 0.05 | 0.10 |
 | 2 | 98138 Tile Round 1 x 1 | Light Bluish Gray | 0.04 | 0.07 | 0.05 | 0.10 |
 | 1 | 3623 Plate 1 x 3 | White | 0.06 | 0.06 | 0.08 | 0.08 |
 | 2 | 2412b Tile Special 1 x 2 Grille with Bottom Groove | Light Bluish Gray | 0.03 | 0.05 | 0.06 | 0.12 |

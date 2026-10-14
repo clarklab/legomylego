@@ -18,7 +18,7 @@ Order with `bricklink_wanted.xml` (upload as a BrickLink Wanted List, then Easy 
 | 2 | 3023 Plate 1 x 2 | Black | 0.05 | 0.09 | 0.08 | 0.16 |
 | 1 | 87087 Brick Special 1 x 1 with Stud on 1 Side | Light Bluish Gray | 0.09 | 0.09 | 0.11 | 0.11 |
 | 2 | 15070 Plate Special 1 x 1 with Vertical Tooth | White | 0.03 | 0.06 | 0.10 | 0.20 |
-| 1 | 3070b Tile 1 x 1 with Groove | Black | 0.05 | 0.05 | 0.05 | 0.05 |
+| 1 | 3070 Tile 1 x 1 with Groove | Black | 0.05 | 0.05 | 0.05 | 0.05 |
 | 1 | 54200 Brick Sloped 30° 1 x 1 x 2/3 (Cheese Slope) | Light Bluish Gray | 0.04 | 0.04 | 0.05 (Standard) | 0.05 |
 | 1 | 3024 Plate 1 x 1 | White | 0.04 | 0.04 | 0.06 | 0.06 |
 | 2 | 98138pb007 Tile Round 1 x 1 with Offset Black Eye Print | White | 0.01 | 0.03 | 0.13 | 0.26 |

@@ -17,7 +17,7 @@ qty,part,name,colour,ldraw_colour,rebrickable_part,rebrickable_colour,bricklink_
 1,3020,Plate 2 x 4,Yellow,14,3020,14,3020,3,302024,0,
 5,3022,Plate 2 x 2,Yellow,14,3022,14,3022,3,4613978,0,
 6,3023b,Plate 1 x 2,Yellow,14,3023,14,3023,3,302324,0,
-2,3070b,Tile 1 x 1 with Groove,Yellow,14,3070b,14,3070b,3,307024,0,
+2,3070b,Tile 1 x 1 with Groove,Yellow,14,3070b,14,3070,3,307024,0,
 1,3623,Plate 1 x 3,Yellow,14,3623,14,3623,3,362324,0,
 1,3701,Technic Brick 1 x 4 [3 Pin Holes],Yellow,14,3701,14,3701,3,370124,0,
 1,43720,"Brick Wedged, Sloped 45° 4 x 2 Right",Yellow,14,43720,14,43720,3,4262782,1,

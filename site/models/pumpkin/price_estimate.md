@@ -22,7 +22,7 @@ Order with `bricklink_wanted.xml` (upload as a BrickLink Wanted List, then Easy 
 | 2 | 3794b Plate Special 1 x 2 with 1 Stud with Groove (Jumper) | Orange | 0.06 | 0.13 | - | - |
 | 1 | 14719 Tile 2 x 2 Corner | Green | 0.13 | 0.13 | 0.07 | 0.07 |
 | 3 | 3022 Plate 2 x 2 | Orange | 0.03 | 0.10 | - | - |
-| 2 | 3070b Tile 1 x 1 with Groove | Black | 0.05 | 0.09 | 0.05 | 0.10 |
+| 2 | 3070 Tile 1 x 1 with Groove | Black | 0.05 | 0.09 | 0.05 | 0.10 |
 | 2 | 2420 Plate 2 x 2 Corner | Orange | 0.04 | 0.09 | 0.07 | 0.14 |
 | 1 | 16770 Creature Body Part, Barb Large (Claw, Talon) with Clip | Bright Green | 0.09 | 0.09 | 0.19 | 0.19 |
 | 1 | 3710 Plate 1 x 4 | Light Bluish Gray | 0.07 | 0.07 | 0.11 | 0.11 |

@@ -38,7 +38,7 @@ Order with `bricklink_wanted.xml` (upload as a BrickLink Wanted List, then Easy 
 | 72 | 3010 Brick 1 x 4 | Tan | 0.11 | 7.73 | 0.15 | 10.80 |
 | 34 | 3008 Brick 1 x 8 | Tan | 0.21 | 7.21 | 0.26 | 8.84 |
 | 2 | 91405 Plate 16 x 16 | Green | 3.61 | 7.21 | 3.29 | 6.58 |
-| 188 | 3040b Brick Sloped 45° 2 x 1 with Bottom Pin | Black | 0.04 | 7.03 | 0.10 | 18.80 |
+| 188 | 3040 Brick Sloped 45° 2 x 1 with Bottom Pin | Black | 0.04 | 7.03 | 0.10 | 18.80 |
 | 53 | 6636 Tile 1 x 6 with Groove | Black | 0.13 | 6.95 | 0.15 | 7.95 |
 | 12 | 11213 Plate Round 6 x 6 with Hole | Dark Red | 0.57 | 6.84 | - | - |
 | 3 | 92438 Plate 8 x 16 | Dark Bluish Gray | 2.10 | 6.29 | 2.40 | 7.20 |
@@ -49,7 +49,7 @@ Order with `bricklink_wanted.xml` (upload as a BrickLink Wanted List, then Easy 
 | 18 | 3035 Plate 4 x 8 | Green | 0.28 | 5.00 | 0.51 | 9.18 |
 | 73 | 3623 Plate 1 x 3 | Dark Red | 0.07 | 4.89 | 0.08 | 5.84 |
 | 28 | 3009 Brick 1 x 6 | Tan | 0.17 | 4.75 | 0.24 | 6.72 |
-| 84 | 3070b Tile 1 x 1 with Groove | Dark Red | 0.06 | 4.66 | 0.05 | 4.20 |
+| 84 | 3070 Tile 1 x 1 with Groove | Dark Red | 0.06 | 4.66 | 0.05 | 4.20 |
 | 157 | 3023 Plate 1 x 2 | Dark Red | 0.03 | 4.55 | 0.08 | 12.56 |
 | 36 | 60592 Window 1 x 2 x 2 Flat Front | White | 0.13 | 4.54 | 0.20 | 7.20 |
 | 74 | 3710 Plate 1 x 4 | Dark Red | 0.06 | 4.22 | 0.11 | 8.14 |
@@ -68,14 +68,14 @@ Order with `bricklink_wanted.xml` (upload as a BrickLink Wanted List, then Easy 
 | 32 | 87087 Brick Special 1 x 1 with Stud on 1 Side | Light Bluish Gray | 0.09 | 2.74 | 0.11 | 3.52 |
 | 16 | 60602 Glass for Window 1 x 2 x 3 Flat Front | Black | 0.16 | 2.54 | - | - |
 | 3 | 41539 Plate 8 x 8 | Light Bluish Gray | 0.84 | 2.53 | 1.10 | 3.30 |
-| 48 | 3062b Brick Round 1 x 1 Open Stud | Tan | 0.05 | 2.46 | 0.06 | 2.88 |
+| 48 | 3062 Brick Round 1 x 1 Open Stud | Tan | 0.05 | 2.46 | 0.06 | 2.88 |
 | 37 | 3623 Plate 1 x 3 | Light Bluish Gray | 0.07 | 2.43 | 0.08 | 2.96 |
 | 18 | 3460 Plate 1 x 8 | Light Bluish Gray | 0.13 | 2.43 | 0.18 | 3.24 |
 | 34 | 3795 Plate 2 x 6 | Dark Red | 0.07 | 2.43 | 0.19 | 6.46 |
 | 16 | 79393 Tile 3 x 3 Curved, Macaroni | White | 0.14 | 2.29 | 0.28 | 4.48 |
 | 27 | 3069 Tile 1 x 2 with Groove | Dark Red | 0.08 | 2.25 | 0.08 | 2.16 |
 | 12 | 30044 Window 1 x 2 x 2 2/3 with Rounded Top | White | 0.18 | 2.13 | 0.31 | 3.72 |
-| 23 | 3068b Tile 2 x 2 with Groove | Black | 0.09 | 2.13 | 0.09 | 2.07 |
+| 23 | 3068 Tile 2 x 2 with Groove | Black | 0.09 | 2.13 | 0.09 | 2.07 |
 | 57 | 3024 Plate 1 x 1 | Dark Red | 0.04 | 2.11 | 0.06 | 3.42 |
 | 35 | 3666 Plate 1 x 6 | Dark Red | 0.06 | 2.10 | 0.16 | 5.60 |
 | 14 | 3034 Plate 2 x 8 | Dark Red | 0.15 | 2.10 | 0.28 | 3.92 |
@@ -96,7 +96,7 @@ Order with `bricklink_wanted.xml` (upload as a BrickLink Wanted List, then Easy 
 | 15 | 3666 Plate 1 x 6 | Light Bluish Gray | 0.10 | 1.53 | 0.16 | 2.40 |
 | 11 | 4477 Plate 1 x 10 | Light Bluish Gray | 0.14 | 1.50 | 0.18 | 1.98 |
 | 20 | 2423 Plant, Leaves 4 x 3 | Green | 0.07 | 1.46 | 0.16 | 3.20 |
-| 24 | 3062b Brick Round 1 x 1 Open Stud | Black | 0.06 | 1.45 | 0.06 | 1.44 |
+| 24 | 3062 Brick Round 1 x 1 Open Stud | Black | 0.06 | 1.45 | 0.06 | 1.44 |
 | 36 | 60601 Glass for Window 1 x 2 x 2 Flat | Trans-Clear | 0.04 | 1.36 | - | - |
 | 22 | 3666 Plate 1 x 6 | Tan | 0.06 | 1.34 | 0.16 | 3.52 |
 | 4 | 3958 Plate 6 x 6 | Black | 0.33 | 1.31 | 0.60 | 2.40 |
@@ -107,14 +107,14 @@ Order with `bricklink_wanted.xml` (upload as a BrickLink Wanted List, then Easy 
 | 48 | 25269 Tile Round 1 x 1 Quarter | Black | 0.02 | 1.12 | 0.05 | 2.40 |
 | 8 | 4162 Tile 1 x 8 with Groove | Tan | 0.14 | 1.11 | 0.16 | 1.28 |
 | 8 | 15254 Brick Arch 1 x 6 x 2 - Thin Top without Reinforced Underside [New Version] | Dark Red | 0.14 | 1.08 | - | - |
-| 32 | 3040b Brick Sloped 45° 2 x 1 with Bottom Pin | Dark Red | 0.03 | 1.08 | 0.10 | 3.20 |
+| 32 | 3040 Brick Sloped 45° 2 x 1 with Bottom Pin | Dark Red | 0.03 | 1.08 | 0.10 | 3.20 |
 | 32 | 25269 Tile Round 1 x 1 Quarter | Tan | 0.03 | 1.07 | 0.05 | 1.60 |
 | 3 | 3036 Plate 6 x 8 | Green | 0.35 | 1.06 | 0.68 | 2.04 |
 | 18 | 3020 Plate 2 x 4 | Dark Red | 0.06 | 1.03 | 0.14 | 2.52 |
 | 7 | 3034 Plate 2 x 8 | Dark Bluish Gray | 0.14 | 1.00 | 0.28 | 1.96 |
 | 8 | 30414 Brick Special 1 x 4 with 4 Studs on One Side | Light Bluish Gray | 0.12 | 0.92 | 0.17 | 1.36 |
 | 16 | 4083 Bar 1 x 4 x 2 with Studs | Black | 0.06 | 0.91 | 0.30 | 4.80 |
-| 16 | 3070b Tile 1 x 1 with Groove | Tan | 0.05 | 0.77 | 0.05 | 0.80 |
+| 16 | 3070 Tile 1 x 1 with Groove | Tan | 0.05 | 0.77 | 0.05 | 0.80 |
 | 7 | 3034 Plate 2 x 8 | Green | 0.11 | 0.77 | 0.28 | 1.96 |
 | 4 | 87079 Tile 2 x 4 with Groove | Light Bluish Gray | 0.19 | 0.76 | 0.18 | 0.72 |
 | 1 | 973pb3159c01 Torso Vest with White Shirt and Blue Tie, Buttons Print, White Arms, Yellow Hands | Black | 0.76 | 0.76 | 1.16 | 1.16 |
@@ -123,13 +123,13 @@ Order with `bricklink_wanted.xml` (upload as a BrickLink Wanted List, then Easy 
 | 6 | 4477 Plate 1 x 10 | Dark Red | 0.11 | 0.69 | 0.18 | 1.08 |
 | 4 | 4162 Tile 1 x 8 with Groove | Light Bluish Gray | 0.17 | 0.67 | 0.16 | 0.64 |
 | 4 | 3622 Brick 1 x 3 | Dark Red | 0.17 | 0.67 | 0.14 | 0.56 |
-| 12 | 3062b Brick Round 1 x 1 Open Stud | Reddish Brown | 0.06 | 0.66 | 0.06 | 0.72 |
+| 12 | 3062 Brick Round 1 x 1 Open Stud | Reddish Brown | 0.06 | 0.66 | 0.06 | 0.72 |
 | 8 | 3003 Brick 2 x 2 | Black | 0.08 | 0.66 | - | - |
-| 16 | 6141 Plate Round 1 x 1 with Solid Stud | Dark Red | 0.04 | 0.64 | 0.05 | 0.80 |
+| 16 | 4073 Plate Round 1 x 1 with Solid Stud | Dark Red | 0.04 | 0.64 | 0.05 | 0.80 |
 | 4 | 15332 Fence Spindled 1 x 4 x 2 [4 Top Studs] | White | 0.15 | 0.59 | 0.37 | 1.48 |
 | 2 | 19121 Fence Ornamented 1 x 4 x 2 with 4 Studs | Black | 0.26 | 0.53 | 0.39 | 0.78 |
 | 8 | 3020 Plate 2 x 4 | Light Bluish Gray | 0.06 | 0.51 | 0.14 | 1.12 |
-| 16 | 4032a Plate Round 2 x 2 with Axle Hole Type 1 (+ Opening) | Reddish Brown | 0.03 | 0.50 | 0.07 | 1.12 |
+| 16 | 4032 Plate Round 2 x 2 with Axle Hole Type 1 (+ Opening) | Reddish Brown | 0.03 | 0.50 | 0.07 | 1.12 |
 | 1 | 970c00 Hips and Dark Brown Legs | Dark Brown | 0.49 | 0.49 | - | - |
 | 4 | 11211 Brick Special 1 x 2 with 2 Studs on 1 Side | Black | 0.12 | 0.47 | 0.13 | 0.52 |
 | 4 | 6636 Tile 1 x 6 with Groove | Tan | 0.11 | 0.46 | 0.15 | 0.60 |
@@ -139,7 +139,7 @@ Order with `bricklink_wanted.xml` (upload as a BrickLink Wanted List, then Easy 
 | 4 | 2431 Tile 1 x 4 with Groove | Tan | 0.11 | 0.42 | 0.13 | 0.52 |
 | 9 | 4589b Cone 1 x 1 [Top Groove] | Dark Red | 0.05 | 0.42 | 0.06 | 0.54 |
 | 2 | 3032 Plate 4 x 6 | Light Bluish Gray | 0.21 | 0.42 | 0.40 | 0.80 |
-| 8 | 3070b Tile 1 x 1 with Groove | Light Bluish Gray | 0.05 | 0.41 | 0.05 | 0.40 |
+| 8 | 3070 Tile 1 x 1 with Groove | Light Bluish Gray | 0.05 | 0.41 | 0.05 | 0.40 |
 | 1 | 3958 Plate 6 x 6 | Green | 0.41 | 0.41 | 0.60 | 0.60 |
 | 1 | 3036 Plate 6 x 8 | Light Bluish Gray | 0.38 | 0.38 | 0.68 | 0.68 |
 | 8 | 15573 Plate Special 1 x 2 with 1 Stud with Groove and Inside Stud Holder (Jumper) | Dark Red | 0.04 | 0.35 | 0.06 | 0.48 |
@@ -151,7 +151,7 @@ Order with `bricklink_wanted.xml` (upload as a BrickLink Wanted List, then Easy 
 | 1 | 3626pb2534 Minifig Head Wheeler, Glasses, Gray Eyebrows and Stubble, Medium Nougat Cheek Lines and Chin Dimple Print | Yellow | 0.28 | 0.28 | 0.30 | 0.30 |
 | 2 | 3009 Brick 1 x 6 | Dark Red | 0.14 | 0.28 | 0.24 | 0.48 |
 | 2 | 3031 Plate 4 x 4 | Light Bluish Gray | 0.13 | 0.26 | 0.23 | 0.46 |
-| 6 | 3062b Brick Round 1 x 1 Open Stud | White | 0.04 | 0.26 | 0.06 | 0.36 |
+| 6 | 3062 Brick Round 1 x 1 Open Stud | White | 0.04 | 0.26 | 0.06 | 0.36 |
 | 3 | 63965 Bar 6L with Stop Ring | White | 0.08 | 0.23 | 0.10 | 0.30 |
 | 2 | 63864 Tile 1 x 3 | Black | 0.11 | 0.23 | 0.12 | 0.24 |
 | 1 | 3878 Top Hat | Black | 0.22 | 0.22 | - | - |
@@ -172,7 +172,7 @@ Order with `bricklink_wanted.xml` (upload as a BrickLink Wanted List, then Easy 
 | 1 | 4495b Flag 4 x 1 Wavy [First Wave Right] | Blue | 0.05 | 0.05 | 0.22 | 0.22 |
 | 1 | 3023 Plate 1 x 2 | Dark Bluish Gray | 0.05 | 0.05 | 0.08 | 0.08 |
 | 1 | 4495b Flag 4 x 1 Wavy [First Wave Right] | Red | 0.04 | 0.04 | 0.22 | 0.22 |
-| 1 | 60897 Plate Special 1 x 1 with Clip Vertical [Thick Open O Clip] | Black | 0.03 | 0.03 | 0.08 | 0.08 |
+| 1 | 4085d Plate Special 1 x 1 with Clip Vertical [Thick Open O Clip] | Black | 0.03 | 0.03 | 0.08 | 0.08 |
 | 1 | 61252 Plate Special 1 x 1 with Clip Horizontal [Thick Open O Clip] | Black | 0.03 | 0.03 | 0.13 | 0.13 |
 
 ## Not LEGO: buy separately
