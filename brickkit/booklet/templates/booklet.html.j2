@@ -53,15 +53,21 @@
 </section>
 {% set ns.page = ns.page + 1 %}
 
+{#- the overview: 12 cards to a page; more than that, smaller cards, up to 24 to a page, on as many pages as it takes -#}
+{% set compact = sections|length > 12 %}
+{% set n_pages = (sections|length + 23) // 24 %}
+{% set per = ((sections|length + n_pages - 1) // n_pages) if compact else 12 %}{# shared evenly across the pages #}
+{% for chunk in sections|batch(per) %}{% set outer = loop %}
 <section class="page">
-  <h2>Build overview</h2>
-  <p style="margin-top:-3mm">The model is built in {{ sections|length }} sections. Each is finished before it is used.</p>
-  <div class="sections">
-  {% for s in sections %}<div class="section-card"><img src="{{ s.img }}"><div class="t">{{ loop.index }}. {{ s.title }}{% if s.repeat > 1 %} ×{{ s.repeat }}{% endif %}</div><div class="m">{{ "step" if s.steps == 1 else "steps" }} {{ s.ranges }}</div></div>{% endfor %}
+  <h2>Build overview{% if not outer.first %} (continued){% endif %}</h2>
+  {% if outer.first %}<p style="margin-top:-3mm">The model is built in {{ sections|length }} sections. Each is finished before it is used.</p>{% endif %}
+  <div class="sections{% if compact %} compact{% endif %}">
+  {% for s in chunk %}<div class="section-card"><img src="{{ s.img }}"><div class="t">{{ outer.index0 * per + loop.index }}. {{ s.title }}{% if s.repeat > 1 %} ×{{ s.repeat }}{% endif %}</div><div class="m">{{ "step" if s.steps == 1 else "steps" }} {{ s.ranges }}</div></div>{% endfor %}
   </div>
   {{ foot() }}
 </section>
 {% set ns.page = ns.page + 1 %}
+{% endfor %}
 
 {% for pair in steps|batch(2) %}
 <section class="page">

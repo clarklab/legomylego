@@ -1291,6 +1291,9 @@ def test_booklet_step_pages():
              "Base\n1", "Base\n3", "Dome\n5", "It works!\n", "Parts inventory", "About this model"]
     assert step_pages(texts) == (5, 7)
     assert step_pages(["a", "b", "c", "d"]) == (2, 3)          # no markers: all but the ends
+    # a long overview runs on to more pages: the steps start after the last of them
+    more = texts[:4] + ["Build overview (continued)\ny"] + texts[4:]
+    assert step_pages(more) == (6, 8)
 
 
 def test_booklet_flip_and_fan():

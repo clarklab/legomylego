@@ -71,3 +71,12 @@ def test_no_ghostscript(tmp_path, monkeypatch):
     p = _pdf(tmp_path, 3000)
     B.shrink_pdf(p, over=1000)
     assert p.stat().st_size == 3000
+
+
+def test_overview_step_ranges():
+    """An overview card's steps: runs joined; a main section built between all the others keeps
+    its first runs and its last two, so the card stays a few lines tall."""
+    from brickkit.booklet.booklet import _ranges
+    assert _ranges([1, 4, 5, 6]) == "1, 4–6"
+    long = _ranges([1, 2, 3, 10, 20, 21, 30, 40, 50, 51, 60])
+    assert long == "1–3, 10, 20–21, 30 … 50–51, 60"

@@ -79,7 +79,7 @@ def step_pages(texts: list[str]) -> tuple[int, int]:
     parts inventory / 'About this model'. Falls back to everything but the first and last."""
     n = len(texts)
     heads = [t.strip().split("\n", 1)[0].strip().lower() for t in texts]
-    first = next((i + 2 for i, h in enumerate(heads) if h.startswith("build overview")), None)
+    first = max((i + 2 for i, h in enumerate(heads) if h.startswith("build overview")), default=None)
     ends = [i + 1 for i, h in enumerate(heads)
             if h.startswith(("it works", "parts inventory", "about this model"))]
     last = (min(e for e in ends if first is None or e > first) - 1) if ends else None

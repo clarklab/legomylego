@@ -54,8 +54,9 @@ def _hex(engine, code: int) -> str:
     return lc.rgb if lc else "#888888"
 
 
-def _ranges(nums: list[int]) -> str:
-    """[1, 4, 5, 6] -> '1, 4-6'"""
+def _ranges(nums: list[int], most: int = 6) -> str:
+    """[1, 4, 5, 6] -> '1, 4-6'. More than `most` runs (a model's main section, built between
+    all the others) keeps the first few and the last: '1-99, 103-110, 277, ... 1035-1036, 1041'."""
     out, start = [], None
     for k, n in enumerate(nums):
         if start is None:
@@ -63,7 +64,9 @@ def _ranges(nums: list[int]) -> str:
         if k + 1 == len(nums) or nums[k + 1] != n + 1:
             out.append(str(start) if start == n else f"{start}\u2013{n}")
             start = None
-    return ", ".join(out)
+    if len(out) > most:
+        out = out[:most - 2] + ["\u2026"] + out[-2:]
+    return ", ".join(out).replace(", \u2026,", " \u2026")
 
 
 def build_context(engine, proj, model, img_dir: Path) -> dict:

@@ -58,6 +58,11 @@ p, li { font-size: 9.5pt; line-height: 1.45; }
 .section-card img { height: 30mm; max-width: 100%; object-fit: contain; }
 .section-card .t { font-weight: 700; font-size: 9pt; margin-top: 1.5mm; }
 .section-card .m { font-size: 7.5pt; color: #666; }
+.sections.compact { grid-template-columns: repeat(6, 1fr); gap: 3mm; }   /* more than 12 sections: 24 to a page */
+.sections.compact .section-card { padding: 2mm; }
+.sections.compact .section-card img { height: 20mm; }
+.sections.compact .section-card .t { font-size: 7.5pt; margin-top: 1mm; }
+.sections.compact .section-card .m { font-size: 6.5pt; }
 /* steps */
 .steps { display: grid; grid-template-columns: 1fr 1fr; gap: 0; height: 176mm; }
 .steps.single { grid-template-columns: 1fr; }
