@@ -2301,6 +2301,88 @@
    },
    "og": "/assets/og/nautilus_crew.png?v=0273587d77"
   },
+  "onkey": {
+   "files": {
+    "booklet.pdf": {
+     "v": "dda7be836e",
+     "size": 3997904
+    },
+    "bricklink_wanted.xml": {
+     "v": "12d13a668e",
+     "size": 3157
+    },
+    "model.glb": {
+     "v": "e5fe976935",
+     "size": 1064100
+    },
+    "model.json": {
+     "v": "3e709b4d1c",
+     "size": 24347
+    },
+    "onkey.mpd": {
+     "v": "89a652efa7",
+     "size": 5974
+    },
+    "parts.csv": {
+     "v": "702a003956",
+     "size": 2717
+    },
+    "pick_a_brick.csv": {
+     "v": "34c4f3e8cc",
+     "size": 394
+    },
+    "price_estimate.md": {
+     "v": "83d38c58fd",
+     "size": 3450
+    },
+    "quick_poster.jpg": {
+     "v": "ec598d31a5",
+     "size": 188606
+    },
+    "renders/renders_back.png": {
+     "v": "46aa3aeef7",
+     "size": 824486
+    },
+    "renders/renders_front.png": {
+     "v": "eb1e191c28",
+     "size": 849036
+    },
+    "renders/renders_side.png": {
+     "v": "f69857fc57",
+     "size": 820163
+    },
+    "renders/renders_three_quarter.png": {
+     "v": "09ead851ab",
+     "size": 864032
+    }
+   },
+   "images": {
+    "renders/renders_back.png": {
+     "w": 900,
+     "h": 900,
+     "lg": "/assets/img/onkey/renders_back.webp?v=79c0323bf4",
+     "sm": "/assets/img/onkey/renders_back-480.webp?v=71b94ee5db"
+    },
+    "renders/renders_front.png": {
+     "w": 900,
+     "h": 900,
+     "lg": "/assets/img/onkey/renders_front.webp?v=250333bb98",
+     "sm": "/assets/img/onkey/renders_front-480.webp?v=952839ddf3"
+    },
+    "renders/renders_side.png": {
+     "w": 900,
+     "h": 900,
+     "lg": "/assets/img/onkey/renders_side.webp?v=7c36eac4a7",
+     "sm": "/assets/img/onkey/renders_side-480.webp?v=cd8bbece54"
+    },
+    "renders/renders_three_quarter.png": {
+     "w": 900,
+     "h": 900,
+     "lg": "/assets/img/onkey/renders_three_quarter.webp?v=8ab958731f",
+     "sm": "/assets/img/onkey/renders_three_quarter-480.webp?v=6386c63ae2"
+    }
+   }
+  },
   "pez_darth_vader": {
    "files": {
     "booklet.pdf": {

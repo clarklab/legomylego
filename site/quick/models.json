@@ -354,6 +354,22 @@
       "source": "https://rebrickable.com/mocs/MOC-249307/"
     },
     {
+      "slug": "onkey",
+      "name": "Onkey",
+      "description": "Onkey, a little monkey head on two long arms, in 79 pieces, 9.6 cm from hand to hand: googly eyes, tan ears, a tuft, and a jaw that drops.",
+      "collection": "quick_bricks",
+      "pieces": 79,
+      "steps": 22,
+      "video": "/quick/onkey-1080x1920.mp4?v=88ebe67eb81e",
+      "poster": "/models/onkey/quick_poster.jpg?v=1622d125e494",
+      "instructions": "/models/onkey/booklet.pdf?v=91ff1dab0930",
+      "url": "/quick/onkey/",
+      "model": "/models/onkey/model.json?v=1d9bdc9184f1",
+      "geometry": "/models/onkey/model.glb?v=f2160e419f64",
+      "designer": "theroldangrace",
+      "source": "https://www.instagram.com/p/DedZYEepfkj/"
+    },
+    {
       "slug": "pez_darth_vader",
       "name": "Darth Vader PEZ",
       "description": "A Darth Vader PEZ dispenser in 53 pieces, 10.6 cm tall, about the size of a real one: a black helmet with flared sides and a silver mouth grille on a black stem, and a head that tips back on a click hinge to show a pink sweet.",

@@ -1,0 +1,141 @@
+0 FILE onkey.ldr
+0 Onkey
+0 Name: onkey.ldr
+0 Author: brickkit
+
+0 // The arms, side by side under the front row, their hands out to the sides, and a 1 x 4 plate on the back row
+1 16 0 0 -30 1 0 0 0 1 0 0 0 1 arm.ldr
+1 16 0 0 -30 -1 0 0 0 1 0 0 0 -1 arm.ldr
+1 70 0 -8 30 1 0 0 0 1 0 0 0 1 3710.dat
+0 STEP
+0 // A 1 x 4 plate on the back row, and on it the jaw's hinge: two plates with a handle, handles to the front
+1 70 0 -16 30 1 0 0 0 1 0 0 0 1 3710.dat
+1 70 20 -24 30 1 0 0 0 1 0 0 0 1 48336.dat
+1 70 -20 -24 30 1 0 0 0 1 0 0 0 1 48336.dat
+0 STEP
+0 // Push a plate with a clip onto each handle from the front, clip to the back: they hang on the handles. Then a 1 x 4 plate across the arms' inner ends, and another on that
+1 19 30 -24 -10 -1 0 0 0 1 0 0 0 -1 61252.dat
+1 19 -30 -24 -10 -1 0 0 0 1 0 0 0 -1 61252.dat
+1 70 0 -16 -30 1 0 0 0 1 0 0 0 1 3710.dat
+1 70 0 -24 -30 1 0 0 0 1 0 0 0 1 3710.dat
+0 STEP
+0 // Two 1 x 1 plates on each clip plate: the jaw will stand on these. Two 1 x 2 plates in the middle at the front, a 1 x 4 plate on the handles and a 2 x 4 plate on that
+1 19 30 -32 -10 1 0 0 0 1 0 0 0 1 3024.dat
+1 19 30 -40 -10 1 0 0 0 1 0 0 0 1 3024.dat
+1 19 -30 -32 -10 1 0 0 0 1 0 0 0 1 3024.dat
+1 19 -30 -40 -10 1 0 0 0 1 0 0 0 1 3024.dat
+1 70 0 -32 -30 1 0 0 0 1 0 0 0 1 3023b.dat
+1 70 0 -40 -30 1 0 0 0 1 0 0 0 1 3023b.dat
+1 70 0 -32 30 1 0 0 0 1 0 0 0 1 3710.dat
+1 70 0 -40 20 1 0 0 0 1 0 0 0 1 3020.dat
+0 STEP
+0 // A tan 2 x 3 plate on the middle, sticking out a stud in front: the upper lip stands on it. Two 1 x 4 plates behind it
+1 19 0 -48 -30 0 0 1 0 1 0 -1 0 0 3021.dat
+1 70 0 -48 10 1 0 0 0 1 0 0 0 1 3710.dat
+1 70 0 -48 30 1 0 0 0 1 0 0 0 1 3710.dat
+0 STEP
+0 // A tan 1 x 3 tile on each column, sticking out in front
+1 19 30 -48 -30 0 0 1 0 1 0 -1 0 0 63864.dat
+1 19 -30 -48 -30 0 0 1 0 1 0 -1 0 0 63864.dat
+0 STEP
+0 // The jaw: push a half up under the front of each tile, thin ends out
+1 16 30 -40 -50 0 0 -1 0 1 0 1 0 0 jaw_half.ldr
+1 16 -30 -40 -50 0 0 1 0 1 0 -1 0 0 jaw_half.ldr
+0 STEP
+0 // A tan 1 x 2 plate on the front of the tan plate
+1 19 0 -56 -50 1 0 0 0 1 0 0 0 1 3023b.dat
+0 STEP
+0 // The upper lip: a tan curved brick over it (the plate fits up inside it)
+1 19 0 -48 -50 0 0 1 0 1 0 -1 0 0 93273.dat
+0 STEP
+0 // A 4 x 4 plate over the whole head, and another on it
+1 70 0 -56 0 1 0 0 0 1 0 0 0 1 3031.dat
+1 70 0 -64 0 1 0 0 0 1 0 0 0 1 3031.dat
+0 STEP
+0 // The ear posts: on each arm's free stud a 1 x 2 plate, front to back, half of it sticking out behind; a 1 x 1 tile on its front stud and two 1 x 1 plates on its back one
+1 70 50 -16 -20 0 0 1 0 1 0 -1 0 0 3023b.dat
+1 70 50 -24 -30 1 0 0 0 1 0 0 0 1 3070b.dat
+1 70 50 -24 -10 1 0 0 0 1 0 0 0 1 3024.dat
+1 70 50 -32 -10 1 0 0 0 1 0 0 0 1 3024.dat
+1 70 -50 -16 -20 0 0 1 0 1 0 -1 0 0 3023b.dat
+1 70 -50 -24 -30 1 0 0 0 1 0 0 0 1 3070b.dat
+1 70 -50 -24 -10 1 0 0 0 1 0 0 0 1 3024.dat
+1 70 -50 -32 -10 1 0 0 0 1 0 0 0 1 3024.dat
+0 STEP
+0 // Two tall bricks with studs on one side on each, one on the other, studs to the front
+1 70 50 -72 -10 1 0 0 0 1 0 0 0 1 32952.dat
+1 70 50 -112 -10 1 0 0 0 1 0 0 0 1 32952.dat
+1 70 -50 -72 -10 1 0 0 0 1 0 0 0 1 32952.dat
+1 70 -50 -112 -10 1 0 0 0 1 0 0 0 1 32952.dat
+0 STEP
+0 // The ears: on each post a darker half circle, flat side in, and a tan macaroni tile above it and below it, round side out
+1 84 50 -72 -28 0 0 -1 -1 0 0 0 1 0 1748.dat
+1 19 50 -82 -28 0 0 -1 -1 0 0 0 1 0 27925.dat
+1 19 50 -62 -28 1 0 0 0 0 -1 0 1 0 27925.dat
+1 84 -50 -72 -28 0 0 1 1 0 0 0 1 0 1748.dat
+1 19 -50 -82 -28 -1 0 0 0 0 1 0 1 0 27925.dat
+1 19 -50 -62 -28 0 0 1 1 0 0 0 1 0 27925.dat
+0 STEP
+0 // The eye row along the front: at each end a brick with a stud on its front, and between them a 1 x 2 brick with a hole
+1 70 30 -88 -30 1 0 0 0 1 0 0 0 1 87087.dat
+1 70 -30 -88 -30 1 0 0 0 1 0 0 0 1 87087.dat
+1 70 0 -88 -30 1 0 0 0 1 0 0 0 1 3700.dat
+0 STEP
+0 // Behind them: a 1 x 4 brick, and a 2 x 4 brick on the back two rows
+1 70 0 -88 -10 1 0 0 0 1 0 0 0 1 3010.dat
+1 70 0 -88 20 1 0 0 0 1 0 0 0 1 3001.dat
+0 STEP
+0 // The eyes: a white cone on each end stud, and a black round tile on each cone
+1 15 30 -78 -56 1 0 0 0 0 -1 0 1 0 33492.dat
+1 0 30 -78 -64 1 0 0 0 0 -1 0 1 0 98138.dat
+1 15 -30 -78 -56 1 0 0 0 0 -1 0 1 0 33492.dat
+1 0 -30 -78 -64 1 0 0 0 0 -1 0 1 0 98138.dat
+0 STEP
+0 // The nose: a half pin in the hole, and a round tile on its end
+1 71 0 -78 -40 0 0 1 0 1 0 -1 0 0 4274.dat
+1 70 0 -78 -48 1 0 0 0 0 -1 0 1 0 98138.dat
+0 STEP
+0 // The forehead: two 2 x 4 bricks
+1 70 0 -112 -20 1 0 0 0 1 0 0 0 1 3001.dat
+1 70 0 -112 20 1 0 0 0 1 0 0 0 1 3001.dat
+0 STEP
+0 // The top of the head: curved bricks round the edge, each curving down to the outside, and in the middle two tan 2 x 2 plates (out of sight) and a 2 x 2 plate with one stud
+1 70 20 -136 -30 1 0 0 0 1 0 0 0 1 37352.dat
+1 70 20 -136 30 -1 0 0 0 1 0 0 0 -1 37352.dat
+1 70 30 -136 0 0 0 -1 0 1 0 1 0 0 37352.dat
+1 70 -20 -136 -30 1 0 0 0 1 0 0 0 1 37352.dat
+1 70 -20 -136 30 -1 0 0 0 1 0 0 0 -1 37352.dat
+1 70 -30 -136 0 0 0 1 0 1 0 -1 0 0 37352.dat
+1 19 0 -120 0 1 0 0 0 1 0 0 0 1 3022.dat
+1 19 0 -128 0 1 0 0 0 1 0 0 0 1 3022.dat
+1 70 0 -136 0 1 0 0 0 1 0 0 0 1 87580.dat
+0 STEP
+0 // The tuft: a round plate and a little rounded piece on top
+1 70 0 -144 0 1 0 0 0 1 0 0 0 1 6141.dat
+1 70 0 -144 0 1 0 0 0 1 0 0 0 1 49307.dat
+0 STEP
+0 NOFILE
+
+0 FILE arm.ldr
+0 Arm
+0 Name: arm.ldr
+0 Author: brickkit
+
+0 // An arm: a 1 x 6 plate, a rounded 1 x 1 piece on its fourth stud, and the hand on the end: a 1 x 2 brick with a rounded top. Make two
+1 70 60 -8 0 1 0 0 0 1 0 0 0 1 3666.dat
+1 70 70 -8 0 1 0 0 0 1 0 0 0 1 49307.dat
+1 70 100 -32 0 1 0 0 0 1 0 0 0 1 3004.dat
+1 70 100 -32 0 1 0 0 0 1 0 0 0 1 3563.dat
+0 STEP
+0 NOFILE
+
+0 FILE jaw_half.ldr
+0 Half the jaw
+0 Name: jaw_half.ldr
+0 Author: brickkit
+
+0 // Half the jaw: an inverted curved brick and a tan 1 x 1 tile on its lower stud. Make two
+1 19 0 0 0 1 0 0 0 1 0 0 0 1 24201.dat
+1 19 0 0 20 1 0 0 0 1 0 0 0 1 3070b.dat
+0 STEP
+0 NOFILE

@@ -1,0 +1,27 @@
+{
+ "low": 6.13,
+ "high": 9.19,
+ "currency": "USD",
+ "note": "BrickLink price guide, 2026-10-14: 34 of 34 part lines priced live (six-month sold average to current asking average, new, USD).",
+ "source": "bricklink",
+ "date": "2026-10-14",
+ "live_lines": 34,
+ "lines": 34,
+ "bricklink": {
+  "usd": 6.13,
+  "date": "2026-10-14",
+  "lines": 34,
+  "of": 34,
+  "missing": [],
+  "basis": "new parts, the average each sold for over the last six months (the average asking price where nothing sold), before shipping"
+ },
+ "pick_a_brick": {
+  "usd": 7.97,
+  "date": "2026-10-14",
+  "lines": 34,
+  "of": 34,
+  "missing": [],
+  "standard": [],
+  "basis": "LEGO Pick a Brick, US shop, before shipping"
+ }
+}

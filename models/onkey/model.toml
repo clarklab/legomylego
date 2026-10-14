@@ -1,0 +1,39 @@
+[model]
+name = "Onkey"
+design = "design.py"
+description = "Onkey, a little monkey head on two long arms, in 79 pieces, 9.6 cm from hand to hand: googly eyes, tan ears, a tuft, and a jaw that drops."
+designer = "theroldangrace"   # from their build video on Instagram (NOTES.md)
+source = "https://www.instagram.com/p/DedZYEepfkj/"
+collection = "quick_bricks"
+
+[palette]                     # role -> a real colour name; design.py places parts by role
+body = "Reddish Brown"        # the head, the arms, the hands, the tuft
+tan = "Tan"                   # the muzzle: upper lip, jaw, and the plates and tiles between
+eye = "White"                 # the googly eyes: a white cone each...
+pupil = "Black"               # ... with a black round tile on it
+inner = "Medium Nougat"       # the inner ears
+hinge = "Reddish Brown"       # the jaw's hinge inside the head: two plates with a handle...
+clip = "Tan"                  # ... and two plates with a clip on the jaw's columns
+pin = "Light Bluish Gray"     # the half pin the nose is on, out of sight in its hole
+inside = "Tan"                # two plates inside the top of the head, out of sight
+
+[booklet]
+subtitle = "A little monkey head on two long arms, with googly eyes and a jaw that drops, in 79 pieces."
+intro = "Make the two arms first and lay them side by side: the head is built on their inner ends. Inside the lower head go the jaw's hinge (two plates with a handle, and a plate with a clip on each) and the tan plate the upper lip stands on; the jaw and the lip go on next, then the ears (they stand on the arms), the face and its eyes, and the rounded top with its tuft."
+notes = ["The jaw hangs on two clips. Push the chin down gently and it opens a little; push it back up and the mouth is shut. It stays wherever you leave it.",
+         "Most of the face's bricks have a stud on their front or side. Check each step's picture for which way the studs point."]
+
+[checks]
+enabled = ["real_elements", "connections", "collisions", "buildability", "stability",
+           "mechanism", "electrics", "technique"]
+
+# Quick Bricks video (brickkit quick onkey): a floor the model stands out on
+[quick]
+surface = "lego_yellow"       # banana yellow; reddish brown stands out on it
+room = "window"
+light = "morning"
+seconds = 17
+flex = 2.6                    # before the cut the jaw drops on its clips, and shuts
+highlight = ["33492", "93273", "1748"]   # the eyes, the upper lip, the inner ears
+close_ups = 3
+music = false                 # just the clicks
