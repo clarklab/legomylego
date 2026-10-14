@@ -2,16 +2,16 @@
 
 43 pieces in 22 lines.
 
-**BrickLink: $2.57** for new parts, before shipping, from BrickLink's price guide on 2026-10-14: each line at the average it sold for over the last six months (the average asking price where nothing sold), weighted by quantity. Not priced (no BrickLink data): 1 x Equipment Dish Rectangular [Kitchen Implements Kit] (97785), Lavender.
+**BrickLink: $3.00** for new parts, before shipping, from BrickLink's price guide on 2026-10-14: each line at the average it sold for over the last six months (the average asking price where nothing sold), weighted by quantity.
 
-**Pick a Brick: $3.51** at LEGO Pick a Brick (US shop) on 2026-10-14, before shipping. Not sold there: 1 x Equipment Dish Rectangular [Kitchen Implements Kit] (97785), Lavender. Standard pieces, sent later in a parcel of their own: 3 x Brick Curved 2 x 2 with Lip, No Studs (30602), Red; 2 x Bracket 1 x 1 - 1 x 1 Inverted (36840), Red; 1 x Brick Sloped Inverted 45° 3 x 1 Double with 2 Blocked Open Studs (2341), White.
+**Pick a Brick: $3.51** at LEGO Pick a Brick (US shop) on 2026-10-14, before shipping. Not sold there: 1 x Equipment Dish Rectangular [Kitchen Implements Kit] (93082c), Lavender. Standard pieces, sent later in a parcel of their own: 3 x Brick Curved 2 x 2 with Lip, No Studs (30602), Red; 2 x Bracket 1 x 1 - 1 x 1 Inverted (36840), Red; 1 x Brick Sloped Inverted 45° 3 x 1 Double with 2 Blocked Open Studs (2341), White.
 
 Order with `bricklink_wanted.xml` (upload as a BrickLink Wanted List, then Easy Buy) or `pick_a_brick.csv` (upload on Pick a Brick).
 
 | Qty | Part | Colour | BrickLink each | BrickLink line | Pick a Brick each | Pick a Brick line |
 |---:|---|---|---:|---:|---:|---:|
-| 1 | 97785 Equipment Dish Rectangular [Kitchen Implements Kit] | Lavender | - | - | - | - |
 | 2 | 47905 Brick Special 1 x 1 with Studs on 2 Sides | Yellow | 0.22 | 0.43 | 0.12 | 0.24 |
+| 1 | 93082c Equipment Dish Rectangular [Kitchen Implements Kit] | Lavender | 0.43 | 0.43 | - | - |
 | 3 | 30602 Brick Curved 2 x 2 with Lip, No Studs | Red | 0.10 | 0.31 | 0.17 (Standard) | 0.51 |
 | 2 | 99781 Bracket 1 x 2 - 1 x 2 | Red | 0.13 | 0.26 | 0.11 | 0.22 |
 | 2 | 36840 Bracket 1 x 1 - 1 x 1 Inverted | Red | 0.12 | 0.25 | 0.05 (Standard) | 0.10 |

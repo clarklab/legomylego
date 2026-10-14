@@ -1325,22 +1325,20 @@
         65.0
       ],
       "price": {
-        "low": 3.17,
-        "high": 6.4,
+        "low": 3.0,
+        "high": 4.45,
         "currency": "USD",
-        "note": "BrickLink price guide, 2026-10-14: 21 of 22 part lines priced live (six-month sold average to current asking average, new, USD); the rest estimated from typical prices.",
+        "note": "BrickLink price guide, 2026-10-14: 22 of 22 part lines priced live (six-month sold average to current asking average, new, USD).",
         "source": "bricklink",
         "date": "2026-10-14",
-        "live_lines": 21,
+        "live_lines": 22,
         "lines": 22,
         "bricklink": {
-          "usd": 2.57,
+          "usd": 3.0,
           "date": "2026-10-14",
-          "lines": 21,
+          "lines": 22,
           "of": 22,
-          "missing": [
-            "1 x Equipment Dish Rectangular [Kitchen Implements Kit] (97785), Lavender"
-          ],
+          "missing": [],
           "basis": "new parts, the average each sold for over the last six months (the average asking price where nothing sold), before shipping"
         },
         "pick_a_brick": {
@@ -1349,7 +1347,7 @@
           "lines": 21,
           "of": 22,
           "missing": [
-            "1 x Equipment Dish Rectangular [Kitchen Implements Kit] (97785), Lavender"
+            "1 x Equipment Dish Rectangular [Kitchen Implements Kit] (93082c), Lavender"
           ],
           "standard": [
             "3 x Brick Curved 2 x 2 with Lip, No Studs (30602), Red",

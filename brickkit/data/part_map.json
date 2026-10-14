@@ -34,5 +34,9 @@
   "rebrickable": "4287c",
   "bricklink": "4287",
   "note": "Slope 33 3 x 1 inverted, thick front: LEGO now makes it as the thin-front 4287c (element 4211195 in Reddish Brown, on Pick a Brick), which builds the same; the lists name what is sold (2026-10-14)"
+ },
+ "97785": {
+  "bricklink": "93082c",
+  "note": "Rectangular dish of the Friends kitchen implements: LEGO makes it as one of nine utensils on a frame (93082, element 6284047 in Lavender), so it has no element number of its own and isn't on Pick a Brick; BrickLink sells it loose as 93082c (checked on BrickLink's API, 2026-10-14)"
  }
 }
