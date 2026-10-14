@@ -90,7 +90,7 @@
 {% if works %}
 <section class="page">
   <h2>It works!</h2>
-  <div class="works">
+  <div class="works{% if works|length > 2 %} three{% endif %}{% if works|length > 3 %} rows{% endif %}">
   {% for w in works %}<div><img src="{{ w.image }}"><h3 style="margin-top:3mm">{{ w.title }}</h3><p>{{ w.text }}</p></div>{% endfor %}
   </div>
   {{ foot() }}

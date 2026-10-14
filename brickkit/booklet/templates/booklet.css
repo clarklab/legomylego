@@ -88,6 +88,8 @@ p, li { font-size: 9.5pt; line-height: 1.45; }
 /* works */
 .works { display: grid; grid-template-columns: repeat(2, 1fr); gap: 6mm; }
 .works img { width: 100%; max-height: 120mm; object-fit: contain; background: #f3f6f9; border-radius: 2.5mm; }
+.works.three { grid-template-columns: repeat(3, 1fr); }   /* a third panel: all three side by side (a second row of two fell off the page) */
+.works.rows img { max-height: 52mm; }                       /* four to six: two rows of three */
 /* inventory */
 .inv { display: grid; grid-template-columns: repeat(8, 1fr); gap: 2.4mm; }
 .inv .cell { background: #f3f6f9; border-radius: 1.5mm; padding: 1.5mm; text-align: center; font-size: 6.4pt; line-height: 1.25; break-inside: avoid; }
