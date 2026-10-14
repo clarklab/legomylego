@@ -3,25 +3,25 @@
 0 Name: vhs_tape.ldr
 0 Author: brickkit
 
-0 // Take the chassis and drop the supply reel onto its right-hand bearing: the reel's red axle goes down through the round holes
+0 // Take the chassis and drop the supply reel into the right-hand drive hole: the white drive hub under the reel goes down into the small square between the four tiles
 1 16 0 0 0 1 0 0 0 1 0 0 0 1 core.ldr
 1 16 110 -16 -10 1 0 0 0 1 0 0 0 1 reel_full.ldr
 0 STEP
-0 // The take-up reel on the left-hand bearing
+0 // The take-up reel into the left-hand drive hole
 1 16 -110 -16 -10 1 0 0 0 1 0 0 0 1 reel_empty.ldr
 0 STEP
 0 // End walls
 1 0 -220 -40 10 0 0 1 0 1 0 -1 0 0 3008.dat
-1 0 -220 -24 -90 0 0 1 0 1 0 -1 0 0 3023b.dat
-1 0 -220 -32 -90 0 0 1 0 1 0 -1 0 0 3023b.dat
+1 0 -220 -40 -80 1 0 0 0 1 0 0 0 1 3005.dat
+1 0 -220 -24 -100 1 0 0 0 1 0 0 0 1 3070b.dat
 1 0 220 -40 10 0 0 1 0 1 0 -1 0 0 3008.dat
-1 0 220 -24 -90 0 0 1 0 1 0 -1 0 0 3023b.dat
-1 0 220 -32 -90 0 0 1 0 1 0 -1 0 0 3023b.dat
+1 0 220 -40 -80 1 0 0 0 1 0 0 0 1 3005.dat
+1 0 220 -24 -100 1 0 0 0 1 0 0 0 1 3070b.dat
 0 STEP
 0 // Lower the top shell onto the chassis
 1 16 0 0 0 -1 0 0 0 -1 0 0 0 1 top_shell.ldr
 0 STEP
-0 // Hold the dust flap in place and push a pin through each cheek
+0 // Hold the dust flap in place and push a pin through each hinge
 1 16 0 0 0 1 0 0 0 0 -1 0 1 0 flap.ldr
 1 0 -210 -54 -100 1 0 0 0 1 0 0 0 1 2780.dat
 1 0 210 -54 -100 1 0 0 0 1 0 0 0 1 2780.dat
@@ -56,8 +56,9 @@
 1 47 0 -24 0 -1 0 0 0 1 0 0 0 -1 27507.dat
 1 47 0 -24 0 0 0 -1 0 1 0 1 0 0 27507.dat
 0 STEP
-0 // The red spindle: push the axle up through the hub
+0 // The red spindle and the drive hub: push the axle up through the reel, then a white round plate onto its lower end, studs down. Its four studs are the pegs you turn the reel by from underneath
 1 4 0 -4 0 0 -1 0 1 0 0 0 0 1 32062.dat
+1 15 0 8 0 -1 0 0 0 -1 0 0 0 1 4032a.dat
 0 STEP
 0 NOFILE
 
@@ -89,8 +90,9 @@
 1 47 0 -24 0 -1 0 0 0 1 0 0 0 -1 27507.dat
 1 47 0 -24 0 0 0 -1 0 1 0 1 0 0 27507.dat
 0 STEP
-0 // The red spindle: push the axle up through the hub
+0 // The red spindle and the drive hub: push the axle up through the reel, then a white round plate onto its lower end, studs down. Its four studs are the pegs you turn the reel by from underneath
 1 4 0 -4 0 0 -1 0 1 0 0 0 0 1 32062.dat
+1 15 0 8 0 -1 0 0 0 -1 0 0 0 1 4032a.dat
 0 STEP
 0 NOFILE
 
@@ -99,7 +101,7 @@
 0 Name: core.ldr
 0 Author: brickkit
 
-0 // Chassis, bottom layer: the Technic plates' middle holes are the reel drive holes and the lamp hole; silver screw heads sit flush underneath
+0 // Chassis, bottom layer: the two square gaps are the reel drive holes, the Technic plate's middle hole is the lamp hole; silver screw heads sit flush underneath
 1 0 -200 -8 100 1 0 0 0 1 0 0 0 1 3623.dat
 1 315 -200 -8 80 1 0 0 0 1 0 0 0 1 6141.dat
 1 0 -190 -8 60 1 0 0 0 1 0 0 0 1 3710.dat
@@ -114,10 +116,14 @@
 1 0 -160 -16 90 0 0 1 0 1 0 -1 0 0 3023b.dat
 0 STEP
 1 0 -140 -16 90 0 0 1 0 1 0 -1 0 0 3023b.dat
-0 STEP
 1 0 -120 -16 90 0 0 1 0 1 0 -1 0 0 3023b.dat
+0 STEP
 1 0 -100 -16 90 0 0 1 0 1 0 -1 0 0 3023b.dat
 1 0 -80 -16 90 0 0 1 0 1 0 -1 0 0 3023b.dat
+0 STEP
+1 0 -120 -8 60 1 0 0 0 1 0 0 0 1 3623.dat
+1 0 -70 -8 60 1 0 0 0 1 0 0 0 1 3023b.dat
+1 0 -110 -16 60 1 0 0 0 1 0 0 0 1 6636.dat
 0 STEP
 1 0 30 -8 80 1 0 0 0 1 0 0 0 1 4477.dat
 1 0 -60 -16 90 0 0 1 0 1 0 -1 0 0 3023b.dat
@@ -143,11 +149,6 @@
 1 315 0 -8 100 1 0 0 0 1 0 0 0 1 6141.dat
 1 0 0 -16 80 0 0 1 0 1 0 -1 0 0 3623.dat
 0 STEP
-1 0 -190 -8 0 1 0 0 0 1 0 0 0 1 3710.dat
-1 0 -110 -8 40 1 0 0 0 1 0 0 0 1 60479.dat
-1 0 -50 -8 20 1 0 0 0 1 0 0 0 1 60479.dat
-1 0 -160 -16 30 0 0 1 0 1 0 -1 0 0 2431.dat
-0 STEP
 1 0 160 -8 60 1 0 0 0 1 0 0 0 1 3623.dat
 1 0 180 -16 80 0 0 1 0 1 0 -1 0 0 3623.dat
 0 STEP
@@ -155,125 +156,106 @@
 1 0 210 -8 60 1 0 0 0 1 0 0 0 1 3023b.dat
 1 0 200 -16 80 0 0 1 0 1 0 -1 0 0 3623.dat
 0 STEP
-1 0 90 -8 40 1 0 0 0 1 0 0 0 1 3460.dat
-1 0 160 -16 50 0 0 1 0 1 0 -1 0 0 3069b.dat
-0 STEP
-1 0 -120 -8 60 1 0 0 0 1 0 0 0 1 3623.dat
-1 0 -140 -16 50 0 0 1 0 1 0 -1 0 0 3069b.dat
-1 0 -120 -16 40 0 0 1 0 1 0 -1 0 0 63864.dat
-1 0 -100 -16 40 0 0 1 0 1 0 -1 0 0 63864.dat
-0 STEP
-1 0 -70 -8 60 1 0 0 0 1 0 0 0 1 3023b.dat
-1 0 -110 -8 -10 1 0 0 0 1 0 0 0 1 3709b.dat
-1 0 -80 -16 30 0 0 1 0 1 0 -1 0 0 2431.dat
-0 STEP
-1 0 -60 -16 50 0 0 1 0 1 0 -1 0 0 3069b.dat
-1 0 -30 -8 0 1 0 0 0 1 0 0 0 1 3710.dat
-1 0 -40 -16 20 0 0 1 0 1 0 -1 0 0 63864.dat
-0 STEP
-1 0 -30 -8 -20 1 0 0 0 1 0 0 0 1 3710.dat
-1 0 -20 -16 10 0 0 1 0 1 0 -1 0 0 3710.dat
-1 0 0 -16 10 0 0 1 0 1 0 -1 0 0 3710.dat
-0 STEP
 1 0 90 -8 60 1 0 0 0 1 0 0 0 1 3710.dat
-1 0 80 -16 50 0 0 1 0 1 0 -1 0 0 3069b.dat
-1 0 150 -8 20 1 0 0 0 1 0 0 0 1 3460.dat
-1 0 100 -16 40 0 0 1 0 1 0 -1 0 0 63864.dat
+1 0 110 -16 60 1 0 0 0 1 0 0 0 1 6636.dat
 0 STEP
-1 0 40 -8 0 1 0 0 0 1 0 0 0 1 3623.dat
-1 0 60 -16 30 0 0 1 0 1 0 -1 0 0 2431.dat
-0 STEP
-1 0 120 -16 40 0 0 1 0 1 0 -1 0 0 63864.dat
-1 0 110 -8 -10 1 0 0 0 1 0 0 0 1 3709b.dat
-1 0 140 -16 30 0 0 1 0 1 0 -1 0 0 2431.dat
-1 0 110 -16 -10 1 0 0 0 1 0 0 0 1 15535.dat
-0 STEP
-1 0 190 -8 0 1 0 0 0 1 0 0 0 1 3710.dat
 1 0 200 -8 40 1 0 0 0 1 0 0 0 1 3623.dat
-1 0 180 -16 20 0 0 1 0 1 0 -1 0 0 63864.dat
-0 STEP
+1 0 190 -8 20 1 0 0 0 1 0 0 0 1 3710.dat
+1 0 190 -8 0 1 0 0 0 1 0 0 0 1 3710.dat
 1 0 220 -8 80 1 0 0 0 1 0 0 0 1 3024.dat
 1 0 190 -8 -20 1 0 0 0 1 0 0 0 1 3710.dat
-1 0 200 -8 -40 1 0 0 0 1 0 0 0 1 3623.dat
+1 0 190 -8 -40 1 0 0 0 1 0 0 0 1 3710.dat
 1 0 220 -16 30 0 0 1 0 1 0 -1 0 0 3460.dat
 0 STEP
-1 315 200 -8 -60 1 0 0 0 1 0 0 0 1 6141.dat
-1 0 200 -16 -10 0 0 1 0 1 0 -1 0 0 3666.dat
+1 0 90 -8 40 1 0 0 0 1 0 0 0 1 3460.dat
+1 0 130 -16 30 1 0 0 0 1 0 0 0 1 87079.dat
+1 0 180 -16 20 0 0 1 0 1 0 -1 0 0 63864.dat
 0 STEP
-1 0 -200 -8 20 1 0 0 0 1 0 0 0 1 3623.dat
-1 0 -190 -8 -20 1 0 0 0 1 0 0 0 1 3710.dat
-1 0 -220 -16 10 0 0 1 0 1 0 -1 0 0 3710.dat
-0 STEP
-1 315 -200 -8 -60 1 0 0 0 1 0 0 0 1 6141.dat
-1 0 -130 -8 -40 1 0 0 0 1 0 0 0 1 4477.dat
-1 0 -200 -16 -10 0 0 1 0 1 0 -1 0 0 3666.dat
-0 STEP
+1 0 40 -8 0 1 0 0 0 1 0 0 0 1 3623.dat
+1 0 30 -8 20 1 0 0 0 1 0 0 0 1 3710.dat
 1 0 40 -8 -20 1 0 0 0 1 0 0 0 1 3623.dat
-1 0 20 -16 10 0 0 1 0 1 0 -1 0 0 3710.dat
-1 0 10 -8 -50 1 0 0 0 1 0 0 0 1 3709b.dat
-1 0 40 -16 -10 0 0 1 0 1 0 -1 0 0 6636.dat
+1 0 70 -16 10 0 0 1 0 1 0 -1 0 0 87079.dat
 0 STEP
-1 0 10 -16 -50 1 0 0 0 1 0 0 0 1 4032a.dat
+1 0 -30 -8 0 1 0 0 0 1 0 0 0 1 3710.dat
+1 0 -30 -8 -20 1 0 0 0 1 0 0 0 1 3710.dat
+1 0 -110 -8 40 1 0 0 0 1 0 0 0 1 60479.dat
+1 0 0 -16 10 0 0 1 0 1 0 -1 0 0 3710.dat
+0 STEP
+1 0 -40 -8 20 1 0 0 0 1 0 0 0 1 3623.dat
+1 0 -20 -16 10 0 0 1 0 1 0 -1 0 0 3710.dat
+0 STEP
+1 0 -90 -16 30 1 0 0 0 1 0 0 0 1 87079.dat
+1 0 -40 -16 30 0 0 1 0 1 0 -1 0 0 3069b.dat
+0 STEP
+1 0 -190 -8 20 1 0 0 0 1 0 0 0 1 3710.dat
+1 0 -190 -8 0 1 0 0 0 1 0 0 0 1 3710.dat
+1 0 -190 -8 -20 1 0 0 0 1 0 0 0 1 3710.dat
+1 0 -150 -16 10 0 0 1 0 1 0 -1 0 0 87079.dat
+0 STEP
+1 0 -220 -16 10 0 0 1 0 1 0 -1 0 0 3710.dat
+1 0 -190 -8 -40 1 0 0 0 1 0 0 0 1 3710.dat
+1 315 -200 -8 -60 1 0 0 0 1 0 0 0 1 6141.dat
+1 0 -200 -16 -10 0 0 1 0 1 0 -1 0 0 3666.dat
 0 STEP
 1 0 -160 -8 -60 1 0 0 0 1 0 0 0 1 3623.dat
 1 0 -180 -16 -10 0 0 1 0 1 0 -1 0 0 6636.dat
-1 0 -170 -8 -80 1 0 0 0 1 0 0 0 1 3666.dat
-1 0 -140 -16 -30 0 0 1 0 1 0 -1 0 0 6636.dat
 0 STEP
-1 0 -160 -16 -50 0 0 1 0 1 0 -1 0 0 2431.dat
-1 0 -110 -16 -10 1 0 0 0 1 0 0 0 1 15535.dat
+1 0 20 -16 10 0 0 1 0 1 0 -1 0 0 3710.dat
+1 0 10 -8 -50 1 0 0 0 1 0 0 0 1 3709b.dat
+1 0 40 -16 -10 0 0 1 0 1 0 -1 0 0 6636.dat
+1 0 10 -16 -50 1 0 0 0 1 0 0 0 1 4032a.dat
 0 STEP
+1 0 -50 -8 -40 1 0 0 0 1 0 0 0 1 3023b.dat
 1 0 -50 -8 -60 1 0 0 0 1 0 0 0 1 3023b.dat
-1 0 10 -8 -80 1 0 0 0 1 0 0 0 1 60479.dat
-1 0 -60 -16 -30 0 0 1 0 1 0 -1 0 0 6636.dat
-1 0 -40 -16 -40 0 0 1 0 1 0 -1 0 0 63864.dat
+1 0 -40 -16 -30 0 0 1 0 1 0 -1 0 0 2431.dat
+0 STEP
+1 315 200 -8 -60 1 0 0 0 1 0 0 0 1 6141.dat
+1 0 200 -16 -10 0 0 1 0 1 0 -1 0 0 3666.dat
+1 0 150 -8 -60 1 0 0 0 1 0 0 0 1 3710.dat
+1 0 180 -16 -40 0 0 1 0 1 0 -1 0 0 63864.dat
+0 STEP
+1 0 150 -16 -30 0 0 1 0 1 0 -1 0 0 87079.dat
+1 0 80 -8 -60 1 0 0 0 1 0 0 0 1 3623.dat
+1 0 60 -8 -40 1 0 0 0 1 0 0 0 1 3024.dat
+1 0 90 -16 -50 1 0 0 0 1 0 0 0 1 87079.dat
 0 STEP
 1 0 -100 -8 -60 1 0 0 0 1 0 0 0 1 3623.dat
-1 0 -80 -16 -50 0 0 1 0 1 0 -1 0 0 2431.dat
-0 STEP
-1 0 80 -8 -60 1 0 0 0 1 0 0 0 1 3623.dat
-1 0 110 -8 -40 1 0 0 0 1 0 0 0 1 3666.dat
-1 0 80 -16 -30 0 0 1 0 1 0 -1 0 0 6636.dat
-1 0 60 -16 -50 0 0 1 0 1 0 -1 0 0 2431.dat
-0 STEP
-1 0 100 -16 -60 0 0 1 0 1 0 -1 0 0 63864.dat
-1 0 150 -8 -60 1 0 0 0 1 0 0 0 1 3710.dat
-1 0 120 -16 -60 0 0 1 0 1 0 -1 0 0 63864.dat
-0 STEP
-1 0 160 -8 -80 1 0 0 0 1 0 0 0 1 3623.dat
-1 0 160 -16 -30 0 0 1 0 1 0 -1 0 0 6636.dat
-1 0 180 -16 -40 0 0 1 0 1 0 -1 0 0 63864.dat
-1 0 140 -16 -50 0 0 1 0 1 0 -1 0 0 2431.dat
-0 STEP
-1 0 190 -8 -100 1 0 0 0 1 0 0 0 1 3710.dat
-1 0 180 -16 -90 0 0 1 0 1 0 -1 0 0 3023b.dat
-0 STEP
-1 0 -120 -16 -60 0 0 1 0 1 0 -1 0 0 63864.dat
-1 0 -100 -16 -60 0 0 1 0 1 0 -1 0 0 63864.dat
-1 0 -190 -8 -100 1 0 0 0 1 0 0 0 1 3710.dat
-1 0 -180 -16 -90 0 0 1 0 1 0 -1 0 0 3023b.dat
-0 STEP
-1 0 -160 -16 -100 1 0 0 0 1 0 0 0 1 3024.dat
-1 15 -200 -16 -80 1 0 0 0 1 0 0 0 1 6141.dat
-0 STEP
+1 0 -70 -16 -30 0 0 1 0 1 0 -1 0 0 87079.dat
+1 0 10 -8 -80 1 0 0 0 1 0 0 0 1 60479.dat
 1 0 -20 -16 -60 0 0 1 0 1 0 -1 0 0 3623.dat
+0 STEP
 1 0 -40 -16 -80 1 0 0 0 1 0 0 0 1 3024.dat
+1 0 -130 -16 -50 1 0 0 0 1 0 0 0 1 87079.dat
+0 STEP
+1 0 -220 -8 -60 1 0 0 0 1 0 0 0 1 3024.dat
+1 0 -190 -8 -100 1 0 0 0 1 0 0 0 1 3710.dat
+1 0 -170 -8 -80 1 0 0 0 1 0 0 0 1 3666.dat
+1 0 -220 -16 -70 0 0 1 0 1 0 -1 0 0 3710.dat
+0 STEP
+1 15 -200 -16 -80 1 0 0 0 1 0 0 0 1 6141.dat
+1 15 -200 -16 -100 1 0 0 0 1 0 0 0 1 6141.dat
+0 STEP
+1 0 -110 -16 -80 1 0 0 0 1 0 0 0 1 6636.dat
+1 0 -160 -16 -100 1 0 0 0 1 0 0 0 1 3024.dat
+1 0 -180 -16 -90 0 0 1 0 1 0 -1 0 0 3023b.dat
 1 0 0 -16 -80 1 0 0 0 1 0 0 0 1 3024.dat
+0 STEP
 1 0 20 -16 -80 1 0 0 0 1 0 0 0 1 3024.dat
 0 STEP
 1 0 40 -16 -80 1 0 0 0 1 0 0 0 1 3024.dat
+1 0 160 -8 -80 1 0 0 0 1 0 0 0 1 3623.dat
+1 0 110 -16 -80 1 0 0 0 1 0 0 0 1 6636.dat
 0 STEP
-1 0 -220 -8 -60 1 0 0 0 1 0 0 0 1 3024.dat
-1 0 -220 -16 -70 0 0 1 0 1 0 -1 0 0 3710.dat
-1 15 -200 -16 -100 1 0 0 0 1 0 0 0 1 6141.dat
+1 0 190 -8 -100 1 0 0 0 1 0 0 0 1 3710.dat
+1 0 180 -16 -90 0 0 1 0 1 0 -1 0 0 3023b.dat
+1 0 160 -16 -100 1 0 0 0 1 0 0 0 1 3024.dat
+1 15 200 -16 -100 1 0 0 0 1 0 0 0 1 6141.dat
 0 STEP
 1 0 210 -8 -80 1 0 0 0 1 0 0 0 1 3023b.dat
 1 0 220 -8 -60 1 0 0 0 1 0 0 0 1 3024.dat
 1 0 220 -16 -80 0 0 1 0 1 0 -1 0 0 3623.dat
-1 0 200 -16 -80 1 0 0 0 1 0 0 0 1 6141.dat
 0 STEP
-1 15 200 -16 -100 1 0 0 0 1 0 0 0 1 6141.dat
-1 0 160 -16 -100 1 0 0 0 1 0 0 0 1 3024.dat
+1 0 200 -16 -80 1 0 0 0 1 0 0 0 1 6141.dat
 0 STEP
 0 // The lamp tube: a black 2 x 2 round brick over the lamp hole
 1 15 0 -24 80 1 0 0 0 1 0 0 0 1 3623.dat
@@ -633,22 +615,18 @@
 0 Name: flap.ldr
 0 Author: brickkit
 
-0 // Dust flap, built flat: 2 x N plates in a row, locked together by 2 x N tiles. The tiles' top halves hang over the plates: they are the flap's top row
-1 0 -220 -118 34 0 0 1 0 1 0 -1 0 0 3623.dat
-1 0 -150 -118 24 1 0 0 0 1 0 0 0 1 3795.dat
+0 // Dust flap, built flat: one long 2 x 16 plate with a short one at each end, locked together by 2 x N tiles. The tiles' top halves hang over the plates: they are the flap's top row
+1 0 -210 -118 34 0 0 1 0 1 0 -1 0 0 3021.dat
+1 0 -180 -118 24 0 0 1 0 1 0 -1 0 0 3023b.dat
+1 0 -10 -118 24 1 0 0 0 1 0 0 0 1 4282.dat
 1 0 -170 -126 44 1 0 0 0 1 0 0 0 1 69729.dat
 0 STEP
-1 0 -50 -118 24 1 0 0 0 1 0 0 0 1 3020.dat
 1 0 -70 -126 44 1 0 0 0 1 0 0 0 1 87079.dat
-0 STEP
-1 0 0 -118 24 0 0 1 0 1 0 -1 0 0 3023b.dat
-1 0 50 -118 24 1 0 0 0 1 0 0 0 1 3020.dat
 1 0 0 -126 44 1 0 0 0 1 0 0 0 1 26603.dat
-0 STEP
-1 0 150 -118 24 1 0 0 0 1 0 0 0 1 3795.dat
 1 0 70 -126 44 1 0 0 0 1 0 0 0 1 87079.dat
 0 STEP
-1 0 220 -118 34 0 0 1 0 1 0 -1 0 0 3623.dat
+1 0 170 -118 24 1 0 0 0 1 0 0 0 1 3022.dat
+1 0 210 -118 34 0 0 1 0 1 0 -1 0 0 3021.dat
 1 0 170 -126 44 1 0 0 0 1 0 0 0 1 69729.dat
 0 STEP
 0 // Bottom row of tiles
@@ -660,8 +638,8 @@
 0 STEP
 1 0 170 -126 14 1 0 0 0 1 0 0 0 1 6636.dat
 0 STEP
-0 // Turn it over: Technic bricks at the ends are the flap's cheeks
-1 0 -220 -110 54 0 0 1 0 1 0 -1 0 0 6541.dat
-1 0 220 -110 54 0 0 1 0 1 0 -1 0 0 6541.dat
+0 // Turn it over: a 1 x 2 plate with a pin hole on the back of each end, on two studs, its hole at the flap's top edge. These are the flap's hinges
+1 0 -220 -110 44 0 0 -1 0 1 0 1 0 0 18677.dat
+1 0 220 -110 44 0 0 -1 0 1 0 1 0 0 18677.dat
 0 STEP
 0 NOFILE

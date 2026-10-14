@@ -81,8 +81,8 @@
      "size": 5682
     },
     "model.glb": {
-     "v": "757a3bc4ce",
-     "size": 3214352
+     "v": "e7d059c06f",
+     "size": 1613884
     },
     "model.json": {
      "v": "86bac2c662",
@@ -459,8 +459,8 @@
      "size": 296148
     },
     "companions/caldwell_mini/booklet.pdf": {
-     "v": "c4436669f3",
-     "size": 3950506
+     "v": "80df8f5acd",
+     "size": 3414739
     },
     "companions/caldwell_mini/bricklink_wanted.xml": {
      "v": "ccc9d749ac",
@@ -519,8 +519,8 @@
      "size": 1511545
     },
     "model.glb": {
-     "v": "3412349c5f",
-     "size": 14075656
+     "v": "460290e1fb",
+     "size": 5999336
     },
     "model.json": {
      "v": "e5bb1c965e",
@@ -1257,8 +1257,8 @@
      "size": 55165
     },
     "model.glb": {
-     "v": "8af71ed691",
-     "size": 1796632
+     "v": "6cc02597e7",
+     "size": 773008
     },
     "model.json": {
      "v": "fdab9fb813",
@@ -2108,8 +2108,8 @@
      "size": 38035
     },
     "model.glb": {
-     "v": "7aefcba43c",
-     "size": 20436516
+     "v": "5ea332f9c6",
+     "size": 9352532
     },
     "model.json": {
      "v": "00429d7b11",
@@ -2189,8 +2189,8 @@
      "size": 4830
     },
     "model.glb": {
-     "v": "157aa74d99",
-     "size": 5961580
+     "v": "a5b414406d",
+     "size": 2776564
     },
     "model.json": {
      "v": "9061396685",
@@ -2940,133 +2940,133 @@
   "vhs_tape": {
    "files": {
     "booklet.pdf": {
-     "v": "1393e4ef5e",
-     "size": 20181502
+     "v": "55055e352f",
+     "size": 19500548
     },
     "bricklink_wanted.xml": {
-     "v": "e030cffbd7",
-     "size": 4925
+     "v": "871c561723",
+     "size": 5109
     },
     "model.glb": {
-     "v": "d03797e387",
-     "size": 2759496
+     "v": "a71c565076",
+     "size": 3097148
     },
     "model.json": {
-     "v": "8b7a704476",
-     "size": 84568
+     "v": "81903f623c",
+     "size": 84407
     },
     "parts.csv": {
-     "v": "9126d98ac2",
-     "size": 3815
+     "v": "6ee9d2df3d",
+     "size": 3910
     },
     "pick_a_brick.csv": {
-     "v": "e580b1ef30",
-     "size": 571
+     "v": "259398f61a",
+     "size": 602
     },
     "price_estimate.md": {
-     "v": "5d19f18e3e",
-     "size": 4991
+     "v": "66f99b8ddc",
+     "size": 4846
     },
     "renders/hero_hero.png": {
-     "v": "3a700fbf36",
-     "size": 1036953
+     "v": "49b77b091c",
+     "size": 1043750
     },
     "renders/hero_open_hero.png": {
-     "v": "34a9c265ac",
-     "size": 1008919
+     "v": "1e8e7a238f",
+     "size": 1010464
     },
     "renders/renders_back.png": {
-     "v": "f9e1b6a973",
-     "size": 839353
+     "v": "c8f339c161",
+     "size": 792188
     },
     "renders/renders_open.png": {
-     "v": "9f1f96efa4",
-     "size": 818793
+     "v": "32673d82e1",
+     "size": 837489
     },
     "renders/renders_three_quarter.png": {
-     "v": "79418cf7a2",
-     "size": 856490
+     "v": "7c802943c8",
+     "size": 856243
     },
     "renders/renders_top.png": {
-     "v": "8dbfa306bc",
-     "size": 843942
+     "v": "20a0052b8b",
+     "size": 844750
     },
     "renders/renders_underside.png": {
-     "v": "8776f1dfe0",
-     "size": 984897
+     "v": "13b93da05d",
+     "size": 982767
     },
     "renders/renders_white.png": {
-     "v": "e21a4d8552",
-     "size": 793653
+     "v": "c4c1912e80",
+     "size": 804656
     },
     "turntable.mp4": {
-     "v": "562abd1527",
-     "size": 845372
+     "v": "a4940636bc",
+     "size": 841238
     },
     "vhs_tape-1080x1080.mp4": {
-     "v": "a17718868a",
-     "size": 28963220
+     "v": "9874ddab65",
+     "size": 29190695
     },
     "vhs_tape.mpd": {
-     "v": "251c4c9211",
-     "size": 22471
+     "v": "50ca233924",
+     "size": 22237
     },
     "video_poster.jpg": {
-     "v": "a8ed6d985e",
-     "size": 196296
+     "v": "e769e1cd76",
+     "size": 194584
     }
    },
    "images": {
     "renders/hero_hero.png": {
      "w": 1000,
      "h": 1000,
-     "lg": "/assets/img/vhs_tape/hero_hero.webp?v=8d336af08e",
-     "sm": "/assets/img/vhs_tape/hero_hero-480.webp?v=ad4e8e0203"
+     "lg": "/assets/img/vhs_tape/hero_hero.webp?v=722ffa7108",
+     "sm": "/assets/img/vhs_tape/hero_hero-480.webp?v=4792f858c5"
     },
     "renders/hero_open_hero.png": {
      "w": 1000,
      "h": 1000,
-     "lg": "/assets/img/vhs_tape/hero_open_hero.webp?v=5e68204550",
-     "sm": "/assets/img/vhs_tape/hero_open_hero-480.webp?v=5bff153b49"
+     "lg": "/assets/img/vhs_tape/hero_open_hero.webp?v=4b0f8f6659",
+     "sm": "/assets/img/vhs_tape/hero_open_hero-480.webp?v=3427d80fa3"
     },
     "renders/renders_back.png": {
      "w": 900,
      "h": 900,
-     "lg": "/assets/img/vhs_tape/renders_back.webp?v=090e4880e5",
-     "sm": "/assets/img/vhs_tape/renders_back-480.webp?v=3ec04cc5a6"
+     "lg": "/assets/img/vhs_tape/renders_back.webp?v=cdf42be5ca",
+     "sm": "/assets/img/vhs_tape/renders_back-480.webp?v=8c68d58abe"
     },
     "renders/renders_open.png": {
      "w": 900,
      "h": 900,
-     "lg": "/assets/img/vhs_tape/renders_open.webp?v=f20cacdf76",
-     "sm": "/assets/img/vhs_tape/renders_open-480.webp?v=3634a58d8b"
+     "lg": "/assets/img/vhs_tape/renders_open.webp?v=79944465ee",
+     "sm": "/assets/img/vhs_tape/renders_open-480.webp?v=4e6d69cc07"
     },
     "renders/renders_three_quarter.png": {
      "w": 900,
      "h": 900,
-     "lg": "/assets/img/vhs_tape/renders_three_quarter.webp?v=8a03357fad",
-     "sm": "/assets/img/vhs_tape/renders_three_quarter-480.webp?v=3f1fc9ad18"
+     "lg": "/assets/img/vhs_tape/renders_three_quarter.webp?v=a328fea9a2",
+     "sm": "/assets/img/vhs_tape/renders_three_quarter-480.webp?v=ed30c44e6b"
     },
     "renders/renders_top.png": {
      "w": 900,
      "h": 900,
-     "lg": "/assets/img/vhs_tape/renders_top.webp?v=8f7811b3a7",
-     "sm": "/assets/img/vhs_tape/renders_top-480.webp?v=667c272efd"
+     "lg": "/assets/img/vhs_tape/renders_top.webp?v=3cd3ede353",
+     "sm": "/assets/img/vhs_tape/renders_top-480.webp?v=0723be2750"
     },
     "renders/renders_underside.png": {
      "w": 900,
      "h": 900,
-     "lg": "/assets/img/vhs_tape/renders_underside.webp?v=2e08b4301d",
-     "sm": "/assets/img/vhs_tape/renders_underside-480.webp?v=6989650b0f"
+     "lg": "/assets/img/vhs_tape/renders_underside.webp?v=70011dcbb0",
+     "sm": "/assets/img/vhs_tape/renders_underside-480.webp?v=a9881c8ee9"
     },
     "renders/renders_white.png": {
      "w": 900,
      "h": 900,
-     "lg": "/assets/img/vhs_tape/renders_white.webp?v=b82674669b",
-     "sm": "/assets/img/vhs_tape/renders_white-480.webp?v=5799d76587"
+     "lg": "/assets/img/vhs_tape/renders_white.webp?v=d4132f34f9",
+     "sm": "/assets/img/vhs_tape/renders_white-480.webp?v=0827f1d39e"
     }
    },
-   "og": "/assets/og/vhs_tape.png?v=7d879247e4"
+   "og": "/assets/og/vhs_tape.png?v=16c375abb2"
   },
   "watermelon_ice_lolly": {
    "files": {
