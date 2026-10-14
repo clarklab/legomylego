@@ -5,10 +5,10 @@
     {
       "name": "real_elements",
       "status": "pass",
-      "summary": "52 part/colour combinations: 0 not real, 0 rare",
+      "summary": "55 part/colour combinations: 0 not real, 0 rare",
       "items": [],
       "stats": {
-        "combinations": 52,
+        "combinations": 55,
         "not_real": 0,
         "rare": 0,
         "hardware": 0,
@@ -36,7 +36,7 @@
     {
       "name": "collisions",
       "status": "pass",
-      "summary": "0 overlapping pair(s) among 372 parts",
+      "summary": "0 overlapping pair(s) among 370 parts",
       "items": [],
       "stats": {
         "pairs": 0
@@ -57,16 +57,16 @@
       "summary": "about 306 g; centre of mass inside the base (98% margin); tips at 74.7 deg",
       "items": [],
       "stats": {
-        "mass_g": 306.31465222812403,
+        "mass_g": 306.20844251497,
         "com": [
-          0.059611902169918476,
-          -31.681832377665135,
-          5.6984272443537805
+          0.04682469706228152,
+          -31.69971480056619,
+          5.714785831369279
         ],
         "approx_parts": 0,
-        "margin": 0.9804951461385913,
-        "tip_angle_deg": 74.6860294380988,
-        "com_height_ldu": 31.681832377665135
+        "margin": 0.9806337782319431,
+        "tip_angle_deg": 74.67985611523711,
+        "com_height_ldu": 31.69971480056619
       }
     },
     {

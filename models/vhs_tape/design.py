@@ -41,6 +41,8 @@ LAMP = (10, -50)                         # lamp tube centre (a 2 x 2 round brick
 STUDS_FWD = rot(x=90)                    # SNOT: studs toward -Z, part's top face at origin z
 STUDS_BACK = rot(x=-90)                  # SNOT: studs toward +Z
 UPRIGHT_1XN = orient((0, 1, 0), (0, 0, 1), (1, 0, 0))   # 1 x N along Y, studs toward -Z
+HINGE_UP = orient((0, -1, 0), (0, 0, 1), (-1, 0, 0))    # the same, the other way up: a plate with
+                                         # a pin hole under one end stands with that end at the top
 FLIP = transform((0, 0, 0), rot(z=180))  # the top shell is built upside down
 FLAT = transform((0, 0, 0), rot(x=-90))  # the flap is built lying on its back
 
@@ -387,34 +389,42 @@ def top_shell(model, win, label):
 def flap(model):
     """A full-length flap built flat: plates stood on their faces with tiles on them. The
     top row is the upper half of 2 x N tiles hanging over the plates, so the flap's top edge
-    is thin and swings clear of the top shell. Technic bricks at the ends are its cheeks."""
+    is thin and swings clear of the top shell.
+
+    Built to be handled (the first one, built with real bricks, came apart along its length
+    and popped off its pivots). Behind the tiles is one 2 x 16 plate, so the flap cannot fold
+    at a seam, and a 2 x 3 plate at each end that reaches the top row: the tile at that end
+    holds it by six studs. On the back of each of those, two studs deep, is the flap's hinge: a
+    1 x 2 plate with a pin hole under one end (it was a 1 x 1 Technic brick on one stud). The
+    hole is where the brick's was, so the flap swings as before."""
     sub = model.submodel("flap", "Dust flap")
     b = Batch()
 
     def add(part, colour, M, cat):
         b.add(part, colour, FLAT @ M, cat)
 
-    for part, colour, M in row_parts(PLATE2, [(-10, -5), (-4, -1), (0, 0), (1, 4), (5, 10)],
-                                     -24, -118, STUDS_FWD):
-        add(part, colour, M, "plates")
+    for part, colour, M in row_parts(PLATE2, [(-9, -9), (-8, 7), (8, 9)], -24, -118, STUDS_FWD):
+        add(part, colour, M, "plates")           # (the 2 x 16, and what is left over beside it)
     for s in (-1, 1):
-        add("3623", "shell", transform((s * 220, -34, -118), UPRIGHT_1XN), "ends")
+        add("3021", "shell", transform((s * 210, -34, -118), UPRIGHT_1XN), "ends")
     for part, colour, M in row_parts(TILE2, [(-11, -6), (-5, -2), (-1, 1), (2, 5), (6, 11)],
                                      -44, -126, STUDS_FWD):
         add(part, colour, M, "top")
     for part, colour, M in row_parts(TILE1, [(-11, -6), (-5, -2), (-1, 1), (2, 5), (6, 11)],
                                      -14, -126, STUDS_FWD):
         add(part, colour, M, "bottom")
-    for s in (-1, 1):
-        add("6541", "shell", transform((s * 220, -54, -110), UPRIGHT_1XN), "cheeks")
+    for s in (-1, 1):                             # the hinges: pin hole at the pivot, at the top
+        add("18677", "shell", transform((s * 220, PIVOT[0] + 10, -110), HINGE_UP), "hinges")
     # (the plates and the tiles over them in one phase: a plate goes down with the tile that
     # locks it to its neighbour, so no row lies loose)
-    b.emit(sub, [["plates", "ends", "top"], ["bottom"], ["cheeks"]], {
-        "plates": "Dust flap, built flat: 2 x N plates in a row, locked together by 2 x N tiles. "
-                  "The tiles' top halves hang over the plates: they are the flap's top row",
-        "ends": "A 1 x 3 plate at each end reaches the top row",
+    b.emit(sub, [["plates", "ends", "top"], ["bottom"], ["hinges"]], {
+        "plates": "Dust flap, built flat: one long 2 x 16 plate with a short one at each end, "
+                  "locked together by 2 x N tiles. The tiles' top halves hang over the plates: "
+                  "they are the flap's top row",
+        "ends": "A 2 x 3 plate at each end reaches the top row",
         "bottom": "Bottom row of tiles",
-        "cheeks": "Turn it over: Technic bricks at the ends are the flap's cheeks"})
+        "hinges": "Turn it over: a 1 x 2 plate with a pin hole on the back of each end, on two "
+                  "studs, its hole at the flap's top edge. These are the flap's hinges"})
     return sub
 
 
@@ -475,11 +485,12 @@ def build(model):
     main.step("End walls")
     for s in (-1, 1):
         main.place("3008", "shell", (s * 220, -40, 10), rot(y=90))
-        main.place("3023", "shell", (s * 220, -24, -90), rot(y=90))
-        main.place("3023", "shell", (s * 220, -32, -90), rot(y=90))
+        main.place("3005", "shell", (s * 220, -40, -80))     # the wall, one stud further forward
+        main.place("3070b", "shell", (s * 220, -24, -100))   # a tile at the corner: the flap's
+        #                                                       hinge plate comes down onto it
     main.step("Lower the top shell onto the chassis")
     main.use(top, FLIP[:3, 3], FLIP[:3, :3], insert=(0, -1, 0))
-    main.step("Hold the dust flap in place and push a pin through each cheek")
+    main.step("Hold the dust flap in place and push a pin through each hinge")
     main.use(door, (0, 0, 0), rot(x=90), tag="flap", insert=(0, 0, -1))
     for s in (-1, 1):
         main.place("2780", "pin", (s * 210, PIVOT[0], PIVOT[1]))

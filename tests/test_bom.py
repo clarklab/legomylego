@@ -72,6 +72,7 @@ def test_choose_element_follows_pick_a_brick():
     assert choose_element(["6386637", "6511024"]) == "6511024"                # accepted as is
     assert choose_element(["6550138"]) == "6550138"                           # nothing else to use
     assert choose_element(["4121715"]) == "6279875"       # Black friction pin: the ID it is sold as
+    assert choose_element(["428226", "428276"]) == "428226"                   # Black 2 x 16 plate
     assert choose_element([]) == ""
 
 

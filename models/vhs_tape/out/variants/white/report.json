@@ -5,10 +5,10 @@
     {
       "name": "real_elements",
       "status": "pass",
-      "summary": "52 part/colour combinations: 0 not real, 0 rare",
+      "summary": "55 part/colour combinations: 0 not real, 0 rare",
       "items": [],
       "stats": {
-        "combinations": 52,
+        "combinations": 55,
         "not_real": 0,
         "rare": 0,
         "hardware": 0,

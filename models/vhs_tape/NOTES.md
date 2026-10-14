@@ -3,8 +3,8 @@
 A life-size (1:1) VHS video cassette in real LEGO, built the way a modern display set is:
 an inner chassis carries the two reel drive holes, lamp tube, brake release, guide rollers
 and the tape run, and a shell goes over it. The full-length dust flap swings up like the real
-one, and both reels turn behind two clear windows, from the drive holes underneath. 372 parts
-in 52 part/colour lines, 133 steps, about 306 g (a real T-120 weighs about 230 g).
+one, and both reels turn behind two clear windows, from the drive holes underneath. 370 parts
+in 55 part/colour lines, 131 steps, about 306 g (a real T-120 weighs about 230 g).
 
 ## Built with real bricks
 
@@ -20,10 +20,10 @@ model's page. What the build changed, all in the instructions and none in the mo
   (139 steps; it was 104);
 - all four 8 x 8 round plates are Black, so the kit arrives as one Pick a Brick parcel.
 
-## After the build: drive holes, and a kit of Bestsellers (2026-10-13)
+## After the build: drive holes, a flap that holds, and a kit of Bestsellers (2026-10-13)
 
 The owner, having built it: the size is right and the instructions are good, so change as
-little as possible. Two things were asked for.
+little as possible. Three things were asked for.
 
 **The reels could not be turned once it was together.** Each red axle's end sat flush in a
 4.8 mm Technic hole in the bottom: nothing for a finger to turn. A real cassette has two drive
@@ -41,30 +41,62 @@ holes underneath with the reel's toothed hub in each. Now:
   it in the middle. The axle's cross goes through an axle hole in each hub, top and bottom,
   so turning the pegs turns the reel.
 
-Everything else is as it was built: same size, same shell, same reels from above. It is 12
-pieces fewer (372; the floor under the reels takes fewer, larger tiles) and uses no part that
-was not already in the kit: 8 more Black 2 x 4 tiles and 2 more White round plates, and the two
-round tiles with a hole and two of the three Technic plates 2 x 4 are gone. The booklet's
-changed steps are the chassis' two floor layers (its 53 steps are now 47) and each reel's last
-step. Not built with real bricks in this form: `built` in `model.toml` still says 2026-10-09,
-which is true of everything but these pieces.
+This part is 12 pieces fewer (the floor under the reels takes fewer, larger tiles) and uses no
+part that was not already in the kit: 8 more Black 2 x 4 tiles and 2 more White round plates,
+and the two round tiles with a hole and two of the three Technic plates 2 x 4 are gone. The
+booklet's changed steps are the chassis' two floor layers (its 53 steps are now 47) and each
+reel's last step.
 
-**To change a cassette that is already built:** only the chassis floor under the two reels
-changes. Lift the top shell off and take the reels out. 36 floor pieces come out (8 of the
-bottom layer, 28 of the second) and 22 go in (8 and 14); every other piece of the 384 stays
-where it is, the whole top shell, the windows, the label and the flap among them. Then one
-White round plate goes on under each reel. 17 pieces are needed that the first kit did not
-have: 8 Black tiles 2 x 4 (4560182), 5 Black plates 1 x 4 (371026), a Black plate 1 x 2
-(302326), a Black plate 1 x 1 (302426) and 2 White round plates 2 x 2 with an axle hole
-(403201): $2.27 on Pick a Brick, all Bestsellers.
+**The dust flap was fragile**, down its length and above all at its pivots: each pivot was a
+1 x 1 Technic brick held to the flap by its one stud, and it popped off. The flap's ten tiles
+and its pivot axis are as they were; what holds them is new:
 
-**Can the whole kit be Pick a Brick Bestsellers?** It already is. Every one of the 52 lines was
-looked up on lego.com (US shop) on 2026-10-13: all are Bestsellers and in stock, 372 pieces for
-$47.48. (That is the black cassette. The `white` colourway's own lines were not looked up.) That includes the two flap pins, which the list had left out: element 4121715 is not on
-Pick a Brick, but the same pin is, as 6279875 ("CONNECTOR PEG W. FRICTION", LEGO's design
-61332), a Bestseller at 6 cents. `brickkit/data/pick_a_brick.json` now swaps the one for the
-other, so `out/pick_a_brick.csv` is the whole kit, and it records which elements were found to
-be Bestsellers and when.
+- **the hinges are 1 x 2 plates with a pin hole under one end (18677)**, stood on the back of
+  the flap's ends with the hole at the top: two studs each where there was one, side by side,
+  so a hinge cannot twist off. The hole is exactly where the brick's was (y = -54, z = -100);
+- each end of the flap is a **2 x 3 plate** (it was 1 x 3): the tiles at that end hold it by six
+  studs, not three, and it takes both of the hinge's studs;
+- behind the tiles is **one 2 x 16 plate** where there were five short plates whose seams sat a
+  stud from the tiles' seams: the flap cannot fold at a seam any more. A 1 x 2 and a 2 x 2
+  fill in beside it;
+- at each front corner of the body the end wall's two 1 x 2 plates are a **1 x 1 brick** and,
+  in front of it, a **1 x 1 tile**: the hinge plate comes down where the front stud was.
+
+The flap is 17 pieces (it was 19) and swings its 90 degrees with no collisions. Three part
+types are new to the kit: the 2 x 16 plate, a 2 x 2 plate and the hinge plate (and a 1 x 1
+brick); the Technic bricks 1 x 1 are gone.
+
+None of this has been built with real bricks in this form: `built` in `model.toml` still says
+2026-10-09, which is true of everything but these pieces.
+
+**To change a cassette that is already built:**
+
+- *The floor.* Lift the top shell off and take the reels out. 36 floor pieces come out (8 of
+  the bottom layer, 28 of the second) and 22 go in (8 and 14). One White round plate goes on
+  under each reel.
+- *The flap.* Pull its two pins. Off its back come the five plates, the two 1 x 3 end plates
+  and the two Technic bricks; on go the 1 x 2, the 2 x 16, the 2 x 2, the two 2 x 3 and the two
+  hinge plates. The ten tiles stay as they are.
+- *The front corners.* At each, the two 1 x 2 plates under the pivot come out; a 1 x 1 brick
+  and a 1 x 1 tile go in.
+
+Everything else of the 384 stays where it is: the whole top shell, the windows and the label.
+26 pieces are needed that the first kit did not have, $3.48 on Pick a Brick, all Bestsellers
+(`tmp/vhs_tape_upgrade_pick_a_brick.csv`, a local file): 8 Black tiles 2 x 4 (4560182), 5 Black
+plates 1 x 4 (371026), 2 hinge plates (6192309), 2 Black plates 2 x 3 (302126), 2 Black bricks
+1 x 1 (300526), 2 Black tiles 1 x 1 (307026), a Black plate 2 x 16 (428226), a Black plate
+2 x 2 (302226), a Black plate 1 x 1 (302426) and 2 White round plates 2 x 2 with an axle hole
+(403201).
+
+**Can the whole kit be Pick a Brick Bestsellers?** It already is. Every one of the 55 lines was
+looked up on lego.com (US shop) on 2026-10-13: all are Bestsellers and in stock, 370 pieces for
+$47.47. (That is the black cassette. The `white` colourway's own lines were not looked up.)
+Two elements our list named are not on Pick a Brick though the piece is, under another number:
+the flap's pins (4121715; sold as 6279875, "CONNECTOR PEG W. FRICTION", LEGO's design 61332)
+and the 2 x 16 plate (428276; sold as 428226). The list had left the pins out for that reason.
+`brickkit/data/pick_a_brick.json` now swaps each for the number that is sold, so
+`out/pick_a_brick.csv` is the whole kit, and it records which elements were found to be
+Bestsellers and when.
 
 ## Size
 
@@ -99,7 +131,8 @@ Reel hubs are 88 mm apart (x = +-110), 4 mm behind the middle of the depth.
      black tiles facing forward, stretched between the rollers.
 2. **Reels** (17 parts each, identical hardware; see Mechanisms). They drop into the
    chassis' drive holes, the full supply reel at +X, the take-up reel at -X.
-3. **End walls**: a 1 x 8 brick and two plates at each end.
+3. **End walls**: a 1 x 8 brick at each end, a 1 x 1 brick in front of it and a 1 x 1 tile
+   at the corner, under the flap's hinge.
 4. **Top shell** (174 parts), built upside down and lowered on:
    - Face layer: **grip bands** of 1 x 2 grille tiles along both long edges (slots along
      the cassette, like the moulded ribs), the black rim round the label (1 x 4 tiles
@@ -121,7 +154,7 @@ Reel hubs are 88 mm apart (x = +-110), 4 mm behind the middle of the depth.
      plates stood on edge, then two rows of white 1 x N tiles with black ends, recessed
      1.6 mm. The **write-protect tab** is one 1 x 1 tile at the back-left of the lower row.
    - Two **windows** (their own sub-assembly, used twice), hung from the back band.
-5. **Dust flap** (19 parts), built flat, then pinned on.
+5. **Dust flap** (17 parts), built flat, then pinned on.
 
 ## Windows: the largest clear pane
 
@@ -146,14 +179,15 @@ connection still registers.
 
 ### Dust flap (`flap`)
 The flap is the whole front edge: 23 studs long, 24 mm tall (y -64..-4), 6.4 mm thick,
-black and smooth. It is built lying on its back: 2 x N plates stood up, studs forward,
-2 x N tiles whose upper halves hang over the plates and make the flap's top row, 1 x N
-tiles for the bottom row, and a 1 x 3 plate at each end reaching the top row. **Technic
-bricks 1 x 1 with a pin hole** on the back of the end plates are the flap's **cheeks**, as
-on the real flap.
+black and smooth. It is built lying on its back: one 2 x 16 plate stood up, studs forward
+(with a 1 x 2 and a 2 x 2 beside it), 2 x N tiles whose upper halves hang over the plates and
+make the flap's top row, 1 x N tiles for the bottom row, and a 2 x 3 plate at each end
+reaching the top row. On the back of each end plate, on two studs, is a **1 x 2 plate with a
+pin hole under one end (18677)**, hole uppermost: the flap's **hinges** (see "After the
+build" for what they replaced, and why).
 
 It pivots on two **Black Technic pins with friction (2780)** along X: each pin goes
-through a cheek into a **Plate 1 x 2 with Pin Hole on Top (11458)** hanging from the top
+through a hinge plate into a **Plate 1 x 2 with Pin Hole on Top (11458)** hanging from the top
 shell's third layer. The axis is at y = -54, z = -100: 10 LDU below the top and 10 LDU
 behind the flap. `pose(t)` turns the flap by `rot(x = -90 t)` about it, so the bottom edge
 swings forward and up until the flap lies flat as a visor. Because the top row is the
@@ -235,7 +269,7 @@ Both pass `real_elements` with no rare parts.
 - **Clear upper flange** is a ring: there is no flat transparent 8 x 8 disc, so inside
   r 60 you see the pack directly.
 - **Lamp tube** is 4 mm right of centre: a 2 x 2 round brick has to sit on a cell corner.
-- The top shell's two front corners are cut back where the flap's cheeks sit and swing.
+- The top shell's two front corners are cut back where the flap's hinges sit and swing.
 - The flap stops 1.6 mm above the bottom edge, and its pin heads show on the ends.
 - The spine label runs to the bottom edge (two tile rows).
 - The bottom is a LEGO bottom (anti-studs), not a smooth moulding.
@@ -244,7 +278,7 @@ Both pass `real_elements` with no rare parts.
 
 ## Checks
 
-`brickkit all vhs_tape`: every check passes with no warnings. real_elements (52
+`brickkit all vhs_tape`: every check passes with no warnings. real_elements (55
 combinations, 0 rare, also for `white`), connections (962; three pieces: the cassette and
 its two loose reels), collisions (0), buildability (249 insertions, 14 sub-assemblies),
 stability (tips at 75 degrees), mechanism (24 poses, 3 moving groups, plus the size

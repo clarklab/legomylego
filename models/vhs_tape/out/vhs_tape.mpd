@@ -12,16 +12,16 @@
 0 STEP
 0 // End walls
 1 0 -220 -40 10 0 0 1 0 1 0 -1 0 0 3008.dat
-1 0 -220 -24 -90 0 0 1 0 1 0 -1 0 0 3023b.dat
-1 0 -220 -32 -90 0 0 1 0 1 0 -1 0 0 3023b.dat
+1 0 -220 -40 -80 1 0 0 0 1 0 0 0 1 3005.dat
+1 0 -220 -24 -100 1 0 0 0 1 0 0 0 1 3070b.dat
 1 0 220 -40 10 0 0 1 0 1 0 -1 0 0 3008.dat
-1 0 220 -24 -90 0 0 1 0 1 0 -1 0 0 3023b.dat
-1 0 220 -32 -90 0 0 1 0 1 0 -1 0 0 3023b.dat
+1 0 220 -40 -80 1 0 0 0 1 0 0 0 1 3005.dat
+1 0 220 -24 -100 1 0 0 0 1 0 0 0 1 3070b.dat
 0 STEP
 0 // Lower the top shell onto the chassis
 1 16 0 0 0 -1 0 0 0 -1 0 0 0 1 top_shell.ldr
 0 STEP
-0 // Hold the dust flap in place and push a pin through each cheek
+0 // Hold the dust flap in place and push a pin through each hinge
 1 16 0 0 0 1 0 0 0 0 -1 0 1 0 flap.ldr
 1 0 -210 -54 -100 1 0 0 0 1 0 0 0 1 2780.dat
 1 0 210 -54 -100 1 0 0 0 1 0 0 0 1 2780.dat
@@ -615,22 +615,18 @@
 0 Name: flap.ldr
 0 Author: brickkit
 
-0 // Dust flap, built flat: 2 x N plates in a row, locked together by 2 x N tiles. The tiles' top halves hang over the plates: they are the flap's top row
-1 0 -220 -118 34 0 0 1 0 1 0 -1 0 0 3623.dat
-1 0 -150 -118 24 1 0 0 0 1 0 0 0 1 3795.dat
+0 // Dust flap, built flat: one long 2 x 16 plate with a short one at each end, locked together by 2 x N tiles. The tiles' top halves hang over the plates: they are the flap's top row
+1 0 -210 -118 34 0 0 1 0 1 0 -1 0 0 3021.dat
+1 0 -180 -118 24 0 0 1 0 1 0 -1 0 0 3023b.dat
+1 0 -10 -118 24 1 0 0 0 1 0 0 0 1 4282.dat
 1 0 -170 -126 44 1 0 0 0 1 0 0 0 1 69729.dat
 0 STEP
-1 0 -50 -118 24 1 0 0 0 1 0 0 0 1 3020.dat
 1 0 -70 -126 44 1 0 0 0 1 0 0 0 1 87079.dat
-0 STEP
-1 0 0 -118 24 0 0 1 0 1 0 -1 0 0 3023b.dat
-1 0 50 -118 24 1 0 0 0 1 0 0 0 1 3020.dat
 1 0 0 -126 44 1 0 0 0 1 0 0 0 1 26603.dat
-0 STEP
-1 0 150 -118 24 1 0 0 0 1 0 0 0 1 3795.dat
 1 0 70 -126 44 1 0 0 0 1 0 0 0 1 87079.dat
 0 STEP
-1 0 220 -118 34 0 0 1 0 1 0 -1 0 0 3623.dat
+1 0 170 -118 24 1 0 0 0 1 0 0 0 1 3022.dat
+1 0 210 -118 34 0 0 1 0 1 0 -1 0 0 3021.dat
 1 0 170 -126 44 1 0 0 0 1 0 0 0 1 69729.dat
 0 STEP
 0 // Bottom row of tiles
@@ -642,8 +638,8 @@
 0 STEP
 1 0 170 -126 14 1 0 0 0 1 0 0 0 1 6636.dat
 0 STEP
-0 // Turn it over: Technic bricks at the ends are the flap's cheeks
-1 0 -220 -110 54 0 0 1 0 1 0 -1 0 0 6541.dat
-1 0 220 -110 54 0 0 1 0 1 0 -1 0 0 6541.dat
+0 // Turn it over: a 1 x 2 plate with a pin hole on the back of each end, on two studs, its hole at the flap's top edge. These are the flap's hinges
+1 0 -220 -110 44 0 0 -1 0 1 0 1 0 0 18677.dat
+1 0 220 -110 44 0 0 -1 0 1 0 1 0 0 18677.dat
 0 STEP
 0 NOFILE

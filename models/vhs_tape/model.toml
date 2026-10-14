@@ -37,7 +37,7 @@ notes = [
   "The write-protect tab on the back is a single tile: pull it off to protect your recording.",
 ]
 works = [
-  { title = "Dust flap", text = "The whole front edge is the flap. It swings up and out 90 degrees on two Technic pins through the end cheeks, uncovering the tape between two white guide rollers.", image = "renders/open.png" },
+  { title = "Dust flap", text = "The whole front edge is the flap. It swings up and out 90 degrees on two Technic pins through the hinge plates at its ends, uncovering the tape between two white guide rollers.", image = "renders/open.png" },
   { title = "Turning reels", text = "Each reel lies loose inside, as in a real cassette, and turns in its drive hole. Turn a drive hub underneath with a fingertip, as a VCR's spindle does, and watch the supply and take-up packs through the clear windows.", image = "renders/three_quarter.png" },
   { title = "Underneath", text = "Two square drive holes, each with a reel's white drive hub in it: four pegs round the red spindle end. Between them the lamp hole; then the reel-lock release hole, five silver screw heads and the open mouth where the VCR's head drum goes in.", image = "renders/underside.png" },
 ]
