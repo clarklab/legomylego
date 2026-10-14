@@ -1,10 +1,37 @@
 {
- "low": 36.73,
- "high": 116.91,
+ "low": 70.74,
+ "high": 109.97,
  "currency": "USD",
- "note": "A rough range from typical BrickLink prices per part type, not live market data.",
- "source": "estimate",
- "date": null,
- "live_lines": 0,
- "lines": 72
+ "note": "BrickLink price guide, 2026-10-14: 72 of 72 part lines priced live (six-month sold average to current asking average, new, USD).",
+ "source": "bricklink",
+ "date": "2026-10-14",
+ "live_lines": 72,
+ "lines": 72,
+ "bricklink": {
+  "usd": 70.74,
+  "date": "2026-10-14",
+  "lines": 72,
+  "of": 72,
+  "missing": [],
+  "basis": "new parts, the average each sold for over the last six months (the average asking price where nothing sold), before shipping"
+ },
+ "pick_a_brick": {
+  "usd": 90.01,
+  "date": "2026-10-14",
+  "lines": 66,
+  "of": 72,
+  "missing": [
+   "1 x Turntable 2 x 2 Plate, Base (3680), Black",
+   "2 x Bar 3L (87994), Black",
+   "19 x Brick 2 x 4 (3001), Dark Brown",
+   "12 x Brick Curved 3 x 1 No Studs (50950), Tan",
+   "2 x Plate 2 x 2 (3022), White",
+   "3 x Plate 1 x 4 (3710), White"
+  ],
+  "standard": [
+   "1 x Tile Round 1 x 1 Half Circle (24246), Coral",
+   "1 x Turntable 2 x 2 Plate - Top (3679), Light Bluish Gray"
+  ],
+  "basis": "LEGO Pick a Brick, US shop, before shipping"
+ }
 }

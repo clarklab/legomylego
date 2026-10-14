@@ -1,24 +1,26 @@
-# Birthday Cake: price estimate
+# Birthday Cake: price
 
-**Roughly $1 - $3** for 20 pieces in 14 lines, new parts on BrickLink, before shipping.
+20 pieces in 14 lines.
 
-This is a rough range from typical per-piece prices by part type (see `brickkit/data/price_bands.json`), scaled up for transparent colours and for part/colour combinations that appeared in few sets. It is not live market data: set up BrickLink API credentials (see `brickkit/bom/live_price.py`) for dated prices.
+**BrickLink: $1.03** for new parts, before shipping, from BrickLink's price guide on 2026-10-14: each line at the average it sold for over the last six months (the average asking price where nothing sold), weighted by quantity.
 
-For a real quote, upload `bricklink_wanted.xml` as a BrickLink Wanted List and use Easy Buy. Parts still made can also be ordered from LEGO Pick a Brick with `pick_a_brick.csv`.
+**Pick a Brick: $2.03** at LEGO Pick a Brick (US shop) on 2026-10-14, before shipping. Not sold there: 1 x Brick 1 x 2 (3004), White; 1 x Brick 1 x 2 with Black Curved Line / Smile print (3004pb302), White. All of it is in the Bestseller range, so it comes as one parcel.
 
-| Qty | Part | Colour | Each (USD) | Line (USD) | Basis |
-|---:|---|---|---:|---:|---|
-| 1 | 3004pb302 Brick 1 x 2 with Black Curved Line / Smile print | White | 0.16-0.48 | 0.16-0.48 | brick, in 2 set(s) |
-| 2 | 76959 Brick Sloped Inverted 45° 2 x 2 [Round Hollow Bottom Pin, Bar-sized Stud Holes] | Reddish Brown | 0.05-0.15 | 0.10-0.30 | slope |
-| 2 | 54200 Brick Sloped 30° 1 x 1 x 2/3 (Cheese Slope) | White | 0.05-0.15 | 0.10-0.30 | slope |
-| 2 | 98138pb366 Tile Round 1 x 1 with Black Eye with Central Pupil Partially Closed Print | White | 0.04-0.14 | 0.08-0.28 | tile, in 16 set(s) |
-| 2 | 37352 Brick Curved 1 x 2 x 1 No Studs | White | 0.04-0.12 | 0.08-0.24 | brick |
-| 2 | 78666 Brick Curved 2 x 1 with Inverted Cutout | White | 0.04-0.12 | 0.08-0.24 | brick |
-| 2 | 87087 Brick Special 1 x 1 with Stud on 1 Side | White | 0.04-0.12 | 0.08-0.24 | brick |
-| 1 | 37762 Equipment Candlestick | White | 0.05-0.25 | 0.05-0.25 | other |
-| 1 | 3262 Brick Round 2 x 2 Dome Top, Vented Stud | Red | 0.04-0.12 | 0.04-0.12 | brick |
-| 1 | 3003 Brick 2 x 2 | Reddish Brown | 0.04-0.12 | 0.04-0.12 | brick |
-| 1 | 3004 Brick 1 x 2 | White | 0.04-0.12 | 0.04-0.12 | brick |
-| 1 | 3010 Brick 1 x 4 | White | 0.04-0.12 | 0.04-0.12 | brick |
-| 1 | 37775 Wave / Flame Small with Pin | Trans-Orange | 0.03-0.12 | 0.03-0.12 | pin, transparent |
-| 1 | 3020 Plate 2 x 4 | Reddish Brown | 0.02-0.08 | 0.02-0.08 | plate |
+Order with `bricklink_wanted.xml` (upload as a BrickLink Wanted List, then Easy Buy) or `pick_a_brick.csv` (upload on Pick a Brick).
+
+| Qty | Part | Colour | BrickLink each | BrickLink line | Pick a Brick each | Pick a Brick line |
+|---:|---|---|---:|---:|---:|---:|
+| 2 | 87087 Brick Special 1 x 1 with Stud on 1 Side | White | 0.09 | 0.17 | 0.11 | 0.22 |
+| 1 | 3004pb302 Brick 1 x 2 with Black Curved Line / Smile print | White | 0.14 | 0.14 | - | - |
+| 1 | 3010 Brick 1 x 4 | White | 0.11 | 0.11 | 0.15 | 0.15 |
+| 2 | 78666 Brick Curved 2 x 1 with Inverted Cutout | White | 0.05 | 0.10 | 0.11 | 0.22 |
+| 2 | 37352 Brick Curved 1 x 2 x 1 No Studs | White | 0.05 | 0.10 | 0.11 | 0.22 |
+| 2 | 54200 Brick Sloped 30° 1 x 1 x 2/3 (Cheese Slope) | White | 0.03 | 0.06 | 0.05 | 0.10 |
+| 1 | 3004 Brick 1 x 2 | White | 0.06 | 0.06 | - | - |
+| 1 | 3003 Brick 2 x 2 | Reddish Brown | 0.06 | 0.06 | 0.13 | 0.13 |
+| 1 | 3020 Plate 2 x 4 | Reddish Brown | 0.05 | 0.05 | 0.14 | 0.14 |
+| 2 | 76959 Brick Sloped Inverted 45° 2 x 2 [Round Hollow Bottom Pin, Bar-sized Stud Holes] | Reddish Brown | 0.02 | 0.04 | 0.14 | 0.28 |
+| 1 | 3262 Brick Round 2 x 2 Dome Top, Vented Stud | Red | 0.04 | 0.04 | 0.13 | 0.13 |
+| 1 | 37762 Equipment Candlestick | White | 0.04 | 0.04 | 0.08 | 0.08 |
+| 2 | 98138pb366 Tile Round 1 x 1 with Black Eye with Central Pupil Partially Closed Print | White | 0.02 | 0.04 | 0.13 | 0.26 |
+| 1 | 37775 Wave / Flame Small with Pin | Trans-Orange | 0.01 | 0.01 | 0.10 | 0.10 |

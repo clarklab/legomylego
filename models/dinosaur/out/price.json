@@ -1,10 +1,34 @@
 {
- "low": 1.38,
- "high": 5.52,
+ "low": 2.29,
+ "high": 3.92,
  "currency": "USD",
- "note": "A rough range from typical BrickLink prices per part type, not live market data.",
- "source": "estimate",
- "date": null,
- "live_lines": 0,
- "lines": 23
+ "note": "BrickLink price guide, 2026-10-14: 23 of 23 part lines priced live (six-month sold average to current asking average, new, USD).",
+ "source": "bricklink",
+ "date": "2026-10-14",
+ "live_lines": 23,
+ "lines": 23,
+ "bricklink": {
+  "usd": 2.29,
+  "date": "2026-10-14",
+  "lines": 23,
+  "of": 23,
+  "missing": [],
+  "basis": "new parts, the average each sold for over the last six months (the average asking price where nothing sold), before shipping"
+ },
+ "pick_a_brick": {
+  "usd": 2.96,
+  "date": "2026-10-14",
+  "lines": 19,
+  "of": 23,
+  "missing": [
+   "1 x Brick 1 x 2 (3004), Orange",
+   "2 x Brick Sloped Inverted 45\u00b0 2 x 1 (3665), Orange",
+   "2 x Plate 2 x 2 (3022), Red",
+   "2 x Brick Special 1 x 2 with Pin (2458), Tan"
+  ],
+  "standard": [
+   "2 x Technic Brick 1 x 2 [1 Pin Hole] (3700), Orange"
+  ],
+  "basis": "LEGO Pick a Brick, US shop, before shipping"
+ }
 }

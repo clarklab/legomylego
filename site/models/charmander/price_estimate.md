@@ -1,20 +1,22 @@
-# Charmander: price estimate
+# Charmander: price
 
-**Roughly $0 - $2** for 14 pieces in 10 lines, new parts on BrickLink, before shipping.
+14 pieces in 10 lines.
 
-This is a rough range from typical per-piece prices by part type (see `brickkit/data/price_bands.json`), scaled up for transparent colours and for part/colour combinations that appeared in few sets. It is not live market data: set up BrickLink API credentials (see `brickkit/bom/live_price.py`) for dated prices.
+**BrickLink: $0.48** for new parts, before shipping, from BrickLink's price guide on 2026-10-14: each line at the average it sold for over the last six months (the average asking price where nothing sold), weighted by quantity.
 
-For a real quote, upload `bricklink_wanted.xml` as a BrickLink Wanted List and use Easy Buy. Parts still made can also be ordered from LEGO Pick a Brick with `pick_a_brick.csv`.
+**Pick a Brick: $1.17** at LEGO Pick a Brick (US shop) on 2026-10-14, before shipping: every line is sold there. Standard pieces, sent later in a parcel of their own: 1 x Tile 1 x 2 with Groove (3069), Tan.
 
-| Qty | Part | Colour | Each (USD) | Line (USD) | Basis |
-|---:|---|---|---:|---:|---|
-| 2 | 54200 Brick Sloped 30° 1 x 1 x 2/3 (Cheese Slope) | Orange | 0.05-0.15 | 0.10-0.30 | slope |
-| 1 | 64647 Flame / Headwear Accessory Plume / Feather, Triple Point | Trans-Orange | 0.06-0.31 | 0.06-0.31 | other, transparent |
-| 3 | 3023 Plate 1 x 2 | Orange | 0.02-0.08 | 0.06-0.24 | plate |
-| 1 | 4589b Cone 1 x 1 [Top Groove] | Orange | 0.05-0.25 | 0.05-0.25 | other |
-| 2 | 6141 Plate Round 1 x 1 with Solid Stud | Orange | 0.02-0.08 | 0.04-0.16 | plate |
-| 1 | 4733 Brick Special 1 x 1 Studs on 4 Sides | Black | 0.04-0.12 | 0.04-0.12 | brick |
-| 1 | 11477 Brick Curved 2 x 1 No Studs [1/2 Bow] | Orange | 0.04-0.12 | 0.04-0.12 | brick |
-| 1 | 3069 Tile 1 x 2 with Groove | Tan | 0.03-0.10 | 0.03-0.10 | tile |
-| 1 | 3024 Plate 1 x 1 | Black | 0.02-0.08 | 0.02-0.08 | plate |
-| 1 | 15573 Plate Special 1 x 2 with 1 Stud with Groove and Inside Stud Holder (Jumper) | Orange | 0.02-0.08 | 0.02-0.08 | plate |
+Order with `bricklink_wanted.xml` (upload as a BrickLink Wanted List, then Easy Buy) or `pick_a_brick.csv` (upload on Pick a Brick).
+
+| Qty | Part | Colour | BrickLink each | BrickLink line | Pick a Brick each | Pick a Brick line |
+|---:|---|---|---:|---:|---:|---:|
+| 1 | 4733 Brick Special 1 x 1 Studs on 4 Sides | Black | 0.13 | 0.13 | 0.21 | 0.21 |
+| 1 | 3069 Tile 1 x 2 with Groove | Tan | 0.08 | 0.08 | 0.08 (Standard) | 0.08 |
+| 3 | 3023 Plate 1 x 2 | Orange | 0.02 | 0.06 | 0.08 | 0.24 |
+| 1 | 11477 Brick Curved 2 x 1 No Studs [1/2 Bow] | Orange | 0.04 | 0.04 | 0.07 | 0.07 |
+| 1 | 3024 Plate 1 x 1 | Black | 0.04 | 0.04 | 0.06 | 0.06 |
+| 2 | 54200 Brick Sloped 30° 1 x 1 x 2/3 (Cheese Slope) | Orange | 0.02 | 0.03 | 0.05 | 0.10 |
+| 1 | 15573 Plate Special 1 x 2 with 1 Stud with Groove and Inside Stud Holder (Jumper) | Orange | 0.03 | 0.03 | 0.06 | 0.06 |
+| 2 | 6141 Plate Round 1 x 1 with Solid Stud | Orange | 0.02 | 0.03 | 0.05 | 0.10 |
+| 1 | 4589b Cone 1 x 1 [Top Groove] | Orange | 0.02 | 0.02 | 0.06 | 0.06 |
+| 1 | 64647 Flame / Headwear Accessory Plume / Feather, Triple Point | Trans-Orange | 0.02 | 0.02 | 0.19 | 0.19 |

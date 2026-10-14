@@ -1,10 +1,33 @@
 {
- "low": 2.03,
- "high": 6.61,
+ "low": 4.37,
+ "high": 6.42,
  "currency": "USD",
- "note": "A rough range from typical BrickLink prices per part type, not live market data.",
- "source": "estimate",
- "date": null,
- "live_lines": 0,
- "lines": 21
+ "note": "BrickLink price guide, 2026-10-14: 21 of 21 part lines priced live (six-month sold average to current asking average, new, USD).",
+ "source": "bricklink",
+ "date": "2026-10-14",
+ "live_lines": 21,
+ "lines": 21,
+ "bricklink": {
+  "usd": 4.37,
+  "date": "2026-10-14",
+  "lines": 21,
+  "of": 21,
+  "missing": [],
+  "basis": "new parts, the average each sold for over the last six months (the average asking price where nothing sold), before shipping"
+ },
+ "pick_a_brick": {
+  "usd": 4.41,
+  "date": "2026-10-14",
+  "lines": 18,
+  "of": 21,
+  "missing": [
+   "4 x Brick 1 x 1 (3005), Dark Turquoise",
+   "1 x Plate 4 x 6 (3032), Dark Turquoise",
+   "4 x Brick Round, Curved 2 x 2 x 1 1/3, Corner (67810), Green"
+  ],
+  "standard": [
+   "6 x Brick Special 1 x 1 with Stud on 1 Side (87087), Dark Turquoise"
+  ],
+  "basis": "LEGO Pick a Brick, US shop, before shipping"
+ }
 }

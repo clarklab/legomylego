@@ -20,7 +20,7 @@ qty,part,name,colour,ldraw_colour,rebrickable_part,rebrickable_colour,bricklink_
 1,973,"Torso Diving Suit with Crossed Belts and Weight Belt Print, Medium Nougat Arms, Dark Bluish Gray Hands",Medium Nougat,84,973c23h12pr2119,84,973pb1240c01,150,6008374,1,minifig torso; stand-in render (LDraw has no model of the print)
 1,10165c01,Helmet Underwater Deep Diver with Trans-Clear Glass,Pearl Gold,297,10165c01,297,10165c01,115,6018281,1,approximate 3D model (LDraw has none)
 2,14769,Tile Round 2 x 2 with Bottom Stud Holder,Pearl Gold,297,14769,297,14769,115,6066345,0,
-6,3069b,Tile 1 x 2 with Groove,Pearl Gold,297,3069b,297,3069b,115,6107197,0,
+6,3069b,Tile 1 x 2 with Groove,Pearl Gold,297,3069b,297,3069,115,6107197,0,
 1,60474,Plate Round 4 x 4 with Pin Hole,Pearl Gold,297,60474,297,60474,115,6521234,0,
 1,64644,"Equipment Telescope / Torch / Spyglass, Support Round 1 x 1 x 1 2/3",Pearl Gold,297,64644,297,64644,115,4538126,0,
 3,15068,Brick Curved 2 x 2 x 2/3,Reddish Brown,70,15068,70,15068,88,6146858,0,
@@ -33,7 +33,7 @@ qty,part,name,colour,ldraw_colour,rebrickable_part,rebrickable_colour,bricklink_
 2,3036,Plate 6 x 8,Reddish Brown,70,3036,70,3036,88,4223729,0,
 3,30414,Brick Special 1 x 4 with 4 Studs on One Side,Reddish Brown,70,30414,70,30414,88,6153594,0,
 4,3068b,Tile 2 x 2 with Groove,Reddish Brown,70,3068b,70,3068b,88,4271949,0,
-11,3069b,Tile 1 x 2 with Groove,Reddish Brown,70,3069b,70,3069b,88,4211151,0,
+11,3069b,Tile 1 x 2 with Groove,Reddish Brown,70,3069b,70,3069,88,4211151,0,
 6,3070b,Tile 1 x 1 with Groove,Reddish Brown,70,3070b,70,3070b,88,4211288,0,
 4,3795,Plate 2 x 6,Reddish Brown,70,3795,70,3795,88,4211247,0,
 1,3941,Brick Round 2 x 2 with Axle Hole,Reddish Brown,70,3941,70,3941,88,4211166,0,

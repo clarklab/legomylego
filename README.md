@@ -13,19 +13,21 @@ at **[bricks.superfun.games](https://bricks.superfun.games)**.
 
 ## Models
 
-| Model | Pieces | Size | Works | Rough cost* |
+| Model | Pieces | Size | Works | Cost* |
 |---|---:|---|---|---|
-| [Hamburger](models/hamburger/NOTES.md) | 590 | 12.5 cm across (4.9 in), 9.6 cm tall | a life-size cheeseburger in six separately built layers that click together: sesame bun with a domed top, patty, cheese with hanging corners, lettuce and tomato | $27-$90 |
-| [Baby Metroid Lamp](models/baby_metroid/NOTES.md) | 2,903 | 18 cm across, 32 cm tall on its stand | a tap lamp: press it down and the fangs bite and the 3 nuclei light up (Power Functions), press again for off; lifts off its stand | $134-$428 |
-| [VHS Cassette](models/vhs_tape/NOTES.md) | 384 | 184 x 102 x 26 mm (real tape: 187 x 103 x 25) | full-length dust flap swings up on Technic pins; both reels turn on red spindles behind two clear windows; black or white (head cleaner) shell | $16-$56 |
-| [Ferret](models/ferret/NOTES.md) | 895 | 51 cm nose to tail | head turns on a turntable; sable, albino and cinnamon coats | $37-$117 |
+| [Hamburger](models/hamburger/NOTES.md) | 590 | 12.5 cm across (4.9 in), 9.6 cm tall | a life-size cheeseburger in six separately built layers that click together: sesame bun with a domed top, patty, cheese with hanging corners, lettuce and tomato | $57 BrickLink / $72 Pick a Brick (5 lines not sold there) |
+| [Baby Metroid Lamp](models/baby_metroid/NOTES.md) | 2,903 | 18 cm across, 32 cm tall on its stand | a tap lamp: press it down and the fangs bite and the 3 nuclei light up (Power Functions), press again for off; lifts off its stand | $182 BrickLink / $283 Pick a Brick (8 lines not sold there) |
+| [VHS Cassette](models/vhs_tape/NOTES.md) | 370 | 184 x 102 x 26 mm (real tape: 187 x 103 x 25) | full-length dust flap swings up on two hinges; both reels turn behind two clear windows, from drive holes underneath with a hub you turn by its pegs; black or white (head cleaner) shell | $39 BrickLink / $47 Pick a Brick |
+| [Ferret](models/ferret/NOTES.md) | 895 | 51 cm nose to tail | head turns on a turntable; sable, albino and cinnamon coats | $71 BrickLink / $90 Pick a Brick (6 lines not sold there) |
 | [Chainsaw Face](models/chainsaw_face/NOTES.md) | 838 | 33.4 cm (13.1 in) tall on his stand, 31.4 cm soles to hair; 12.8 cm chainsaw | posable figure: ball joints at the neck, shoulders, wrists, hips and ankles, ratchet elbows and knees, a waist turntable; swings the chainsaw from overhead down across his hips in both fists; spattered or clean apron | $31-$113 |
-| [The Caldwell County Courthouse](models/caldwell_courthouse/NOTES.md) | 6,663 | 44.8 x 44.8 cm base, 65.4 cm tall | four clocks that keep real time (quartz clock inserts, not LEGO, behind SNOT dials); the dome lifts off to set them; clock tower flanked by bell domes, crested corner pavilions; the clockmaster minifigure on the lawn; dark red or reddish brown trim; a 64-piece [mini version](models/caldwell_mini/design.py) for kids | $261-$875 (+ $20-$60 clock inserts) |
-| [Nautilus](models/nautilus/NOTES.md) | 7,126 | 106 cm long (42 in), 19 cm across the side keels; 36 cm tall on its 94 x 27 cm sea stand | minifigure scale (the salon windows are LEGO's biggest clear bubbles); the port side of the salon swings up like a gull wing on Nemo's salon and crew; the salon lights up (Power Functions, battery box hidden in the sea); the propeller spins in its guard ring and the rudder swings | $284-$973 |
-| [Nautilus Crew](models/nautilus_crew/NOTES.md) | 106 (5 minifigures) | 12.8 x 6.4 cm base, 9.3 cm tall | Captain Nemo, Ned Land, Professor Aronnax, Conseil and a Nautilus diver in a brass deep-sea helmet as real printed minifigures (heads, torsos and legs as sold, listed by their BrickLink numbers) with a harpoon, a spyglass, a magnifying glass, a specimen bottle and a speargun, on a slice of the Nautilus deck before a salon window | $29-$120 |
+| [The Caldwell County Courthouse](models/caldwell_courthouse/NOTES.md) | 6,663 | 44.8 x 44.8 cm base, 65.4 cm tall | four clocks that keep real time (quartz clock inserts, not LEGO, behind SNOT dials); the dome lifts off to set them; clock tower flanked by bell domes, crested corner pavilions; the clockmaster minifigure on the lawn; dark red or reddish brown trim; a 64-piece [mini version](models/caldwell_mini/design.py) for kids | $748 BrickLink / $873 Pick a Brick (15 lines not sold there) (+ $20-$60 clock inserts) |
+| [Nautilus](models/nautilus/NOTES.md) | 7,126 | 106 cm long (42 in), 19 cm across the side keels; 36 cm tall on its 94 x 27 cm sea stand | minifigure scale (the salon windows are LEGO's biggest clear bubbles); the port side of the salon swings up like a gull wing on Nemo's salon and crew; the salon lights up (Power Functions, battery box hidden in the sea); the propeller spins in its guard ring and the rudder swings | $839 BrickLink / $983 Pick a Brick (49 lines not sold there) |
+| [Nautilus Crew](models/nautilus_crew/NOTES.md) | 106 (5 minifigures) | 12.8 x 6.4 cm base, 9.3 cm tall | Captain Nemo, Ned Land, Professor Aronnax, Conseil and a Nautilus diver in a brass deep-sea helmet as real printed minifigures (heads, torsos and legs as sold, listed by their BrickLink numbers) with a harpoon, a spyglass, a magnifying glass, a specimen bottle and a speargun, on a slice of the Nautilus deck before a salon window | $56 BrickLink / $19 Pick a Brick (14 lines not sold there) |
 
-*Rough range from typical per-part prices (`out/price_estimate.md`), not live market data.
-Upload `out/bricklink_wanted.xml` to a BrickLink Wanted List for a real quote.
+*New parts before shipping: BrickLink at each part's six-month sold average, and LEGO Pick a
+Brick at its US prices, both from the day the parts list was last made (`out/price_estimate.md`
+has the date and every line). Upload `out/bricklink_wanted.xml` to a BrickLink Wanted List, or
+`out/pick_a_brick.csv` to Pick a Brick.
 
 Each model's `out/` folder holds:
 

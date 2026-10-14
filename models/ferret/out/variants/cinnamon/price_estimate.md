@@ -1,93 +1,95 @@
-# Ferret: price estimate
+# Ferret: price
 
-**Roughly $35 - $112** for 895 pieces in 83 lines, new parts on BrickLink, before shipping.
+895 pieces in 83 lines.
 
-This is a rough range from typical per-piece prices by part type (see `brickkit/data/price_bands.json`), scaled up for transparent colours and for part/colour combinations that appeared in few sets. It is not live market data: set up BrickLink API credentials (see `brickkit/bom/live_price.py`) for dated prices.
+**BrickLink: $65.59** for new parts, before shipping, from BrickLink's price guide on 2026-10-14: each line at the average it sold for over the last six months (the average asking price where nothing sold), weighted by quantity.
 
-For a real quote, upload `bricklink_wanted.xml` as a BrickLink Wanted List and use Easy Buy. Parts still made can also be ordered from LEGO Pick a Brick with `pick_a_brick.csv`.
+**Pick a Brick: $90.86** at LEGO Pick a Brick (US shop) on 2026-10-14, before shipping. Not sold there: 1 x Turntable 2 x 2 Plate, Base (3680), Black; 2 x Bar 3L (87994), Black; 35 x Brick 1 x 2 (3004), Reddish Brown; 12 x Plate 2 x 2 (3022), Reddish Brown; 2 x Plate 2 x 2 (3022), White; 3 x Plate 1 x 4 (3710), White. Standard pieces, sent later in a parcel of their own: 1 x Tile Round 1 x 1 Half Circle (24246), Coral; 1 x Tile Round 1 x 2 Half Circle (1748), Dark Pink; 1 x Turntable 2 x 2 Plate - Top (3679), Light Bluish Gray; 25 x Plate 1 x 2 (3023), Medium Nougat; 12 x Brick Curved 3 x 1 No Studs (50950), Medium Nougat; 2 x Brick Curved 2 x 2 x 2/3 (15068), Reddish Brown.
 
-| Qty | Part | Colour | Each (USD) | Line (USD) | Basis |
-|---:|---|---|---:|---:|---|
-| 140 | 54200 Brick Sloped 30° 1 x 1 x 2/3 (Cheese Slope) | Medium Nougat | 0.05-0.15 | 7.00-21.00 | slope |
-| 114 | 3024 Plate 1 x 1 | Medium Nougat | 0.02-0.08 | 2.28-9.12 | plate |
-| 56 | 11477 Brick Curved 2 x 1 No Studs [1/2 Bow] | Medium Nougat | 0.04-0.12 | 2.24-6.72 | brick |
-| 40 | 54200 Brick Sloped 30° 1 x 1 x 2/3 (Cheese Slope) | Reddish Brown | 0.05-0.15 | 2.00-6.00 | slope |
-| 17 | 2456 Brick 2 x 6 | Medium Nougat | 0.08-0.28 | 1.43-4.76 | 2 x 6, in 15 set(s) |
-| 35 | 3004 Brick 1 x 2 | Reddish Brown | 0.04-0.12 | 1.40-4.20 | brick |
-| 30 | 3003 Brick 2 x 2 | Reddish Brown | 0.04-0.12 | 1.20-3.60 | brick |
-| 24 | 3005 Brick 1 x 1 | Medium Nougat | 0.04-0.12 | 0.96-2.88 | brick |
-| 12 | 50950 Brick Curved 3 x 1 No Studs | Medium Nougat | 0.08-0.24 | 0.96-2.88 | brick, in 9 set(s) |
-| 23 | 3005 Brick 1 x 1 | Reddish Brown | 0.04-0.12 | 0.92-2.76 | brick |
-| 21 | 3004 Brick 1 x 2 | Tan | 0.04-0.12 | 0.84-2.52 | brick |
-| 32 | 3024 Plate 1 x 1 | Reddish Brown | 0.02-0.08 | 0.64-2.56 | plate |
-| 19 | 3004 Brick 1 x 2 | Medium Nougat | 0.04-0.12 | 0.76-2.28 | brick |
-| 19 | 3001 Brick 2 x 4 | Reddish Brown | 0.04-0.12 | 0.76-2.28 | brick |
-| 22 | 3070b Tile 1 x 1 with Groove | Medium Nougat | 0.03-0.10 | 0.66-2.20 | tile |
-| 17 | 3005 Brick 1 x 1 | Tan | 0.04-0.12 | 0.68-2.04 | brick |
-| 12 | 3008 Brick 1 x 8 | Medium Nougat | 0.06-0.17 | 0.67-2.02 | brick, in 30 set(s) |
-| 25 | 3023 Plate 1 x 2 | Medium Nougat | 0.02-0.08 | 0.50-2.00 | plate |
-| 8 | 3795 Plate 2 x 6 | Medium Nougat | 0.06-0.20 | 0.48-1.60 | 2 x 6 |
-| 11 | 3006 Brick 2 x 10 | Light Bluish Gray | 0.04-0.12 | 0.44-1.32 | brick |
-| 11 | 3010 Brick 1 x 4 | Medium Nougat | 0.04-0.12 | 0.44-1.32 | brick |
-| 10 | 3622 Brick 1 x 3 | Medium Nougat | 0.04-0.12 | 0.40-1.20 | brick |
-| 2 | 4740 Dish 2 x 2 Inverted [Radar] | Black | 0.15-0.60 | 0.30-1.20 | dish |
-| 2 | 4740 Dish 2 x 2 Inverted [Radar] | White | 0.15-0.60 | 0.30-1.20 | dish |
-| 9 | 3003 Brick 2 x 2 | Medium Nougat | 0.04-0.12 | 0.36-1.08 | brick |
-| 8 | 3008 Brick 1 x 8 | Tan | 0.04-0.12 | 0.32-0.96 | brick |
-| 12 | 3022 Plate 2 x 2 | Reddish Brown | 0.02-0.08 | 0.24-0.96 | plate |
-| 7 | 3001 Brick 2 x 4 | Medium Nougat | 0.04-0.12 | 0.28-0.84 | brick |
-| 7 | 3001 Brick 2 x 4 | Tan | 0.04-0.12 | 0.28-0.84 | brick |
-| 7 | 3622 Brick 1 x 3 | Tan | 0.04-0.12 | 0.28-0.84 | brick |
-| 4 | 2456 Brick 2 x 6 | Tan | 0.06-0.20 | 0.24-0.80 | 2 x 6 |
-| 8 | 3070b Tile 1 x 1 with Groove | White | 0.03-0.10 | 0.24-0.80 | tile |
-| 6 | 3004 Brick 1 x 2 | Light Bluish Gray | 0.04-0.12 | 0.24-0.72 | brick |
-| 6 | 3005 Brick 1 x 1 | Light Bluish Gray | 0.04-0.12 | 0.24-0.72 | brick |
-| 6 | 3003 Brick 2 x 2 | Tan | 0.04-0.12 | 0.24-0.72 | brick |
-| 5 | 3007 Brick 2 x 8 | Light Bluish Gray | 0.04-0.12 | 0.20-0.60 | brick |
-| 4 | 54200 Brick Sloped 30° 1 x 1 x 2/3 (Cheese Slope) | Tan | 0.05-0.15 | 0.20-0.60 | slope |
-| 3 | 3795 Plate 2 x 6 | Reddish Brown | 0.06-0.20 | 0.18-0.60 | 2 x 6 |
-| 3 | 3795 Plate 2 x 6 | White | 0.06-0.20 | 0.18-0.60 | 2 x 6 |
-| 7 | 3710 Plate 1 x 4 | Medium Nougat | 0.02-0.08 | 0.14-0.56 | plate |
-| 4 | 3007 Brick 2 x 8 | Tan | 0.04-0.12 | 0.16-0.48 | brick |
-| 4 | 3010 Brick 1 x 4 | Tan | 0.04-0.12 | 0.16-0.48 | brick |
-| 2 | 87994 Bar 3L | Black | 0.05-0.25 | 0.10-0.50 | other |
-| 3 | 3001 Brick 2 x 4 | Light Bluish Gray | 0.04-0.12 | 0.12-0.36 | brick |
-| 3 | 3010 Brick 1 x 4 | Light Bluish Gray | 0.04-0.12 | 0.12-0.36 | brick |
-| 3 | 3622 Brick 1 x 3 | Light Bluish Gray | 0.04-0.12 | 0.12-0.36 | brick |
-| 3 | 3006 Brick 2 x 10 | Tan | 0.04-0.12 | 0.12-0.36 | brick |
-| 4 | 3623 Plate 1 x 3 | Reddish Brown | 0.02-0.08 | 0.08-0.32 | plate |
-| 2 | 3666 Plate 1 x 6 | Reddish Brown | 0.05-0.15 | 0.10-0.30 | 1 x 6 |
-| 2 | 85984 Brick Sloped 30° 1 x 2 x 2/3 | Reddish Brown | 0.05-0.15 | 0.10-0.30 | slope |
-| 4 | 3024 Plate 1 x 1 | Tan | 0.02-0.08 | 0.08-0.32 | plate |
-| 4 | 3023 Plate 1 x 2 | White | 0.02-0.08 | 0.08-0.32 | plate |
-| 4 | 3024 Plate 1 x 1 | White | 0.02-0.08 | 0.08-0.32 | plate |
-| 2 | 22885 Brick Special 1 x 2 x 1 2/3 with 4 Studs on 1 Side | Light Bluish Gray | 0.04-0.12 | 0.08-0.24 | brick |
-| 2 | 15068 Brick Curved 2 x 2 x 2/3 | Reddish Brown | 0.04-0.12 | 0.08-0.24 | brick |
-| 3 | 3020 Plate 2 x 4 | Medium Nougat | 0.02-0.08 | 0.06-0.24 | plate |
-| 3 | 3020 Plate 2 x 4 | Reddish Brown | 0.02-0.08 | 0.06-0.24 | plate |
-| 3 | 3020 Plate 2 x 4 | White | 0.02-0.08 | 0.06-0.24 | plate |
-| 3 | 3710 Plate 1 x 4 | White | 0.02-0.08 | 0.06-0.24 | plate |
-| 2 | 32828 Plate Special Round 1 x 1 with Hollow Stud and Horizontal Bar 1L | Medium Nougat | 0.03-0.11 | 0.06-0.22 | plate, in 24 set(s) |
-| 2 | 98138 Tile Round 1 x 1 | Bright Pink | 0.03-0.10 | 0.06-0.20 | tile |
-| 2 | 15712 Tile Special 1 x 1 with Clip with Rounded Edges | White | 0.03-0.10 | 0.06-0.20 | tile |
-| 2 | 3069b Tile 1 x 2 with Groove | White | 0.03-0.10 | 0.06-0.20 | tile |
-| 2 | 32828 Plate Special Round 1 x 1 with Hollow Stud and Horizontal Bar 1L | Black | 0.02-0.08 | 0.04-0.16 | plate |
-| 1 | 3009 Brick 1 x 6 | Light Bluish Gray | 0.05-0.15 | 0.05-0.15 | 1 x 6 |
-| 1 | 3009 Brick 1 x 6 | Medium Nougat | 0.05-0.15 | 0.05-0.15 | 1 x 6 |
-| 2 | 3023 Plate 1 x 2 | Reddish Brown | 0.02-0.08 | 0.04-0.16 | plate |
-| 2 | 3710 Plate 1 x 4 | Reddish Brown | 0.02-0.08 | 0.04-0.16 | plate |
-| 1 | 3009 Brick 1 x 6 | Tan | 0.05-0.15 | 0.05-0.15 | 1 x 6 |
-| 2 | 3021 Plate 2 x 3 | White | 0.02-0.08 | 0.04-0.16 | plate |
-| 2 | 3022 Plate 2 x 2 | White | 0.02-0.08 | 0.04-0.16 | plate |
-| 1 | 3666 Plate 1 x 6 | White | 0.05-0.15 | 0.05-0.15 | 1 x 6 |
-| 1 | 24246 Tile Round 1 x 1 Half Circle | Coral | 0.04-0.14 | 0.04-0.14 | tile, in 21 set(s) |
-| 1 | 1748 Tile Round 1 x 2 Half Circle | Dark Pink | 0.04-0.14 | 0.04-0.14 | tile, in 18 set(s) |
-| 1 | 3002 Brick 2 x 3 | Tan | 0.04-0.12 | 0.04-0.12 | brick |
-| 1 | 11211 Brick Special 1 x 2 with 2 Studs on 1 Side | White | 0.04-0.12 | 0.04-0.12 | brick |
-| 1 | 3001 Brick 2 x 4 | White | 0.04-0.12 | 0.04-0.12 | brick |
-| 1 | 87087 Brick Special 1 x 1 with Stud on 1 Side | White | 0.04-0.12 | 0.04-0.12 | brick |
-| 1 | 3680 Turntable 2 x 2 Plate, Base | Black | 0.02-0.08 | 0.02-0.08 | plate |
-| 1 | 3679 Turntable 2 x 2 Plate - Top | Light Bluish Gray | 0.02-0.08 | 0.02-0.08 | plate |
-| 1 | 3710 Plate 1 x 4 | Light Bluish Gray | 0.02-0.08 | 0.02-0.08 | plate |
-| 1 | 3021 Plate 2 x 3 | Medium Nougat | 0.02-0.08 | 0.02-0.08 | plate |
-| 1 | 3460 Plate 1 x 8 | Reddish Brown | 0.02-0.08 | 0.02-0.08 | plate |
+Order with `bricklink_wanted.xml` (upload as a BrickLink Wanted List, then Easy Buy) or `pick_a_brick.csv` (upload on Pick a Brick).
+
+| Qty | Part | Colour | BrickLink each | BrickLink line | Pick a Brick each | Pick a Brick line |
+|---:|---|---|---:|---:|---:|---:|
+| 140 | 54200 Brick Sloped 30° 1 x 1 x 2/3 (Cheese Slope) | Medium Nougat | 0.05 | 6.52 | 0.05 | 7.00 |
+| 11 | 3006 Brick 2 x 10 | Light Bluish Gray | 0.54 | 5.89 | 0.69 | 7.59 |
+| 56 | 11477 Brick Curved 2 x 1 No Studs [1/2 Bow] | Medium Nougat | 0.07 | 3.74 | 0.07 | 3.92 |
+| 114 | 3024 Plate 1 x 1 | Medium Nougat | 0.03 | 2.92 | 0.06 | 6.84 |
+| 12 | 3008 Brick 1 x 8 | Medium Nougat | 0.24 | 2.88 | 0.26 | 3.12 |
+| 17 | 2456 Brick 2 x 6 | Medium Nougat | 0.17 | 2.86 | 0.31 | 5.27 |
+| 12 | 50950 Brick Curved 3 x 1 No Studs | Medium Nougat | 0.22 | 2.62 | 0.12 (Standard) | 1.44 |
+| 35 | 3004 Brick 1 x 2 | Reddish Brown | 0.07 | 2.57 | - | - |
+| 19 | 3001 Brick 2 x 4 | Reddish Brown | 0.11 | 2.00 | 0.21 | 3.99 |
+| 30 | 3003 Brick 2 x 2 | Reddish Brown | 0.06 | 1.84 | 0.13 | 3.90 |
+| 8 | 3008 Brick 1 x 8 | Tan | 0.21 | 1.70 | 0.26 | 2.08 |
+| 11 | 3010 Brick 1 x 4 | Medium Nougat | 0.15 | 1.63 | 0.15 | 1.65 |
+| 21 | 3004 Brick 1 x 2 | Tan | 0.07 | 1.56 | 0.10 | 2.10 |
+| 5 | 3007 Brick 2 x 8 | Light Bluish Gray | 0.31 | 1.55 | 0.39 | 1.95 |
+| 40 | 54200 Brick Sloped 30° 1 x 1 x 2/3 (Cheese Slope) | Reddish Brown | 0.03 | 1.21 | 0.05 | 2.00 |
+| 10 | 3622 Brick 1 x 3 | Medium Nougat | 0.12 | 1.20 | 0.14 | 1.40 |
+| 32 | 3024 Plate 1 x 1 | Reddish Brown | 0.04 | 1.18 | 0.06 | 1.92 |
+| 22 | 3070b Tile 1 x 1 with Groove | Medium Nougat | 0.05 | 1.18 | 0.05 | 1.10 |
+| 3 | 3006 Brick 2 x 10 | Tan | 0.37 | 1.12 | 0.69 | 2.07 |
+| 23 | 3005 Brick 1 x 1 | Reddish Brown | 0.05 | 1.11 | 0.07 | 1.61 |
+| 7 | 3001 Brick 2 x 4 | Medium Nougat | 0.15 | 1.08 | 0.21 | 1.47 |
+| 4 | 3007 Brick 2 x 8 | Tan | 0.25 | 1.01 | 0.39 | 1.56 |
+| 17 | 3005 Brick 1 x 1 | Tan | 0.06 | 0.96 | 0.07 | 1.19 |
+| 7 | 3001 Brick 2 x 4 | Tan | 0.13 | 0.94 | 0.21 | 1.47 |
+| 19 | 3004 Brick 1 x 2 | Medium Nougat | 0.05 | 0.90 | 0.10 | 1.90 |
+| 8 | 3795 Plate 2 x 6 | Medium Nougat | 0.08 | 0.67 | 0.19 | 1.52 |
+| 24 | 3005 Brick 1 x 1 | Medium Nougat | 0.03 | 0.67 | 0.07 | 1.68 |
+| 25 | 3023 Plate 1 x 2 | Medium Nougat | 0.03 | 0.66 | 0.08 (Standard) | 2.00 |
+| 4 | 2456 Brick 2 x 6 | Tan | 0.16 | 0.65 | 0.31 | 1.24 |
+| 6 | 3004 Brick 1 x 2 | Light Bluish Gray | 0.10 | 0.61 | 0.10 | 0.60 |
+| 9 | 3003 Brick 2 x 2 | Medium Nougat | 0.06 | 0.52 | 0.13 | 1.17 |
+| 7 | 3622 Brick 1 x 3 | Tan | 0.07 | 0.51 | 0.14 | 0.98 |
+| 7 | 3710 Plate 1 x 4 | Medium Nougat | 0.06 | 0.45 | 0.11 | 0.77 |
+| 4 | 3010 Brick 1 x 4 | Tan | 0.11 | 0.43 | 0.15 | 0.60 |
+| 3 | 3010 Brick 1 x 4 | Light Bluish Gray | 0.14 | 0.42 | 0.15 | 0.45 |
+| 12 | 3022 Plate 2 x 2 | Reddish Brown | 0.04 | 0.42 | - | - |
+| 3 | 3795 Plate 2 x 6 | White | 0.13 | 0.39 | 0.19 | 0.57 |
+| 3 | 3001 Brick 2 x 4 | Light Bluish Gray | 0.13 | 0.39 | 0.21 | 0.63 |
+| 6 | 3005 Brick 1 x 1 | Light Bluish Gray | 0.06 | 0.37 | 0.07 | 0.42 |
+| 6 | 3003 Brick 2 x 2 | Tan | 0.06 | 0.36 | 0.13 | 0.78 |
+| 3 | 3020 Plate 2 x 4 | White | 0.11 | 0.32 | 0.14 | 0.42 |
+| 8 | 3070b Tile 1 x 1 with Groove | White | 0.04 | 0.32 | 0.05 | 0.40 |
+| 1 | 1748 Tile Round 1 x 2 Half Circle | Dark Pink | 0.32 | 0.32 | 0.13 (Standard) | 0.13 |
+| 2 | 22885 Brick Special 1 x 2 x 1 2/3 with 4 Studs on 1 Side | Light Bluish Gray | 0.15 | 0.29 | 0.19 | 0.38 |
+| 3 | 3020 Plate 2 x 4 | Medium Nougat | 0.09 | 0.26 | 0.14 | 0.42 |
+| 1 | 3009 Brick 1 x 6 | Light Bluish Gray | 0.23 | 0.23 | 0.24 | 0.24 |
+| 3 | 3622 Brick 1 x 3 | Light Bluish Gray | 0.07 | 0.21 | 0.14 | 0.42 |
+| 4 | 3623 Plate 1 x 3 | Reddish Brown | 0.05 | 0.21 | 0.08 | 0.32 |
+| 2 | 3021 Plate 2 x 3 | White | 0.10 | 0.19 | 0.13 | 0.26 |
+| 3 | 3710 Plate 1 x 4 | White | 0.06 | 0.19 | - | - |
+| 4 | 3023 Plate 1 x 2 | White | 0.05 | 0.18 | 0.08 | 0.32 |
+| 1 | 3009 Brick 1 x 6 | Medium Nougat | 0.18 | 0.18 | 0.24 | 0.24 |
+| 1 | 3009 Brick 1 x 6 | Tan | 0.17 | 0.17 | 0.24 | 0.24 |
+| 3 | 3795 Plate 2 x 6 | Reddish Brown | 0.06 | 0.17 | 0.19 | 0.57 |
+| 2 | 15068 Brick Curved 2 x 2 x 2/3 | Reddish Brown | 0.08 | 0.17 | 0.12 (Standard) | 0.24 |
+| 4 | 3024 Plate 1 x 1 | White | 0.04 | 0.15 | 0.06 | 0.24 |
+| 3 | 3020 Plate 2 x 4 | Reddish Brown | 0.05 | 0.14 | 0.14 | 0.42 |
+| 1 | 3001 Brick 2 x 4 | White | 0.12 | 0.12 | 0.21 | 0.21 |
+| 2 | 87994 Bar 3L | Black | 0.06 | 0.12 | - | - |
+| 1 | 3666 Plate 1 x 6 | White | 0.12 | 0.12 | 0.16 | 0.16 |
+| 2 | 3666 Plate 1 x 6 | Reddish Brown | 0.06 | 0.12 | 0.16 | 0.32 |
+| 1 | 3021 Plate 2 x 3 | Medium Nougat | 0.11 | 0.11 | 0.13 | 0.13 |
+| 1 | 3460 Plate 1 x 8 | Reddish Brown | 0.10 | 0.10 | 0.18 | 0.18 |
+| 2 | 85984 Brick Sloped 30° 1 x 2 x 2/3 | Reddish Brown | 0.05 | 0.10 | 0.08 | 0.16 |
+| 2 | 4740 Dish 2 x 2 Inverted [Radar] | White | 0.05 | 0.10 | 0.06 | 0.12 |
+| 1 | 3002 Brick 2 x 3 | Tan | 0.10 | 0.10 | 0.17 | 0.17 |
+| 2 | 32828 Plate Special Round 1 x 1 with Hollow Stud and Horizontal Bar 1L | Medium Nougat | 0.05 | 0.10 | 0.06 | 0.12 |
+| 2 | 15712 Tile Special 1 x 1 with Clip with Rounded Edges | White | 0.05 | 0.09 | 0.13 | 0.26 |
+| 4 | 3024 Plate 1 x 1 | Tan | 0.02 | 0.09 | 0.06 | 0.24 |
+| 4 | 54200 Brick Sloped 30° 1 x 1 x 2/3 (Cheese Slope) | Tan | 0.02 | 0.09 | 0.05 | 0.20 |
+| 1 | 87087 Brick Special 1 x 1 with Stud on 1 Side | White | 0.09 | 0.09 | 0.11 | 0.11 |
+| 2 | 3710 Plate 1 x 4 | Reddish Brown | 0.04 | 0.08 | 0.11 | 0.22 |
+| 1 | 3680 Turntable 2 x 2 Plate, Base | Black | 0.08 | 0.08 | - | - |
+| 1 | 11211 Brick Special 1 x 2 with 2 Studs on 1 Side | White | 0.08 | 0.08 | 0.13 | 0.13 |
+| 2 | 3023 Plate 1 x 2 | Reddish Brown | 0.04 | 0.08 | 0.08 | 0.16 |
+| 2 | 4740 Dish 2 x 2 Inverted [Radar] | Black | 0.04 | 0.08 | 0.06 | 0.12 |
+| 2 | 3069 Tile 1 x 2 with Groove | White | 0.04 | 0.07 | 0.08 | 0.16 |
+| 1 | 3710 Plate 1 x 4 | Light Bluish Gray | 0.07 | 0.07 | 0.11 | 0.11 |
+| 2 | 3022 Plate 2 x 2 | White | 0.03 | 0.07 | - | - |
+| 2 | 32828 Plate Special Round 1 x 1 with Hollow Stud and Horizontal Bar 1L | Black | 0.03 | 0.06 | 0.06 | 0.12 |
+| 1 | 3679 Turntable 2 x 2 Plate - Top | Light Bluish Gray | 0.05 | 0.05 | 0.08 (Standard) | 0.08 |
+| 2 | 98138 Tile Round 1 x 1 | Bright Pink | 0.02 | 0.03 | 0.05 | 0.10 |
+| 1 | 24246 Tile Round 1 x 1 Half Circle | Coral | 0.02 | 0.02 | 0.07 (Standard) | 0.07 |

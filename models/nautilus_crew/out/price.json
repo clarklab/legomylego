@@ -1,11 +1,47 @@
 {
- "low": 29.22,
- "high": 119.83,
+ "low": 56.46,
+ "high": 77.65,
  "currency": "USD",
- "note": "A rough range from typical BrickLink prices per part type, not live market data.",
- "source": "estimate",
- "date": null,
- "live_lines": 0,
+ "note": "BrickLink price guide, 2026-10-14: 51 of 51 part lines priced live (six-month sold average to current asking average, new, USD).",
+ "source": "bricklink",
+ "date": "2026-10-14",
+ "live_lines": 51,
  "lines": 51,
+ "bricklink": {
+  "usd": 56.48,
+  "date": "2026-10-14",
+  "lines": 51,
+  "of": 51,
+  "missing": [],
+  "basis": "new parts, the average each sold for over the last six months (the average asking price where nothing sold), before shipping"
+ },
+ "pick_a_brick": {
+  "usd": 19.21,
+  "date": "2026-10-14",
+  "lines": 37,
+  "of": 51,
+  "missing": [
+   "1 x Equipment Magnifying Glass with Thick Frame, Solid Handle, Trans-Clear Lens Pattern (10830c01), Black",
+   "1 x Weapon Spear Gun with Rounded Trigger and Thin Spear Base (30088), Black",
+   "1 x Hips and Black Legs (970c00), Black",
+   "1 x Torso Boat Captain, Suit Double Breasted and Gold Anchor Logo Print, Black Arms, Yellow Hands (973pb0049c01), Black",
+   "1 x Hips and Dark Blue Legs (970c00), Dark Blue",
+   "1 x Hips and Medium Nougat Legs with Reddish Brown Kneepads Print (970c150pb02), Dark Bluish Gray",
+   "1 x Hips and Light Bluish Gray Legs (970c00), Light Bluish Gray",
+   "1 x Torso Diving Suit with Crossed Belts and Weight Belt Print, Medium Nougat Arms, Dark Bluish Gray Hands (973pb1240c01), Medium Nougat",
+   "1 x Helmet Underwater Deep Diver with Trans-Clear Glass (10165c01), Pearl Gold",
+   "1 x Torso Tank Top with Blue and White Stripes, Belt Print, Yellow Arms and Hands (973pb3974c01), White",
+   "1 x Minifig Head, Beard with Gray Hair, Moustache, and Angry Eyebrows Print (3626px132), Yellow",
+   "1 x Minifig Head, Beard Stubble, Raised Eyebrow, White Pupils Print, Stubble Goatee [Hollow Stud] (3626pb1965), Yellow",
+   "1 x Minifig Head, Grey Beard, Moustache and Eyebrows (3626pb2199), Yellow",
+   "1 x Minifig Head, Stubble, Brown Eyebrows, Crooked Smile and Scar Print [Hollow Stud] (3626pb0495), Yellow"
+  ],
+  "standard": [
+   "1 x Hair Combed Back (92081), Dark Bluish Gray",
+   "3 x Brick Curved 2 x 2 x 2/3 (15068), Reddish Brown",
+   "1 x Minifig Head Chan Kong-Sang / Jia / Roby, Eyebrows, White Pupils, Scared / Lopside Smile Print (3626pb1879), Yellow"
+  ],
+  "basis": "LEGO Pick a Brick, US shop, before shipping"
+ },
  "minifigs": 5
 }
