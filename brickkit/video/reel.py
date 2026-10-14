@@ -45,6 +45,12 @@ from . import timeline as T
 
 URL = "bricks.superfun.games"
 DISCLAIMER = "Unofficial fan model · computer-checked, not yet built with real bricks"
+DISCLAIMER_BUILT = "Unofficial fan model · built with real bricks, checked by computer"
+
+
+def disclaimer(config: dict) -> str:
+    """The outro's small print: a model built with real bricks (model.toml `built`) says so."""
+    return DISCLAIMER_BUILT if (config.get("model") or {}).get("built") else DISCLAIMER
 MOODS = {"cold_open": "cold", "open": "intro", "title": "rise", "build": "groove",
          "scan": "breakdown", "mechanism": "halftime", "lights": "feature", "lift": "feature",
          "colourways": "groove", "booklet": "groove_light", "outro": "end", "coda": "cold",
@@ -144,7 +150,7 @@ def model_stats(engine, proj, model, placed, tl, out_dir: Path, booklet_steps: i
         "dims_mm": [round(w, 1), round(d, 1), round(h, 1)], "dims": dims,
         "headline": list(headline), "mass_g": mass,
         "notice": proj.config.get("model", {}).get("notice", ""),
-        "disclaimer": DISCLAIMER,
+        "disclaimer": disclaimer(proj.config),
         "mechanism_name": model.meta.get("mechanism_name", ""),
         "facts": [str(x) for x in cfg.get("facts", [])],
     }

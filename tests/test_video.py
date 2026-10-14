@@ -1185,6 +1185,10 @@ def test_outro_small_print(engine, sample, tmp_path):
         assert rp["outro"] == {"small_print": want}
         assert rp["model"]["disclaimer"] == R.DISCLAIMER
     sample.meta.pop("video", None)
+    # a model built with real bricks (model.toml `built`) says so in its small print
+    assert R.disclaimer({"model": {"built": "2026-10-09"}}) == R.DISCLAIMER_BUILT
+    assert R.disclaimer({"model": {}}) == R.disclaimer({}) == R.DISCLAIMER
+    assert "not yet built" not in R.DISCLAIMER_BUILT
 
 # ---------------------------------------------------------------------------- recorded sounds
 def test_rev_peaks():
