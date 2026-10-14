@@ -71,13 +71,16 @@ def test_choose_element_follows_pick_a_brick():
     assert choose_element(["394126", "614326", "614376"]) == "614326"         # Black 2x2 round brick
     assert choose_element(["6386637", "6511024"]) == "6511024"                # accepted as is
     assert choose_element(["6550138"]) == "6550138"                           # nothing else to use
+    assert choose_element(["4121715"]) == "6279875"       # Black friction pin: the ID it is sold as
     assert choose_element([]) == ""
 
 
-def test_pick_a_brick_csv_leaves_out_unavailable(tmp_path):
+def test_pick_a_brick_csv_leaves_out_unavailable(tmp_path, monkeypatch):
     import csv
+    from brickkit.bom import bom
     from brickkit.bom.bom import BomLine, write_pick_a_brick_csv
     from brickkit.catalog.colors import Color
+    monkeypatch.setattr(bom, "pick_a_brick_data", lambda: {"unavailable": ["4121715"]})
     black = Color(name="Black", ldraw=0, rgb="#1B2A34", alpha=255, rb_id=0, bl_id=11)
     lines = [BomLine("2780", "2780", "2780", "Pin", black, 2, "4121715", False),
              BomLine("3001", "3001", "3001", "Brick 2x4", black, 3, "300126", False)]

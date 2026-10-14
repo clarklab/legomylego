@@ -4,15 +4,19 @@ Units: LDU (stud 20, plate 8, brick 24), -Y is up, the dust flap faces the front
 Body 23 x 12 studs (x -230..230, z -110..130), the flap 16 LDU in front of it, 8 plates
 tall (y -64..0): 184.0 x 102.4 x 25.6 mm against the real 187 x 103 x 25 mm.
 
-Built like a modern display set: an inner chassis (the core: floor, spindle bearings, lamp
-tube, brake release, tape run, guide rollers and the posts the shell lands on), two reels that
-drop onto their spindles, end walls, a top shell built upside down (grip bands, two glass
-windows on SNOT hangers, recessed face label, spine label) and a full-length dust flap
+Built like a modern display set: an inner chassis (the core: floor, the two reel drive holes,
+lamp tube, brake release, tape run, guide rollers and the posts the shell lands on), two reels
+that drop into their drive holes, end walls, a top shell built upside down (grip bands, two
+glass windows on SNOT hangers, recessed face label, spine label) and a full-length dust flap
 hung on two Technic pins.
 
 Moving groups: `flap` (the dust flap, about the pin axis) and `reel_l` / `reel_r` (reels,
 about their red spindle axles). `reel_l` is the supply reel: on the left when you hold the
 cassette label-up with the flap pointing away from you, which is +X here.
+
+Each reel is turned from underneath, like a real cassette's: a square drive hole in the bottom,
+4 x 4 studs, and in the middle of it the reel's drive hub, a white round plate upside down on
+the red axle, whose four studs are the pegs a fingertip turns it by (`DRIVE`, `reel`).
 """
 from __future__ import annotations
 
@@ -29,6 +33,8 @@ Y_F0, Y_F1 = -8, -16                     # tops of the two floor layers
 Y_T3, Y_T2, Y_T1 = -48, -56, -64         # tops of the three top-shell layers
 REEL_X = {"reel_l": 110, "reel_r": -110}  # hub centres 88 mm apart; supply (full) at +X
 REEL_Z = -10
+DRIVE = 2                                # the drive hole under a reel: this many studs out from
+                                         # its middle each way (4 x 4, 32 mm; a real one is 30)
 PIVOT = (-54.0, -100.0)                  # (y, z) of the flap's pin axis, which runs along X
 LAMP = (10, -50)                         # lamp tube centre (a 2 x 2 round brick sits on a
                                          # cell corner, 4 mm right of the middle)
@@ -83,8 +89,11 @@ def reel(model, name: str, title: str, full: bool):
     a clear upper flange ring (Trans-Clear 4 x 4 macaroni tiles, r 60..80 LDU) and
     a white hub: a flat ring of 2 x 2 macaroni tiles round a 2 x 2 round plate whose four
     studs are the hub's bumps. A red Technic axle runs through the round plates' holes and
-    the hub's axle hole: its end is the red dot in the middle of the hub, and underneath it
-    is the spindle that turns in the chassis' round bearing holes."""
+    the hub's axle hole: its end is the red dot in the middle of the hub. Underneath, a second
+    white round plate is pushed onto the axle upside down, up against the lower flange: the
+    drive hub. It turns in the square hole the chassis' tiles leave for it (the reel's
+    bearing), its four studs are the pegs the reel is turned by from underneath, and the
+    axle's two axle holes, one in each hub, make the reel turn with it."""
     s = model.submodel(name, title)
     s.step("The lower flange and the tape pack: two black 8 x 8 round plates with a hole in "
            "the middle, one on the other")
@@ -100,8 +109,11 @@ def reel(model, name: str, title: str, full: bool):
     s.step("Clear upper flange")
     for q in range(4):
         s.place("27507", "clear").M = quarter_M("27507", q, -24)
-    s.step("The red spindle: push the axle up through the hub")
+    s.step("The red spindle and the drive hub: push the axle up through the reel, then a white "
+           "round plate onto its lower end, studs down. Its four studs are the pegs you turn "
+           "the reel by from underneath")
     s.place("32062", "spindle", (0, -4, 0), rot(z=90), insert=(0, 1, 0))
+    s.place("4032a", "hub", (0, 8, 0), rot(z=180), insert=(0, 1, 0))
     return s
 
 
@@ -109,15 +121,25 @@ def reel(model, name: str, title: str, full: bool):
 SCREWS = [(-10, -3), (10, -3), (-10, 4), (10, 4), (0, 5)]
 
 
+def drive_tiles(x):
+    """The four 2 x 4 tiles round a reel's drive hub, as a pinwheel: (i0, i1, k0, k1) cells.
+    Their inner edges leave a 2 x 2 square for the hub to turn in (the reel's bearing), their
+    outer halves sit on the floor round the drive hole and their inner halves reach over it."""
+    i, k = math.floor(x / S), math.floor(REEL_Z / S)   # the cell left of and in front of the
+    #                                                    reel's middle (it is on a cell corner)
+    return [(i - 2, i + 1, k - 2, k - 1), (i + 2, i + 3, k - 2, k + 1),
+            (i, i + 3, k + 2, k + 3), (i - 2, i - 1, k, k + 3)]
+
+
 def core_layout(variant: int) -> Batch:
     b = Batch()
     floor = {(i, k) for i, k in CELLS if k <= 5} - MOUTH
+    holes = set()                         # the two drive holes, open underneath
+    for x in REEL_X.values():
+        holes |= cells(x - S * DRIVE, x + S * DRIVE, REEL_Z - S * DRIVE, REEL_Z + S * DRIVE)
 
-    # F0 [-8, 0]: the bottom, with its round holes and screw heads
-    f0_fixed = set()
-    for x in REEL_X.values():             # Technic plate: its middle hole is the drive hole
-        b.add("3709b", "shell", transform((x, Y_F0, REEL_Z)), "f0")
-        f0_fixed |= cells(x - 40, x + 40, REEL_Z - 20, REEL_Z + 20)
+    # F0 [-8, 0]: the bottom, with its drive holes, round holes and screw heads
+    f0_fixed = set(holes)
     b.add("3709b", "shell", transform((LAMP[0], Y_F0, LAMP[1])), "f0")   # lamp hole
     f0_fixed |= cells(LAMP[0] - 40, LAMP[0] + 40, LAMP[1] - 20, LAMP[1] + 20)
     b.add("32124", "shell", transform((0, Y_F0, 60)), "f0")              # reel-lock release
@@ -131,9 +153,11 @@ def core_layout(variant: int) -> Batch:
 
     # F1 [-16, -8]: smooth tiles under the reels, plates elsewhere
     f1_fixed = set()
-    for x in REEL_X.values():             # round tile with a hole: the spindle's upper bearing
-        b.add("15535", "shell", transform((x, Y_F1, REEL_Z)), "f1")
-        f1_fixed |= cells(x - 20, x + 20, REEL_Z - 20, REEL_Z + 20)
+    for x in REEL_X.values():             # four tiles round the drive hub: the reel's bearing
+        for r in drive_tiles(x):
+            p, M = rect_M(TILE, r, Y_F1)
+            b.add(p, "shell", M, "f1")
+        f1_fixed |= cells(x - 60, x + 60, REEL_Z - 60, REEL_Z + 60)
     b.add("4032a", "shell", transform((LAMP[0], Y_F1, LAMP[1])), "f1")
     f1_fixed |= cells(LAMP[0] - 20, LAMP[0] + 20, LAMP[1] - 20, LAMP[1] + 20)
     for s in (-1, 1):                     # white bases of the guide rollers and posts
@@ -142,9 +166,16 @@ def core_layout(variant: int) -> Batch:
         f1_fixed |= {(s * 10, -5), (s * 10, -4)}
     rest = floor - f1_fixed
     smooth = {c for c in rest if reel_dist(*c) < 90}
-    for r in weave(smooth, "z", (8, 6, 4, 3, 2, 1), phase=variant // 4):   # columns along Z
+    # (in front of and behind the four tiles a column is one cell: those go in rows, so one
+    # tile ties the bottom layer's pieces under it and none is a 1 x 1)
+    rows = {(i, k) for i, k in smooth if (i, k - 1) not in smooth and (i, k + 1) not in smooth}
+    for r in weave(smooth - rows, "z", (8, 6, 4, 3, 2, 1), phase=variant // 4):   # columns along Z
         p, M = rect_M(TILE, r, Y_F1)
         b.add(p, "shell", M, "f1")
+    for k in sorted({k for _, k in rows}):       # (a line at a time: each as few tiles as fit)
+        for r in weave({c for c in rows if c[1] == k}, "x", (8, 6, 4, 3, 2, 1)):
+            p, M = rect_M(TILE, r, Y_F1)
+            b.add(p, "shell", M, "f1")
     for r in weave(rest - smooth, "z", phase=variant // 4 + 1):
         p, M = rect_M(PLATE, r, Y_F1)
         b.add(p, "shell", M, "f1")
@@ -178,10 +209,12 @@ CORE_PHASES = [["f0", "f1"], ["lamp", "brake"], ["rollers", "ledges", "tape_post
 def core(model):
     sub = model.submodel("core", "Chassis")
     best_layout(core_layout, CORE_PHASES).emit(sub, CORE_PHASES, {
-        "f0": "Chassis, bottom layer: the Technic plates' middle holes are the reel drive "
-              "holes and the lamp hole; silver screw heads sit flush underneath",
-        "f1": "Second floor layer: smooth tiles where the reels turn, round tiles with a "
-              "hole over the drive holes (the spindle bearings)",
+        "f0": "Chassis, bottom layer: the two square gaps are the reel drive holes, the "
+              "Technic plate's middle hole is the lamp hole; silver screw heads sit flush "
+              "underneath",
+        "f1": "Second floor layer: smooth tiles where the reels turn. Four 2 x 4 tiles reach "
+              "over each drive hole and leave a small square in the middle for the reel's "
+              "drive hub",
         "lamp": "The lamp tube: a black 2 x 2 round brick over the lamp hole",
         "brake": "The white reel-lock release, over its hole at the back",
         "rollers": "White tape guide rollers at the front corners, a white guide post and "
@@ -430,12 +463,13 @@ def build(model):
     door = flap(model)
 
     main = model.main
-    main.step("Take the chassis and drop the supply reel onto its right-hand bearing: the "
-              "reel's red axle goes down through the round holes")
+    main.step("Take the chassis and drop the supply reel into the right-hand drive hole: the "
+              "white drive hub under the reel goes down into the small square between the "
+              "four tiles")
     main.use(chassis)
     main.use(reels["reel_l"], (REEL_X["reel_l"], -16, REEL_Z), tag="reel_l",
              insert=(0, -1, 0))
-    main.step("The take-up reel on the left-hand bearing")
+    main.step("The take-up reel into the left-hand drive hole")
     main.use(reels["reel_r"], (REEL_X["reel_r"], -16, REEL_Z), tag="reel_r",
              insert=(0, -1, 0))
     main.step("End walls")
@@ -454,7 +488,7 @@ def build(model):
     model.moving_group("reel_l", "reel_l")
     model.moving_group("reel_r", "reel_r")
     for g in ("reel_l", "reel_r"):
-        model.captive(g, "the reel turns on its red spindle in the chassis' round bearing "
-                         "holes; the top shell keeps it down")
+        model.captive(g, "the reel's drive hub turns in the square the chassis' tiles leave "
+                         "round it; the top shell keeps the reel down")
     model.pose = pose
     model.extra_checks.append(check_dimensions)

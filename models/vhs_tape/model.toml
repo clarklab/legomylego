@@ -1,7 +1,7 @@
 [model]
 name = "VHS Cassette"
 design = "design.py"
-description = "A 1:1 VHS video cassette in real LEGO, 184 x 102 x 26 mm: an inner chassis with the tape run, lamp tube and reel spindles inside a shell with two big clear windows; the full-length dust flap swings up and both reels turn."
+description = "A 1:1 VHS video cassette in real LEGO, 184 x 102 x 26 mm: an inner chassis with the tape run, lamp tube and two reels inside a shell with two big clear windows; the full-length dust flap swings up, and both reels turn from the drive holes underneath."
 built = "2026-10-09"          # built with real bricks by the owner, from the booklet: it works
 notice = "VHS is a trademark of JVC KENWOOD Corporation."
 
@@ -30,21 +30,25 @@ label = "Light Bluish Gray"
 
 [booklet]
 subtitle = "A 1:1 VHS tape, within a few millimetres of the real 187 x 103 x 25 mm cassette. Swing the dust flap up to see the tape; watch the reels turn through the windows."
-intro = "Built like a real cassette, from the inside out. First the chassis: the bottom with its drive holes and screw heads, the lamp tube, the reel-lock release, the guide rollers and the tape stretched across the mouth. Two reels drop onto their red spindles: the supply reel and the take-up reel. The end walls go on, then the top shell, built upside down with its grip bands, recessed label, spine label and two big windows, is lowered over everything. Last, the full-length dust flap hangs on two Technic pins."
+intro = "Built like a real cassette, from the inside out. First the chassis: the bottom with its drive holes and screw heads, the lamp tube, the reel-lock release, the guide rollers and the tape stretched across the mouth. Two reels drop into their drive holes: the supply reel and the take-up reel. The end walls go on, then the top shell, built upside down with its grip bands, recessed label, spine label and two big windows, is lowered over everything. Last, the full-length dust flap hangs on two Technic pins."
 notes = [
-  "Each reel turns on its red Technic axle in the chassis' round holes. The axle's end shows in the drive hole underneath: turn it with a fingertip to wind the tape.",
+  "Each reel has a white drive hub underneath, in a square drive hole in the bottom, like a real cassette's. Put a fingertip on its four pegs and turn: the reel turns with it.",
   "Lower the top shell straight down so the window hangers find their ledges and the reel hubs slide under the windows.",
   "The write-protect tab on the back is a single tile: pull it off to protect your recording.",
 ]
 works = [
   { title = "Dust flap", text = "The whole front edge is the flap. It swings up and out 90 degrees on two Technic pins through the end cheeks, uncovering the tape between two white guide rollers.", image = "renders/open.png" },
-  { title = "Turning reels", text = "Each reel turns on a red Technic axle in round holes in the chassis. Watch the supply and take-up packs through the clear windows, or turn a spindle from underneath like a VCR does.", image = "renders/three_quarter.png" },
-  { title = "Underneath", text = "Two drive holes with the red spindle ends, the lamp hole, the reel-lock release hole, five silver screw heads and the open mouth where the VCR's head drum goes in.", image = "renders/underside.png" },
+  { title = "Turning reels", text = "Each reel lies loose inside, as in a real cassette, and turns in its drive hole. Turn a drive hub underneath with a fingertip, as a VCR's spindle does, and watch the supply and take-up packs through the clear windows.", image = "renders/three_quarter.png" },
+  { title = "Underneath", text = "Two square drive holes, each with a reel's white drive hub in it: four pegs round the red spindle end. Between them the lamp hole; then the reel-lock release hole, five silver screw heads and the open mouth where the VCR's head drum goes in.", image = "renders/underside.png" },
 ]
 
 [checks]
 enabled = ["real_elements", "connections", "collisions", "buildability", "stability",
            "mechanism", "electrics", "technique"]
+
+[checks.connections]
+allow_separate_tags = ["reel_l", "reel_r"]   # the reels are loose, as in a real cassette: each turns
+                                             # in its drive hole, trapped under the top shell
 
 # Build video (brickkit video): theme and callouts; see docs/brickkit-guide.md, "Video"
 [video]

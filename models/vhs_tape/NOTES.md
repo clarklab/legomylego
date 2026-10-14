@@ -1,10 +1,10 @@
 # VHS Cassette: design notes
 
 A life-size (1:1) VHS video cassette in real LEGO, built the way a modern display set is:
-an inner chassis carries the reel spindles, lamp tube, brake release, guide rollers and
-the tape run, and a shell goes over it. The full-length dust flap swings up like the real
-one, and both reels turn behind two clear windows. 384 parts in 54 part/colour lines,
-104 steps, about 313 g (a real T-120 weighs about 230 g).
+an inner chassis carries the two reel drive holes, lamp tube, brake release, guide rollers
+and the tape run, and a shell goes over it. The full-length dust flap swings up like the real
+one, and both reels turn behind two clear windows, from the drive holes underneath. 372 parts
+in 52 part/colour lines, 133 steps, about 306 g (a real T-120 weighs about 230 g).
 
 ## Built with real bricks
 
@@ -19,6 +19,52 @@ model's page. What the build changed, all in the instructions and none in the mo
   are built apart and go on with the plate that locks them, about four things to a step
   (139 steps; it was 104);
 - all four 8 x 8 round plates are Black, so the kit arrives as one Pick a Brick parcel.
+
+## After the build: drive holes, and a kit of Bestsellers (2026-10-13)
+
+The owner, having built it: the size is right and the instructions are good, so change as
+little as possible. Two things were asked for.
+
+**The reels could not be turned once it was together.** Each red axle's end sat flush in a
+4.8 mm Technic hole in the bottom: nothing for a finger to turn. A real cassette has two drive
+holes underneath with the reel's toothed hub in each. Now:
+
+- the bottom layer has a **square drive hole, 4 x 4 studs (32 mm; a real one is about 30)**,
+  under each reel, where a Technic plate 2 x 4 was;
+- in the second layer **four 2 x 4 tiles in a pinwheel** reach over each hole and leave a
+  2 x 2 square in the middle, where a round tile with a hole was. Each sits on five studs of
+  the floor round the hole and ties the plates under it together;
+- each reel has one more piece, its **drive hub: a White 2 x 2 round plate with an axle hole,
+  pushed studs-down onto the axle's lower end**, up against the lower flange. It turns in that
+  2 x 2 square, which is now the reel's bearing (0 collisions through the 24 poses). Its four
+  studs are the pegs: their tips are 1.6 mm inside the bottom, the red axle end is flush with
+  it in the middle. The axle's cross goes through an axle hole in each hub, top and bottom,
+  so turning the pegs turns the reel.
+
+Everything else is as it was built: same size, same shell, same reels from above. It is 12
+pieces fewer (372; the floor under the reels takes fewer, larger tiles) and uses no part that
+was not already in the kit: 8 more Black 2 x 4 tiles and 2 more White round plates, and the two
+round tiles with a hole and two of the three Technic plates 2 x 4 are gone. The booklet's
+changed steps are the chassis' two floor layers (its 53 steps are now 47) and each reel's last
+step. Not built with real bricks in this form: `built` in `model.toml` still says 2026-10-09,
+which is true of everything but these pieces.
+
+**To change a cassette that is already built:** only the chassis floor under the two reels
+changes. Lift the top shell off and take the reels out. 36 floor pieces come out (8 of the
+bottom layer, 28 of the second) and 22 go in (8 and 14); every other piece of the 384 stays
+where it is, the whole top shell, the windows, the label and the flap among them. Then one
+White round plate goes on under each reel. 17 pieces are needed that the first kit did not
+have: 8 Black tiles 2 x 4 (4560182), 5 Black plates 1 x 4 (371026), a Black plate 1 x 2
+(302326), a Black plate 1 x 1 (302426) and 2 White round plates 2 x 2 with an axle hole
+(403201): $2.27 on Pick a Brick, all Bestsellers.
+
+**Can the whole kit be Pick a Brick Bestsellers?** It already is. Every one of the 52 lines was
+looked up on lego.com (US shop) on 2026-10-13: all are Bestsellers and in stock, 372 pieces for
+$47.48. (That is the black cassette. The `white` colourway's own lines were not looked up.) That includes the two flap pins, which the list had left out: element 4121715 is not on
+Pick a Brick, but the same pin is, as 6279875 ("CONNECTOR PEG W. FRICTION", LEGO's design
+61332), a Bestseller at 6 cents. `brickkit/data/pick_a_brick.json` now swaps the one for the
+other, so `out/pick_a_brick.csv` is the whole kit, and it records which elements were found to
+be Bestsellers and when.
 
 ## Size
 
@@ -36,21 +82,23 @@ Reel hubs are 88 mm apart (x = +-110), 4 mm behind the middle of the depth.
 
 ## Structure (booklet order)
 
-1. **Chassis** (`core`, 151 parts). Two floor layers, woven crosswise (rows along X, then
+1. **Chassis** (`core`, 137 parts). Two floor layers, woven crosswise (rows along X, then
    columns along Z) so every plate is bonded:
-   - Bottom layer: three Technic plates 2 x 4 whose middle holes are the two **drive holes**
-     and the **lamp hole**, a Technic plate 1 x 5 whose axle hole is the **reel-lock
-     release hole**, five **Flat Silver 1 x 1 round plates as screw heads**, and the open
-     **mouth** (a 15-stud slot) under the tape.
-   - Second layer: **smooth tiles wherever a reel turns**, a round tile with a hole over
-     each drive hole (the spindle's upper bearing), plates elsewhere.
+   - Bottom layer: two square **drive holes**, 4 x 4 studs, one under each reel; a Technic
+     plate 2 x 4 whose middle hole is the **lamp hole**, a Technic plate 1 x 5 whose axle
+     hole is the **reel-lock release hole**, five **Flat Silver 1 x 1 round plates as screw
+     heads**, and the open **mouth** (a 15-stud slot) under the tape.
+   - Second layer: **smooth tiles wherever a reel turns**, plates elsewhere. Over each drive
+     hole four 2 x 4 tiles in a pinwheel leave a 2 x 2 square for the reel's drive hub (the
+     reel's bearing). In front of and behind them a 1 x 6 tile lies along the cassette, where
+     a column would be a single 1 x 1.
    - On top: the **lamp tube** (black 2 x 2 round brick) centre-front, the **white brake
      release** at the back centre, **white guide rollers** (1 x 1 round bricks) at both
      front corners with a guide post behind each, ledges the windows land on, and three
      bricks with a side stud carrying the **tape run**: black 1 x N plates stood on edge with
      black tiles facing forward, stretched between the rollers.
-2. **Reels** (16 parts each, identical hardware; see Mechanisms). They drop onto the
-   chassis, the full supply reel at +X, the take-up reel at -X.
+2. **Reels** (17 parts each, identical hardware; see Mechanisms). They drop into the
+   chassis' drive holes, the full supply reel at +X, the take-up reel at -X.
 3. **End walls**: a 1 x 8 brick and two plates at each end.
 4. **Top shell** (174 parts), built upside down and lowered on:
    - Face layer: **grip bands** of 1 x 2 grille tiles along both long edges (slots along
@@ -136,12 +184,16 @@ Each reel, from the bottom:
 5. Four **Trans-Clear 4 x 4 macaroni tiles**: the clear upper flange (r 60..80).
 6. A **Red Technic Axle 2 Notched** pushed up through the round plates' holes and the
    hub's axle hole: its end is the **red dot** in the hub.
+7. The **drive hub**: a second **White 4032a** pushed studs-down onto the axle's lower end,
+   against the lower flange. Its four studs are the pegs the reel is turned by.
 
-In the chassis the axle turns in round holes: the round tile with a hole (upper bearing)
-and the Technic plate's middle hole (the drive hole). The reel rides on the smooth tiles
-and the top shell keeps it down. Underneath, the red spindle end shows in each drive hole,
-flush with the bottom: turn it with a fingertip to wind the tape, as a VCR's spindle turns
-the hub from below. Both reels are declared `captive` (they are trapped by the shell).
+The reel lies loose in the chassis, as a real one does. Its drive hub turns in the 2 x 2
+square the four tiles leave (the bearing), the reel rides on the smooth tiles and the top
+shell keeps it down. Underneath, each drive hole shows the white hub, its four pegs and the
+red spindle end in the middle: put a fingertip on the pegs and turn, as a VCR's spindle turns
+the hub from below. Nothing clicks a reel to the chassis, so the connections check is told the
+two may be separate (`[checks.connections] allow_separate_tags`), and both are declared
+`captive` (they are trapped by the shell).
 
 Through the windows both reels read as a white hub, a black pack and a clear ring over
 black.
@@ -157,7 +209,8 @@ the take-up reel 360 degrees (the small pack spins faster for the same tape spee
   flanges and hub; no Dark Brown was needed.
 - **27507 is a ring (r 60..80 only)**. **68568 (Tile 4 x 4 quarter circle)** was tried and
   dropped: it is not a concentric ring and clashes with the macaroni tiles.
-- **2780 pins stay Black** in every colourway: LEGO never made them in White.
+- **2780 pins stay Black** in every colourway: LEGO never made them in White. On Pick a
+  Brick the pin is element 6279875 (see "After the build").
 - Screw heads are **Flat Silver** 1 x 1 round plates, flush with the bottom.
 
 ## Colourways
@@ -175,10 +228,10 @@ Both pass `real_elements` with no rare parts.
   subtle, so the top shell leaves a dark gap over it.
 - **Mouth** underneath is a 1-stud slot, not the real deep U-shaped recess: the reels and
   the chassis floor fill that space.
-- **Drive holes** are 4.8 mm Technic holes with the red spindle end flush, not the real
-  25 mm openings showing the hub. An open 2 x 2 pocket was tried so a Technic axle
-  connector could be pushed onto the spindle end; the round bearing tile above it then has
-  nothing to hold on to.
+- **Drive holes** are square, 32 mm, with a round hub of four pegs; a real one is a round
+  30 mm opening on a hub with a ring of teeth inside. LEGO makes no plate with a round hole
+  that size among the Bestsellers (the 4 x 4 round plate with a 2 x 2 hole, 11833, is not on
+  Pick a Brick at all), and the pegs are studs, so there are four.
 - **Clear upper flange** is a ring: there is no flat transparent 8 x 8 disc, so inside
   r 60 you see the pack directly.
 - **Lamp tube** is 4 mm right of centre: a 2 x 2 round brick has to sit on a cell corner.
@@ -191,11 +244,11 @@ Both pass `real_elements` with no rare parts.
 
 ## Checks
 
-`brickkit all vhs_tape`: every check passes with no warnings. real_elements (54
-combinations, 0 rare, also for `white`), connections (996; one piece), collisions (0),
-buildability (283 insertions, 8 sub-assemblies), stability (tips at 75 degrees),
-mechanism (24 poses, 3 moving groups, plus the size check), electrics (none), technique
-(0 notes).
+`brickkit all vhs_tape`: every check passes with no warnings. real_elements (52
+combinations, 0 rare, also for `white`), connections (962; three pieces: the cassette and
+its two loose reels), collisions (0), buildability (249 insertions, 14 sub-assemblies),
+stability (tips at 75 degrees), mechanism (24 poses, 3 moving groups, plus the size
+check), electrics (none), technique (0 notes).
 
 ## Engine changes made for this model
 
@@ -217,6 +270,6 @@ already built, and `best_layout` tries layout variants until every phase is one 
 ## Renders
 
 `out/renders/`: `three_quarter.png` (closed), `open.png` (flap up, reels turned),
-`back.png` (spine label and write-protect tab), `underside.png` (drive holes, screws,
-mouth), `white.png` (the white colourway). Hero shots: `out/hero/hero.png` and
+`back.png` (spine label and write-protect tab), `underside.png` (drive holes with the reels'
+drive hubs, screws, mouth; rendered again 2026-10-13), `white.png` (the white colourway). Hero shots: `out/hero/hero.png` and
 `out/hero_open/hero.png`.
