@@ -1,0 +1,44 @@
+[model]
+name = "Guardian"
+design = "design.py"
+description = "A Guardian, the six-legged ancient machine from The Legend of Zelda, in 183 pieces, 26 cm across its legs and 14 cm tall: a domed stone body ringed with pink lights, a head with one blue eye, and six ball-jointed legs you can pose. It stands on a short black stand."
+brands = ["nintendo"]   # the logo cards on the Quick Bricks page it is filed under (brands/)
+# designer = "..."            # someone else's design: who made it (the booklet and its page
+# source = "https://..."      # say so), and where the original is; with no name to give,
+# credit = "..."              # our own sentence for it
+collection = "quick_bricks"
+
+[palette]                     # role -> a real colour name; design.py places parts by role
+stone = "Dark Bluish Gray"    # the dome, the head: old grey stone
+rim = "Black"                 # the two round 8 x 8 rims, the core between them, the stand
+joint = "Dark Bluish Gray"    # the ball-joint plates: the sockets and the legs' links
+armour = "White"              # the plates of armour on the legs, and the claws
+sand = "Tan"                  # the skirt round the dome, the band round the head
+sand_dark = "Dark Tan"        # the collar under the neck, the belly
+glow = "Magenta"              # the pink: the lights round the body, the horns, the glow underneath
+glow_clear = "Trans-Dark Pink"    # the three lights on the head
+eye = "Trans-Light Blue"      # the eye
+eye_ring = "Dark Pink"        # the round plate the eye sits on, and the ring round the neck
+pin = "Light Bluish Gray"     # the four half pins in the head (hidden but for their studs)
+
+[booklet]
+subtitle = "The six-legged ancient machine, with one blue eye and legs you can pose, in 183 pieces."
+intro = "It goes together in sections. Make six sockets and six legs first: a leg is a chain of five ball-jointed links and a claw. Build the round body with the sockets in the band between its two rims, stand it on the black stand, snap a leg into each socket and press the head onto the neck."
+notes = ["The legs are on friction ball joints and can be posed. The stand carries the body: if a leg lifts off the table or pushes the body up, bend it at a joint or two.",
+         "A ball snaps into its socket with a firm push, straight in. Hold the socket's plate, not the leg beyond it."]
+
+[checks]
+enabled = ["real_elements", "connections", "collisions", "buildability", "stability",
+           "mechanism", "electrics", "technique"]
+
+# Quick Bricks video (brickkit quick guardian). Pick a workshop the last few models did not
+# use (brickkit status shows theirs); under 25 pieces the parts start laid out on the table
+[quick]
+surface = "lego_green"        # a field: the grey and white machine stands out on green
+room = "window"               # (on the grey baseplate in the white studio it washed out)
+light = "day"
+seconds = 35
+flex = 3.0                    # before the cut the legs walk on the spot (design.py: model.pose)
+highlight = ["eye", "claw"]   # tags: the eye, a claw
+close_ups = 2
+music = false                 # just the clicks

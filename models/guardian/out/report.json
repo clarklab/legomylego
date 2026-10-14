@@ -1,0 +1,96 @@
+{
+  "title": "Guardian",
+  "status": "pass",
+  "checks": [
+    {
+      "name": "real_elements",
+      "status": "pass",
+      "summary": "31 part/colour combinations: 0 not real, 0 rare",
+      "items": [],
+      "stats": {
+        "combinations": 31,
+        "not_real": 0,
+        "rare": 0,
+        "hardware": 0,
+        "minifig_components": 0,
+        "stand_ins": 0,
+        "approximate": 0
+      }
+    },
+    {
+      "name": "connections",
+      "status": "pass",
+      "summary": "396 connections (345 stud, 42 ball, 8 pin, 1 axle); 1 separate piece(s)",
+      "items": [],
+      "stats": {
+        "connections": 396,
+        "by_kind": {
+          "stud": 345,
+          "axle": 1,
+          "pin": 8,
+          "ball": 42
+        },
+        "pieces": 1
+      }
+    },
+    {
+      "name": "collisions",
+      "status": "pass",
+      "summary": "0 overlapping pair(s) among 183 parts",
+      "items": [],
+      "stats": {
+        "pairs": 0
+      }
+    },
+    {
+      "name": "buildability",
+      "status": "pass",
+      "summary": "88 insertions tried across 5 submodel(s); 0 problem(s)",
+      "items": [],
+      "stats": {
+        "insertions": 88
+      }
+    },
+    {
+      "name": "stability",
+      "status": "pass",
+      "summary": "about 122 g; centre of mass inside the base (100% margin); tips at 59.0 deg",
+      "items": [],
+      "stats": {
+        "mass_g": 122.44422141075808,
+        "com": [
+          -3.757436783082375e-15,
+          -156.21015859582846,
+          -0.33238417945985527
+        ],
+        "approx_parts": 0,
+        "margin": 0.9987206999466285,
+        "tip_angle_deg": 58.952012423652604,
+        "com_height_ldu": 156.21015859582846
+      }
+    },
+    {
+      "name": "mechanism",
+      "status": "pass",
+      "summary": "24 poses swept for 6 moving group(s); 0 gear pair(s); 0 problem(s)",
+      "items": [],
+      "stats": {
+        "poses": 24
+      }
+    },
+    {
+      "name": "electrics",
+      "status": "pass",
+      "summary": "no electrics in this model",
+      "items": [],
+      "stats": {}
+    },
+    {
+      "name": "technique",
+      "status": "pass",
+      "summary": "0 note(s)",
+      "items": [],
+      "stats": {}
+    }
+  ]
+}

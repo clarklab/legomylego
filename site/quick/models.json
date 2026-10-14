@@ -11,7 +11,7 @@
       "poster": "/models/avocado/quick_poster.jpg?v=68dd50223060",
       "instructions": "/models/avocado/booklet.pdf?v=379180d9884d",
       "url": "/quick/avocado/",
-      "model": "/models/avocado/model.json?v=de246ded0f2b",
+      "model": "/models/avocado/model.json?v=b1d5b37894f7",
       "geometry": "/models/avocado/model.glb?v=becb7ece243f",
       "brands": [
         "snacks"
@@ -28,7 +28,7 @@
       "poster": "/models/bat/quick_poster.jpg?v=92098713a210",
       "instructions": "/models/bat/booklet.pdf?v=d5d4cc70a83c",
       "url": "/quick/bat/",
-      "model": "/models/bat/model.json?v=6aec25d55b35",
+      "model": "/models/bat/model.json?v=1310d34fa628",
       "geometry": "/models/bat/model.glb?v=c1573b3e653a",
       "brands": [
         "spooky"
@@ -45,7 +45,7 @@
       "poster": "/models/birthday_cake/quick_poster.jpg?v=fe2947f097cb",
       "instructions": "/models/birthday_cake/booklet.pdf?v=031c83092bf6",
       "url": "/quick/birthday_cake/",
-      "model": "/models/birthday_cake/model.json?v=5c42ce0f6ea2",
+      "model": "/models/birthday_cake/model.json?v=b466db3efba8",
       "geometry": "/models/birthday_cake/model.glb?v=61d0f99b4823",
       "brands": [
         "snacks"
@@ -62,7 +62,7 @@
       "poster": "/models/bmo/quick_poster.jpg?v=920aab15e02f",
       "instructions": "/models/bmo/booklet.pdf?v=48408ad11d9c",
       "url": "/quick/bmo/",
-      "model": "/models/bmo/model.json?v=303e54d155b0",
+      "model": "/models/bmo/model.json?v=4eefc4dd5477",
       "geometry": "/models/bmo/model.glb?v=82246a33a447",
       "brands": [
         "adventure-time"
@@ -79,7 +79,7 @@
       "poster": "/models/bulbasaur/quick_poster.jpg?v=25d4b0f74dd4",
       "instructions": "/models/bulbasaur/booklet.pdf?v=fc77270ac73f",
       "url": "/quick/bulbasaur/",
-      "model": "/models/bulbasaur/model.json?v=28c21660d55b",
+      "model": "/models/bulbasaur/model.json?v=feecc2fb18ab",
       "geometry": "/models/bulbasaur/model.glb?v=10fefe93bb55",
       "brands": [
         "pokemon",
@@ -97,7 +97,7 @@
       "poster": "/models/caldwell_mini/quick_poster.jpg?v=a8f0a0c05ee5",
       "instructions": "/models/caldwell_mini/booklet.pdf?v=7a85f7e72312",
       "url": "/quick/caldwell_mini/",
-      "model": "/models/caldwell_mini/model.json?v=7f57954fa678",
+      "model": "/models/caldwell_mini/model.json?v=3b2554ea56ac",
       "geometry": "/models/caldwell_mini/model.glb?v=982c063bf263"
     },
     {
@@ -111,7 +111,7 @@
       "poster": "/models/charmander/quick_poster.jpg?v=e7362b080974",
       "instructions": "/models/charmander/booklet.pdf?v=6537bc8d173f",
       "url": "/quick/charmander/",
-      "model": "/models/charmander/model.json?v=ebd4b3c15ab9",
+      "model": "/models/charmander/model.json?v=dd2b1203ca41",
       "geometry": "/models/charmander/model.glb?v=86bea5fb0a68",
       "brands": [
         "pokemon",
@@ -131,7 +131,7 @@
       "poster": "/models/charmander_starter/quick_poster.jpg?v=be6ffa7ae86d",
       "instructions": "/models/charmander_starter/booklet.pdf?v=88cefe484c17",
       "url": "/quick/charmander_starter/",
-      "model": "/models/charmander_starter/model.json?v=b533d3f3cd50",
+      "model": "/models/charmander_starter/model.json?v=9655738ef3f0",
       "geometry": "/models/charmander_starter/model.glb?v=19df1a30fa8c",
       "brands": [
         "pokemon",
@@ -149,7 +149,7 @@
       "poster": "/models/crow/quick_poster.jpg?v=ea26a883f65a",
       "instructions": "/models/crow/booklet.pdf?v=8aed0c73e544",
       "url": "/quick/crow/",
-      "model": "/models/crow/model.json?v=0c1d1675a713",
+      "model": "/models/crow/model.json?v=9e58debe982f",
       "geometry": "/models/crow/model.glb?v=6bb08cf9b2c7",
       "brands": [
         "spooky"
@@ -168,7 +168,7 @@
       "poster": "/models/dinosaur/quick_poster.jpg?v=a1df279f67d0",
       "instructions": "/models/dinosaur/booklet.pdf?v=7f62f5bd5820",
       "url": "/quick/dinosaur/",
-      "model": "/models/dinosaur/model.json?v=7075e0f8599d",
+      "model": "/models/dinosaur/model.json?v=80ab63d33684",
       "geometry": "/models/dinosaur/model.glb?v=10fce31fc22f"
     },
     {
@@ -182,7 +182,7 @@
       "poster": "/models/dracula/quick_poster.jpg?v=69bdbf967332",
       "instructions": "/models/dracula/booklet.pdf?v=a5ab4c5407c5",
       "url": "/quick/dracula/",
-      "model": "/models/dracula/model.json?v=f2bee5e8ce4a",
+      "model": "/models/dracula/model.json?v=1ae25aa036e5",
       "geometry": "/models/dracula/model.glb?v=1d73a8d9a362",
       "brands": [
         "spooky"
@@ -216,7 +216,7 @@
       "poster": "/models/frankenstein/quick_poster.jpg?v=55569760fa9f",
       "instructions": "/models/frankenstein/booklet.pdf?v=340761fb0fe1",
       "url": "/quick/frankenstein/",
-      "model": "/models/frankenstein/model.json?v=ce3dd35bf2dc",
+      "model": "/models/frankenstein/model.json?v=4dd8a7ba9165",
       "geometry": "/models/frankenstein/model.glb?v=fa974ac48e22",
       "brands": [
         "spooky"
@@ -235,7 +235,7 @@
       "poster": "/models/freddy_fazbear/quick_poster.jpg?v=b33640f39e27",
       "instructions": "/models/freddy_fazbear/booklet.pdf?v=1a24b425609a",
       "url": "/quick/freddy_fazbear/",
-      "model": "/models/freddy_fazbear/model.json?v=77c1b604557d",
+      "model": "/models/freddy_fazbear/model.json?v=4b77195eddde",
       "geometry": "/models/freddy_fazbear/model.glb?v=e81926d53f64",
       "brands": [
         "spooky"
@@ -253,13 +253,30 @@
       "poster": "/models/game_boy/quick_poster.jpg?v=308f54c49711",
       "instructions": "/models/game_boy/booklet.pdf?v=8f5be1b3785e",
       "url": "/quick/game_boy/",
-      "model": "/models/game_boy/model.json?v=7892c505b0fc",
+      "model": "/models/game_boy/model.json?v=311e48829059",
       "geometry": "/models/game_boy/model.glb?v=6ea7b17c22f3",
       "brands": [
         "nintendo"
       ],
       "designer": "Phoenix_bricks",
       "source": "https://rebrickable.com/mocs/MOC-238888/"
+    },
+    {
+      "slug": "guardian",
+      "name": "Guardian",
+      "description": "A Guardian, the six-legged ancient machine from The Legend of Zelda, in 183 pieces, 26 cm across its legs and 14 cm tall: a domed stone body ringed with pink lights, a head with one blue eye, and six ball-jointed legs you can pose. It stands on a short black stand.",
+      "collection": "quick_bricks",
+      "pieces": 183,
+      "steps": 37,
+      "video": "/quick/guardian-1080x1920.mp4?v=0f00683b73c1",
+      "poster": "/models/guardian/quick_poster.jpg?v=e6a54c6e68a7",
+      "instructions": "/models/guardian/booklet.pdf?v=0e34a617031b",
+      "url": "/quick/guardian/",
+      "model": "/models/guardian/model.json?v=f9240e410eaf",
+      "geometry": "/models/guardian/model.glb?v=5307d4fd4ef1",
+      "brands": [
+        "nintendo"
+      ]
     },
     {
       "slug": "jake_the_dog",
@@ -289,7 +306,7 @@
       "poster": "/models/luigi/quick_poster.jpg?v=1bd10b55dcd9",
       "instructions": "/models/luigi/booklet.pdf?v=b9f520a33357",
       "url": "/quick/luigi/",
-      "model": "/models/luigi/model.json?v=9bc88db12d22",
+      "model": "/models/luigi/model.json?v=de1baa336ded",
       "geometry": "/models/luigi/model.glb?v=7e1d5bccf840",
       "brands": [
         "nintendo"
@@ -308,7 +325,7 @@
       "poster": "/models/magikarp/quick_poster.jpg?v=753faa77847b",
       "instructions": "/models/magikarp/booklet.pdf?v=8113050ca8d1",
       "url": "/quick/magikarp/",
-      "model": "/models/magikarp/model.json?v=3f92abb84d21",
+      "model": "/models/magikarp/model.json?v=0a2b7abaf615",
       "geometry": "/models/magikarp/model.glb?v=0d1b1ff49564",
       "brands": [
         "pokemon",
@@ -328,7 +345,7 @@
       "poster": "/models/mario/quick_poster.jpg?v=544eb3866326",
       "instructions": "/models/mario/booklet.pdf?v=3bda6de97b9a",
       "url": "/quick/mario/",
-      "model": "/models/mario/model.json?v=da45314bca59",
+      "model": "/models/mario/model.json?v=7c3e4892a8a6",
       "geometry": "/models/mario/model.glb?v=7e1d5bccf840",
       "brands": [
         "nintendo"
@@ -347,7 +364,7 @@
       "poster": "/models/pez_darth_vader/quick_poster.jpg?v=3f42f9da29d3",
       "instructions": "/models/pez_darth_vader/booklet.pdf?v=1dae53d6f924",
       "url": "/quick/pez_darth_vader/",
-      "model": "/models/pez_darth_vader/model.json?v=0d9b951eb26c",
+      "model": "/models/pez_darth_vader/model.json?v=c55f5b6f0aeb",
       "geometry": "/models/pez_darth_vader/model.glb?v=5dad2051e4a0",
       "brands": [
         "pez",
@@ -365,7 +382,7 @@
       "poster": "/models/pez_stormtrooper/quick_poster.jpg?v=01ce01eee023",
       "instructions": "/models/pez_stormtrooper/booklet.pdf?v=7a56cb856baa",
       "url": "/quick/pez_stormtrooper/",
-      "model": "/models/pez_stormtrooper/model.json?v=16a14521bb12",
+      "model": "/models/pez_stormtrooper/model.json?v=bda77552a79d",
       "geometry": "/models/pez_stormtrooper/model.glb?v=1744ae20e925",
       "brands": [
         "pez",
@@ -383,7 +400,7 @@
       "poster": "/models/pez_yoda/quick_poster.jpg?v=ac37509de7c2",
       "instructions": "/models/pez_yoda/booklet.pdf?v=6fe27e239f98",
       "url": "/quick/pez_yoda/",
-      "model": "/models/pez_yoda/model.json?v=3af6d8f893bc",
+      "model": "/models/pez_yoda/model.json?v=c8b6840502cc",
       "geometry": "/models/pez_yoda/model.glb?v=2eab64f102a5",
       "brands": [
         "pez",
@@ -401,7 +418,7 @@
       "poster": "/models/pikachu/quick_poster.jpg?v=458e797cf5a9",
       "instructions": "/models/pikachu/booklet.pdf?v=912151544e6f",
       "url": "/quick/pikachu/",
-      "model": "/models/pikachu/model.json?v=48b2df7afe8a",
+      "model": "/models/pikachu/model.json?v=5248cf381329",
       "geometry": "/models/pikachu/model.glb?v=318ab3dcdc0e",
       "brands": [
         "pokemon",
@@ -420,7 +437,7 @@
       "poster": "/models/porygon/quick_poster.jpg?v=7904f0df6d59",
       "instructions": "/models/porygon/booklet.pdf?v=d567eb0f2aab",
       "url": "/quick/porygon/",
-      "model": "/models/porygon/model.json?v=e9a6e729879b",
+      "model": "/models/porygon/model.json?v=51cab8101711",
       "geometry": "/models/porygon/model.glb?v=a46e853c1f37",
       "brands": [
         "pokemon",
@@ -440,7 +457,7 @@
       "poster": "/models/pumpkin/quick_poster.jpg?v=39d9c48b3100",
       "instructions": "/models/pumpkin/booklet.pdf?v=2f8b7c6e0092",
       "url": "/quick/pumpkin/",
-      "model": "/models/pumpkin/model.json?v=432f106e7433",
+      "model": "/models/pumpkin/model.json?v=767a6a69e3b6",
       "geometry": "/models/pumpkin/model.glb?v=41b0f2c90b61",
       "brands": [
         "spooky"
@@ -459,7 +476,7 @@
       "poster": "/models/squirtle/quick_poster.jpg?v=0b9c4374f608",
       "instructions": "/models/squirtle/booklet.pdf?v=5f7551cc97de",
       "url": "/quick/squirtle/",
-      "model": "/models/squirtle/model.json?v=d3df433e65c9",
+      "model": "/models/squirtle/model.json?v=b14a3eaaa41b",
       "geometry": "/models/squirtle/model.glb?v=73f173a0bab4",
       "brands": [
         "pokemon",
@@ -477,7 +494,7 @@
       "poster": "/models/taco/quick_poster.jpg?v=9dd6d311549f",
       "instructions": "/models/taco/booklet.pdf?v=0f928322195f",
       "url": "/quick/taco/",
-      "model": "/models/taco/model.json?v=e98e6425be94",
+      "model": "/models/taco/model.json?v=b7e38ede6a99",
       "geometry": "/models/taco/model.glb?v=ce5243fde9d0",
       "brands": [
         "snacks"
@@ -494,7 +511,7 @@
       "poster": "/models/watermelon_ice_lolly/quick_poster.jpg?v=7ff545804daa",
       "instructions": "/models/watermelon_ice_lolly/booklet.pdf?v=70953717d202",
       "url": "/quick/watermelon_ice_lolly/",
-      "model": "/models/watermelon_ice_lolly/model.json?v=d3f2673c3448",
+      "model": "/models/watermelon_ice_lolly/model.json?v=83c861372677",
       "geometry": "/models/watermelon_ice_lolly/model.glb?v=498362a0cc5b",
       "brands": [
         "snacks"
@@ -511,7 +528,7 @@
       "poster": "/models/xenomorph/quick_poster.jpg?v=085460d7f210",
       "instructions": "/models/xenomorph/booklet.pdf?v=8937acb1b16d",
       "url": "/quick/xenomorph/",
-      "model": "/models/xenomorph/model.json?v=8c869e9b880f",
+      "model": "/models/xenomorph/model.json?v=f2f2704ed044",
       "geometry": "/models/xenomorph/model.glb?v=933bc79f188c",
       "brands": [
         "spooky"

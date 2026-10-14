@@ -1,0 +1,36 @@
+{
+ "low": 12.84,
+ "high": 19.59,
+ "currency": "USD",
+ "note": "BrickLink price guide, 2026-10-14: 31 of 31 part lines priced live (six-month sold average to current asking average, new, USD).",
+ "source": "bricklink",
+ "date": "2026-10-14",
+ "live_lines": 31,
+ "lines": 31,
+ "bricklink": {
+  "usd": 12.84,
+  "date": "2026-10-14",
+  "lines": 31,
+  "of": 31,
+  "missing": [],
+  "basis": "new parts, the average each sold for over the last six months (the average asking price where nothing sold), before shipping"
+ },
+ "pick_a_brick": {
+  "usd": 14.38,
+  "date": "2026-10-14",
+  "lines": 26,
+  "of": 31,
+  "missing": [
+   "30 x Plate Special 1 x 2 with 5.9mm Towball Socket and Towball (14419), Dark Bluish Gray",
+   "6 x Plate Special 1 x 2 5.9mm Centre Side Towball Socket (14704), Dark Bluish Gray",
+   "6 x Plate Special 1 x 2 with End Towball (22890), Dark Bluish Gray",
+   "1 x Brick Round 4 x 4 with 4 Side Pin Holes and Center Axle Hole (6222), Dark Bluish Gray",
+   "4 x Technic Pin 1/2 without Friction Ridges (4274), Light Bluish Gray"
+  ],
+  "standard": [
+   "1 x Brick Round 2 x 2 with Axle Hole (3941), Dark Bluish Gray",
+   "1 x Plate Round 4 x 4 with Pin Hole (60474), Magenta"
+  ],
+  "basis": "LEGO Pick a Brick, US shop, before shipping"
+ }
+}
