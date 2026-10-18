@@ -58,6 +58,10 @@
 .quickdetail .qd-shop { display: flex; flex-direction: column; align-items: start; gap: 14px; padding: 26px; border: 1px solid var(--line); border-radius: 12px; background: var(--surface); }
 .quickdetail .qd-shop h3 { font-size: 1.25rem; letter-spacing: -.025em; }
 .quickdetail .qd-shop > p { font-size: .875rem; color: var(--muted); }
+.quickdetail .qd-shop > p.qd-shop-price { display: flex; align-items: baseline; gap: 8px; color: var(--ink); }
+.quickdetail .qd-shop-price strong { font-size: 2rem; font-weight: 700; letter-spacing: -.03em; font-variant-numeric: tabular-nums; }
+.quickdetail .qd-shop-price span { font-size: .875rem; color: var(--muted); }
+.quickdetail .qd-shop > p.qd-shop-note { margin-top: -8px; font-size: .8125rem; }
 .quickdetail .qd-shop-download { display: flex; align-items: center; gap: 9px; margin-top: auto; min-height: 48px; padding: 11px 13px; border: 1px solid var(--line-2); border-radius: 7px; text-decoration: none; font-size: .875rem; font-weight: 550; }
 .quickdetail .qd-shop-download:hover { background: var(--surface-2); }
 .quickdetail .qd-file-type { color: var(--muted); font-weight: 400; }

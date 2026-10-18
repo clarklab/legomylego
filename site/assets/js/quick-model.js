@@ -102,18 +102,47 @@ function renderBooklet(pdf) {
   $('#qd-booklet-frame').src = `${pdf}#view=FitH`;
 }
 
+function fmtDay(iso) {
+  const t = Date.parse(`${iso}T12:00:00`);
+  return Number.isNaN(t) ? iso : new Date(t).toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric' });
+}
+
+const lines = (n) => `${fmtInt(n)} ${n === 1 ? 'line' : 'lines'}`;
+
+// What the parts cost at each shop, from the model's price (bom/price.py): the total and how it
+// was worked out, with the lines a shop doesn't sell or sends later.
+function shopPrice(p, kind) {
+  if (!p || p.usd == null) return '';
+  const usd = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(p.usd);
+  const day = p.date ? ` on ${fmtDay(p.date)}` : '';
+  let note;
+  if (kind === 'pick_a_brick') {
+    note = `LEGO’s own US prices${day}.`;
+    if (p.missing?.length) note += ` ${lines(p.missing.length)} ${p.missing.length === 1 ? 'isn’t' : 'aren’t'} sold there (not in this total): get ${p.missing.length === 1 ? 'it' : 'them'} on BrickLink.`;
+    if (p.standard?.length) note += ` ${lines(p.standard.length)} ${p.standard.length === 1 ? 'comes' : 'come'} later, in a parcel of ${p.standard.length === 1 ? 'its' : 'their'} own.`;
+    else if (!p.missing?.length) note += ' Every piece is a Bestseller, so it all comes in one parcel.';
+  } else {
+    note = `BrickLink’s price guide${day}: new parts at the average each sold for over the last six months.`;
+    if (p.missing?.length) note += ` ${lines(p.missing.length)} had no price and ${p.missing.length === 1 ? 'is' : 'are'} left out of this total.`;
+  }
+  return `<p class="qd-shop-price"><strong>${usd}</strong><span>before shipping</span></p><p class="qd-shop-note">${esc(note)}</p>`;
+}
+
 function renderShopping(files) {
+  const price = state.data?.price || {};
   const shops = [
     { file: files.pick_a_brick_csv, name: 'LEGO Pick a Brick', label: 'Download Pick a Brick list', format: 'CSV',
       url: 'https://www.lego.com/en-us/pick-and-build/pick-a-brick', action: 'Open Pick a Brick',
-      description: 'Download the list of LEGO element IDs and quantities, then upload it to Pick a Brick.' },
+      description: 'Download the list of LEGO element IDs and quantities, then upload it to Pick a Brick.',
+      price: shopPrice(price.pick_a_brick, 'pick_a_brick') },
     { file: files.bricklink_xml, name: 'BrickLink', label: 'Download BrickLink wanted list', format: 'XML',
       url: 'https://www.bricklink.com/v2/wanted/upload.page', action: 'Upload to BrickLink',
-      description: 'Copy the downloaded XML into BrickLink’s “Upload BrickLink XML format” tab.' },
+      description: 'Copy the downloaded XML into BrickLink’s “Upload BrickLink XML format” tab.',
+      price: shopPrice(price.bricklink, 'bricklink') },
   ].filter(shop => shop.file);
   $('#get-pieces').hidden = !shops.length;
   $('#qd-shopping-links').innerHTML = shops.map(shop => `<article class="qd-shop">
-    <h3>${esc(shop.name)}</h3><p>${esc(shop.description)}</p>
+    <h3>${esc(shop.name)}</h3>${shop.price}<p>${esc(shop.description)}</p>
     <a class="qd-shop-download" href="${esc(modelAsset(shop.file))}" download>${icon('download')}<span>${esc(shop.label)} <span class="qd-file-type">${shop.format}</span></span></a>
     <a class="qd-shop-visit" href="${shop.url}" target="_blank" rel="noopener">${esc(shop.action)}${icon('external')}</a>
   </article>`).join('');
