@@ -1,28 +1,26 @@
 {
  "low": 9.43,
- "high": 15.89,
+ "high": 15.92,
  "currency": "USD",
- "note": "BrickLink price guide, 2026-10-14: 23 of 23 part lines priced live (six-month sold average to current asking average, new, USD).",
+ "note": "BrickLink price guide, 2026-10-17: 23 of 23 part lines priced live (six-month sold average to current asking average, new, USD).",
  "source": "bricklink",
- "date": "2026-10-14",
+ "date": "2026-10-17",
  "live_lines": 23,
  "lines": 23,
  "bricklink": {
   "usd": 9.43,
-  "date": "2026-10-14",
+  "date": "2026-10-17",
   "lines": 23,
   "of": 23,
   "missing": [],
   "basis": "new parts, the average each sold for over the last six months (the average asking price where nothing sold), before shipping"
  },
  "pick_a_brick": {
-  "usd": 11.68,
-  "date": "2026-10-14",
-  "lines": 22,
+  "usd": 12.18,
+  "date": "2026-10-17",
+  "lines": 23,
   "of": 23,
-  "missing": [
-   "1 x Hips and Dark Brown Legs (970c00), Dark Brown"
-  ],
+  "missing": [],
   "standard": [],
   "basis": "LEGO Pick a Brick, US shop, before shipping"
  },

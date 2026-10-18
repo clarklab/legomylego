@@ -149,3 +149,23 @@ def test_prefer_what_pick_a_brick_sells(engine, monkeypatch):
     before = [x.element_id for x in lines]
     assert pab_price.prefer_sold(lines, pab, engine.catalog, log=lambda m: None) == 1
     assert l.element_id == sold and [x.element_id for x in lines[1:]] == before[1:]
+
+
+def test_prefer_what_pick_a_brick_sells_minifig_legs(engine, monkeypatch):
+    """Minifig legs are renumbered too (Dark Brown legs: 6156848, and 4529672, which Pick a Brick
+    sells): the legs line takes the ID it sells, looked up by the legs' own number."""
+    from brickkit.bom import pab_price
+    from brickkit.bom.bom import BomLine
+    brown = engine.catalog.color("Dark Brown")
+    e = engine.catalog.element("970c07", brown)
+    assert e and "4529672" in e.element_ids and len(e.element_ids) > 1
+    l = BomLine("3815b", "970c07", "970c00", "Hips and Dark Brown Legs", brown, 1,
+                max(e.element_ids, key=int), False, "P", "legs")
+    sold = "4529672"
+    monkeypatch.setattr(pab_price.PickABrick, "lookup",
+                        lambda self, el: {"ok": True, "usd": 0.5, "bestseller": True} if el == sold
+                        else {"ok": False, "error": "not on Pick a Brick"})
+    monkeypatch.setattr(pab_price.PickABrick, "save", lambda self: None)
+    pab = {"day": "2026-10-17", "prices": {l.element_id: {"ok": False}}}
+    assert pab_price.prefer_sold([l], pab, engine.catalog, log=lambda m: None) == 1
+    assert l.element_id == sold and pab["prices"][sold]["ok"]

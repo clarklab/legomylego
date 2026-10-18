@@ -100,9 +100,10 @@ def prefer_sold(lines, pab: dict | None, catalog, log=print) -> int:
     try:
         for l in lines:
             got = pab["prices"].get(l.element_id) if l.element_id else None
-            if not got or got.get("ok") or getattr(l, "kind", ""):
+            if not got or got.get("ok"):
                 continue
-            e = catalog.element(l.ldraw_part + ".dat", l.color)
+            kind = getattr(l, "kind", "")      # a minifig head, torso or legs: by its own number
+            e = catalog.element(l.rb_part if kind else l.ldraw_part + ".dat", l.color)
             for other in sorted(e.element_ids if e else [], key=lambda x: -int(x) if x.isdigit() else 0):
                 if other == l.element_id:
                     continue
