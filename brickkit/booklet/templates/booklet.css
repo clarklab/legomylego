@@ -25,11 +25,6 @@ p, li { font-size: 9.5pt; line-height: 1.45; }
 .cover .sub { font-size: 10pt; color: #ddd; line-height: 1.4; }
 .cover .count { margin-top: 9mm; font-size: 22pt; font-weight: 800; }
 .cover .count small { font-size: 10pt; font-weight: 400; color: #bbb; }
-.cover .flag { margin-top: 8mm; background: #ffd500; color: #1c1c1c; font-weight: 800;
-               padding: 3mm 4mm; border-radius: 2mm; font-size: 10pt; display: inline-block; }
-.cover .warn { margin-top: 5mm; border: 0.6mm solid #e3000b; background: #fff; color: #1c1c1c;
-               padding: 3mm 4mm; border-radius: 2mm; font-size: 8.5pt; }
-.cover .warn b { color: #e3000b; }
 .cover .legal { position: absolute; bottom: 10mm; left: 12mm; right: 12mm; font-size: 6.5pt; color: #999; line-height: 1.4; }
 .cover .right { flex: 1; background: radial-gradient(circle at 50% 40%, #f4f7fb, #dfe6ee); display: flex;
                 align-items: center; justify-content: center; }
@@ -42,8 +37,6 @@ p, li { font-size: 9.5pt; line-height: 1.45; }
 .box.red h3 { color: #e3000b; }
 .box.green { background: #fff; border: 0.6mm solid #1d7a46; }
 .box.green h3 { color: #1d7a46; }
-.cover .warn.ok { border-color: #1d7a46; }
-.cover .warn.ok b { color: #1d7a46; }
 .box ul { margin: 0; padding-left: 4.5mm; }
 .swatch { display: inline-block; width: 3.4mm; height: 3.4mm; border-radius: 0.8mm; border: 0.2mm solid #0003; vertical-align: -0.6mm; margin-right: 1.5mm; }
 .colours { columns: 2; font-size: 8.5pt; }
