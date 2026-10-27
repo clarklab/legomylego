@@ -8,6 +8,7 @@ including models with no video, poster, or instruction PDF yet.
 from __future__ import annotations
 
 import argparse
+import datetime
 import hashlib
 import html
 import json
@@ -74,6 +75,21 @@ def credit_html(item: dict) -> str:
     return f'<p class="qd-credit">{text}</p>'
 
 
+def built_html(item: dict) -> str:
+    """The line that says the model has been built with real bricks from these steps, and when:
+    `built` in model.toml, the day (as on the booklet)."""
+    day = item.get("built")
+    if not day:
+        return ""
+    try:
+        d = datetime.date.fromisoformat(str(day))
+        when = f"{d:%b} {d.day}, {d.year}"
+    except ValueError:
+        when = html.escape(str(day))
+    return (f'<p class="qd-built"><i data-icon="checkCircle"></i><span><strong>Built with real '
+            f'bricks</strong> on {when}, from these steps: it works.</span></p>')
+
+
 def quick_page(template: str, item: dict) -> str:
     """Fill the same meta/data-fill markers as the main model-page template."""
     name = html.escape(item["name"], quote=False)
@@ -95,7 +111,8 @@ def quick_page(template: str, item: dict) -> str:
                   template, count=1, flags=re.S)
     page = page.replace('data-slug=""', f'data-slug="{html.escape(item["slug"], quote=True)}"', 1)
     page = re.sub(r"<!-- credit:start -->.*?<!-- credit:end -->",
-                  lambda _: "<!-- credit:start -->" + credit_html(item) + "<!-- credit:end -->",
+                  lambda _: ("<!-- credit:start -->" + credit_html(item) + built_html(item)
+                             + "<!-- credit:end -->"),
                   page, count=1, flags=re.S)
     for key in ("name", "description"):
         page = re.sub(r'(<[^>]*data-fill="' + key + r'"[^>]*>)[^<]*(<)',
@@ -141,7 +158,7 @@ def build_quick_site(site: Path = ROOT / "site", models_dir: Path = ROOT / "mode
             if unknown:
                 raise ValueError(f"{slug}: no logo in brands/ for {', '.join(unknown)}")
             items[-1]["brands"] = list(cfg["brands"])
-        for key in ("designer", "source", "credit"):   # (someone else's design: whose, and where)
+        for key in ("designer", "source", "credit", "built"):   # (whose design, where; built when)
             if cfg.get(key):
                 items[-1][key] = cfg[key]
     result = {"models": items}

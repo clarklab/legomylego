@@ -4,6 +4,7 @@ design = "design.py"
 description = "A small, quick kids' build of the 1894 courthouse in Lockhart, Texas: buff stone walls with a red band, slate roofs on the four corner pavilions, and the clock tower with a clock on each side under a steep slate spire and a red finial. It comes with the clockmaster, a minifigure in a top hat. The big display version is The Caldwell County Courthouse."
 palette_title = "Dark red trim"
 collection = "quick_bricks"   # a little Quick Bricks model (also a section of the big courthouse's page)
+built = "2026-10-27"          # built with real bricks by the owner, from the booklet: it works
 
 [palette]
 lawn = "Green"

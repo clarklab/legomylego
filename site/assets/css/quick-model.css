@@ -7,6 +7,9 @@
 .quickdetail .qd-description { max-width: 720px; color: var(--muted); font-size: 1.0625rem; line-height: 1.65; }
 .quickdetail .qd-credit { max-width: 720px; margin-top: .5rem; color: var(--muted); font-size: .9375rem; line-height: 1.6; }
 .quickdetail .qd-credit a { color: inherit; text-decoration: underline; text-underline-offset: 2px; }
+.quickdetail .qd-built { display: inline-flex; justify-self: start; width: fit-content; align-items: center; gap: 8px; margin-top: .75rem; padding: 6px 13px 6px 10px; border-radius: 999px; background: var(--pass-bg); color: var(--pass); font-size: .875rem; line-height: 1.4; }
+.quickdetail .qd-built .icon { flex: none; width: 16px; height: 16px; }
+.quickdetail .qd-built strong { font-weight: 650; }
 .quickdetail .qd-page-links { display: flex; flex-wrap: wrap; gap: 10px 24px; font-size: .875rem; font-weight: 550; }
 .quickdetail .qd-page-links a { padding-block: 5px; text-underline-offset: 5px; text-decoration-color: var(--line-2); }
 .quickdetail .qd-page-links a:hover { text-decoration-color: var(--ink); }

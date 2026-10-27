@@ -95,10 +95,11 @@
       "steps": 15,
       "video": "/quick/caldwell_mini-1080x1920.mp4?v=f235caa0d8c9",
       "poster": "/models/caldwell_mini/quick_poster.jpg?v=197e211f5350",
-      "instructions": "/models/caldwell_mini/booklet.pdf?v=7a85f7e72312",
+      "instructions": "/models/caldwell_mini/booklet.pdf?v=ec316d85e479",
       "url": "/quick/caldwell_mini/",
-      "model": "/models/caldwell_mini/model.json?v=90d3c6aa6c99",
-      "geometry": "/models/caldwell_mini/model.glb?v=982c063bf263"
+      "model": "/models/caldwell_mini/model.json?v=5ff5717105cf",
+      "geometry": "/models/caldwell_mini/model.glb?v=982c063bf263",
+      "built": "2026-10-27"
     },
     {
       "slug": "charmander",
