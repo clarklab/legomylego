@@ -1,0 +1,29 @@
+{
+ "low": 1.34,
+ "high": 2.11,
+ "currency": "USD",
+ "note": "BrickLink price guide, 2026-11-05: 10 of 10 part lines priced live (six-month sold average to current asking average, new, USD).",
+ "source": "bricklink",
+ "date": "2026-11-05",
+ "live_lines": 10,
+ "lines": 10,
+ "bricklink": {
+  "usd": 1.34,
+  "date": "2026-11-05",
+  "lines": 10,
+  "of": 10,
+  "missing": [],
+  "basis": "new parts, the average each sold for over the last six months (the average asking price where nothing sold), before shipping"
+ },
+ "pick_a_brick": {
+  "usd": 1.91,
+  "date": "2026-11-05",
+  "lines": 9,
+  "of": 10,
+  "missing": [
+   "4 x Plate 1 x 2 (3023), White"
+  ],
+  "standard": [],
+  "basis": "LEGO Pick a Brick, US shop, before shipping"
+ }
+}

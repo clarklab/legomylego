@@ -2097,6 +2097,78 @@
     }
    }
   },
+  "moby_dick": {
+   "files": {
+    "booklet.pdf": {
+     "v": "f1ac6939b5",
+     "size": 1898876
+    },
+    "bricklink_wanted.xml": {
+     "v": "db6b5e13ce",
+     "size": 946
+    },
+    "moby_dick.mpd": {
+     "v": "71bfa2d1f4",
+     "size": 1638
+    },
+    "model.glb": {
+     "v": "46e1d357a6",
+     "size": 815772
+    },
+    "model.json": {
+     "v": "cc6b6738d5",
+     "size": 8167
+    },
+    "parts.csv": {
+     "v": "dc7caa6b82",
+     "size": 940
+    },
+    "pick_a_brick.csv": {
+     "v": "8193802629",
+     "size": 127
+    },
+    "price_estimate.md": {
+     "v": "aa184f3eed",
+     "size": 1591
+    },
+    "quick_poster.jpg": {
+     "v": "a2a65a85f6",
+     "size": 81601
+    },
+    "renders/renders_front.png": {
+     "v": "1c7db6a895",
+     "size": 793218
+    },
+    "renders/renders_three_quarter.png": {
+     "v": "23b483f41e",
+     "size": 808898
+    },
+    "renders/renders_three_quarter_right.png": {
+     "v": "f7559bd3cd",
+     "size": 799515
+    }
+   },
+   "images": {
+    "renders/renders_front.png": {
+     "w": 900,
+     "h": 900,
+     "lg": "/assets/img/moby_dick/renders_front.webp?v=6e5ca383ae",
+     "sm": "/assets/img/moby_dick/renders_front-480.webp?v=bba6a45c22"
+    },
+    "renders/renders_three_quarter.png": {
+     "w": 900,
+     "h": 900,
+     "lg": "/assets/img/moby_dick/renders_three_quarter.webp?v=08b83a8c1b",
+     "sm": "/assets/img/moby_dick/renders_three_quarter-480.webp?v=2d57a5b1c0"
+    },
+    "renders/renders_three_quarter_right.png": {
+     "w": 900,
+     "h": 900,
+     "lg": "/assets/img/moby_dick/renders_three_quarter_right.webp?v=34687d3bee",
+     "sm": "/assets/img/moby_dick/renders_three_quarter_right-480.webp?v=ba40a524fc"
+    }
+   }
+  },
   "nautilus": {
    "files": {
     "booklet.pdf": {

@@ -1,0 +1,38 @@
+[model]
+name = "Moby Dick"
+design = "design.py"
+description = "Moby Dick, the white whale, in 17 pieces: a curved head with an eye on each side, a jumper for a blowhole and two cheese-slope flukes rising out of a blue 4 x 12 sea, 10 cm long. d.e.n.n.i.s's design, built as d.e.n.n.i.s's instructions build it."
+designer = "d.e.n.n.i.s"      # someone else's design: who made it (the booklet and its page
+source = "https://brickit.app/ideas/527f1c4e-e90c-4600-8a03-e480011a26e6"   # say so), and
+#                             # where the original is; with no name to give,
+# credit = "..."              # our own sentence for it
+designer_steps = true         # the steps are the designer's own, followed page by page
+# brands = ["pokemon"]        # the logo cards on the Quick Bricks page it is filed under: a
+#                             # logo's file name in brands/ (more than one is fine; none is too)
+collection = "quick_bricks"
+
+[palette]                     # role -> a real colour name; design.py places parts by role
+sea = "Blue"                  # the 4 x 12 plate
+whale = "White"
+eye = "White"                 # the eyes: white round tiles printed with a black eye (98138pr0082)
+
+[booklet]
+subtitle = "The white whale surfacing in a blue sea, in 17 pieces. A design by d.e.n.n.i.s."
+intro = "Lay the sea down long ways, then build the whale along the middle of it: a 2 x 4 brick for the body, a brick with a side stud each side of its front for the eyes, two stacked plates at each end and a little slope behind the back ones. A curved slope goes over each end, low end out, with a jumper (the blowhole) and a tile between them on top. Two cheese slopes behind the whale are its tail, coming up out of the water."
+notes = ["Each curved slope has a step under it: its high end sits a plate higher than its low end. The low end goes over the stacked plates, the high end over the bricks.", "Turn the eyes so the line of the eyelid is along the bottom and the black dome is up."]
+
+[checks]
+enabled = ["real_elements", "connections", "collisions", "buildability", "stability",
+           "mechanism", "electrics", "technique"]
+
+# Quick Bricks video (brickkit quick moby_dick). Pick a workshop the last few models did not
+# use (brickkit status shows theirs); under 25 pieces the parts start laid out on the table
+[quick]
+surface = "oak"               # the blue sea and the white whale both stand out on bare oak (a blue
+#                               mat or LEGO floor would swallow the sea)
+room = "night"                # dark walls behind a white whale; no recent model used it
+light = "day"                 # keeps the whale white (evening turns white cream)
+seconds = 14
+highlight = ["eyes", "tail"]  # the eyes going on last, then the flukes
+close_ups = 2
+music = false                 # just the clicks

@@ -1420,6 +1420,62 @@
       "status": "pass"
     },
     {
+      "slug": "moby_dick",
+      "name": "Moby Dick",
+      "description": "Moby Dick, the white whale, in 17 pieces: a curved head with an eye on each side, a jumper for a blowhole and two cheese-slope flukes rising out of a blue 4 x 12 sea, 10 cm long. d.e.n.n.i.s's design, built as d.e.n.n.i.s's instructions build it.",
+      "collection": "quick_bricks",
+      "steps": 11,
+      "notice": "",
+      "parts": 17,
+      "pieces": 17,
+      "dims_mm": [
+        32.0,
+        17.6,
+        96.0
+      ],
+      "price": {
+        "low": 1.34,
+        "high": 2.11,
+        "currency": "USD",
+        "note": "BrickLink price guide, 2026-11-05: 10 of 10 part lines priced live (six-month sold average to current asking average, new, USD).",
+        "source": "bricklink",
+        "date": "2026-11-05",
+        "live_lines": 10,
+        "lines": 10,
+        "bricklink": {
+          "usd": 1.34,
+          "date": "2026-11-05",
+          "lines": 10,
+          "of": 10,
+          "missing": [],
+          "basis": "new parts, the average each sold for over the last six months (the average asking price where nothing sold), before shipping"
+        },
+        "pick_a_brick": {
+          "usd": 1.91,
+          "date": "2026-11-05",
+          "lines": 9,
+          "of": 10,
+          "missing": [
+            "4 x Plate 1 x 2 (3023), White"
+          ],
+          "standard": [],
+          "basis": "LEGO Pick a Brick, US shop, before shipping"
+        }
+      },
+      "features": {
+        "mechanism": false,
+        "lights": false,
+        "minifigs": 0
+      },
+      "variants": [
+        "Standard"
+      ],
+      "thumbnail": "renders/renders_front.png",
+      "video": null,
+      "poster": null,
+      "status": "pass"
+    },
+    {
       "slug": "nautilus",
       "name": "Nautilus",
       "description": "Captain Nemo's Nautilus from Walt Disney's 20,000 Leagues Under the Sea (1954) at minifigure scale, 106 cm long: its salon windows are LEGO's biggest clear bubbles. Big tiled side panels on hinges, the toothed crest arch over an alligator-head wheelhouse with bubble eyes, the saw keel, the shark's dorsal fin and the fish tail with its propeller and rudder; the port side of the salon swings up like a gull wing on Captain Nemo's salon - his pipe organ, library, aquarium and crew - and the whole ship rides a breaking sea on two clear posts. The salon lights up, the propeller spins and the rudder swings.",

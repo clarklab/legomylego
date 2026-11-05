@@ -355,6 +355,23 @@
       "source": "https://rebrickable.com/mocs/MOC-249307/"
     },
     {
+      "slug": "moby_dick",
+      "name": "Moby Dick",
+      "description": "Moby Dick, the white whale, in 17 pieces: a curved head with an eye on each side, a jumper for a blowhole and two cheese-slope flukes rising out of a blue 4 x 12 sea, 10 cm long. d.e.n.n.i.s's design, built as d.e.n.n.i.s's instructions build it.",
+      "collection": "quick_bricks",
+      "pieces": 17,
+      "steps": 11,
+      "video": "/quick/moby_dick-1080x1920.mp4?v=91d3b0fdda7d",
+      "poster": "/models/moby_dick/quick_poster.jpg?v=cf982adb3b83",
+      "instructions": "/models/moby_dick/booklet.pdf?v=230d2d26b0e0",
+      "url": "/quick/moby_dick/",
+      "model": "/models/moby_dick/model.json?v=3a2c51f8a345",
+      "geometry": "/models/moby_dick/model.glb?v=d3dc9e3c90a7",
+      "designer": "d.e.n.n.i.s",
+      "source": "https://brickit.app/ideas/527f1c4e-e90c-4600-8a03-e480011a26e6",
+      "designer_steps": true
+    },
+    {
       "slug": "onkey",
       "name": "Onkey",
       "description": "Onkey, a little monkey head on two long arms, in 79 pieces, 9.6 cm from hand to hand: googly eyes, tan ears, a tuft, and a jaw that drops.",

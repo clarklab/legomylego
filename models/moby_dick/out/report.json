@@ -1,0 +1,91 @@
+{
+  "title": "Moby Dick",
+  "status": "pass",
+  "checks": [
+    {
+      "name": "real_elements",
+      "status": "pass",
+      "summary": "10 part/colour combinations: 0 not real, 0 rare",
+      "items": [],
+      "stats": {
+        "combinations": 10,
+        "not_real": 0,
+        "rare": 0,
+        "hardware": 0,
+        "minifig_components": 0,
+        "stand_ins": 0,
+        "approximate": 0
+      }
+    },
+    {
+      "name": "connections",
+      "status": "pass",
+      "summary": "38 connections (38 stud); 1 separate piece(s)",
+      "items": [],
+      "stats": {
+        "connections": 38,
+        "by_kind": {
+          "stud": 38
+        },
+        "pieces": 1
+      }
+    },
+    {
+      "name": "collisions",
+      "status": "pass",
+      "summary": "0 overlapping pair(s) among 17 parts",
+      "items": [],
+      "stats": {
+        "pairs": 0
+      }
+    },
+    {
+      "name": "buildability",
+      "status": "pass",
+      "summary": "16 insertions tried across 1 submodel(s); 0 problem(s)",
+      "items": [],
+      "stats": {
+        "insertions": 16
+      }
+    },
+    {
+      "name": "stability",
+      "status": "pass",
+      "summary": "about 17 g; centre of mass inside the base (100% margin); tips at 69.3 deg",
+      "items": [],
+      "stats": {
+        "mass_g": 16.754185394910905,
+        "com": [
+          2.6506165437619844e-16,
+          -7.134388445940027,
+          -12.107952818470647
+        ],
+        "approx_parts": 0,
+        "margin": 1.0,
+        "tip_angle_deg": 69.27537674323871,
+        "com_height_ldu": 15.134388445940026
+      }
+    },
+    {
+      "name": "mechanism",
+      "status": "pass",
+      "summary": "no moving parts defined",
+      "items": [],
+      "stats": {}
+    },
+    {
+      "name": "electrics",
+      "status": "pass",
+      "summary": "no electrics in this model",
+      "items": [],
+      "stats": {}
+    },
+    {
+      "name": "technique",
+      "status": "pass",
+      "summary": "0 note(s)",
+      "items": [],
+      "stats": {}
+    }
+  ]
+}

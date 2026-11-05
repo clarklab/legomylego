@@ -1,0 +1,45 @@
+0 FILE moby_dick.ldr
+0 Moby Dick
+0 Name: moby_dick.ldr
+0 Author: brickkit
+
+0 // The sea: a blue 4 x 12 plate, lying front to back
+1 1 0 0 0 0 0 1 0 1 0 -1 0 0 3029.dat
+0 STEP
+0 // The body: a 2 x 4 brick down the middle, a stud in from the front
+1 15 0 -24 -20 0 0 1 0 1 0 -1 0 0 3001.dat
+0 STEP
+0 // In front of it a 1 x 1 brick with a stud on its side on each side, the side studs out
+1 15 -10 -24 -70 0 0 1 0 1 0 -1 0 0 87087.dat
+1 15 10 -24 -70 0 0 -1 0 1 0 1 0 0 87087.dat
+0 STEP
+0 // The snout: two 1 x 2 plates, one on the other, in front of them
+1 15 0 -8 -90 1 0 0 0 1 0 0 0 1 3023b.dat
+1 15 0 -16 -90 1 0 0 0 1 0 0 0 1 3023b.dat
+0 STEP
+0 // Two 1 x 2 plates, one on the other, behind the body
+1 15 0 -8 30 1 0 0 0 1 0 0 0 1 3023b.dat
+1 15 0 -16 30 1 0 0 0 1 0 0 0 1 3023b.dat
+0 STEP
+0 // A 1 x 2 slope behind them, sloping down to the back
+1 15 0 0 50 -1 0 0 0 1 0 0 0 -1 85984.dat
+0 STEP
+0 // The head: a curved slope over the snout and the side-stud bricks, low end to the front
+1 15 0 -16 -80 1 0 0 0 1 0 0 0 1 15068.dat
+0 STEP
+0 // On top: a jumper (the blowhole) and a 2 x 2 tile behind it
+1 15 0 -32 -50 1 0 0 0 1 0 0 0 1 15573.dat
+1 15 0 -32 -20 1 0 0 0 1 0 0 0 1 3068b.dat
+0 STEP
+0 // A curved slope over the back of the body, low end to the back
+1 15 0 -16 20 -1 0 0 0 1 0 0 0 -1 15068.dat
+0 STEP
+0 // The tail: two cheese slopes on the sea behind it, sloping towards each other
+1 15 -10 0 90 0 0 -1 0 1 0 1 0 0 54200.dat
+1 15 10 0 90 0 0 1 0 1 0 -1 0 0 54200.dat
+0 STEP
+0 // The eyes, on the side studs
+1 15 -28 -14 -70 0 1 0 0 0 -1 -1 0 0 98138p2g.dat
+1 15 28 -14 -70 0 -1 0 0 0 -1 1 0 0 98138p2g.dat
+0 STEP
+0 NOFILE
