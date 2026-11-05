@@ -56,6 +56,43 @@ def _copy(src: Path, dst: Path) -> None:
         shutil.copy2(src, dst)
 
 
+PAGE_WIDTH = 1400                 # px: the booklet's pages as pictures, wide enough for a phone
+
+
+def booklet_pages(pdf: Path, out: Path, width: int = PAGE_WIDTH) -> dict | None:
+    """The booklet's pages as WebP pictures (out/p001.webp, ...), for the page's booklet view
+    where a browser cannot show a PDF inside a page (Chrome on Android, iOS). Made again only
+    when the PDF changes (out/.src holds its hash). None when there is no PDF to read."""
+    if not pdf or not pdf.is_file():
+        return None
+    stamp, want = out / ".src", f"{_hash(pdf)} {width}"
+    pages = sorted(out.glob("p*.webp"))
+    if not (pages and stamp.is_file() and stamp.read_text().strip() == want):
+        import pypdfium2 as pdfium
+        try:
+            doc = pdfium.PdfDocument(str(pdf))
+        except pdfium.PdfiumError:
+            return None
+        out.mkdir(parents=True, exist_ok=True)
+        for old in pages:
+            old.unlink()
+        try:
+            for i in range(len(doc)):
+                page = doc[i]
+                image = page.render(scale=width / page.get_width()).to_pil().convert("RGB")
+                image.save(out / f"p{i + 1:03d}.webp", "WEBP", quality=80, method=6)
+        finally:
+            doc.close()
+        stamp.write_text(want + "\n")
+        pages = sorted(out.glob("p*.webp"))
+    if not pages:
+        return None
+    from PIL import Image
+    with Image.open(pages[0]) as first:
+        size = list(first.size)
+    return {"count": len(pages), "size": size, "v": want[:12]}
+
+
 def credit_html(item: dict) -> str:
     """The line under a model's description that says whose design it is, when it is not ours:
     `credit` (our own words for it), else from `designer` and `source` (a link to the original)."""
@@ -156,6 +193,9 @@ def build_quick_site(site: Path = ROOT / "site", models_dir: Path = ROOT / "mode
             "url": f"/quick/{slug}/", "model": _asset_url(site, model_path),
             "geometry": _asset_url(site, model_dir / files.get("glb", "model.glb")),
         })
+        pages = booklet_pages(booklet, model_dir / "pages")
+        if pages:                                      # (pictures of the booklet's pages)
+            items[-1]["booklet_pages"] = pages
         if cfg.get("brands"):                          # the page's logo cards filter by these
             unknown = [b for b in cfg["brands"] if not (ROOT / "brands" / f"{b}.svg").exists()]
             if unknown:

@@ -201,3 +201,26 @@ def test_quick_page_credits_the_designer(tmp_path):
     ours = quick_page(template, {**item, "designer": None, "source": None})
     assert "qd-credit" not in ours and "<!-- credit:start --><!-- credit:end -->" in ours
     assert "qd-credit" not in quick_page(TEMPLATE, item)          # (a template without the marker)
+
+
+def test_booklet_pages_are_pictures_for_phones(tmp_path):
+    """A browser with no PDF viewer in the page (a phone) gets the booklet's pages as pictures:
+    one WebP per page, made again only when the PDF changes; a file that is not a PDF has none."""
+    import pypdfium2 as pdfium
+    from tools.quick_site import booklet_pages
+    site, models, folder = add_model(tmp_path, 'zebra', pdf=True)
+    doc = pdfium.PdfDocument.new()
+    for _ in range(3):
+        doc.new_page(842, 595)                         # A4 landscape, in points
+    doc.save(folder / 'booklet.pdf')
+    doc.close()
+    zebra = build_quick_site(site, models)['models'][0]
+    pages = zebra['booklet_pages']
+    assert pages['count'] == 3 and pages['size'][0] == 1400 and 980 < pages['size'][1] < 1000
+    made = sorted(p.name for p in (folder / 'pages').glob('*.webp'))
+    assert made == ['p001.webp', 'p002.webp', 'p003.webp']
+    first = (folder / 'pages' / 'p001.webp').stat().st_mtime_ns
+    assert booklet_pages(folder / 'booklet.pdf', folder / 'pages') == pages          # (kept)
+    assert (folder / 'pages' / 'p001.webp').stat().st_mtime_ns == first
+    (folder / 'booklet.pdf').write_bytes(b'%PDF-not really')
+    assert booklet_pages(folder / 'booklet.pdf', tmp_path / 'none') is None

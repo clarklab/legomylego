@@ -60,11 +60,59 @@ const lerp = (a, b, t) => a + (b - a) * t;
 
 export function hasWebGL2() {
   try {
-    return !!document.createElement('canvas').getContext('webgl2');
+    const gl = document.createElement('canvas').getContext('webgl2');
+    // give the test context back at once: phones allow only a few, and the viewer needs one
+    gl?.getExtension('WEBGL_lose_context')?.loseContext();
+    return !!gl;
   } catch (e) {
     return false;
   }
 }
+
+// The new-piece outline (see _renderOutline): a full-screen pass's vertex shader, the distance
+// across (per row) to the nearest masked pixel, and the ring painted from it.
+const QUAD_VS = 'varying vec2 vUv; void main(){ vUv = uv; gl_Position = vec4(position.xy, 0.0, 1.0); }';
+const MAX_R = 16;
+const ACROSS_FS = `#define MAX_R ${MAX_R}
+  uniform sampler2D tMask; uniform vec2 texel; uniform float R;
+  varying vec2 vUv;
+  void main(){
+    float best = R + 1.0;
+    for (int i = -MAX_R; i <= MAX_R; i++) {
+      float fi = float(i);
+      if (abs(fi) > R) continue;
+      if (texture2D(tMask, vUv + vec2(fi * texel.x, 0.0)).r > 0.0) best = min(best, abs(fi));
+    }
+    gl_FragColor = vec4(best / (R + 1.0), 0.0, 0.0, 1.0);
+  }`;
+const RING_FS = `#define MAX_R ${MAX_R}
+  uniform sampler2D tMask; uniform sampler2D tDist; uniform vec2 texel;
+  uniform float R; uniform float W; uniform float E; uniform float S;
+  uniform vec3 cRing; uniform vec3 cEdge;
+  varying vec2 vUv;
+  bool other(float id, vec2 d){ float o = texture2D(tMask, vUv + d * texel).r; return o > 0.0 && abs(o - id) > 0.002; }
+  void main(){
+    float id = texture2D(tMask, vUv).r;
+    if (id > 0.0) {
+      // inside a new piece: a yellow line where another new piece is next to it
+      if (!(other(id, vec2(S, 0.0)) || other(id, vec2(-S, 0.0)) || other(id, vec2(0.0, S)) || other(id, vec2(0.0, -S)))) discard;
+      gl_FragColor = vec4(cRing, 1.0);
+      return;
+    }
+    float d2 = (R + 1.0) * (R + 1.0);
+    for (int j = -MAX_R; j <= MAX_R; j++) {
+      float fj = float(j);
+      if (abs(fj) > R) continue;
+      float h = texture2D(tDist, vUv + vec2(0.0, fj * texel.y)).r * (R + 1.0);
+      if (h < R + 0.5) d2 = min(d2, h * h + fj * fj);
+    }
+    float d = sqrt(d2);
+    float a = 1.0 - smoothstep(W + E - 0.5, W + E + 0.5, d);
+    if (a <= 0.0) discard;
+    gl_FragColor = vec4(mix(cRing, cEdge, smoothstep(W - 0.5, W + 0.5, d)), a);
+  }`;
+const ID_VS = 'void main(){ gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }';
+const ID_FS = 'uniform float uId; void main(){ gl_FragColor = vec4(uId / 255.0, 0.0, 0.0, 1.0); }';
 
 // When does each node first show up in the build? Main-model parts appear at their `join` step.
 // Parts of a sub-assembly appear while that sub-assembly is being built (its own steps), but only
@@ -140,13 +188,19 @@ export class ModelViewer {
     this.reducedMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
     const coarse = matchMedia('(pointer: coarse)').matches;
     this.lowPower = coarse || (navigator.hardwareConcurrency || 8) <= 4;
+    // Phones and tablets get a lighter renderer: plain PBR materials instead of the physical
+    // ones (smaller shaders), PCF shadows instead of VSM (no float render targets or blur
+    // passes), translucent parts as alpha and a lower pixel ratio. Phone GPU drivers have lost
+    // the context or crashed the tab on the full set.
+    this.mobile = coarse;
+    if (this.mobile) this.lite = true;
 
     const renderer = (this.renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: 'high-performance', preserveDrawingBuffer: false }));
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, this.lowPower ? 1.6 : 2));
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, this.mobile ? 1.5 : this.lowPower ? 1.6 : 2));
     renderer.toneMapping = THREE.NeutralToneMapping;      // colour-true, made for product views
     renderer.toneMappingExposure = 1.0;
     renderer.shadowMap.enabled = true;
-    renderer.shadowMap.type = THREE.VSMShadowMap;
+    renderer.shadowMap.type = this.mobile ? THREE.PCFShadowMap : THREE.VSMShadowMap;
     renderer.shadowMap.autoUpdate = false;
     if (this.lowPower) renderer.transmissionResolutionScale = 0.6;
     renderer.domElement.setAttribute('aria-label', '3D model viewer. Drag to orbit, scroll or pinch to zoom.');
@@ -156,10 +210,7 @@ export class ModelViewer {
     this.scene = new THREE.Scene();
     this.camera = new THREE.PerspectiveCamera(30, 1, 0.005, 50);
 
-    const pmrem = new THREE.PMREMGenerator(renderer);
-    this.envTex = pmrem.fromScene(studioEnvironment(), 0.06).texture;
-    pmrem.dispose();
-    this.scene.environment = this.envTex;
+    this._makeEnvironment();
 
     this.bgCanvas = document.createElement('canvas');
     this.bgCanvas.width = this.bgCanvas.height = 256;
@@ -171,7 +222,7 @@ export class ModelViewer {
     this.key = new THREE.DirectionalLight(0xffffff, 1.3);
     this.key.castShadow = true;
     this.key.shadow.mapSize.set(this.lowPower ? 1024 : 2048, this.lowPower ? 1024 : 2048);
-    this.key.shadow.radius = 10;
+    this.key.shadow.radius = this.mobile ? 3 : 10;
     this.key.shadow.blurSamples = 16;
     this.key.shadow.bias = -0.0005;
     this.scene.add(this.key, this.key.target);
@@ -224,13 +275,43 @@ export class ModelViewer {
       if (this.visible) this.requestRender();
     });
 
+    // A lost context (a phone short of GPU memory, a backgrounded tab) usually comes back: wait
+    // for it, rebuild what lived only on the GPU, and give up only if it stays away.
     renderer.domElement.addEventListener('webglcontextlost', (e) => {
       e.preventDefault();
-      this.host.dispatchEvent(new CustomEvent('viewer-error', { detail: 'The 3D view lost its graphics context. Reload the page to try again.' }));
+      this.lost = true;
+      if (this._raf) cancelAnimationFrame(this._raf);
+      this._raf = 0;
+      clearTimeout(this._lostTimer);
+      this._lostTimer = setTimeout(() => {
+        if (this.lost) this.host.dispatchEvent(new CustomEvent('viewer-error', { detail: 'The 3D view lost its graphics context. Reload the page to try again.' }));
+      }, 5000);
+    });
+    renderer.domElement.addEventListener('webglcontextrestored', () => {
+      this.lost = false;
+      clearTimeout(this._lostTimer);
+      this.envRT = null;                         // (its GL objects went with the old context)
+      this._makeEnvironment();                   // (a render target's pixels do not come back)
+      this.bgTex.needsUpdate = true;
+      this.renderer.shadowMap.needsUpdate = true;
+      this._last = 0;
+      this.requestRender();
     });
 
     this._initPicking();
+    this._initOutline();
     this.resize();
+  }
+
+  /** The studio reflections (a PMREM render target): made at the start and after a lost context. */
+  _makeEnvironment() {
+    const pmrem = new THREE.PMREMGenerator(this.renderer);
+    const old = this.envRT;
+    this.envRT = pmrem.fromScene(studioEnvironment(), 0.06);
+    this.envTex = this.envRT.texture;
+    pmrem.dispose();
+    old?.dispose();
+    this.scene.environment = this.envTex;
   }
 
   // ---------- loading ----------
@@ -470,9 +551,16 @@ export class ModelViewer {
       p.emissive = color.clone();
       p.emissiveIntensity = glowBase;
     }
-    m = new THREE.MeshPhysicalMaterial(p);
+    if (this.mobile) {
+      // the lighter profile: MeshStandardMaterial takes only these (transmission and the rest
+      // are physical-only; translucent parts go to alpha in lite mode below)
+      const keep = ['color', 'roughness', 'metalness', 'envMapIntensity', 'emissive', 'emissiveIntensity'];
+      m = new THREE.MeshStandardMaterial(Object.fromEntries(keep.filter((k) => k in p).map((k) => [k, p[k]])));
+    } else {
+      m = new THREE.MeshPhysicalMaterial(p);
+    }
     m.userData.trans = trans && !glow;
-    m.userData.full = { transmission: m.transmission, side: m.side };
+    m.userData.full = { transmission: m.transmission ?? 0, side: m.side };
     if (m.userData.trans && this.lite) this._liteMaterial(m, true);
     m.userData.glow = glow;
     m.userData.glowBase = glowBase;
@@ -544,6 +632,7 @@ export class ModelViewer {
       const mat = this._material(g.code, g.glow);
       const mesh = new THREE.InstancedMesh(g.geom, mat, g.pieces.length);
       mesh.frustumCulled = false;
+      mesh.layers.enable(1);                     // (layer 1: the parts, for the outline's mask)
       mesh.castShadow = !mat.userData.trans;
       mesh.receiveShadow = false;
       const batch = { mesh, pieces: g.pieces, appears: Int32Array.from(g.pieces, (pi) => this.nodeInfo[this.pieces[pi].node].appear), code: g.code };
@@ -562,6 +651,7 @@ export class ModelViewer {
     if (this.mech) this.setPose(this.poseT);
     this._applyGlow();
     this._refreshSelection();
+    this._refreshOutline();
     this.renderer.shadowMap.needsUpdate = true;
   }
 
@@ -600,13 +690,16 @@ export class ModelViewer {
     this.requestRender();
   }
 
-  /** Show every node whose appear step <= step. With animate, newly added parts drop into place. */
-  setStep(step, { animate = false } = {}) {
+  /** Show every node whose appear step <= step. With animate, newly added parts drop into place;
+   * with highlight, the parts this step adds get the booklet's yellow outline. */
+  setStep(step, { animate = false, highlight = false } = {}) {
     if (!this.pieces) return;
     const last = this.steps.length - 1;
     step = Math.max(0, Math.min(last, Math.round(step)));
     const prev = this.step;
     this.step = step;
+    this.highlight = !!highlight;
+    this._refreshOutline();
     // finish any running drops
     if (this.drops.size) {
       const done = [...this.drops.keys()];
@@ -927,10 +1020,118 @@ export class ModelViewer {
     }
   }
 
+  // ---------- new-piece outline ----------
+  // The parts a step adds get the booklet's ring: yellow with a thin dark edge outside, round
+  // what can be seen of them, and a yellow line where two new parts meet (two plates end to end
+  // read as one otherwise). In screen space, after the picture is drawn: a mask of the new
+  // parts' visible pixels (each part its own grey: the old parts drawn first, depth only), the
+  // distance to it worked out across and then down, and a pass that paints the ring over the
+  // picture.
+
+  _initOutline() {
+    const target = (depth) => new THREE.WebGLRenderTarget(1, 1, { minFilter: THREE.NearestFilter, magFilter: THREE.NearestFilter, generateMipmaps: false, depthBuffer: depth });
+    const pass = (fragmentShader, uniforms, extra = {}) => {
+      const mat = new THREE.ShaderMaterial({ uniforms, vertexShader: QUAD_VS, fragmentShader, depthTest: false, depthWrite: false, ...extra });
+      const scene = new THREE.Scene();
+      const quad = new THREE.Mesh(new THREE.PlaneGeometry(2, 2), mat);
+      quad.frustumCulled = false;
+      scene.add(quad);
+      return { scene, mat };
+    };
+    const o = (this.outline = { meshes: [], mats: [], group: new THREE.Group(), mask: target(true), dist: target(false), size: new THREE.Vector2(), clear: new THREE.Color(), cam: new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1) });
+    o.depth = new THREE.MeshBasicMaterial({ colorWrite: false });
+    const texel = { value: new THREE.Vector2() }, R = { value: 8 };
+    o.across = pass(ACROSS_FS, { tMask: { value: o.mask.texture }, texel, R });
+    o.ring = pass(RING_FS, {
+      tMask: { value: o.mask.texture }, tDist: { value: o.dist.texture }, texel, R,
+      W: { value: 4 }, E: { value: 1 }, S: { value: 1 },
+      cRing: { value: new THREE.Vector3(1, 205 / 255, 0) },          // the booklet's (255, 205, 0)
+      cEdge: { value: new THREE.Vector3(28 / 255, 28 / 255, 28 / 255) },
+    }, { transparent: true });
+    o.uniforms = o.ring.mat.uniforms;
+    this.scene.add(o.group);
+  }
+
+  /** The new parts' stand-ins for the mask: one per piece, drawn only on layer 2, each part's
+   * pieces in one grey so a part's own sub-pieces get no line between them. */
+  _refreshOutline() {
+    const o = this.outline;
+    if (!o) return;
+    o.group.clear();
+    o.meshes = [];
+    if (!this.highlight || !this.pieces || !this.pieceSlot) return;
+    const ids = new Map();
+    this.pieces.forEach((p, pi) => {
+      const slot = this.pieceSlot[pi];
+      if (!slot || this.nodeInfo[p.node].appear !== this.step) return;
+      if (!ids.has(p.node)) {
+        if (ids.size >= 250) return;
+        ids.set(p.node, ids.size + 1);
+      }
+      const k = ids.get(p.node);
+      o.mats[k] ||= new THREE.ShaderMaterial({ uniforms: { uId: { value: k } }, vertexShader: ID_VS, fragmentShader: ID_FS });
+      const mesh = new THREE.Mesh(p.geom, o.mats[k]);
+      mesh.matrixAutoUpdate = false;
+      mesh.frustumCulled = false;
+      mesh.layers.set(2);
+      o.group.add(mesh);
+      o.meshes.push({ mesh, slot });
+    });
+  }
+
+  _renderOutline() {
+    const o = this.outline, r = this.renderer;
+    const size = r.getDrawingBufferSize(o.size);
+    if (o.mask.width !== size.x || o.mask.height !== size.y) {
+      o.mask.setSize(size.x, size.y);
+      o.dist.setSize(size.x, size.y);
+    }
+    for (const { mesh, slot } of o.meshes) slot.batch.mesh.getMatrixAt(slot.index, mesh.matrix);   // (drops, poses)
+    const pr = r.getPixelRatio();
+    const u = o.uniforms;
+    u.texel.value.set(1 / size.x, 1 / size.y);
+    u.W.value = 2.5 * pr;                        // the ring, then its dark edge, in device pixels
+    u.E.value = 0.9 * pr;
+    u.S.value = Math.max(1, Math.round(pr));
+    u.R.value = Math.min(MAX_R - 1, Math.ceil(u.W.value + u.E.value + 1));
+
+    const background = this.scene.background, autoClear = r.autoClear, target = r.getRenderTarget();
+    const clearAlpha = r.getClearAlpha(), shadows = r.shadowMap.needsUpdate;
+    r.getClearColor(o.clear);
+    this.scene.background = null;
+    r.autoClear = false;
+    r.shadowMap.needsUpdate = false;
+    r.setClearColor(0x000000, 0);
+    // 1. the mask: the parts already there, depth only; then the new ones, each its own grey
+    r.setRenderTarget(o.mask);
+    r.clear();
+    for (const b of this.batches) b.mesh.count = upperBound(b.appears, this.step - 1);
+    this.scene.overrideMaterial = o.depth;
+    this.camera.layers.set(1);
+    r.render(this.scene, this.camera);
+    this.scene.overrideMaterial = null;
+    for (const b of this.batches) b.mesh.count = upperBound(b.appears, this.step);
+    this.camera.layers.set(2);
+    r.render(this.scene, this.camera);
+    this.camera.layers.set(0);
+    // 2. how far across each pixel is from the mask; 3. the ring, over the picture
+    r.setRenderTarget(o.dist);
+    r.clear();
+    r.render(o.across.scene, o.cam);
+    r.setRenderTarget(null);                     // (the canvas, whichever path drew the picture)
+    r.render(o.ring.scene, o.cam);
+
+    r.setRenderTarget(target);
+    this.scene.background = background;
+    r.autoClear = autoClear;
+    r.shadowMap.needsUpdate = shadows;
+    r.setClearColor(o.clear, clearAlpha);
+  }
+
   // ---------- loop ----------
 
   requestRender() {
-    if (!this._raf) this._raf = requestAnimationFrame(this._loop);
+    if (!this._raf && !this.lost) this._raf = requestAnimationFrame(this._loop);
   }
 
   _loop(now) {
@@ -946,8 +1147,10 @@ export class ModelViewer {
     if (this.controls.update(dt)) active = true;
     if (this.controls.autoRotate) active = true;
     this._flush();
+    if (this.lost) return;
     if (this.aoOn && this.composer) this.composer.render(dt);
     else this.renderer.render(this.scene, this.camera);
+    if (this.highlight && this.outline.meshes.length) this._renderOutline();
     if (active && this.visible) this.requestRender();
     else if (!this._raf) this._last = 0;
   }

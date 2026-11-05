@@ -13,6 +13,14 @@
       "url": "/quick/avocado/",
       "model": "/models/avocado/model.json?v=8d4a2ca6aa0a",
       "geometry": "/models/avocado/model.glb?v=becb7ece243f",
+      "booklet_pages": {
+        "count": 15,
+        "size": [
+          1400,
+          990
+        ],
+        "v": "379180d9884d"
+      },
       "brands": [
         "snacks"
       ]
@@ -30,6 +38,14 @@
       "url": "/quick/bat/",
       "model": "/models/bat/model.json?v=97b7ddd5306c",
       "geometry": "/models/bat/model.glb?v=c1573b3e653a",
+      "booklet_pages": {
+        "count": 10,
+        "size": [
+          1400,
+          990
+        ],
+        "v": "d5d4cc70a83c"
+      },
       "brands": [
         "spooky"
       ]
@@ -47,6 +63,14 @@
       "url": "/quick/birthday_cake/",
       "model": "/models/birthday_cake/model.json?v=39908db3eb3a",
       "geometry": "/models/birthday_cake/model.glb?v=61d0f99b4823",
+      "booklet_pages": {
+        "count": 12,
+        "size": [
+          1400,
+          990
+        ],
+        "v": "031c83092bf6"
+      },
       "brands": [
         "snacks"
       ]
@@ -64,6 +88,14 @@
       "url": "/quick/bmo/",
       "model": "/models/bmo/model.json?v=e325901cc494",
       "geometry": "/models/bmo/model.glb?v=82246a33a447",
+      "booklet_pages": {
+        "count": 12,
+        "size": [
+          1400,
+          990
+        ],
+        "v": "48408ad11d9c"
+      },
       "brands": [
         "adventure-time"
       ]
@@ -81,6 +113,14 @@
       "url": "/quick/bulbasaur/",
       "model": "/models/bulbasaur/model.json?v=0556e2db1a47",
       "geometry": "/models/bulbasaur/model.glb?v=10fefe93bb55",
+      "booklet_pages": {
+        "count": 16,
+        "size": [
+          1400,
+          990
+        ],
+        "v": "fc77270ac73f"
+      },
       "brands": [
         "pokemon",
         "nintendo"
@@ -99,6 +139,14 @@
       "url": "/quick/caldwell_mini/",
       "model": "/models/caldwell_mini/model.json?v=5ff5717105cf",
       "geometry": "/models/caldwell_mini/model.glb?v=982c063bf263",
+      "booklet_pages": {
+        "count": 14,
+        "size": [
+          1400,
+          990
+        ],
+        "v": "307811c5f7b7"
+      },
       "built": "2026-10-27"
     },
     {
@@ -114,6 +162,14 @@
       "url": "/quick/charmander/",
       "model": "/models/charmander/model.json?v=49876191ebf8",
       "geometry": "/models/charmander/model.glb?v=86bea5fb0a68",
+      "booklet_pages": {
+        "count": 10,
+        "size": [
+          1400,
+          990
+        ],
+        "v": "6537bc8d173f"
+      },
       "brands": [
         "pokemon",
         "nintendo"
@@ -134,6 +190,14 @@
       "url": "/quick/charmander_starter/",
       "model": "/models/charmander_starter/model.json?v=13b3c084e089",
       "geometry": "/models/charmander_starter/model.glb?v=19df1a30fa8c",
+      "booklet_pages": {
+        "count": 14,
+        "size": [
+          1400,
+          990
+        ],
+        "v": "88cefe484c17"
+      },
       "brands": [
         "pokemon",
         "nintendo"
@@ -152,6 +216,14 @@
       "url": "/quick/crow/",
       "model": "/models/crow/model.json?v=c043f013d356",
       "geometry": "/models/crow/model.glb?v=6bb08cf9b2c7",
+      "booklet_pages": {
+        "count": 14,
+        "size": [
+          1400,
+          990
+        ],
+        "v": "8aed0c73e544"
+      },
       "brands": [
         "spooky"
       ],
@@ -170,7 +242,15 @@
       "instructions": "/models/dinosaur/booklet.pdf?v=7f62f5bd5820",
       "url": "/quick/dinosaur/",
       "model": "/models/dinosaur/model.json?v=7dfe3a69a0af",
-      "geometry": "/models/dinosaur/model.glb?v=10fce31fc22f"
+      "geometry": "/models/dinosaur/model.glb?v=10fce31fc22f",
+      "booklet_pages": {
+        "count": 19,
+        "size": [
+          1400,
+          990
+        ],
+        "v": "7f62f5bd5820"
+      }
     },
     {
       "slug": "dracula",
@@ -185,6 +265,14 @@
       "url": "/quick/dracula/",
       "model": "/models/dracula/model.json?v=566444b3eaec",
       "geometry": "/models/dracula/model.glb?v=1d73a8d9a362",
+      "booklet_pages": {
+        "count": 12,
+        "size": [
+          1400,
+          990
+        ],
+        "v": "a5ab4c5407c5"
+      },
       "brands": [
         "spooky"
       ]
@@ -202,6 +290,14 @@
       "url": "/quick/finn_the_human/",
       "model": "/models/finn_the_human/model.json?v=e37ae9518896",
       "geometry": "/models/finn_the_human/model.glb?v=8b1c3ebcd0c3",
+      "booklet_pages": {
+        "count": 30,
+        "size": [
+          1400,
+          990
+        ],
+        "v": "43eb8af8444a"
+      },
       "brands": [
         "adventure-time"
       ]
@@ -219,6 +315,14 @@
       "url": "/quick/frankenstein/",
       "model": "/models/frankenstein/model.json?v=c77b98a16d3d",
       "geometry": "/models/frankenstein/model.glb?v=fa974ac48e22",
+      "booklet_pages": {
+        "count": 12,
+        "size": [
+          1400,
+          990
+        ],
+        "v": "340761fb0fe1"
+      },
       "brands": [
         "spooky"
       ],
@@ -238,6 +342,14 @@
       "url": "/quick/freddy_fazbear/",
       "model": "/models/freddy_fazbear/model.json?v=e77713521dea",
       "geometry": "/models/freddy_fazbear/model.glb?v=e81926d53f64",
+      "booklet_pages": {
+        "count": 22,
+        "size": [
+          1400,
+          990
+        ],
+        "v": "1a24b425609a"
+      },
       "brands": [
         "spooky"
       ],
@@ -256,6 +368,14 @@
       "url": "/quick/game_boy/",
       "model": "/models/game_boy/model.json?v=311e48829059",
       "geometry": "/models/game_boy/model.glb?v=6ea7b17c22f3",
+      "booklet_pages": {
+        "count": 11,
+        "size": [
+          1400,
+          990
+        ],
+        "v": "8f5be1b3785e"
+      },
       "brands": [
         "nintendo"
       ],
@@ -275,6 +395,14 @@
       "url": "/quick/garfield/",
       "model": "/models/garfield/model.json?v=12f521e1ca16",
       "geometry": "/models/garfield/model.glb?v=a9ae0c2427b8",
+      "booklet_pages": {
+        "count": 16,
+        "size": [
+          1400,
+          990
+        ],
+        "v": "f6338e7ccd5d"
+      },
       "designer": "zeldar",
       "source": "https://brickit.app/ideas/4938967d-9f27-44fc-b41a-ef581aeff4b8",
       "designer_steps": true
@@ -292,6 +420,14 @@
       "url": "/quick/guardian/",
       "model": "/models/guardian/model.json?v=2391f74ebca8",
       "geometry": "/models/guardian/model.glb?v=5307d4fd4ef1",
+      "booklet_pages": {
+        "count": 25,
+        "size": [
+          1400,
+          990
+        ],
+        "v": "0e34a617031b"
+      },
       "brands": [
         "nintendo"
       ]
@@ -309,6 +445,14 @@
       "url": "/quick/jake_the_dog/",
       "model": "/models/jake_the_dog/model.json?v=296add6934db",
       "geometry": "/models/jake_the_dog/model.glb?v=04bd1cfe6eaf",
+      "booklet_pages": {
+        "count": 26,
+        "size": [
+          1400,
+          990
+        ],
+        "v": "f44437c4d60b"
+      },
       "brands": [
         "adventure-time"
       ]
@@ -326,6 +470,14 @@
       "url": "/quick/luigi/",
       "model": "/models/luigi/model.json?v=be3f826f254d",
       "geometry": "/models/luigi/model.glb?v=7e1d5bccf840",
+      "booklet_pages": {
+        "count": 14,
+        "size": [
+          1400,
+          990
+        ],
+        "v": "b9f520a33357"
+      },
       "brands": [
         "nintendo"
       ],
@@ -345,6 +497,14 @@
       "url": "/quick/magikarp/",
       "model": "/models/magikarp/model.json?v=4ec39ab063f1",
       "geometry": "/models/magikarp/model.glb?v=0d1b1ff49564",
+      "booklet_pages": {
+        "count": 16,
+        "size": [
+          1400,
+          990
+        ],
+        "v": "8113050ca8d1"
+      },
       "brands": [
         "pokemon",
         "nintendo"
@@ -365,6 +525,14 @@
       "url": "/quick/mario/",
       "model": "/models/mario/model.json?v=f7e74a34b140",
       "geometry": "/models/mario/model.glb?v=7e1d5bccf840",
+      "booklet_pages": {
+        "count": 14,
+        "size": [
+          1400,
+          990
+        ],
+        "v": "3bda6de97b9a"
+      },
       "brands": [
         "nintendo"
       ],
@@ -384,6 +552,14 @@
       "url": "/quick/moby_dick/",
       "model": "/models/moby_dick/model.json?v=3a2c51f8a345",
       "geometry": "/models/moby_dick/model.glb?v=d3dc9e3c90a7",
+      "booklet_pages": {
+        "count": 12,
+        "size": [
+          1400,
+          990
+        ],
+        "v": "230d2d26b0e0"
+      },
       "designer": "d.e.n.n.i.s",
       "source": "https://brickit.app/ideas/527f1c4e-e90c-4600-8a03-e480011a26e6",
       "designer_steps": true
@@ -401,6 +577,14 @@
       "url": "/quick/onkey/",
       "model": "/models/onkey/model.json?v=1d9bdc9184f1",
       "geometry": "/models/onkey/model.glb?v=f2160e419f64",
+      "booklet_pages": {
+        "count": 17,
+        "size": [
+          1400,
+          990
+        ],
+        "v": "91ff1dab0930"
+      },
       "designer": "theroldangrace",
       "source": "https://www.instagram.com/p/DedZYEepfkj/"
     },
@@ -417,6 +601,14 @@
       "url": "/quick/pez_darth_vader/",
       "model": "/models/pez_darth_vader/model.json?v=15f8895ce27c",
       "geometry": "/models/pez_darth_vader/model.glb?v=5dad2051e4a0",
+      "booklet_pages": {
+        "count": 15,
+        "size": [
+          1400,
+          990
+        ],
+        "v": "1dae53d6f924"
+      },
       "brands": [
         "pez",
         "star-wars"
@@ -435,6 +627,14 @@
       "url": "/quick/pez_stormtrooper/",
       "model": "/models/pez_stormtrooper/model.json?v=d6d20d5aa828",
       "geometry": "/models/pez_stormtrooper/model.glb?v=1744ae20e925",
+      "booklet_pages": {
+        "count": 15,
+        "size": [
+          1400,
+          990
+        ],
+        "v": "7a56cb856baa"
+      },
       "brands": [
         "pez",
         "star-wars"
@@ -453,6 +653,14 @@
       "url": "/quick/pez_yoda/",
       "model": "/models/pez_yoda/model.json?v=df637f0b9b99",
       "geometry": "/models/pez_yoda/model.glb?v=2eab64f102a5",
+      "booklet_pages": {
+        "count": 16,
+        "size": [
+          1400,
+          990
+        ],
+        "v": "6fe27e239f98"
+      },
       "brands": [
         "pez",
         "star-wars"
@@ -471,6 +679,14 @@
       "url": "/quick/pikachu/",
       "model": "/models/pikachu/model.json?v=4560e8529073",
       "geometry": "/models/pikachu/model.glb?v=318ab3dcdc0e",
+      "booklet_pages": {
+        "count": 11,
+        "size": [
+          1400,
+          990
+        ],
+        "v": "912151544e6f"
+      },
       "brands": [
         "pokemon",
         "nintendo"
@@ -490,6 +706,14 @@
       "url": "/quick/porygon/",
       "model": "/models/porygon/model.json?v=51cab8101711",
       "geometry": "/models/porygon/model.glb?v=a46e853c1f37",
+      "booklet_pages": {
+        "count": 12,
+        "size": [
+          1400,
+          990
+        ],
+        "v": "d567eb0f2aab"
+      },
       "brands": [
         "pokemon",
         "nintendo"
@@ -510,6 +734,14 @@
       "url": "/quick/pumpkin/",
       "model": "/models/pumpkin/model.json?v=6738c2d82cff",
       "geometry": "/models/pumpkin/model.glb?v=41b0f2c90b61",
+      "booklet_pages": {
+        "count": 18,
+        "size": [
+          1400,
+          990
+        ],
+        "v": "2f8b7c6e0092"
+      },
       "brands": [
         "spooky"
       ],
@@ -529,6 +761,14 @@
       "url": "/quick/squirtle/",
       "model": "/models/squirtle/model.json?v=f74423102cd3",
       "geometry": "/models/squirtle/model.glb?v=73f173a0bab4",
+      "booklet_pages": {
+        "count": 16,
+        "size": [
+          1400,
+          990
+        ],
+        "v": "5f7551cc97de"
+      },
       "brands": [
         "pokemon",
         "nintendo"
@@ -547,6 +787,14 @@
       "url": "/quick/taco/",
       "model": "/models/taco/model.json?v=b7e38ede6a99",
       "geometry": "/models/taco/model.glb?v=ce5243fde9d0",
+      "booklet_pages": {
+        "count": 12,
+        "size": [
+          1400,
+          990
+        ],
+        "v": "0f928322195f"
+      },
       "brands": [
         "snacks"
       ]
@@ -564,6 +812,14 @@
       "url": "/quick/watermelon_ice_lolly/",
       "model": "/models/watermelon_ice_lolly/model.json?v=83c861372677",
       "geometry": "/models/watermelon_ice_lolly/model.glb?v=498362a0cc5b",
+      "booklet_pages": {
+        "count": 13,
+        "size": [
+          1400,
+          990
+        ],
+        "v": "70953717d202"
+      },
       "brands": [
         "snacks"
       ]
@@ -581,6 +837,14 @@
       "url": "/quick/xenomorph/",
       "model": "/models/xenomorph/model.json?v=5602f987806a",
       "geometry": "/models/xenomorph/model.glb?v=933bc79f188c",
+      "booklet_pages": {
+        "count": 24,
+        "size": [
+          1400,
+          990
+        ],
+        "v": "8937acb1b16d"
+      },
       "brands": [
         "spooky"
       ],

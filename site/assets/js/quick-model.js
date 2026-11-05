@@ -92,14 +92,65 @@ function renderDownloads() {
   renderShopping(files);
 }
 
+// A PDF shows inside the page only where the browser has its own PDF viewer for it: desktop
+// browsers. Phones (Chrome on Android shows nothing, iOS only the first page) get the booklet's
+// pages as pictures instead, made by tools/quick_site.py, to swipe through.
+const inlinePDF = navigator.pdfViewerEnabled !== false && !matchMedia('(pointer: coarse)').matches;
+
 function renderBooklet(pdf) {
   $('#instruction-booklet').hidden = !pdf;
   $('#qd-booklet-jump').hidden = !pdf;
   if (!pdf || state.bookletURL === pdf) return;
   state.bookletURL = pdf;
   $('#qd-booklet-open').href = pdf;
-  $('#qd-booklet-frame').title = `${state.entry.name} building instructions`;
-  $('#qd-booklet-frame').src = `${pdf}#view=FitH`;
+  const pages = state.entry.booklet_pages;
+  if (pages?.count && !inlinePDF) { renderPages(pages); return; }
+  const frame = $('#qd-booklet-frame');
+  frame.hidden = false;
+  frame.title = `${state.entry.name} building instructions`;
+  frame.src = `${pdf}#view=FitH`;
+}
+
+function renderPages({ count, size, v }) {
+  const track = $('#qd-pages-track');
+  const base = `/models/${encodeURIComponent(state.entry.slug)}/pages/`;
+  const url = (i) => `${base}p${String(i + 1).padStart(3, '0')}.webp?v=${encodeURIComponent(v)}`;
+  const [w, h] = size || [1400, 990];
+  // (a tap opens the page by itself, to zoom in on)
+  track.innerHTML = Array.from({ length: count }, (_, i) => `<figure class="qd-page"><a href="${esc(url(i))}" target="_blank" rel="noopener"><img width="${w}" height="${h}" alt="Booklet page ${i + 1} of ${count}" decoding="async" data-src="${esc(url(i))}"></a></figure>`).join('');
+  const images = $$('img', track);
+  const load = (i) => { const img = images[i]; if (img && !img.src) img.src = img.dataset.src; };
+  let index = -1, want = 0, settling = 0;
+  const show = (i) => {
+    i = Math.max(0, Math.min(count - 1, i));
+    if (i === index) return;
+    index = i;
+    for (let k = i - 1; k <= i + 2; k++) load(k);
+    $('#qd-pages-count').textContent = `Page ${i + 1} of ${count}`;
+    $('#qd-pages-prev').disabled = i === 0;
+    $('#qd-pages-next').disabled = i === count - 1;
+  };
+  // The buttons keep their own target, so two quick taps go two pages; a swipe resets it
+  const go = (i) => {
+    want = Math.max(0, Math.min(count - 1, i));
+    clearTimeout(settling);
+    settling = setTimeout(() => { settling = 0; }, 700);
+    track.scrollTo({ left: want * track.clientWidth, behavior: reducedMotion ? 'auto' : 'smooth' });
+  };
+  let frame = 0;
+  track.addEventListener('scroll', () => {
+    if (frame) return;
+    frame = requestAnimationFrame(() => {
+      frame = 0;
+      show(Math.round(track.scrollLeft / Math.max(1, track.clientWidth)));
+      if (!settling) want = index;
+    });
+  }, { passive: true });
+  $('#qd-pages-prev').addEventListener('click', () => go(want - 1));
+  $('#qd-pages-next').addEventListener('click', () => go(want + 1));
+  $('#qd-booklet-frame').hidden = true;
+  $('#qd-pages').hidden = false;
+  show(0);
 }
 
 function fmtDay(iso) {
@@ -193,7 +244,9 @@ function showStep(index, complete = false) {
   const subassembly = step.submodel !== steps.at(-1).submodel;
   $('#qd-step-label').textContent = complete ? 'Ready when you are' : `Step ${state.step + 1} of ${steps.length}`;
   $('#qd-caption').textContent = complete ? 'One brick at a time.' : (step.caption || (subassembly ? `Build the ${humanize(step.submodel).toLowerCase()}` : `Build step ${state.step + 1}`)).replace(/^\d+\s*[.·]\s*/, '');
-  $('#qd-step-description').textContent = complete ? 'Turn the model around, then follow the steps at your own pace.' : subassembly ? 'Build this small section before adding it to the model.' : state.step === steps.length - 1 ? 'The last pieces are in. Your little build is complete.' : 'Use the view to see where each piece fits. You can turn it around at any step.';
+  const outlined = state.viewer ? 'The new pieces are outlined in yellow. ' : '';
+  $('#qd-step-description').textContent = complete ? 'Turn the model around, then follow the steps at your own pace.' : subassembly ? `${outlined}Build this small section before adding it to the model.` : state.step === steps.length - 1 ? `${outlined}The last pieces are in. Your little build is complete.` : `${outlined}Turn the model around at any step to see where they fit.`;
+  $('#qd-step-body').scrollTop = 0;
   $('#qd-start').hidden = !complete;
   $('#qd-complete').hidden = complete;
   $('#qd-step-controls').hidden = complete;
@@ -203,7 +256,14 @@ function showStep(index, complete = false) {
   $('#qd-progress-fill').style.setProperty('--qd-progress', `${((state.step + 1) / steps.length) * 100}%`);
   $('#qd-part-tip').hidden = true;
   renderStepParts();
-  state.viewer?.setStep(state.step, { animate: !complete && !reducedMotion });
+  fadeStepBody();
+  state.viewer?.setStep(state.step, { animate: !complete && !reducedMotion, highlight: !complete });
+}
+
+// When a step's words and pieces run past the panel, its lower edge fades until scrolled to the end.
+function fadeStepBody() {
+  const body = $('#qd-step-body');
+  body.classList.toggle('qd-more', body.scrollHeight - body.scrollTop - body.clientHeight > 2);
 }
 
 function setupSteps() {
@@ -222,6 +282,8 @@ function setupSteps() {
   $('#qd-prev').addEventListener('click', () => showStep(state.step - 1));
   $('#qd-next').addEventListener('click', () => showStep(state.step + 1));
   $('#qd-step-select').addEventListener('change', (event) => showStep(Number(event.target.value)));
+  $('#qd-step-body').addEventListener('scroll', fadeStepBody, { passive: true });
+  new ResizeObserver(fadeStepBody).observe($('#qd-step-body'));
   $('#qd-caption').setAttribute('aria-live', 'polite');
   showStep(0);
 }
@@ -270,7 +332,7 @@ async function loadViewer() {
     await viewer.load(webURL(state.entry.geometry) || modelAsset(state.data.files.glb), state.data);
     // A context-loss event may have switched to fallback while the file loaded.
     if (state.viewer !== viewer) return;
-    viewer.setStep(state.step);
+    showStep(state.step, state.complete);        // (the step, its outline and its words, now with the view)
     host.dataset.ready = '1';
     host.setAttribute('aria-busy', 'false');
     $('#qd-poster').hidden = true;

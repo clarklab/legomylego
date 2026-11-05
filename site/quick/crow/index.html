@@ -14,7 +14,7 @@
 <meta property="og:description" content="A little black crow in 34 pieces, 7 cm from beak to tail: a pointed beak, half-closed eyes, two wings and two tail feathers on clips, and yellow feet. Designed by Qrys.And.Reading.">
 <meta property="og:url" content="https://bricks.superfun.games/quick/crow/">
 <meta name="twitter:card" content="summary_large_image">
-<meta property="og:image" content="https://bricks.superfun.games/models/crow/quick_poster.jpg?v=856381f657">
+<meta property="og:image" content="https://bricks.superfun.games/models/crow/quick_poster.jpg?v=ea26a883f65a">
 <!-- meta:end -->
 <meta name="theme-color" content="#fffdf5" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#191919" media="(prefers-color-scheme: dark)">
@@ -71,20 +71,28 @@
       <div class="qd-build-panel">
         <div id="qd-stats" class="qd-stats" aria-label="Build details"></div>
         <div class="qd-step-heading"><p id="qd-step-label" class="eyebrow">A little build, a lot of character</p><button id="qd-complete" type="button" class="qd-text-button" hidden>View complete model</button></div>
-        <h2 id="qd-caption">One brick at a time.</h2>
-        <p id="qd-step-description" class="qd-step-description">Turn the model around, then follow the steps at your own pace.</p>
-        <button id="qd-start" type="button" class="btn qd-start" disabled>Start building<i data-icon="arrowRight"></i></button>
-        <div id="qd-step-controls" class="qd-step-controls" hidden>
-          <div class="qd-step-navigation"><button id="qd-prev" type="button" class="qd-step-button"><i data-icon="prev"></i>Previous</button><label class="qd-jump"><span class="visually-hidden">Go to build step</span><select id="qd-step-select" aria-label="Go to build step"></select></label><button id="qd-next" type="button" class="qd-step-button">Next<i data-icon="next"></i></button></div>
-          <div class="qd-progress" aria-hidden="true"><span id="qd-progress-fill"></span></div>
+        <div id="qd-step-body" class="qd-step-body">
+          <h2 id="qd-caption">One brick at a time.</h2>
+          <p id="qd-step-description" class="qd-step-description">Turn the model around, then follow the steps at your own pace.</p>
+          <section id="qd-step-parts" class="qd-step-parts" aria-labelledby="qd-parts-title" hidden><h3 id="qd-parts-title">Add these pieces</h3><ul id="qd-parts-list" role="list"></ul></section>
+          <p id="qd-part-tip" class="qd-part-tip" role="status" hidden></p>
         </div>
-        <section id="qd-step-parts" class="qd-step-parts" aria-labelledby="qd-parts-title" hidden><h3 id="qd-parts-title">Add these pieces</h3><ul id="qd-parts-list" role="list"></ul></section>
-        <p id="qd-part-tip" class="qd-part-tip" role="status" hidden></p>
+        <div class="qd-step-foot">
+          <button id="qd-start" type="button" class="btn qd-start" disabled>Start building<i data-icon="arrowRight"></i></button>
+          <div id="qd-step-controls" class="qd-step-controls" hidden>
+            <div class="qd-step-navigation"><button id="qd-prev" type="button" class="qd-step-button"><i data-icon="prev"></i>Previous</button><label class="qd-jump"><span class="visually-hidden">Go to build step</span><select id="qd-step-select" aria-label="Go to build step"></select></label><button id="qd-next" type="button" class="qd-step-button">Next<i data-icon="next"></i></button></div>
+            <div class="qd-progress" aria-hidden="true"><span id="qd-progress-fill"></span></div>
+          </div>
+        </div>
       </div>
     </section>
     <section id="instruction-booklet" class="qd-booklet" aria-labelledby="qd-booklet-title" hidden>
       <div class="qd-section-heading"><div><p class="eyebrow">Follow along</p><h2 id="qd-booklet-title">Instruction booklet</h2></div><a id="qd-booklet-open" class="qd-download-link" target="_blank" rel="noopener"><i data-icon="external"></i>Open PDF</a></div>
-      <iframe id="qd-booklet-frame" class="qd-booklet-frame" title="Building instruction booklet" loading="lazy"></iframe>
+      <iframe id="qd-booklet-frame" class="qd-booklet-frame" title="Building instruction booklet" loading="lazy" hidden></iframe>
+      <div id="qd-pages" class="qd-pages" hidden>
+        <div id="qd-pages-track" class="qd-pages-track" tabindex="0" role="region" aria-label="Booklet pages: swipe or scroll sideways"></div>
+        <div class="qd-pages-bar"><button id="qd-pages-prev" type="button" class="qd-step-button"><i data-icon="prev"></i>Previous</button><p id="qd-pages-count" class="qd-pages-count" aria-live="polite"></p><button id="qd-pages-next" type="button" class="qd-step-button">Next<i data-icon="next"></i></button></div>
+      </div>
       <p class="qd-resource-note">You can also follow the interactive steps above or open the PDF in its own tab.</p>
     </section>
     <section id="get-pieces" class="qd-shopping" aria-labelledby="qd-shopping-title" hidden>
