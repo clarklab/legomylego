@@ -1,0 +1,138 @@
+0 FILE the_thing.ldr
+0 The Thing
+0 Name: the_thing.ldr
+0 Author: brickkit
+
+0 // The shorts: a blue 2 x 3 plate
+1 1 0 -32 0 1 0 0 0 1 0 0 0 1 3021.dat
+0 STEP
+0 // Under it a blue 1 x 2 plate at each end, front to back
+1 1 -20 -24 0 0 0 1 0 1 0 -1 0 0 3023b.dat
+1 1 20 -24 0 0 0 1 0 1 0 -1 0 0 3023b.dat
+0 STEP
+0 // An orange 1 x 2 plate under each: the legs
+1 25 -20 -16 0 0 0 1 0 1 0 -1 0 0 3023b.dat
+1 25 20 -16 0 0 0 1 0 1 0 -1 0 0 3023b.dat
+0 STEP
+0 // An orange 1 x 2 plate under each: the legs
+1 25 -20 -8 0 0 0 1 0 1 0 -1 0 0 3023b.dat
+1 25 20 -8 0 0 0 1 0 1 0 -1 0 0 3023b.dat
+0 STEP
+0 // The chest: an inverted slope on each end of the shorts, sloping out
+1 25 -20 -56 0 0 0 1 0 1 0 -1 0 0 3660b.dat
+1 25 20 -56 0 0 0 -1 0 1 0 1 0 0 3660b.dat
+0 STEP
+0 // A 1 x 2 brick between them
+1 25 0 -56 0 0 0 1 0 1 0 -1 0 0 3004.dat
+0 STEP
+0 // A technic brick on each end, its hole out to the side
+1 25 -40 -80 0 0 0 1 0 1 0 -1 0 0 3700.dat
+1 25 40 -80 0 0 0 1 0 1 0 -1 0 0 3700.dat
+0 STEP
+0 // A 2 x 3 brick between them
+1 25 0 -80 0 1 0 0 0 1 0 0 0 1 3002.dat
+0 STEP
+0 // A 2 x 3 plate across the middle and a 1 x 2 plate on each end
+1 25 -40 -88 0 0 0 1 0 1 0 -1 0 0 3023b.dat
+1 25 0 -88 0 1 0 0 0 1 0 0 0 1 3021.dat
+1 25 40 -88 0 0 0 1 0 1 0 -1 0 0 3023b.dat
+0 STEP
+0 // A 1 x 1 plate at the back of the middle
+1 25 0 -96 10 1 0 0 0 1 0 0 0 1 3024.dat
+0 STEP
+0 // A cheese slope on it, sloping down to the back
+1 25 0 -96 10 -1 0 0 0 1 0 0 0 -1 54200.dat
+0 STEP
+0 // A corner slope on each side, its stud at the inner front corner
+1 25 -20 -112 -10 -1 0 0 0 1 0 0 0 -1 3045.dat
+1 25 20 -112 -10 0 0 -1 0 1 0 1 0 0 3045.dat
+0 STEP
+0 // A technic brick in front between them, its hole to the front
+1 25 0 -112 -10 1 0 0 0 1 0 0 0 1 6541.dat
+0 STEP
+0 // The right arm: a 1 x 1 plate, its stud in the technic brick's hole
+1 25 -50 -70 0 0 -1 0 0.34202 0 0.939693 -0.939693 0 0.34202 3024.dat
+0 STEP
+0 // A 2 x 2 corner plate on it, its corner down, its other end forward
+1 25 -58 -51.2061 6.8404 0 -1 0 -0.939693 0 0.34202 -0.34202 0 -0.939693 2420.dat
+0 STEP
+0 // A plate with a clip on the front of the corner plate: the hand
+1 25 -66 -44.3657 -11.9534 0 -1 0 0.939693 0 -0.34202 0.34202 0 0.939693 61252.dat
+0 STEP
+0 // A 1 x 2 plate on the upper arm
+1 25 -66 -60.6031 3.4202 0 -1 0 -0.939693 0 0.34202 -0.34202 0 -0.939693 3023b.dat
+0 STEP
+0 // The left arm: a 1 x 1 plate, its stud in the technic brick's hole
+1 25 50 -70 0 0 1 0 -0.258819 0 0.965926 0.965926 0 0.258819 3024.dat
+0 STEP
+0 // A 2 x 2 corner plate on it, its corner down, its other end forward
+1 25 58 -50.6815 5.1764 0 1 0 0.258819 0 -0.965926 -0.965926 0 -0.258819 2420.dat
+0 STEP
+0 // A 1 x 2 plate on the upper arm, and a plate with a clip in front: the hand
+1 25 66 -60.3407 2.5882 0 1 0 -0.965926 0 -0.258819 -0.258819 0 0.965926 3023b.dat
+1 25 66 -45.5051 -14.1421 0 1 0 -0.965926 0 -0.258819 -0.258819 0 0.965926 61252.dat
+0 STEP
+0 // A half pin in the hole at the front
+1 71 0 -102 -20 0 0 1 0 1 0 -1 0 0 4274.dat
+0 STEP
+0 // A bracket on the half pin: its 1 x 2 plate upright, studs to the front, and its 2 x 2 plate level, studs down
+1 25 10 -102 -28 1 0 0 0 0 -1 0 1 0 99207.dat
+0 STEP
+0 // Under the front of the bracket: a black 1 x 1 plate (the mouth) and an orange one
+1 0 0 -80 -50 -1 0 0 0 -1 0 0 0 1 3024.dat
+1 25 20 -80 -50 -1 0 0 0 -1 0 0 0 1 3024.dat
+0 STEP
+0 // Under them a 1 x 1 plate and a bracket, its stud out to the side: the ear
+1 25 0 -72 -50 -1 0 0 0 -1 0 0 0 1 3024.dat
+1 25 20 -72 -50 0 0 -1 0 -1 0 -1 0 0 36841.dat
+0 STEP
+0 // A 1 x 3 plate under them, out a stud to the left
+1 25 0 -64 -50 -1 0 0 0 -1 0 0 0 1 3623.dat
+0 STEP
+0 // On the end of it a bracket, its stud out to the side (the other ear), and a 1 x 1 plate on that
+1 25 -20 -72 -50 0 0 1 0 -1 0 1 0 0 36841.dat
+1 25 -20 -80 -50 -1 0 0 0 -1 0 0 0 1 3024.dat
+0 STEP
+0 // A bracket on them beside the first, the same way round
+1 25 -20 -102 -28 1 0 0 0 0 -1 0 1 0 73825.dat
+0 STEP
+0 // Three cheese slopes, upside down, in a row in the gap behind the face: one behind each column of the face, the thin end to the chest. The face hides the left two; only the right one shows
+1 25 -20 -88 -30 1 0 0 0 -1 0 0 0 -1 54200.dat
+1 25 0 -88 -30 1 0 0 0 -1 0 0 0 -1 54200.dat
+1 25 20 -88 -30 1 0 0 0 -1 0 0 0 -1 54200.dat
+0 STEP
+0 // Three bricks on their backs on the brackets' studs, studs to the front: a brick with a side stud at each end, its side stud up
+1 25 -20 -102 -52 -1 0 0 0 0 1 0 1 0 87087.dat
+1 25 0 -102 -52 -1 0 0 0 0 1 0 1 0 3005.dat
+1 25 20 -102 -52 -1 0 0 0 0 1 0 1 0 87087.dat
+0 STEP
+0 // The eyes
+1 0 -20 -102 -60 1 0 0 0 0 -1 0 1 0 98138pz0.dat
+1 0 20 -102 -60 1 0 0 0 0 -1 0 1 0 98138pz0.dat
+0 STEP
+0 // The nose: a cheese slope, thick end down
+1 25 0 -102 -52 -1 0 0 0 0 1 0 1 0 54200.dat
+0 STEP
+0 // A 1 x 2 plate on each side stud, its middle on the stud, running front to back
+1 25 -20 -120 -42 0 0 1 0 1 0 -1 0 0 3023b.dat
+1 25 20 -120 -42 0 0 1 0 1 0 -1 0 0 3023b.dat
+0 STEP
+0 // A 1 x 3 plate across their backs
+1 25 0 -128 -32 1 0 0 0 1 0 0 0 1 3623.dat
+0 STEP
+0 // A bracket on the front of each, hanging down over the eye
+1 25 -20 -128 -52 1 0 0 0 1 0 0 0 1 36841.dat
+1 25 20 -128 -52 1 0 0 0 1 0 0 0 1 36841.dat
+0 STEP
+0 // The top of the head: a 1 x 2 plate in the middle
+1 25 0 -136 -42 0 0 1 0 1 0 -1 0 0 3023b.dat
+0 STEP
+0 // And one each side
+1 25 -20 -136 -42 0 0 1 0 1 0 -1 0 0 3023b.dat
+1 25 20 -136 -42 0 0 1 0 1 0 -1 0 0 3023b.dat
+0 STEP
+0 // The brow: a 1 x 2 tile on each bracket, its middle on the stud
+1 25 -20 -118 -74 -1 0 0 0 0 1 0 1 0 3069b.dat
+1 25 20 -118 -74 -1 0 0 0 0 1 0 1 0 3069b.dat
+0 STEP
+0 NOFILE

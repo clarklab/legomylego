@@ -30,6 +30,11 @@
   "bricklink": "3069",
   "note": "Tile 1 x 2 with groove: BrickLink's number is now 3069 (its wanted-list upload accepted 3069 and has no 3069b price guide; checked Oct 2026)"
  },
+ "3660b": {
+  "rebrickable": "3660",
+  "bricklink": "3660",
+  "note": "Slope 45 2 x 2 inverted: LDraw's 3660b is the mould LEGO now sells as 3660 (ovoid bottom pin; element 4118829 in Orange, which 3660b itself never had); the lists name what is sold (2026-11-04)"
+ },
  "4287b": {
   "rebrickable": "4287c",
   "bricklink": "4287",

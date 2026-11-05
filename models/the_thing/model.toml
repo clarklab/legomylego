@@ -1,0 +1,42 @@
+[model]
+name = "The Thing"
+design = "design.py"
+description = "The Thing, the Fantastic Four's rock-skinned strongman, in 58 pieces, 6 cm tall: a grumpy brow over BrickHeadz eyes, a cheese-slope nose, an ear on each side, blue shorts and two clip hands on arms that turn at the shoulder. zeldar's design, built as zeldar's instructions build it."
+designer = "zeldar"           # someone else's design: who made it (the booklet and its page
+source = "https://brickit.app/ideas/2d4e49a5-3670-42b3-a2d3-39c16475d11a"   # say so), and
+#                             # where the original is; with no name to give,
+# credit = "..."              # our own sentence for it
+designer_steps = true         # the steps are the designer's own, followed page by page
+# brands = ["pokemon"]        # the logo cards on the Quick Bricks page it is filed under: a
+#                             # logo's file name in brands/ (more than one is fine; none is too)
+collection = "quick_bricks"
+
+[palette]                     # role -> a real colour name; design.py places parts by role
+orange = "Orange"
+blue = "Blue"                 # the shorts
+black = "Black"               # the eyes and the mouth
+pin = "Light Bluish Gray"     # the half pin the head hangs on, out of sight: LEGO never made it in
+                              # orange (zeldar's app shows it orange)
+
+[booklet]
+subtitle = "The Fantastic Four's strongman, grumpy brow and all, in 58 pieces. A design by zeldar."
+intro = "Start with the blue shorts and build the legs down from them, then the chest up from the waist: two inverted slopes make it wider than the hips. Each arm turns on a stud in a technic brick's hole. The head hangs in front of the chest on a half pin and a bracket, the face built upside down under it, and the brow sits half a stud forward: a 1 x 2 plate or tile goes on a hollow stud by the tube in the middle of its underside."
+notes = ["The arms turn on one stud each: let them hang a little back from straight down, as in the pictures.", "The brow plates and the brow tiles go on centred on one stud each: press the tube under the middle of the plate or tile into the hollow stud.", "The head is heavy and out in front: The Thing stands, but tips forward easily. Stand him on a flat table."]
+
+[checks]
+enabled = ["real_elements", "connections", "collisions", "buildability", "stability",
+           "mechanism", "electrics", "technique"]
+[checks.stability]            # zeldar's head hangs out in front of 1 x 2 feet: the centre of mass
+min_tilt_deg = 2              # is 3.4 LDU inside their front edge, so he tips forward at about
+                              # 2.6 degrees (the check wants 10). It is the design: kept as is
+
+# Quick Bricks video (brickkit quick the_thing). Pick a workshop the last few models did not
+# use (brickkit status shows theirs); under 25 pieces the parts start laid out on the table
+[quick]
+surface = "blue_mat"          # orange reads true on the blue mat (on kraft it turns yellow)
+room = "bookshelf"            # workbench | studio | window | night | bookshelf
+light = "day"                 # morning | day | evening
+seconds = 14
+highlight = ["eyes", "brow"]  # the eyes going on, then the brow coming down over them
+close_ups = 2
+music = false                 # just the clicks

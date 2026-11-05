@@ -3163,6 +3163,178 @@
     }
    }
   },
+  "the_thing": {
+   "files": {
+    "booklet.pdf": {
+     "v": "45fe08e5fb",
+     "size": 4195993
+    },
+    "bricklink_wanted.xml": {
+     "v": "bc20f4c2a6",
+     "size": 2225
+    },
+    "model.glb": {
+     "v": "31d138cb99",
+     "size": 620672
+    },
+    "model.json": {
+     "v": "0016497ac5",
+     "size": 19138
+    },
+    "pages/p001.webp": {
+     "v": "74c2ee1958",
+     "size": 29728
+    },
+    "pages/p002.webp": {
+     "v": "2f33e3d289",
+     "size": 91832
+    },
+    "pages/p003.webp": {
+     "v": "904c2d4688",
+     "size": 53354
+    },
+    "pages/p004.webp": {
+     "v": "dab4e43e68",
+     "size": 12594
+    },
+    "pages/p005.webp": {
+     "v": "28b65a0b2e",
+     "size": 29238
+    },
+    "pages/p006.webp": {
+     "v": "ac726da75a",
+     "size": 35090
+    },
+    "pages/p007.webp": {
+     "v": "c74fc6d16f",
+     "size": 34962
+    },
+    "pages/p008.webp": {
+     "v": "fe0a9d9291",
+     "size": 31252
+    },
+    "pages/p009.webp": {
+     "v": "d30b20728a",
+     "size": 31334
+    },
+    "pages/p010.webp": {
+     "v": "d4afca9fbf",
+     "size": 27648
+    },
+    "pages/p011.webp": {
+     "v": "f5fb725459",
+     "size": 26628
+    },
+    "pages/p012.webp": {
+     "v": "f5a4842a9d",
+     "size": 30132
+    },
+    "pages/p013.webp": {
+     "v": "f95b11bdd9",
+     "size": 29196
+    },
+    "pages/p014.webp": {
+     "v": "42573ed199",
+     "size": 35446
+    },
+    "pages/p015.webp": {
+     "v": "5032022de8",
+     "size": 34472
+    },
+    "pages/p016.webp": {
+     "v": "1b464ba99e",
+     "size": 47284
+    },
+    "pages/p017.webp": {
+     "v": "673ec205ef",
+     "size": 40190
+    },
+    "pages/p018.webp": {
+     "v": "2a25138ad9",
+     "size": 44154
+    },
+    "pages/p019.webp": {
+     "v": "e3ecf657b7",
+     "size": 39192
+    },
+    "pages/p020.webp": {
+     "v": "d885d48527",
+     "size": 38136
+    },
+    "pages/p021.webp": {
+     "v": "57f6ffc87c",
+     "size": 38084
+    },
+    "pages/p022.webp": {
+     "v": "190993ae73",
+     "size": 37812
+    },
+    "pages/p023.webp": {
+     "v": "6f68f5d77c",
+     "size": 21856
+    },
+    "pages/p024.webp": {
+     "v": "c7c5337ea4",
+     "size": 50248
+    },
+    "pages/p025.webp": {
+     "v": "e57f8d0dbe",
+     "size": 72134
+    },
+    "parts.csv": {
+     "v": "bf356f5a31",
+     "size": 1906
+    },
+    "pick_a_brick.csv": {
+     "v": "f524209da1",
+     "size": 282
+    },
+    "price_estimate.md": {
+     "v": "ff2cbf9ed2",
+     "size": 2900
+    },
+    "quick_poster.jpg": {
+     "v": "fd322070a1",
+     "size": 127697
+    },
+    "renders/renders_front.png": {
+     "v": "b548dd290f",
+     "size": 850997
+    },
+    "renders/renders_three_quarter.png": {
+     "v": "0f1eed4bf2",
+     "size": 881454
+    },
+    "renders/renders_three_quarter_right.png": {
+     "v": "7946efb0c2",
+     "size": 881122
+    },
+    "the_thing.mpd": {
+     "v": "8873404433",
+     "size": 5614
+    }
+   },
+   "images": {
+    "renders/renders_front.png": {
+     "w": 900,
+     "h": 900,
+     "lg": "/assets/img/the_thing/renders_front.webp?v=04bb5436f9",
+     "sm": "/assets/img/the_thing/renders_front-480.webp?v=c887fc8848"
+    },
+    "renders/renders_three_quarter.png": {
+     "w": 900,
+     "h": 900,
+     "lg": "/assets/img/the_thing/renders_three_quarter.webp?v=d8ec5fa6b0",
+     "sm": "/assets/img/the_thing/renders_three_quarter-480.webp?v=469445db25"
+    },
+    "renders/renders_three_quarter_right.png": {
+     "w": 900,
+     "h": 900,
+     "lg": "/assets/img/the_thing/renders_three_quarter_right.webp?v=defa902ce1",
+     "sm": "/assets/img/the_thing/renders_three_quarter_right-480.webp?v=4cf7997567"
+    }
+   }
+  },
   "vhs_tape": {
    "files": {
     "booklet.pdf": {

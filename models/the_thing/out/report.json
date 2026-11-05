@@ -1,0 +1,110 @@
+{
+  "title": "The Thing",
+  "status": "warn",
+  "checks": [
+    {
+      "name": "real_elements",
+      "status": "warn",
+      "summary": "24 part/colour combinations: 0 not real, 1 rare",
+      "items": [
+        {
+          "part": "3045",
+          "name": "Brick Sloped 45\u00b0 2 x 2 Double Convex",
+          "colour": "Orange",
+          "severity": "warn",
+          "problem": "rare: in 7 set(s), last seen 2010",
+          "element_ids": [
+            "4118936",
+            "4593330"
+          ]
+        }
+      ],
+      "stats": {
+        "combinations": 24,
+        "not_real": 0,
+        "rare": 1,
+        "hardware": 0,
+        "minifig_components": 0,
+        "stand_ins": 0,
+        "approximate": 0
+      }
+    },
+    {
+      "name": "connections",
+      "status": "pass",
+      "summary": "92 connections (86 stud, 4 bar, 2 pin); 1 separate piece(s)",
+      "items": [],
+      "stats": {
+        "connections": 92,
+        "by_kind": {
+          "stud": 86,
+          "pin": 2,
+          "bar": 4
+        },
+        "pieces": 1
+      }
+    },
+    {
+      "name": "collisions",
+      "status": "pass",
+      "summary": "0 overlapping pair(s) among 58 parts",
+      "items": [],
+      "stats": {
+        "pairs": 0
+      }
+    },
+    {
+      "name": "buildability",
+      "status": "pass",
+      "summary": "57 insertions tried across 1 submodel(s); 0 problem(s)",
+      "items": [],
+      "stats": {
+        "insertions": 57
+      }
+    },
+    {
+      "name": "stability",
+      "status": "warn",
+      "summary": "about 28 g; centre of mass inside the base (17% margin); tips at 2.6 deg",
+      "items": [
+        {
+          "severity": "warn",
+          "problem": "centre of mass only 17% from the edge of the base"
+        }
+      ],
+      "stats": {
+        "mass_g": 27.997834831545696,
+        "com": [
+          -0.004302132844460017,
+          -75.16121360907846,
+          -16.61764820521204
+        ],
+        "approx_parts": 0,
+        "margin": 0.16911758973939808,
+        "tip_angle_deg": 2.576645763177811,
+        "com_height_ldu": 75.16121360907846
+      }
+    },
+    {
+      "name": "mechanism",
+      "status": "pass",
+      "summary": "no moving parts defined",
+      "items": [],
+      "stats": {}
+    },
+    {
+      "name": "electrics",
+      "status": "pass",
+      "summary": "no electrics in this model",
+      "items": [],
+      "stats": {}
+    },
+    {
+      "name": "technique",
+      "status": "pass",
+      "summary": "0 note(s)",
+      "items": [],
+      "stats": {}
+    }
+  ]
+}

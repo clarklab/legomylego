@@ -800,6 +800,31 @@
       ]
     },
     {
+      "slug": "the_thing",
+      "name": "The Thing",
+      "description": "The Thing, the Fantastic Four's rock-skinned strongman, in 58 pieces, 6 cm tall: a grumpy brow over BrickHeadz eyes, a cheese-slope nose, an ear on each side, blue shorts and two clip hands on arms that turn at the shoulder. zeldar's design, built as zeldar's instructions build it.",
+      "collection": "quick_bricks",
+      "pieces": 58,
+      "steps": 37,
+      "video": "/quick/the_thing-1080x1920.mp4?v=b65be0894c70",
+      "poster": "/models/the_thing/quick_poster.jpg?v=73689db0fa65",
+      "instructions": "/models/the_thing/booklet.pdf?v=b4542464c552",
+      "url": "/quick/the_thing/",
+      "model": "/models/the_thing/model.json?v=f011e82177ab",
+      "geometry": "/models/the_thing/model.glb?v=2f037b59d9c8",
+      "booklet_pages": {
+        "count": 25,
+        "size": [
+          1400,
+          990
+        ],
+        "v": "b4542464c552"
+      },
+      "designer": "zeldar",
+      "source": "https://brickit.app/ideas/2d4e49a5-3670-42b3-a2d3-39c16475d11a",
+      "designer_steps": true
+    },
+    {
       "slug": "watermelon_ice_lolly",
       "name": "Watermelon Ice Lolly",
       "description": "The smiling watermelon ice lolly from LEGO Classic 11039: 23 pieces, with three black seeds, a lime rind and a tan stick.",

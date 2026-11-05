@@ -1,0 +1,33 @@
+{
+ "low": 6.51,
+ "high": 8.85,
+ "currency": "USD",
+ "note": "BrickLink price guide, 2026-11-04: 24 of 24 part lines priced live (six-month sold average to current asking average, new, USD).",
+ "source": "bricklink",
+ "date": "2026-11-04",
+ "live_lines": 24,
+ "lines": 24,
+ "bricklink": {
+  "usd": 6.51,
+  "date": "2026-11-04",
+  "lines": 24,
+  "of": 24,
+  "missing": [],
+  "basis": "new parts, the average each sold for over the last six months (the average asking price where nothing sold), before shipping"
+ },
+ "pick_a_brick": {
+  "usd": 4.03,
+  "date": "2026-11-05",
+  "lines": 19,
+  "of": 24,
+  "missing": [
+   "2 x Tile Round 1 x 1 with Large and Small White Squares Print (Brickheadz Eye) (98138pb072), Black",
+   "2 x Brick Sloped 45\u00b0 2 x 2 Double Convex (3045), Orange",
+   "2 x Technic Brick 1 x 2 [1 Pin Hole] (3700), Orange",
+   "1 x Technic Brick 1 x 1 with Pin Hole (6541), Orange",
+   "1 x Bracket 1 x 1 - 1 x 2 Inverted (73825), Orange"
+  ],
+  "standard": [],
+  "basis": "LEGO Pick a Brick, US shop, before shipping"
+ }
+}
