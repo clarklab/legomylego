@@ -1,0 +1,8 @@
+0 brickkit overlay for "Plate 2 x 2" (3022)
+0 // The tube in the middle of a 2 x 2 plate's underside is hollow, a stud's width inside
+0 // (LDraw draws it with stud4.dat: outside radius 8, inside 6), so a single stud fits up into
+0 // it and the plate sits centred on that stud, half a stud off the grid. The LDCad shadow file
+0 // only has the tube's outside (S 16), which goes between four studs. zeldar's Chicken hangs
+0 // its wings centred on the side studs of two 87087s this way. A stud hole there, like the
+0 // four at the corners (overlays add to the library's snaps).
+0 !LDCAD SNAP_CYL [gender=F] [caps=one] [secs=R 6 4] [pos=0 8 0]

@@ -1,0 +1,108 @@
+{
+  "title": "Chicken",
+  "status": "warn",
+  "checks": [
+    {
+      "name": "real_elements",
+      "status": "warn",
+      "summary": "16 part/colour combinations: 0 not real, 1 rare",
+      "items": [
+        {
+          "part": "3069bpx3",
+          "name": "Tile 1 x 2 with 2 Black Squares print",
+          "colour": "White",
+          "severity": "warn",
+          "problem": "rare: in 1 set(s), last seen 2019",
+          "element_ids": [
+            "6252683"
+          ]
+        }
+      ],
+      "stats": {
+        "combinations": 16,
+        "not_real": 0,
+        "rare": 1,
+        "hardware": 0,
+        "minifig_components": 0,
+        "stand_ins": 0,
+        "approximate": 0
+      }
+    },
+    {
+      "name": "connections",
+      "status": "pass",
+      "summary": "38 connections (37 stud, 1 bar); 1 separate piece(s)",
+      "items": [],
+      "stats": {
+        "connections": 38,
+        "by_kind": {
+          "stud": 37,
+          "bar": 1
+        },
+        "pieces": 1
+      }
+    },
+    {
+      "name": "collisions",
+      "status": "pass",
+      "summary": "0 overlapping pair(s) among 30 parts",
+      "items": [],
+      "stats": {
+        "pairs": 0
+      }
+    },
+    {
+      "name": "buildability",
+      "status": "pass",
+      "summary": "29 insertions tried across 2 submodel(s); 0 problem(s)",
+      "items": [],
+      "stats": {
+        "insertions": 29
+      }
+    },
+    {
+      "name": "stability",
+      "status": "warn",
+      "summary": "about 15 g; centre of mass inside the base (22% margin); tips at 2.9 deg",
+      "items": [
+        {
+          "severity": "warn",
+          "problem": "centre of mass only 22% from the edge of the base"
+        }
+      ],
+      "stats": {
+        "mass_g": 15.347894242222084,
+        "com": [
+          0.2078888445310302,
+          -70.1841821152846,
+          -18.450596911974237
+        ],
+        "approx_parts": 0,
+        "margin": 0.22183769300161016,
+        "tip_angle_deg": 2.8951353457240616,
+        "com_height_ldu": 70.1841821152846
+      }
+    },
+    {
+      "name": "mechanism",
+      "status": "pass",
+      "summary": "no moving parts defined",
+      "items": [],
+      "stats": {}
+    },
+    {
+      "name": "electrics",
+      "status": "pass",
+      "summary": "no electrics in this model",
+      "items": [],
+      "stats": {}
+    },
+    {
+      "name": "technique",
+      "status": "pass",
+      "summary": "0 note(s)",
+      "items": [],
+      "stats": {}
+    }
+  ]
+}

@@ -1448,6 +1448,166 @@
     }
    }
   },
+  "chicken": {
+   "files": {
+    "booklet.pdf": {
+     "v": "4399c17e3f",
+     "size": 2941217
+    },
+    "bricklink_wanted.xml": {
+     "v": "83387f5d77",
+     "size": 1494
+    },
+    "chicken.mpd": {
+     "v": "0e63cef465",
+     "size": 3512
+    },
+    "model.glb": {
+     "v": "014e5d014e",
+     "size": 409824
+    },
+    "model.json": {
+     "v": "ab3ceba111",
+     "size": 12396
+    },
+    "pages/p001.webp": {
+     "v": "98ff2a9328",
+     "size": 23038
+    },
+    "pages/p002.webp": {
+     "v": "bc155e3c45",
+     "size": 90970
+    },
+    "pages/p003.webp": {
+     "v": "f168553e13",
+     "size": 53578
+    },
+    "pages/p004.webp": {
+     "v": "45a7f233c1",
+     "size": 14864
+    },
+    "pages/p005.webp": {
+     "v": "608da7858c",
+     "size": 30662
+    },
+    "pages/p006.webp": {
+     "v": "e19c16567b",
+     "size": 30456
+    },
+    "pages/p007.webp": {
+     "v": "5bf84e91a5",
+     "size": 31434
+    },
+    "pages/p008.webp": {
+     "v": "02742a886b",
+     "size": 26746
+    },
+    "pages/p009.webp": {
+     "v": "de5abf33e7",
+     "size": 36448
+    },
+    "pages/p010.webp": {
+     "v": "52b5861dcc",
+     "size": 31148
+    },
+    "pages/p011.webp": {
+     "v": "64e61cc838",
+     "size": 39322
+    },
+    "pages/p012.webp": {
+     "v": "891367e7cb",
+     "size": 31178
+    },
+    "pages/p013.webp": {
+     "v": "f211da18a2",
+     "size": 28498
+    },
+    "pages/p014.webp": {
+     "v": "52ce61f409",
+     "size": 34320
+    },
+    "pages/p015.webp": {
+     "v": "694cf085e9",
+     "size": 30732
+    },
+    "pages/p016.webp": {
+     "v": "c469db00a8",
+     "size": 35700
+    },
+    "pages/p017.webp": {
+     "v": "a7fb2a8b8e",
+     "size": 66652
+    },
+    "parts.csv": {
+     "v": "7ac8071bd1",
+     "size": 1277
+    },
+    "pick_a_brick.csv": {
+     "v": "f24d777a79",
+     "size": 189
+    },
+    "price_estimate.md": {
+     "v": "ad16b1c5df",
+     "size": 1995
+    },
+    "quick_poster.jpg": {
+     "v": "559a241200",
+     "size": 133560
+    },
+    "renders/renders_front.png": {
+     "v": "2c37fdceb0",
+     "size": 795240
+    },
+    "renders/renders_side.png": {
+     "v": "7655a06437",
+     "size": 805297
+    },
+    "renders/renders_three_quarter.png": {
+     "v": "0a2745aa5e",
+     "size": 811585
+    },
+    "renders/renders_three_quarter_right.png": {
+     "v": "77be9a51ae",
+     "size": 810062
+    },
+    "renders/renders_top.png": {
+     "v": "5bd75b0ff8",
+     "size": 799773
+    }
+   },
+   "images": {
+    "renders/renders_front.png": {
+     "w": 900,
+     "h": 900,
+     "lg": "/assets/img/chicken/renders_front.webp?v=e5843a3250",
+     "sm": "/assets/img/chicken/renders_front-480.webp?v=2a304df617"
+    },
+    "renders/renders_side.png": {
+     "w": 900,
+     "h": 900,
+     "lg": "/assets/img/chicken/renders_side.webp?v=1cdbd0c2c6",
+     "sm": "/assets/img/chicken/renders_side-480.webp?v=19460d8a7c"
+    },
+    "renders/renders_three_quarter.png": {
+     "w": 900,
+     "h": 900,
+     "lg": "/assets/img/chicken/renders_three_quarter.webp?v=118921aff4",
+     "sm": "/assets/img/chicken/renders_three_quarter-480.webp?v=68bae166e7"
+    },
+    "renders/renders_three_quarter_right.png": {
+     "w": 900,
+     "h": 900,
+     "lg": "/assets/img/chicken/renders_three_quarter_right.webp?v=855b234379",
+     "sm": "/assets/img/chicken/renders_three_quarter_right-480.webp?v=867ec4efc3"
+    },
+    "renders/renders_top.png": {
+     "w": 900,
+     "h": 900,
+     "lg": "/assets/img/chicken/renders_top.webp?v=138a81d542",
+     "sm": "/assets/img/chicken/renders_top-480.webp?v=b8ec302593"
+    }
+   }
+  },
   "crow": {
    "files": {
     "booklet.pdf": {

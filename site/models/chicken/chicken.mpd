@@ -1,0 +1,88 @@
+0 FILE chicken.ldr
+0 Chicken
+0 Name: chicken.ldr
+0 Author: brickkit
+
+0 // A white 3 x 3 plate
+1 15 0 -52 0 1 0 0 0 1 0 0 0 1 11212.dat
+0 STEP
+0 // Turn it over. Two yellow brackets on its underside, one under each side of the middle row, their flanges flat on the plate, studs in, their plates hanging down
+1 14 -20 -30 10 1 0 0 0 0 1 0 -1 0 36841.dat
+1 14 20 -30 10 1 0 0 0 0 1 0 -1 0 36841.dat
+0 STEP
+0 // A yellow bracket on each, by the upper of its two studs: the leg, its plate the foot
+1 14 -20 -8 -12 -1 0 0 0 1 0 0 0 -1 73825.dat
+1 14 20 -8 -12 -1 0 0 0 1 0 0 0 -1 73825.dat
+0 STEP
+0 // A yellow 1 x 1 tile on each leg's lower stud, at the back
+1 14 -20 -10 10 1 0 0 0 0 1 0 -1 0 3070b.dat
+1 14 20 -10 10 1 0 0 0 0 1 0 -1 0 3070b.dat
+0 STEP
+0 // Turn it back. Two bricks with a side stud on the middle row, the studs out to the sides: they hold the wings
+1 15 -20 -76 0 0 0 1 0 1 0 -1 0 0 87087.dat
+1 15 20 -76 0 0 0 -1 0 1 0 1 0 0 87087.dat
+0 STEP
+0 // A 1 x 3 brick along the front and one along the back
+1 15 0 -76 -20 1 0 0 0 1 0 0 0 1 3622.dat
+1 15 0 -76 20 1 0 0 0 1 0 0 0 1 3622.dat
+0 STEP
+0 // A brick with a headlight in the middle of the front, the headlight forward
+1 15 0 -100 -20 1 0 0 0 1 0 0 0 1 4070.dat
+0 STEP
+0 // A 1 x 1 plate on each side of it
+1 15 -20 -84 -20 1 0 0 0 1 0 0 0 1 3024.dat
+1 15 20 -84 -20 1 0 0 0 1 0 0 0 1 3024.dat
+0 STEP
+0 // A 2 x 3 plate behind them
+1 15 0 -84 10 1 0 0 0 1 0 0 0 1 3021.dat
+0 STEP
+0 // The wings: a 2 x 2 plate on each side stud, studs out, centred on it: the stud goes up into the tube in the middle of the plate's underside
+1 15 38 -66 0 0 -1 0 1 0 0 0 0 1 3022.dat
+1 15 -38 -66 0 0 1 0 1 0 0 0 0 -1 3022.dat
+0 STEP
+0 // The head: a brick with studs on two sides on the headlight's stud, its top forward
+1 15 0 -90 -50 0 0 1 1 0 0 0 1 0 47905.dat
+0 STEP
+0 // A 2 x 2 plate on its left side stud, studs out: the side of the head
+1 15 -18 -100 -50 0 1 0 -1 0 0 0 0 1 3022.dat
+0 STEP
+0 // The upper brick, top forward, in the plate's upper front hole: a stud higher and a stud further forward than the first, its plates reaching back to the headlight
+1 16 0 0 0 1 0 0 0 1 0 0 0 1 head_top.ldr
+0 STEP
+0 // A 1 x 1 plate on the lower brick's stud
+1 15 0 -90 -58 1 0 0 0 0 -1 0 1 0 3024.dat
+0 STEP
+0 // The wattle: a red bracket, its plate on the 1 x 1 plate's stud and its other plate flat underneath, reaching forward
+1 4 0 -90 -66 1 0 0 0 0 -1 0 1 0 36840.dat
+0 STEP
+0 // A red 1 x 1 plate upside down on the bracket's stud underneath
+1 4 0 -68 -68 -1 0 0 0 -1 0 0 0 1 3024.dat
+0 STEP
+0 // A white 1 x 1 plate on the red bracket's stud
+1 15 0 -90 -74 1 0 0 0 0 -1 0 1 0 3024.dat
+0 STEP
+0 // A 2 x 2 plate on the right side studs of the two bricks: the other side of the head
+1 15 18 -100 -50 0 -1 0 1 0 0 0 0 1 3022.dat
+0 STEP
+0 // The eyes: a 1 x 2 tile printed with two black squares on the upper brick's stud, by one end, reaching out to the right
+1 15 10 -110 -78 1 0 0 0 0 -1 0 1 0 3069bpx3.dat
+0 STEP
+0 // The beak: an orange 1 x 2 jumper plate on the white 1 x 1 plate's stud
+1 25 0 -90 -82 1 0 0 0 0 -1 0 1 0 15573.dat
+0 STEP
+0 // An orange 1 x 2 tile on the jumper's stud
+1 25 0 -90 -90 1 0 0 0 0 -1 0 1 0 3069b.dat
+0 STEP
+0 NOFILE
+
+0 FILE head_top.ldr
+0 The upper head brick
+0 Name: head_top.ldr
+0 Author: brickkit
+
+0 // A brick with studs on two sides, and two 1 x 1 plates on its bottom
+1 15 0 -110 -70 0 0 1 1 0 0 0 1 0 47905.dat
+1 15 0 -110 -46 1 0 0 0 0 -1 0 1 0 3024.dat
+1 15 0 -110 -38 1 0 0 0 0 -1 0 1 0 3024.dat
+0 STEP
+0 NOFILE

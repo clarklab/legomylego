@@ -204,6 +204,31 @@
       ]
     },
     {
+      "slug": "chicken",
+      "name": "Chicken",
+      "description": "A blocky white chicken in 30 pieces, about 5 cm tall: a printed face, an orange beak over a red wattle, wings on the sides and yellow legs. zeldar's design, built as zeldar's instructions build it, with the face half a stud over so it holds.",
+      "collection": "quick_bricks",
+      "pieces": 30,
+      "steps": 22,
+      "video": "/quick/chicken-1080x1920.mp4?v=adf3d7d4468a",
+      "poster": "/models/chicken/quick_poster.jpg?v=723cf26903cf",
+      "instructions": "/models/chicken/booklet.pdf?v=b88aac3813ed",
+      "url": "/quick/chicken/",
+      "model": "/models/chicken/model.json?v=14ae49966acf",
+      "geometry": "/models/chicken/model.glb?v=5e94d0746420",
+      "booklet_pages": {
+        "count": 17,
+        "size": [
+          1400,
+          990
+        ],
+        "v": "b88aac3813ed"
+      },
+      "designer": "zeldar",
+      "source": "https://brickit.app/ideas/1ff0b486-ec13-474b-b23a-42492bd06964",
+      "designer_steps": true
+    },
+    {
       "slug": "crow",
       "name": "Crow",
       "description": "A little black crow in 34 pieces, 7 cm from beak to tail: a pointed beak, half-closed eyes, two wings and two tail feathers on clips, and yellow feet. Designed by Qrys.And.Reading.",

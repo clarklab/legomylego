@@ -672,6 +672,62 @@
       "status": "pass"
     },
     {
+      "slug": "chicken",
+      "name": "Chicken",
+      "description": "A blocky white chicken in 30 pieces, about 5 cm tall: a printed face, an orange beak over a red wattle, wings on the sides and yellow legs. zeldar's design, built as zeldar's instructions build it, with the face half a stud over so it holds.",
+      "collection": "quick_bricks",
+      "steps": 22,
+      "notice": "",
+      "parts": 30,
+      "pieces": 30,
+      "dims_mm": [
+        33.6,
+        48.0,
+        48.0
+      ],
+      "price": {
+        "low": 2.78,
+        "high": 3.93,
+        "currency": "USD",
+        "note": "BrickLink price guide, 2026-11-05: 16 of 16 part lines priced live (six-month sold average to current asking average, new, USD).",
+        "source": "bricklink",
+        "date": "2026-11-05",
+        "live_lines": 16,
+        "lines": 16,
+        "bricklink": {
+          "usd": 2.85,
+          "date": "2026-11-05",
+          "lines": 16,
+          "of": 16,
+          "missing": [],
+          "basis": "new parts, the average each sold for over the last six months (the average asking price where nothing sold), before shipping"
+        },
+        "pick_a_brick": {
+          "usd": 2.47,
+          "date": "2026-11-05",
+          "lines": 15,
+          "of": 16,
+          "missing": [
+            "1 x Tile 1 x 2 with 2 Black Squares print (3069pb0691), White"
+          ],
+          "standard": [],
+          "basis": "LEGO Pick a Brick, US shop, before shipping"
+        }
+      },
+      "features": {
+        "mechanism": false,
+        "lights": false,
+        "minifigs": 0
+      },
+      "variants": [
+        "Standard"
+      ],
+      "thumbnail": "renders/renders_front.png",
+      "video": null,
+      "poster": null,
+      "status": "warn"
+    },
+    {
       "slug": "crow",
       "name": "Crow",
       "description": "A little black crow in 34 pieces, 7 cm from beak to tail: a pointed beak, half-closed eyes, two wings and two tail feathers on clips, and yellow feet. Designed by Qrys.And.Reading.",
