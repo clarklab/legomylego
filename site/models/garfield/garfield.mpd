@@ -1,0 +1,92 @@
+0 FILE garfield.ldr
+0 Garfield
+0 Name: garfield.ldr
+0 Author: brickkit
+
+0 // Two 1 x 1 plates, one on the other
+1 25 0 -8 0 1 0 0 0 1 0 0 0 1 3024.dat
+1 25 0 -16 0 1 0 0 0 1 0 0 0 1 3024.dat
+0 STEP
+0 // A 1 x 1 brick with a stud on its side, the stud to the front
+1 25 0 -40 0 1 0 0 0 1 0 0 0 1 87087.dat
+0 STEP
+0 // A 1 x 3 plate across it
+1 25 0 -48 0 1 0 0 0 1 0 0 0 1 3623.dat
+0 STEP
+0 // Under each end of the 1 x 3 a bracket, its plate standing up in front, studs to the front
+1 25 -20 -40 0 1 0 0 0 1 0 0 0 1 73825.dat
+1 25 20 -40 0 1 0 0 0 1 0 0 0 1 73825.dat
+0 STEP
+0 // A 1 x 1 plate under each bracket
+1 25 -20 -32 0 1 0 0 0 1 0 0 0 1 3024.dat
+1 25 20 -32 0 1 0 0 0 1 0 0 0 1 3024.dat
+0 STEP
+0 // On each end of the 1 x 3 a small bracket, its plate at the back, stud to the back
+1 25 -20 -56 0 -1 0 0 0 1 0 0 0 -1 36840.dat
+1 25 20 -56 0 -1 0 0 0 1 0 0 0 -1 36840.dat
+0 STEP
+0 // Two 1 x 1 plates on the middle of the 1 x 3
+1 25 0 -56 0 1 0 0 0 1 0 0 0 1 3024.dat
+1 25 0 -64 0 1 0 0 0 1 0 0 0 1 3024.dat
+0 STEP
+0 // On each small bracket a bracket whose plate hangs down the side, studs out
+1 25 -20 -64 0 0 0 1 0 1 0 -1 0 0 79389.dat
+1 25 20 -64 0 0 0 -1 0 1 0 1 0 0 79389.dat
+0 STEP
+0 // The ears: a 1 x 1 plate with a tooth on each back stud, the tooth up
+1 191 -20 -58 22 1 0 0 0 0 1 0 -1 0 49668.dat
+1 191 20 -58 22 1 0 0 0 0 1 0 -1 0 49668.dat
+0 STEP
+0 // A 1 x 1 plate on each side bracket's lower stud
+1 25 -42 -34 0 0 1 0 -1 0 0 0 0 1 3024.dat
+1 25 42 -34 0 0 -1 0 1 0 0 0 0 1 3024.dat
+0 STEP
+0 // The jowls: each on the side, its upper hole on the plate's stud, the brick tucked under the face bracket's plate
+1 16 0 0 0 1 0 0 0 1 0 0 0 1 jowl_left.ldr
+1 16 0 0 0 1 0 0 0 1 0 0 0 1 jowl_right.ldr
+0 STEP
+0 // A cheese slope on each side bracket's upper stud
+1 25 -34 -54 0 0 1 0 0 0 1 1 0 0 54200.dat
+1 25 34 -54 0 0 -1 0 0 0 1 -1 0 0 54200.dat
+0 STEP
+0 // A 1 x 3 tile on top
+1 25 0 -72 0 1 0 0 0 1 0 0 0 1 63864.dat
+0 STEP
+0 // The eyelids: a 1 x 1 tile with a round end on each upper stud, round end up
+1 25 -20 -62 -22 -1 0 0 0 0 1 0 1 0 24246.dat
+1 25 20 -62 -22 -1 0 0 0 0 1 0 1 0 24246.dat
+0 STEP
+0 // The nose: a pink round tile on the middle brick's stud
+1 29 0 -30 -18 1 0 0 0 0 -1 0 1 0 98138.dat
+0 STEP
+0 // The eyes, under the eyelids
+1 15 -20 -42 -22 1 0 0 0 0 -1 0 1 0 98138p2l.dat
+1 15 20 -42 -22 1 0 0 0 0 -1 0 1 0 98138p2l.dat
+0 STEP
+0 // The cheeks: a half round tile on each side brick's stud, flat edge up, turned so its inner end dips under the nose
+1 191 -24 -14 -18 0.965926 0 0.258819 0.258819 0 -0.965926 0 1 0 1748.dat
+1 191 24 -14 -18 0.965926 0 -0.258819 -0.258819 0 -0.965926 0 1 0 1748.dat
+0 STEP
+0 NOFILE
+
+0 FILE jowl_left.ldr
+0 The left jowl
+0 Name: jowl_left.ldr
+0 Author: brickkit
+
+0 // A curved slope, and a 1 x 1 brick with a side stud on its lower hole, the brick's side stud to the front
+1 25 -34 -24 0 0 1 0 0 0 -1 -1 0 0 11477.dat
+1 25 -34 -14 0 0 1 0 -1 0 0 0 0 1 87087.dat
+0 STEP
+0 NOFILE
+
+0 FILE jowl_right.ldr
+0 The right jowl
+0 Name: jowl_right.ldr
+0 Author: brickkit
+
+0 // A curved slope, and a 1 x 1 brick with a side stud on its lower hole, the brick's side stud to the front
+1 25 34 -24 0 0 -1 0 0 0 -1 1 0 0 11477.dat
+1 25 34 -14 0 0 -1 0 1 0 0 0 0 1 87087.dat
+0 STEP
+0 NOFILE

@@ -263,6 +263,23 @@
       "source": "https://rebrickable.com/mocs/MOC-238888/"
     },
     {
+      "slug": "garfield",
+      "name": "Garfield",
+      "description": "Garfield's head in 32 pieces, 4 cm wide: sleepy half-closed eyes under round eyelids, a pink nose, cheeks tipped in under it and two little ears. zeldar's design, built as zeldar's instructions build it.",
+      "collection": "quick_bricks",
+      "pieces": 32,
+      "steps": 19,
+      "video": "/quick/garfield-1080x1920.mp4?v=06d46b6f66bf",
+      "poster": "/models/garfield/quick_poster.jpg?v=fc15dffdf0f1",
+      "instructions": "/models/garfield/booklet.pdf?v=f6338e7ccd5d",
+      "url": "/quick/garfield/",
+      "model": "/models/garfield/model.json?v=12f521e1ca16",
+      "geometry": "/models/garfield/model.glb?v=a9ae0c2427b8",
+      "designer": "zeldar",
+      "source": "https://brickit.app/ideas/4938967d-9f27-44fc-b41a-ef581aeff4b8",
+      "designer_steps": true
+    },
+    {
       "slug": "guardian",
       "name": "Guardian",
       "description": "A Guardian, the six-legged ancient machine from The Legend of Zelda, in 183 pieces, 26 cm across its legs and 14 cm tall: a domed stone body ringed with pink lights, a head with one blue eye, and six ball-jointed legs you can pose. It stands on a short black stand.",

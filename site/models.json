@@ -1135,6 +1135,65 @@
       "status": "pass"
     },
     {
+      "slug": "garfield",
+      "name": "Garfield",
+      "description": "Garfield's head in 32 pieces, 4 cm wide: sleepy half-closed eyes under round eyelids, a pink nose, cheeks tipped in under it and two little ears. zeldar's design, built as zeldar's instructions build it.",
+      "collection": "quick_bricks",
+      "steps": 19,
+      "notice": "",
+      "parts": 32,
+      "pieces": 32,
+      "dims_mm": [
+        40.0,
+        35.5,
+        19.2
+      ],
+      "price": {
+        "low": 4.0,
+        "high": 5.94,
+        "currency": "USD",
+        "note": "BrickLink price guide, 2026-11-05: 14 of 14 part lines priced live (six-month sold average to current asking average, new, USD).",
+        "source": "bricklink",
+        "date": "2026-11-05",
+        "live_lines": 14,
+        "lines": 14,
+        "bricklink": {
+          "usd": 4.0,
+          "date": "2026-11-05",
+          "lines": 14,
+          "of": 14,
+          "missing": [],
+          "basis": "new parts, the average each sold for over the last six months (the average asking price where nothing sold), before shipping"
+        },
+        "pick_a_brick": {
+          "usd": 1.96,
+          "date": "2026-11-05",
+          "lines": 10,
+          "of": 14,
+          "missing": [
+            "2 x Plate Special 1 x 1 with Tooth (49668), Bright Light Orange",
+            "2 x Bracket 1 x 1 - 1 x 1 Inverted (36840), Orange",
+            "2 x Bracket 1 x 1 - 1 x 2 Inverted (73825), Orange",
+            "2 x Bracket 1 x 1 - 1 x 2 (79389), Orange"
+          ],
+          "standard": [],
+          "basis": "LEGO Pick a Brick, US shop, before shipping"
+        }
+      },
+      "features": {
+        "mechanism": false,
+        "lights": false,
+        "minifigs": 0
+      },
+      "variants": [
+        "Standard"
+      ],
+      "thumbnail": "renders/renders_front.png",
+      "video": null,
+      "poster": null,
+      "status": "pass"
+    },
+    {
       "slug": "guardian",
       "name": "Guardian",
       "description": "A Guardian, the six-legged ancient machine from The Legend of Zelda, in 183 pieces, 26 cm across its legs and 14 cm tall: a domed stone body ringed with pink lights, a head with one blue eye, and six ball-jointed legs you can pose. It stands on a short black stand.",

@@ -1647,6 +1647,78 @@
     }
    }
   },
+  "garfield": {
+   "files": {
+    "booklet.pdf": {
+     "v": "0e7775d8ec",
+     "size": 3250827
+    },
+    "bricklink_wanted.xml": {
+     "v": "f2eaa531d3",
+     "size": 1321
+    },
+    "garfield.mpd": {
+     "v": "3c0adda38e",
+     "size": 3249
+    },
+    "model.glb": {
+     "v": "20aab3c3e9",
+     "size": 278504
+    },
+    "model.json": {
+     "v": "73a3bc1155",
+     "size": 11866
+    },
+    "parts.csv": {
+     "v": "57ee7df242",
+     "size": 1249
+    },
+    "pick_a_brick.csv": {
+     "v": "7d63fb3542",
+     "size": 174
+    },
+    "price_estimate.md": {
+     "v": "0b78da7a5c",
+     "size": 2064
+    },
+    "quick_poster.jpg": {
+     "v": "19bc52b602",
+     "size": 171217
+    },
+    "renders/renders_front.png": {
+     "v": "f5a095ba2e",
+     "size": 872958
+    },
+    "renders/renders_three_quarter.png": {
+     "v": "32121368ca",
+     "size": 876639
+    },
+    "renders/renders_three_quarter_right.png": {
+     "v": "50420c2644",
+     "size": 880498
+    }
+   },
+   "images": {
+    "renders/renders_front.png": {
+     "w": 900,
+     "h": 900,
+     "lg": "/assets/img/garfield/renders_front.webp?v=b646814547",
+     "sm": "/assets/img/garfield/renders_front-480.webp?v=1f7c8c3540"
+    },
+    "renders/renders_three_quarter.png": {
+     "w": 900,
+     "h": 900,
+     "lg": "/assets/img/garfield/renders_three_quarter.webp?v=f805ded922",
+     "sm": "/assets/img/garfield/renders_three_quarter-480.webp?v=5d7d0655ed"
+    },
+    "renders/renders_three_quarter_right.png": {
+     "w": 900,
+     "h": 900,
+     "lg": "/assets/img/garfield/renders_three_quarter_right.webp?v=30cdcd1dd2",
+     "sm": "/assets/img/garfield/renders_three_quarter_right-480.webp?v=974c88c7e2"
+    }
+   }
+  },
   "guardian": {
    "files": {
     "booklet.pdf": {

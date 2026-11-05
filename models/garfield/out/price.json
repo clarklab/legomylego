@@ -1,0 +1,32 @@
+{
+ "low": 4.0,
+ "high": 5.94,
+ "currency": "USD",
+ "note": "BrickLink price guide, 2026-11-05: 14 of 14 part lines priced live (six-month sold average to current asking average, new, USD).",
+ "source": "bricklink",
+ "date": "2026-11-05",
+ "live_lines": 14,
+ "lines": 14,
+ "bricklink": {
+  "usd": 4.0,
+  "date": "2026-11-05",
+  "lines": 14,
+  "of": 14,
+  "missing": [],
+  "basis": "new parts, the average each sold for over the last six months (the average asking price where nothing sold), before shipping"
+ },
+ "pick_a_brick": {
+  "usd": 1.96,
+  "date": "2026-11-05",
+  "lines": 10,
+  "of": 14,
+  "missing": [
+   "2 x Plate Special 1 x 1 with Tooth (49668), Bright Light Orange",
+   "2 x Bracket 1 x 1 - 1 x 1 Inverted (36840), Orange",
+   "2 x Bracket 1 x 1 - 1 x 2 Inverted (73825), Orange",
+   "2 x Bracket 1 x 1 - 1 x 2 (79389), Orange"
+  ],
+  "standard": [],
+  "basis": "LEGO Pick a Brick, US shop, before shipping"
+ }
+}

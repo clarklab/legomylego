@@ -1,0 +1,42 @@
+[model]
+name = "Garfield"
+design = "design.py"
+description = "Garfield's head in 32 pieces, 4 cm wide: sleepy half-closed eyes under round eyelids, a pink nose, cheeks tipped in under it and two little ears. zeldar's design, built as zeldar's instructions build it."
+designer = "zeldar"           # someone else's design: who made it (the booklet and its page
+source = "https://brickit.app/ideas/4938967d-9f27-44fc-b41a-ef581aeff4b8"   # say so), and
+#                             # where the original is
+designer_steps = true         # the steps are the designer's own, followed page by page
+# brands = ["pokemon"]        # the logo cards on the Quick Bricks page it is filed under: a
+#                             # logo's file name in brands/ (more than one is fine; none is too)
+collection = "quick_bricks"
+
+[palette]                     # role -> a real colour name; design.py places parts by role
+orange = "Orange"             # the head
+ear = "Bright Light Orange"   # the ears: LEGO never made the 1 x 1 plate with a tooth (49668) in
+                              # Orange (zeldar's app shows them orange); this is its nearest colour
+cheek = "Bright Light Orange" # the cheeks: the app draws them Medium Orange, which the 1 x 2 half
+                              # round tile (1748) was never made in
+nose = "Bright Pink"          # the app draws Pink, which the round 1 x 1 tile never came in
+white = "White"               # the eyes: 98138pr9976, a black half eye with a white half pupil
+
+[booklet]
+subtitle = "Garfield, half asleep as ever, in 32 pieces. A design by zeldar."
+intro = "Start with a one-stud column and a 1 x 3 plate across it: the face's brackets hang under its ends and their studs carry the eyelids and eyes. Brackets on top turn studs out to the sides for the jowls and temples, the ears hang on studs at the back, and the face goes on last: eyelids, the pink nose, the eyes, and the cheeks."
+notes = ["Each jowl is a curved slope with a 1 x 1 brick on its lower hole, the brick's side stud to the front. Put them together first, then press the pair onto the side: the curved slope's upper hole on the plate's stud, the brick tucked under the face bracket.",
+         "Each cheek sits on one stud, so it turns. Turn it until its inner end dips under the nose, as in the pictures.",
+         "The ears are Bright Light Orange: LEGO never made that piece in Orange."]
+
+[checks]
+enabled = ["real_elements", "connections", "collisions", "buildability", "stability",
+           "mechanism", "electrics", "technique"]
+
+# Quick Bricks video (brickkit quick garfield). Pick a workshop the last few models did not
+# use (brickkit status shows theirs); under 25 pieces the parts start laid out on the table
+[quick]
+surface = "lego_blue"         # orange reads true on blue; the blue mat was the last few models'
+room = "studio"               # workbench | studio | window | night | bookshelf
+light = "morning"             # Garfield and mornings; check the preview's orange stays orange
+seconds = 14
+highlight = ["eyes", "cheeks"]   # the sleepy eyes going on, then the cheeks under the nose
+close_ups = 2
+music = false                 # just the clicks

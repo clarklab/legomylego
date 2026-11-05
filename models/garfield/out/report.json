@@ -1,0 +1,91 @@
+{
+  "title": "Garfield",
+  "status": "pass",
+  "checks": [
+    {
+      "name": "real_elements",
+      "status": "pass",
+      "summary": "14 part/colour combinations: 0 not real, 0 rare",
+      "items": [],
+      "stats": {
+        "combinations": 14,
+        "not_real": 0,
+        "rare": 0,
+        "hardware": 0,
+        "minifig_components": 0,
+        "stand_ins": 0,
+        "approximate": 0
+      }
+    },
+    {
+      "name": "connections",
+      "status": "pass",
+      "summary": "33 connections (33 stud); 1 separate piece(s)",
+      "items": [],
+      "stats": {
+        "connections": 33,
+        "by_kind": {
+          "stud": 33
+        },
+        "pieces": 1
+      }
+    },
+    {
+      "name": "collisions",
+      "status": "pass",
+      "summary": "0 overlapping pair(s) among 32 parts",
+      "items": [],
+      "stats": {
+        "pairs": 0
+      }
+    },
+    {
+      "name": "buildability",
+      "status": "pass",
+      "summary": "31 insertions tried across 3 submodel(s); 0 problem(s)",
+      "items": [],
+      "stats": {
+        "insertions": 31
+      }
+    },
+    {
+      "name": "stability",
+      "status": "pass",
+      "summary": "about 10 g; centre of mass inside the base (87% margin); tips at 12.2 deg",
+      "items": [],
+      "stats": {
+        "mass_g": 9.629173319049233,
+        "com": [
+          -1.8397390550439994e-08,
+          -40.240100354735176,
+          -1.2968672993464319
+        ],
+        "approx_parts": 0,
+        "margin": 0.8703132700653569,
+        "tip_angle_deg": 12.20396516880505,
+        "com_height_ldu": 40.240100354735176
+      }
+    },
+    {
+      "name": "mechanism",
+      "status": "pass",
+      "summary": "no moving parts defined",
+      "items": [],
+      "stats": {}
+    },
+    {
+      "name": "electrics",
+      "status": "pass",
+      "summary": "no electrics in this model",
+      "items": [],
+      "stats": {}
+    },
+    {
+      "name": "technique",
+      "status": "pass",
+      "summary": "0 note(s)",
+      "items": [],
+      "stats": {}
+    }
+  ]
+}
