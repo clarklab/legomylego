@@ -3,7 +3,7 @@
 Copy for this model's Quick Bricks video, to paste and post by hand (docs/new-model.md).
 
 - **Video:** `out/{{slug}}-1080x1920.mp4` (9:16, sound on: the clicks are the point)
-- **Link:** https://bricks.superfun.games/quick/{{slug}}/
+- **Link:** https://bricks.vhsgarage.com/quick/{{slug}}/
 - **Credit:** TODO (the designer and where the original is, when the design is not ours; the
   set, when it is one of LEGO's; "Our own design: no credit line needed." when it is ours)
 

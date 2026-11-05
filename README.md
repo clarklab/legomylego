@@ -3,7 +3,7 @@ Make LEGO easier than a toaster
 
 Buildable models made only of real LEGO elements. They are designed in Python, checked by
 computer, and shipped with parts lists, an instruction booklet, a build video and a 3D viewer
-at **[bricks.superfun.games](https://bricks.superfun.games)**.
+at **[bricks.vhsgarage.com](https://bricks.vhsgarage.com)**.
 
 > Computer-checked; most not yet built with real bricks (the VHS Cassette has been, and it
 > works). Every part/colour exists, every
@@ -88,7 +88,7 @@ Walt Disney's 1954 film; an unofficial fan model, not affiliated with or endorse
 
 ## Site
 
-`site/` is a static site deployed by Netlify (`netlify.toml`) at bricks.superfun.games.
+`site/` is a static site deployed by Netlify (`netlify.toml`) at bricks.vhsgarage.com.
 
 Shared design tokens and page styles live in `site/assets/css/site.css`; the model viewer
 and detail sections use `site/assets/css/model.css`. Inter is served locally from

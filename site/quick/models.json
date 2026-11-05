@@ -9,7 +9,7 @@
       "steps": 17,
       "video": "/quick/avocado-1080x1920.mp4?v=8a0c21473ecb",
       "poster": "/models/avocado/quick_poster.jpg?v=68dd50223060",
-      "instructions": "/models/avocado/booklet.pdf?v=379180d9884d",
+      "instructions": "/models/avocado/booklet.pdf?v=e9ae0730a56d",
       "url": "/quick/avocado/",
       "model": "/models/avocado/model.json?v=8d4a2ca6aa0a",
       "geometry": "/models/avocado/model.glb?v=becb7ece243f",
@@ -19,7 +19,7 @@
           1400,
           990
         ],
-        "v": "379180d9884d"
+        "v": "e9ae0730a56d"
       },
       "brands": [
         "snacks"
@@ -34,7 +34,7 @@
       "steps": 8,
       "video": "/quick/bat-1080x1920.mp4?v=f8a89432e86d",
       "poster": "/models/bat/quick_poster.jpg?v=92098713a210",
-      "instructions": "/models/bat/booklet.pdf?v=d5d4cc70a83c",
+      "instructions": "/models/bat/booklet.pdf?v=a5f9878ab3ef",
       "url": "/quick/bat/",
       "model": "/models/bat/model.json?v=97b7ddd5306c",
       "geometry": "/models/bat/model.glb?v=c1573b3e653a",
@@ -44,7 +44,7 @@
           1400,
           990
         ],
-        "v": "d5d4cc70a83c"
+        "v": "a5f9878ab3ef"
       },
       "brands": [
         "spooky"
@@ -59,7 +59,7 @@
       "steps": 12,
       "video": "/quick/birthday_cake-1080x1920.mp4?v=0c19c3cabbd8",
       "poster": "/models/birthday_cake/quick_poster.jpg?v=fe2947f097cb",
-      "instructions": "/models/birthday_cake/booklet.pdf?v=031c83092bf6",
+      "instructions": "/models/birthday_cake/booklet.pdf?v=9a0b8f9c656c",
       "url": "/quick/birthday_cake/",
       "model": "/models/birthday_cake/model.json?v=39908db3eb3a",
       "geometry": "/models/birthday_cake/model.glb?v=61d0f99b4823",
@@ -69,7 +69,7 @@
           1400,
           990
         ],
-        "v": "031c83092bf6"
+        "v": "9a0b8f9c656c"
       },
       "brands": [
         "snacks"
@@ -84,7 +84,7 @@
       "steps": 12,
       "video": "/quick/bmo-1080x1920.mp4?v=f525a67e069a",
       "poster": "/models/bmo/quick_poster.jpg?v=920aab15e02f",
-      "instructions": "/models/bmo/booklet.pdf?v=48408ad11d9c",
+      "instructions": "/models/bmo/booklet.pdf?v=f1aca22a8a46",
       "url": "/quick/bmo/",
       "model": "/models/bmo/model.json?v=e325901cc494",
       "geometry": "/models/bmo/model.glb?v=82246a33a447",
@@ -94,7 +94,7 @@
           1400,
           990
         ],
-        "v": "48408ad11d9c"
+        "v": "f1aca22a8a46"
       },
       "brands": [
         "adventure-time"
@@ -109,7 +109,7 @@
       "steps": 19,
       "video": "/quick/bulbasaur-1080x1920.mp4?v=445ddd3357bc",
       "poster": "/models/bulbasaur/quick_poster.jpg?v=25d4b0f74dd4",
-      "instructions": "/models/bulbasaur/booklet.pdf?v=fc77270ac73f",
+      "instructions": "/models/bulbasaur/booklet.pdf?v=405d4d5d022f",
       "url": "/quick/bulbasaur/",
       "model": "/models/bulbasaur/model.json?v=0556e2db1a47",
       "geometry": "/models/bulbasaur/model.glb?v=10fefe93bb55",
@@ -119,7 +119,7 @@
           1400,
           990
         ],
-        "v": "fc77270ac73f"
+        "v": "405d4d5d022f"
       },
       "brands": [
         "pokemon",
@@ -135,7 +135,7 @@
       "steps": 15,
       "video": "/quick/caldwell_mini-1080x1920.mp4?v=f235caa0d8c9",
       "poster": "/models/caldwell_mini/quick_poster.jpg?v=197e211f5350",
-      "instructions": "/models/caldwell_mini/booklet.pdf?v=307811c5f7b7",
+      "instructions": "/models/caldwell_mini/booklet.pdf?v=bce3e7485d95",
       "url": "/quick/caldwell_mini/",
       "model": "/models/caldwell_mini/model.json?v=5ff5717105cf",
       "geometry": "/models/caldwell_mini/model.glb?v=982c063bf263",
@@ -145,7 +145,7 @@
           1400,
           990
         ],
-        "v": "307811c5f7b7"
+        "v": "bce3e7485d95"
       },
       "built": "2026-10-27"
     },
@@ -158,7 +158,7 @@
       "steps": 8,
       "video": "/quick/charmander-1080x1920.mp4?v=8733097078ba",
       "poster": "/models/charmander/quick_poster.jpg?v=e7362b080974",
-      "instructions": "/models/charmander/booklet.pdf?v=6537bc8d173f",
+      "instructions": "/models/charmander/booklet.pdf?v=eb904e88bfc5",
       "url": "/quick/charmander/",
       "model": "/models/charmander/model.json?v=49876191ebf8",
       "geometry": "/models/charmander/model.glb?v=86bea5fb0a68",
@@ -168,7 +168,7 @@
           1400,
           990
         ],
-        "v": "6537bc8d173f"
+        "v": "eb904e88bfc5"
       },
       "brands": [
         "pokemon",
@@ -186,7 +186,7 @@
       "steps": 15,
       "video": "/quick/charmander_starter-1080x1920.mp4?v=459a27c8e9ef",
       "poster": "/models/charmander_starter/quick_poster.jpg?v=be6ffa7ae86d",
-      "instructions": "/models/charmander_starter/booklet.pdf?v=88cefe484c17",
+      "instructions": "/models/charmander_starter/booklet.pdf?v=0e8d65288150",
       "url": "/quick/charmander_starter/",
       "model": "/models/charmander_starter/model.json?v=13b3c084e089",
       "geometry": "/models/charmander_starter/model.glb?v=19df1a30fa8c",
@@ -196,7 +196,7 @@
           1400,
           990
         ],
-        "v": "88cefe484c17"
+        "v": "0e8d65288150"
       },
       "brands": [
         "pokemon",
@@ -212,7 +212,7 @@
       "steps": 15,
       "video": "/quick/crow-1080x1920.mp4?v=f28fdcecd25a",
       "poster": "/models/crow/quick_poster.jpg?v=ea26a883f65a",
-      "instructions": "/models/crow/booklet.pdf?v=8aed0c73e544",
+      "instructions": "/models/crow/booklet.pdf?v=c1df0da20dfd",
       "url": "/quick/crow/",
       "model": "/models/crow/model.json?v=c043f013d356",
       "geometry": "/models/crow/model.glb?v=6bb08cf9b2c7",
@@ -222,7 +222,7 @@
           1400,
           990
         ],
-        "v": "8aed0c73e544"
+        "v": "c1df0da20dfd"
       },
       "brands": [
         "spooky"
@@ -239,7 +239,7 @@
       "steps": 26,
       "video": "/quick/dinosaur-1080x1920.mp4?v=edeac1d0a623",
       "poster": "/models/dinosaur/quick_poster.jpg?v=a1df279f67d0",
-      "instructions": "/models/dinosaur/booklet.pdf?v=7f62f5bd5820",
+      "instructions": "/models/dinosaur/booklet.pdf?v=be551ea928a6",
       "url": "/quick/dinosaur/",
       "model": "/models/dinosaur/model.json?v=7dfe3a69a0af",
       "geometry": "/models/dinosaur/model.glb?v=10fce31fc22f",
@@ -249,7 +249,7 @@
           1400,
           990
         ],
-        "v": "7f62f5bd5820"
+        "v": "be551ea928a6"
       }
     },
     {
@@ -261,7 +261,7 @@
       "steps": 11,
       "video": "/quick/dracula-1080x1920.mp4?v=fb7679912ce4",
       "poster": "/models/dracula/quick_poster.jpg?v=69bdbf967332",
-      "instructions": "/models/dracula/booklet.pdf?v=a5ab4c5407c5",
+      "instructions": "/models/dracula/booklet.pdf?v=c1415fe1bd36",
       "url": "/quick/dracula/",
       "model": "/models/dracula/model.json?v=566444b3eaec",
       "geometry": "/models/dracula/model.glb?v=1d73a8d9a362",
@@ -271,7 +271,7 @@
           1400,
           990
         ],
-        "v": "a5ab4c5407c5"
+        "v": "c1415fe1bd36"
       },
       "brands": [
         "spooky"
@@ -286,7 +286,7 @@
       "steps": 45,
       "video": "/quick/finn_the_human-1080x1920.mp4?v=1eab9dc84e24",
       "poster": "/models/finn_the_human/quick_poster.jpg?v=3ff81c893d6c",
-      "instructions": "/models/finn_the_human/booklet.pdf?v=43eb8af8444a",
+      "instructions": "/models/finn_the_human/booklet.pdf?v=51a69477278a",
       "url": "/quick/finn_the_human/",
       "model": "/models/finn_the_human/model.json?v=e37ae9518896",
       "geometry": "/models/finn_the_human/model.glb?v=8b1c3ebcd0c3",
@@ -296,7 +296,7 @@
           1400,
           990
         ],
-        "v": "43eb8af8444a"
+        "v": "51a69477278a"
       },
       "brands": [
         "adventure-time"
@@ -311,7 +311,7 @@
       "steps": 11,
       "video": "/quick/frankenstein-1080x1920.mp4?v=96e22efe1be2",
       "poster": "/models/frankenstein/quick_poster.jpg?v=55569760fa9f",
-      "instructions": "/models/frankenstein/booklet.pdf?v=340761fb0fe1",
+      "instructions": "/models/frankenstein/booklet.pdf?v=0287b251e29d",
       "url": "/quick/frankenstein/",
       "model": "/models/frankenstein/model.json?v=c77b98a16d3d",
       "geometry": "/models/frankenstein/model.glb?v=fa974ac48e22",
@@ -321,7 +321,7 @@
           1400,
           990
         ],
-        "v": "340761fb0fe1"
+        "v": "0287b251e29d"
       },
       "brands": [
         "spooky"
@@ -338,7 +338,7 @@
       "steps": 32,
       "video": "/quick/freddy_fazbear-1080x1920.mp4?v=b24f63a8d4aa",
       "poster": "/models/freddy_fazbear/quick_poster.jpg?v=b33640f39e27",
-      "instructions": "/models/freddy_fazbear/booklet.pdf?v=1a24b425609a",
+      "instructions": "/models/freddy_fazbear/booklet.pdf?v=544df1e3928f",
       "url": "/quick/freddy_fazbear/",
       "model": "/models/freddy_fazbear/model.json?v=e77713521dea",
       "geometry": "/models/freddy_fazbear/model.glb?v=e81926d53f64",
@@ -348,7 +348,7 @@
           1400,
           990
         ],
-        "v": "1a24b425609a"
+        "v": "544df1e3928f"
       },
       "brands": [
         "spooky"
@@ -364,7 +364,7 @@
       "steps": 10,
       "video": "/quick/game_boy-1080x1920.mp4?v=46c050bb59d2",
       "poster": "/models/game_boy/quick_poster.jpg?v=308f54c49711",
-      "instructions": "/models/game_boy/booklet.pdf?v=8f5be1b3785e",
+      "instructions": "/models/game_boy/booklet.pdf?v=b2811dd75928",
       "url": "/quick/game_boy/",
       "model": "/models/game_boy/model.json?v=311e48829059",
       "geometry": "/models/game_boy/model.glb?v=6ea7b17c22f3",
@@ -374,7 +374,7 @@
           1400,
           990
         ],
-        "v": "8f5be1b3785e"
+        "v": "b2811dd75928"
       },
       "brands": [
         "nintendo"
@@ -391,7 +391,7 @@
       "steps": 19,
       "video": "/quick/garfield-1080x1920.mp4?v=06d46b6f66bf",
       "poster": "/models/garfield/quick_poster.jpg?v=fc15dffdf0f1",
-      "instructions": "/models/garfield/booklet.pdf?v=f6338e7ccd5d",
+      "instructions": "/models/garfield/booklet.pdf?v=00d880cd49f3",
       "url": "/quick/garfield/",
       "model": "/models/garfield/model.json?v=12f521e1ca16",
       "geometry": "/models/garfield/model.glb?v=a9ae0c2427b8",
@@ -401,7 +401,7 @@
           1400,
           990
         ],
-        "v": "f6338e7ccd5d"
+        "v": "00d880cd49f3"
       },
       "designer": "zeldar",
       "source": "https://brickit.app/ideas/4938967d-9f27-44fc-b41a-ef581aeff4b8",
@@ -416,7 +416,7 @@
       "steps": 37,
       "video": "/quick/guardian-1080x1920.mp4?v=0f00683b73c1",
       "poster": "/models/guardian/quick_poster.jpg?v=e6a54c6e68a7",
-      "instructions": "/models/guardian/booklet.pdf?v=0e34a617031b",
+      "instructions": "/models/guardian/booklet.pdf?v=b3b5b5e0fec2",
       "url": "/quick/guardian/",
       "model": "/models/guardian/model.json?v=2391f74ebca8",
       "geometry": "/models/guardian/model.glb?v=5307d4fd4ef1",
@@ -426,7 +426,7 @@
           1400,
           990
         ],
-        "v": "0e34a617031b"
+        "v": "b3b5b5e0fec2"
       },
       "brands": [
         "nintendo"
@@ -441,7 +441,7 @@
       "steps": 39,
       "video": "/quick/jake_the_dog-1080x1920.mp4?v=6beb4a5c7e90",
       "poster": "/models/jake_the_dog/quick_poster.jpg?v=a8c7d5a20dfc",
-      "instructions": "/models/jake_the_dog/booklet.pdf?v=f44437c4d60b",
+      "instructions": "/models/jake_the_dog/booklet.pdf?v=9e6fa088fc13",
       "url": "/quick/jake_the_dog/",
       "model": "/models/jake_the_dog/model.json?v=296add6934db",
       "geometry": "/models/jake_the_dog/model.glb?v=04bd1cfe6eaf",
@@ -451,7 +451,7 @@
           1400,
           990
         ],
-        "v": "f44437c4d60b"
+        "v": "9e6fa088fc13"
       },
       "brands": [
         "adventure-time"
@@ -466,7 +466,7 @@
       "steps": 15,
       "video": "/quick/luigi-1080x1920.mp4?v=63b52bf65ac9",
       "poster": "/models/luigi/quick_poster.jpg?v=1bd10b55dcd9",
-      "instructions": "/models/luigi/booklet.pdf?v=b9f520a33357",
+      "instructions": "/models/luigi/booklet.pdf?v=334708404752",
       "url": "/quick/luigi/",
       "model": "/models/luigi/model.json?v=be3f826f254d",
       "geometry": "/models/luigi/model.glb?v=7e1d5bccf840",
@@ -476,7 +476,7 @@
           1400,
           990
         ],
-        "v": "b9f520a33357"
+        "v": "334708404752"
       },
       "brands": [
         "nintendo"
@@ -493,7 +493,7 @@
       "steps": 19,
       "video": "/quick/magikarp-1080x1920.mp4?v=719e9de97cf1",
       "poster": "/models/magikarp/quick_poster.jpg?v=753faa77847b",
-      "instructions": "/models/magikarp/booklet.pdf?v=8113050ca8d1",
+      "instructions": "/models/magikarp/booklet.pdf?v=6494f92e1497",
       "url": "/quick/magikarp/",
       "model": "/models/magikarp/model.json?v=4ec39ab063f1",
       "geometry": "/models/magikarp/model.glb?v=0d1b1ff49564",
@@ -503,7 +503,7 @@
           1400,
           990
         ],
-        "v": "8113050ca8d1"
+        "v": "6494f92e1497"
       },
       "brands": [
         "pokemon",
@@ -521,7 +521,7 @@
       "steps": 15,
       "video": "/quick/mario-1080x1920.mp4?v=eb34315f4be5",
       "poster": "/models/mario/quick_poster.jpg?v=544eb3866326",
-      "instructions": "/models/mario/booklet.pdf?v=3bda6de97b9a",
+      "instructions": "/models/mario/booklet.pdf?v=ee7c487244e5",
       "url": "/quick/mario/",
       "model": "/models/mario/model.json?v=f7e74a34b140",
       "geometry": "/models/mario/model.glb?v=7e1d5bccf840",
@@ -531,7 +531,7 @@
           1400,
           990
         ],
-        "v": "3bda6de97b9a"
+        "v": "ee7c487244e5"
       },
       "brands": [
         "nintendo"
@@ -548,7 +548,7 @@
       "steps": 11,
       "video": "/quick/moby_dick-1080x1920.mp4?v=91d3b0fdda7d",
       "poster": "/models/moby_dick/quick_poster.jpg?v=cf982adb3b83",
-      "instructions": "/models/moby_dick/booklet.pdf?v=230d2d26b0e0",
+      "instructions": "/models/moby_dick/booklet.pdf?v=01890ea38710",
       "url": "/quick/moby_dick/",
       "model": "/models/moby_dick/model.json?v=3a2c51f8a345",
       "geometry": "/models/moby_dick/model.glb?v=d3dc9e3c90a7",
@@ -558,7 +558,7 @@
           1400,
           990
         ],
-        "v": "230d2d26b0e0"
+        "v": "01890ea38710"
       },
       "designer": "d.e.n.n.i.s",
       "source": "https://brickit.app/ideas/527f1c4e-e90c-4600-8a03-e480011a26e6",
@@ -573,7 +573,7 @@
       "steps": 22,
       "video": "/quick/onkey-1080x1920.mp4?v=88ebe67eb81e",
       "poster": "/models/onkey/quick_poster.jpg?v=1622d125e494",
-      "instructions": "/models/onkey/booklet.pdf?v=91ff1dab0930",
+      "instructions": "/models/onkey/booklet.pdf?v=6feb1df1189b",
       "url": "/quick/onkey/",
       "model": "/models/onkey/model.json?v=1d9bdc9184f1",
       "geometry": "/models/onkey/model.glb?v=f2160e419f64",
@@ -583,7 +583,7 @@
           1400,
           990
         ],
-        "v": "91ff1dab0930"
+        "v": "6feb1df1189b"
       },
       "designer": "theroldangrace",
       "source": "https://www.instagram.com/p/DedZYEepfkj/"
@@ -597,7 +597,7 @@
       "steps": 18,
       "video": "/quick/pez_darth_vader-1080x1920.mp4?v=fe64e923dbf4",
       "poster": "/models/pez_darth_vader/quick_poster.jpg?v=3f42f9da29d3",
-      "instructions": "/models/pez_darth_vader/booklet.pdf?v=1dae53d6f924",
+      "instructions": "/models/pez_darth_vader/booklet.pdf?v=3f7a8a633fcc",
       "url": "/quick/pez_darth_vader/",
       "model": "/models/pez_darth_vader/model.json?v=15f8895ce27c",
       "geometry": "/models/pez_darth_vader/model.glb?v=5dad2051e4a0",
@@ -607,7 +607,7 @@
           1400,
           990
         ],
-        "v": "1dae53d6f924"
+        "v": "3f7a8a633fcc"
       },
       "brands": [
         "pez",
@@ -623,7 +623,7 @@
       "steps": 18,
       "video": "/quick/pez_stormtrooper-1080x1920.mp4?v=62c34036059b",
       "poster": "/models/pez_stormtrooper/quick_poster.jpg?v=01ce01eee023",
-      "instructions": "/models/pez_stormtrooper/booklet.pdf?v=7a56cb856baa",
+      "instructions": "/models/pez_stormtrooper/booklet.pdf?v=5a9470b27e5c",
       "url": "/quick/pez_stormtrooper/",
       "model": "/models/pez_stormtrooper/model.json?v=d6d20d5aa828",
       "geometry": "/models/pez_stormtrooper/model.glb?v=1744ae20e925",
@@ -633,7 +633,7 @@
           1400,
           990
         ],
-        "v": "7a56cb856baa"
+        "v": "5a9470b27e5c"
       },
       "brands": [
         "pez",
@@ -649,7 +649,7 @@
       "steps": 19,
       "video": "/quick/pez_yoda-1080x1920.mp4?v=27483b53574a",
       "poster": "/models/pez_yoda/quick_poster.jpg?v=ac37509de7c2",
-      "instructions": "/models/pez_yoda/booklet.pdf?v=6fe27e239f98",
+      "instructions": "/models/pez_yoda/booklet.pdf?v=6abad4288e6b",
       "url": "/quick/pez_yoda/",
       "model": "/models/pez_yoda/model.json?v=df637f0b9b99",
       "geometry": "/models/pez_yoda/model.glb?v=2eab64f102a5",
@@ -659,7 +659,7 @@
           1400,
           990
         ],
-        "v": "6fe27e239f98"
+        "v": "6abad4288e6b"
       },
       "brands": [
         "pez",
@@ -675,7 +675,7 @@
       "steps": 10,
       "video": "/quick/pikachu-1080x1920.mp4?v=ef62c61497b3",
       "poster": "/models/pikachu/quick_poster.jpg?v=458e797cf5a9",
-      "instructions": "/models/pikachu/booklet.pdf?v=912151544e6f",
+      "instructions": "/models/pikachu/booklet.pdf?v=2812f54521b9",
       "url": "/quick/pikachu/",
       "model": "/models/pikachu/model.json?v=4560e8529073",
       "geometry": "/models/pikachu/model.glb?v=318ab3dcdc0e",
@@ -685,7 +685,7 @@
           1400,
           990
         ],
-        "v": "912151544e6f"
+        "v": "2812f54521b9"
       },
       "brands": [
         "pokemon",
@@ -702,7 +702,7 @@
       "steps": 11,
       "video": "/quick/porygon-1080x1920.mp4?v=58abbcfb70c5",
       "poster": "/models/porygon/quick_poster.jpg?v=7904f0df6d59",
-      "instructions": "/models/porygon/booklet.pdf?v=d567eb0f2aab",
+      "instructions": "/models/porygon/booklet.pdf?v=54ca072ebe0c",
       "url": "/quick/porygon/",
       "model": "/models/porygon/model.json?v=51cab8101711",
       "geometry": "/models/porygon/model.glb?v=a46e853c1f37",
@@ -712,7 +712,7 @@
           1400,
           990
         ],
-        "v": "d567eb0f2aab"
+        "v": "54ca072ebe0c"
       },
       "brands": [
         "pokemon",
@@ -730,7 +730,7 @@
       "steps": 24,
       "video": "/quick/pumpkin-1080x1920.mp4?v=6cfe55523321",
       "poster": "/models/pumpkin/quick_poster.jpg?v=39d9c48b3100",
-      "instructions": "/models/pumpkin/booklet.pdf?v=2f8b7c6e0092",
+      "instructions": "/models/pumpkin/booklet.pdf?v=b123554b46d2",
       "url": "/quick/pumpkin/",
       "model": "/models/pumpkin/model.json?v=6738c2d82cff",
       "geometry": "/models/pumpkin/model.glb?v=41b0f2c90b61",
@@ -740,7 +740,7 @@
           1400,
           990
         ],
-        "v": "2f8b7c6e0092"
+        "v": "b123554b46d2"
       },
       "brands": [
         "spooky"
@@ -757,7 +757,7 @@
       "steps": 20,
       "video": "/quick/squirtle-1080x1920.mp4?v=7b4dbd19d95e",
       "poster": "/models/squirtle/quick_poster.jpg?v=0b9c4374f608",
-      "instructions": "/models/squirtle/booklet.pdf?v=5f7551cc97de",
+      "instructions": "/models/squirtle/booklet.pdf?v=d541ab02f3a9",
       "url": "/quick/squirtle/",
       "model": "/models/squirtle/model.json?v=f74423102cd3",
       "geometry": "/models/squirtle/model.glb?v=73f173a0bab4",
@@ -767,7 +767,7 @@
           1400,
           990
         ],
-        "v": "5f7551cc97de"
+        "v": "d541ab02f3a9"
       },
       "brands": [
         "pokemon",
@@ -783,7 +783,7 @@
       "steps": 12,
       "video": "/quick/taco-1080x1920.mp4?v=44744b81e822",
       "poster": "/models/taco/quick_poster.jpg?v=188d7e3ddbef",
-      "instructions": "/models/taco/booklet.pdf?v=0f928322195f",
+      "instructions": "/models/taco/booklet.pdf?v=3d5364907113",
       "url": "/quick/taco/",
       "model": "/models/taco/model.json?v=b7e38ede6a99",
       "geometry": "/models/taco/model.glb?v=ce5243fde9d0",
@@ -793,7 +793,7 @@
           1400,
           990
         ],
-        "v": "0f928322195f"
+        "v": "3d5364907113"
       },
       "brands": [
         "snacks"
@@ -808,7 +808,7 @@
       "steps": 37,
       "video": "/quick/the_thing-1080x1920.mp4?v=b65be0894c70",
       "poster": "/models/the_thing/quick_poster.jpg?v=73689db0fa65",
-      "instructions": "/models/the_thing/booklet.pdf?v=b4542464c552",
+      "instructions": "/models/the_thing/booklet.pdf?v=1a15e2369268",
       "url": "/quick/the_thing/",
       "model": "/models/the_thing/model.json?v=f011e82177ab",
       "geometry": "/models/the_thing/model.glb?v=2f037b59d9c8",
@@ -818,7 +818,7 @@
           1400,
           990
         ],
-        "v": "b4542464c552"
+        "v": "1a15e2369268"
       },
       "designer": "zeldar",
       "source": "https://brickit.app/ideas/2d4e49a5-3670-42b3-a2d3-39c16475d11a",
@@ -833,7 +833,7 @@
       "steps": 13,
       "video": "/quick/watermelon_ice_lolly-1080x1920.mp4?v=081903af64ba",
       "poster": "/models/watermelon_ice_lolly/quick_poster.jpg?v=2e553f311fd2",
-      "instructions": "/models/watermelon_ice_lolly/booklet.pdf?v=70953717d202",
+      "instructions": "/models/watermelon_ice_lolly/booklet.pdf?v=bcaf0980da86",
       "url": "/quick/watermelon_ice_lolly/",
       "model": "/models/watermelon_ice_lolly/model.json?v=83c861372677",
       "geometry": "/models/watermelon_ice_lolly/model.glb?v=498362a0cc5b",
@@ -843,7 +843,7 @@
           1400,
           990
         ],
-        "v": "70953717d202"
+        "v": "bcaf0980da86"
       },
       "brands": [
         "snacks"
@@ -858,7 +858,7 @@
       "steps": 35,
       "video": "/quick/xenomorph-1080x1920.mp4?v=0e3f831c60de",
       "poster": "/models/xenomorph/quick_poster.jpg?v=085460d7f210",
-      "instructions": "/models/xenomorph/booklet.pdf?v=8937acb1b16d",
+      "instructions": "/models/xenomorph/booklet.pdf?v=c8c69ab3ab42",
       "url": "/quick/xenomorph/",
       "model": "/models/xenomorph/model.json?v=5602f987806a",
       "geometry": "/models/xenomorph/model.glb?v=933bc79f188c",
@@ -868,7 +868,7 @@
           1400,
           990
         ],
-        "v": "8937acb1b16d"
+        "v": "c8c69ab3ab42"
       },
       "brands": [
         "spooky"

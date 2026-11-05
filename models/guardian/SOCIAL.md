@@ -3,7 +3,7 @@
 Copy for this model's Quick Bricks video, to paste and post by hand (docs/new-model.md).
 
 - **Video:** `out/guardian-1080x1920.mp4` (9:16, sound on: the clicks are the point)
-- **Link:** https://bricks.superfun.games/quick/guardian/
+- **Link:** https://bricks.vhsgarage.com/quick/guardian/
 - **Credit:** Our own design: no credit line needed.
 
 ## Instagram

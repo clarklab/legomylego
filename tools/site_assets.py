@@ -41,7 +41,7 @@ else:
 
 ROOT = Path(__file__).resolve().parents[1]
 SITE = ROOT / "site"
-ORIGIN = "https://bricks.superfun.games"
+ORIGIN = "https://bricks.vhsgarage.com"
 HOST = ORIGIN.removeprefix("https://")
 SITE_NAME = "Bricks"
 SHORT_NAME = "Bricks"

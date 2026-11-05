@@ -2,7 +2,7 @@
 
 Buildable LEGO models, checked by the `brickkit` engine, with their parts lists, instruction
 booklets, videos and a static site (`site/`, deployed by Netlify from `main` to
-bricks.superfun.games).
+bricks.vhsgarage.com).
 
 ## Where to look
 

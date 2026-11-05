@@ -3,7 +3,7 @@
 Copy for this model's Quick Bricks video, to paste and post by hand (docs/new-model.md).
 
 - **Video:** `out/moby_dick-1080x1920.mp4` (9:16, sound on: the clicks are the point)
-- **Link:** https://bricks.superfun.games/quick/moby_dick/
+- **Link:** https://bricks.vhsgarage.com/quick/moby_dick/
 - **Credit:** Design by d.e.n.n.i.s, from Brickit: https://brickit.app/ideas/527f1c4e-e90c-4600-8a03-e480011a26e6
 
 ## Instagram

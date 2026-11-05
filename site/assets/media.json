@@ -7,8 +7,8 @@
      "size": 2100
     },
     "booklet.pdf": {
-     "v": "38715dcc8d",
-     "size": 2714463
+     "v": "d56ef7ccdb",
+     "size": 2705509
     },
     "bricklink_wanted.xml": {
      "v": "b747f1e2c3",
@@ -21,6 +21,66 @@
     "model.json": {
      "v": "16514e6112",
      "size": 9863
+    },
+    "pages/p001.webp": {
+     "v": "0415c1e129",
+     "size": 25152
+    },
+    "pages/p002.webp": {
+     "v": "cc3864df68",
+     "size": 68874
+    },
+    "pages/p003.webp": {
+     "v": "0ceb9c76bd",
+     "size": 53234
+    },
+    "pages/p004.webp": {
+     "v": "709b30ec3f",
+     "size": 16586
+    },
+    "pages/p005.webp": {
+     "v": "fe0eedd4e6",
+     "size": 25438
+    },
+    "pages/p006.webp": {
+     "v": "f2e6bd64d6",
+     "size": 31922
+    },
+    "pages/p007.webp": {
+     "v": "7386fb2c15",
+     "size": 30214
+    },
+    "pages/p008.webp": {
+     "v": "465af905a4",
+     "size": 26548
+    },
+    "pages/p009.webp": {
+     "v": "28e2f4633a",
+     "size": 29720
+    },
+    "pages/p010.webp": {
+     "v": "62c541c5ae",
+     "size": 29090
+    },
+    "pages/p011.webp": {
+     "v": "d2b31fc401",
+     "size": 28302
+    },
+    "pages/p012.webp": {
+     "v": "e05e8e66f6",
+     "size": 26776
+    },
+    "pages/p013.webp": {
+     "v": "fc3ee518f4",
+     "size": 15090
+    },
+    "pages/p014.webp": {
+     "v": "34d5892b0d",
+     "size": 32214
+    },
+    "pages/p015.webp": {
+     "v": "004795cfd7",
+     "size": 63322
     },
     "parts.csv": {
      "v": "3b87a5fa20",
@@ -73,8 +133,8 @@
      "size": 138580
     },
     "booklet.pdf": {
-     "v": "c04d26c10b",
-     "size": 33378817
+     "v": "b37035b74e",
+     "size": 33369481
     },
     "bricklink_wanted.xml": {
      "v": "c039363e85",
@@ -171,7 +231,7 @@
      "sm": "/assets/img/baby_metroid/renders_three_quarter-480.webp?v=dc8f4aabcb"
     }
    },
-   "og": "/assets/og/baby_metroid.png?v=e1a16ff654"
+   "og": "/assets/og/baby_metroid.png?v=9fe4af6ded"
   },
   "bat": {
    "files": {
@@ -180,8 +240,8 @@
      "size": 1570
     },
     "booklet.pdf": {
-     "v": "a7ca3322df",
-     "size": 1474503
+     "v": "591375a620",
+     "size": 1465357
     },
     "bricklink_wanted.xml": {
      "v": "537c847915",
@@ -194,6 +254,46 @@
     "model.json": {
      "v": "29a4be37bd",
      "size": 8282
+    },
+    "pages/p001.webp": {
+     "v": "d4734ab3ef",
+     "size": 23964
+    },
+    "pages/p002.webp": {
+     "v": "dd5ab1cbdc",
+     "size": 59414
+    },
+    "pages/p003.webp": {
+     "v": "2a394e1a74",
+     "size": 53124
+    },
+    "pages/p004.webp": {
+     "v": "2ac82857a2",
+     "size": 11262
+    },
+    "pages/p005.webp": {
+     "v": "9f5d424ed8",
+     "size": 24954
+    },
+    "pages/p006.webp": {
+     "v": "2b5fcd5518",
+     "size": 30952
+    },
+    "pages/p007.webp": {
+     "v": "f27288f2b7",
+     "size": 31950
+    },
+    "pages/p008.webp": {
+     "v": "fb2c6212c9",
+     "size": 30214
+    },
+    "pages/p009.webp": {
+     "v": "cd77f3accb",
+     "size": 27610
+    },
+    "pages/p010.webp": {
+     "v": "0be34b96c2",
+     "size": 58508
     },
     "parts.csv": {
      "v": "6fa6085cd3",
@@ -221,8 +321,8 @@
      "size": 4157
     },
     "booklet.pdf": {
-     "v": "8e9c121b2b",
-     "size": 1861323
+     "v": "7b2294d1c7",
+     "size": 1852424
     },
     "bricklink_wanted.xml": {
      "v": "58fabe005c",
@@ -235,6 +335,54 @@
     "model.json": {
      "v": "5ade33057a",
      "size": 9625
+    },
+    "pages/p001.webp": {
+     "v": "7c40e9b911",
+     "size": 23354
+    },
+    "pages/p002.webp": {
+     "v": "18333a6d23",
+     "size": 69474
+    },
+    "pages/p003.webp": {
+     "v": "950b184326",
+     "size": 53098
+    },
+    "pages/p004.webp": {
+     "v": "91c472a427",
+     "size": 13734
+    },
+    "pages/p005.webp": {
+     "v": "18ea76723d",
+     "size": 24628
+    },
+    "pages/p006.webp": {
+     "v": "ec9e0f1216",
+     "size": 31354
+    },
+    "pages/p007.webp": {
+     "v": "e40f0c7e30",
+     "size": 31820
+    },
+    "pages/p008.webp": {
+     "v": "1df453ffc0",
+     "size": 30858
+    },
+    "pages/p009.webp": {
+     "v": "9a748e9cd0",
+     "size": 32644
+    },
+    "pages/p010.webp": {
+     "v": "9ca6443ec8",
+     "size": 21492
+    },
+    "pages/p011.webp": {
+     "v": "55dd9b69c8",
+     "size": 32842
+    },
+    "pages/p012.webp": {
+     "v": "1c550279dc",
+     "size": 64484
     },
     "parts.csv": {
      "v": "6638a2cf1f",
@@ -273,8 +421,8 @@
      "size": 4006
     },
     "booklet.pdf": {
-     "v": "5e1b918bba",
-     "size": 3392961
+     "v": "21b33d3f3f",
+     "size": 3384156
     },
     "bricklink_wanted.xml": {
      "v": "939ae648be",
@@ -287,6 +435,54 @@
     "model.json": {
      "v": "b87916e959",
      "size": 14717
+    },
+    "pages/p001.webp": {
+     "v": "611e86e3ed",
+     "size": 29642
+    },
+    "pages/p002.webp": {
+     "v": "3e760d360a",
+     "size": 76508
+    },
+    "pages/p003.webp": {
+     "v": "0a15261708",
+     "size": 53242
+    },
+    "pages/p004.webp": {
+     "v": "e72dd6b10f",
+     "size": 17746
+    },
+    "pages/p005.webp": {
+     "v": "bddeaa8206",
+     "size": 44094
+    },
+    "pages/p006.webp": {
+     "v": "bc62573b47",
+     "size": 50412
+    },
+    "pages/p007.webp": {
+     "v": "163b4e974a",
+     "size": 34498
+    },
+    "pages/p008.webp": {
+     "v": "0eddf8170e",
+     "size": 37776
+    },
+    "pages/p009.webp": {
+     "v": "d2f3ff4487",
+     "size": 38904
+    },
+    "pages/p010.webp": {
+     "v": "3f8fdc6689",
+     "size": 56470
+    },
+    "pages/p011.webp": {
+     "v": "bd960ad3ce",
+     "size": 45014
+    },
+    "pages/p012.webp": {
+     "v": "0eb168080c",
+     "size": 65322
     },
     "parts.csv": {
      "v": "1fb4151285",
@@ -361,8 +557,8 @@
   "bulbasaur": {
    "files": {
     "booklet.pdf": {
-     "v": "3451352e41",
-     "size": 3169089
+     "v": "26a2809804",
+     "size": 3160538
     },
     "bricklink_wanted.xml": {
      "v": "a3549ac602",
@@ -379,6 +575,70 @@
     "model.json": {
      "v": "37a66c3e8c",
      "size": 14819
+    },
+    "pages/p001.webp": {
+     "v": "4b09c0cc81",
+     "size": 26816
+    },
+    "pages/p002.webp": {
+     "v": "8841cdb05e",
+     "size": 62712
+    },
+    "pages/p003.webp": {
+     "v": "f6f12e4224",
+     "size": 52362
+    },
+    "pages/p004.webp": {
+     "v": "96f9e8735d",
+     "size": 13334
+    },
+    "pages/p005.webp": {
+     "v": "f646bdec5f",
+     "size": 36840
+    },
+    "pages/p006.webp": {
+     "v": "329e56ce1f",
+     "size": 39396
+    },
+    "pages/p007.webp": {
+     "v": "518372ca77",
+     "size": 43650
+    },
+    "pages/p008.webp": {
+     "v": "5f6a53c902",
+     "size": 33520
+    },
+    "pages/p009.webp": {
+     "v": "9fc7254741",
+     "size": 33824
+    },
+    "pages/p010.webp": {
+     "v": "6df3101ee6",
+     "size": 36284
+    },
+    "pages/p011.webp": {
+     "v": "711cbbdac8",
+     "size": 29024
+    },
+    "pages/p012.webp": {
+     "v": "ec75000ba7",
+     "size": 30110
+    },
+    "pages/p013.webp": {
+     "v": "13ac30333b",
+     "size": 33888
+    },
+    "pages/p014.webp": {
+     "v": "a8c393d7f5",
+     "size": 17266
+    },
+    "pages/p015.webp": {
+     "v": "46309b7d5c",
+     "size": 47176
+    },
+    "pages/p016.webp": {
+     "v": "feeeb78782",
+     "size": 62154
     },
     "parts.csv": {
      "v": "409394224e",
@@ -443,8 +703,8 @@
   "caldwell_courthouse": {
    "files": {
     "booklet.pdf": {
-     "v": "fffe9e7c81",
-     "size": 43400363
+     "v": "e84415c76a",
+     "size": 43392990
     },
     "bricklink_wanted.xml": {
      "v": "66f744f6b5",
@@ -459,8 +719,8 @@
      "size": 296148
     },
     "companions/caldwell_mini/booklet.pdf": {
-     "v": "80df8f5acd",
-     "size": 3414739
+     "v": "471a95aae2",
+     "size": 3940914
     },
     "companions/caldwell_mini/bricklink_wanted.xml": {
      "v": "ccc9d749ac",
@@ -683,13 +943,13 @@
      "sm": "/assets/img/caldwell_courthouse/companions_caldwell_mini_renders_front-480.webp?v=36b9befbfb"
     }
    },
-   "og": "/assets/og/caldwell_courthouse.png?v=0a1b3125d0"
+   "og": "/assets/og/caldwell_courthouse.png?v=3a17cf4eab"
   },
   "caldwell_mini": {
    "files": {
     "booklet.pdf": {
-     "v": "d665361b09",
-     "size": 3941120
+     "v": "471a95aae2",
+     "size": 3940914
     },
     "bricklink_wanted.xml": {
      "v": "ccc9d749ac",
@@ -706,6 +966,62 @@
     "model.json": {
      "v": "2e5becff3f",
      "size": 28411
+    },
+    "pages/p001.webp": {
+     "v": "7657d8db00",
+     "size": 40088
+    },
+    "pages/p002.webp": {
+     "v": "d7efc3d956",
+     "size": 63262
+    },
+    "pages/p003.webp": {
+     "v": "ce1e4c6fbb",
+     "size": 53300
+    },
+    "pages/p004.webp": {
+     "v": "38925dd612",
+     "size": 15800
+    },
+    "pages/p005.webp": {
+     "v": "c690bbb433",
+     "size": 46042
+    },
+    "pages/p006.webp": {
+     "v": "50da832b96",
+     "size": 53382
+    },
+    "pages/p007.webp": {
+     "v": "e30d45280e",
+     "size": 57028
+    },
+    "pages/p008.webp": {
+     "v": "37015943ae",
+     "size": 52728
+    },
+    "pages/p009.webp": {
+     "v": "2b8b58b1c5",
+     "size": 56140
+    },
+    "pages/p010.webp": {
+     "v": "6b271097c8",
+     "size": 23218
+    },
+    "pages/p011.webp": {
+     "v": "ea91848786",
+     "size": 22104
+    },
+    "pages/p012.webp": {
+     "v": "6a128b7880",
+     "size": 30300
+    },
+    "pages/p013.webp": {
+     "v": "7f77396104",
+     "size": 49330
+    },
+    "pages/p014.webp": {
+     "v": "db9c322720",
+     "size": 64126
     },
     "parts.csv": {
      "v": "a661445a8e",
@@ -774,8 +1090,8 @@
   "chainsaw_face": {
    "files": {
     "booklet.pdf": {
-     "v": "e2e5083a72",
-     "size": 22230206
+     "v": "df844355ad",
+     "size": 22221317
     },
     "bricklink_wanted.xml": {
      "v": "c0b32d220e",
@@ -880,13 +1196,13 @@
      "sm": "/assets/img/chainsaw_face/renders_three_quarter-480.webp?v=751432b688"
     }
    },
-   "og": "/assets/og/chainsaw_face.png?v=e7e98b19b0"
+   "og": "/assets/og/chainsaw_face.png?v=339e4e0fcf"
   },
   "charmander": {
    "files": {
     "booklet.pdf": {
-     "v": "a806d992f6",
-     "size": 1518455
+     "v": "f2a617bdb5",
+     "size": 1509642
     },
     "bricklink_wanted.xml": {
      "v": "3bef4e12fc",
@@ -903,6 +1219,46 @@
     "model.json": {
      "v": "9759f4d9c3",
      "size": 7482
+    },
+    "pages/p001.webp": {
+     "v": "a4aeb201ea",
+     "size": 24384
+    },
+    "pages/p002.webp": {
+     "v": "51930dbf5b",
+     "size": 71718
+    },
+    "pages/p003.webp": {
+     "v": "bcedba611c",
+     "size": 53128
+    },
+    "pages/p004.webp": {
+     "v": "45e2057b25",
+     "size": 11670
+    },
+    "pages/p005.webp": {
+     "v": "0259df3457",
+     "size": 26764
+    },
+    "pages/p006.webp": {
+     "v": "edde6044fe",
+     "size": 29996
+    },
+    "pages/p007.webp": {
+     "v": "d0881c90c5",
+     "size": 35676
+    },
+    "pages/p008.webp": {
+     "v": "d312887b8e",
+     "size": 29828
+    },
+    "pages/p009.webp": {
+     "v": "9dff5d65fd",
+     "size": 26124
+    },
+    "pages/p010.webp": {
+     "v": "fb24b20ef2",
+     "size": 63416
     },
     "parts.csv": {
      "v": "73ab5e8909",
@@ -957,8 +1313,8 @@
   "charmander_starter": {
    "files": {
     "booklet.pdf": {
-     "v": "fbfd8eb06c",
-     "size": 2548001
+     "v": "6668e1a5da",
+     "size": 2539456
     },
     "bricklink_wanted.xml": {
      "v": "5d2251724b",
@@ -975,6 +1331,62 @@
     "model.json": {
      "v": "e1f8539eac",
      "size": 13241
+    },
+    "pages/p001.webp": {
+     "v": "ac7332def9",
+     "size": 28364
+    },
+    "pages/p002.webp": {
+     "v": "c8bbba65e5",
+     "size": 63272
+    },
+    "pages/p003.webp": {
+     "v": "c979c4dab1",
+     "size": 53412
+    },
+    "pages/p004.webp": {
+     "v": "4fd7a958b3",
+     "size": 12524
+    },
+    "pages/p005.webp": {
+     "v": "73046baceb",
+     "size": 47718
+    },
+    "pages/p006.webp": {
+     "v": "6de1070c38",
+     "size": 44478
+    },
+    "pages/p007.webp": {
+     "v": "aedfd03d8a",
+     "size": 29808
+    },
+    "pages/p008.webp": {
+     "v": "01d900f1b3",
+     "size": 28966
+    },
+    "pages/p009.webp": {
+     "v": "a4d700b381",
+     "size": 35078
+    },
+    "pages/p010.webp": {
+     "v": "29ec0bcaa1",
+     "size": 31748
+    },
+    "pages/p011.webp": {
+     "v": "cc1b2bcdfa",
+     "size": 34350
+    },
+    "pages/p012.webp": {
+     "v": "3db56fbeff",
+     "size": 23182
+    },
+    "pages/p013.webp": {
+     "v": "a5df89643d",
+     "size": 44566
+    },
+    "pages/p014.webp": {
+     "v": "e8d8da1c0e",
+     "size": 64406
     },
     "parts.csv": {
      "v": "55bda5411b",
@@ -1039,8 +1451,8 @@
   "crow": {
    "files": {
     "booklet.pdf": {
-     "v": "96fa7f76bd",
-     "size": 2490164
+     "v": "278c23a29d",
+     "size": 2481127
     },
     "bricklink_wanted.xml": {
      "v": "904780bc44",
@@ -1057,6 +1469,62 @@
     "model.json": {
      "v": "143d5f298d",
      "size": 14240
+    },
+    "pages/p001.webp": {
+     "v": "88e89800f8",
+     "size": 27716
+    },
+    "pages/p002.webp": {
+     "v": "c99eb408b1",
+     "size": 77206
+    },
+    "pages/p003.webp": {
+     "v": "b259c827dc",
+     "size": 53208
+    },
+    "pages/p004.webp": {
+     "v": "694e18aa78",
+     "size": 13972
+    },
+    "pages/p005.webp": {
+     "v": "351fc93c6f",
+     "size": 28934
+    },
+    "pages/p006.webp": {
+     "v": "9812d85c00",
+     "size": 37418
+    },
+    "pages/p007.webp": {
+     "v": "b384686772",
+     "size": 35796
+    },
+    "pages/p008.webp": {
+     "v": "2943bcad24",
+     "size": 27260
+    },
+    "pages/p009.webp": {
+     "v": "72b3d30823",
+     "size": 34166
+    },
+    "pages/p010.webp": {
+     "v": "645dbec466",
+     "size": 37652
+    },
+    "pages/p011.webp": {
+     "v": "002861c935",
+     "size": 55830
+    },
+    "pages/p012.webp": {
+     "v": "321d6fd86a",
+     "size": 27588
+    },
+    "pages/p013.webp": {
+     "v": "e495563eea",
+     "size": 43012
+    },
+    "pages/p014.webp": {
+     "v": "aa5eff82ac",
+     "size": 67522
     },
     "parts.csv": {
      "v": "d0e0192e10",
@@ -1151,8 +1619,8 @@
   "dinosaur": {
    "files": {
     "booklet.pdf": {
-     "v": "8867f6ea54",
-     "size": 4077457
+     "v": "b3554ae0f6",
+     "size": 4068622
     },
     "bricklink_wanted.xml": {
      "v": "fec8e93203",
@@ -1169,6 +1637,82 @@
     "model.json": {
      "v": "4e3df22613",
      "size": 15166
+    },
+    "pages/p001.webp": {
+     "v": "9991157398",
+     "size": 27544
+    },
+    "pages/p002.webp": {
+     "v": "d198ae98c4",
+     "size": 66374
+    },
+    "pages/p003.webp": {
+     "v": "586442d57b",
+     "size": 52644
+    },
+    "pages/p004.webp": {
+     "v": "efeb6aaa0b",
+     "size": 23274
+    },
+    "pages/p005.webp": {
+     "v": "63ee57cbd5",
+     "size": 25570
+    },
+    "pages/p006.webp": {
+     "v": "ab8c8e46b5",
+     "size": 22636
+    },
+    "pages/p007.webp": {
+     "v": "ff73328ae6",
+     "size": 30362
+    },
+    "pages/p008.webp": {
+     "v": "a91a788d79",
+     "size": 29366
+    },
+    "pages/p009.webp": {
+     "v": "0e16c2125d",
+     "size": 23464
+    },
+    "pages/p010.webp": {
+     "v": "58e81fd490",
+     "size": 20104
+    },
+    "pages/p011.webp": {
+     "v": "f3e50900ee",
+     "size": 29774
+    },
+    "pages/p012.webp": {
+     "v": "370489abf0",
+     "size": 34240
+    },
+    "pages/p013.webp": {
+     "v": "7962ee60e4",
+     "size": 41706
+    },
+    "pages/p014.webp": {
+     "v": "0b16f9404b",
+     "size": 35712
+    },
+    "pages/p015.webp": {
+     "v": "7c1fe90c4a",
+     "size": 34040
+    },
+    "pages/p016.webp": {
+     "v": "82f82bb6ec",
+     "size": 36438
+    },
+    "pages/p017.webp": {
+     "v": "d8c1f7c9be",
+     "size": 47646
+    },
+    "pages/p018.webp": {
+     "v": "34cbe70a77",
+     "size": 47120
+    },
+    "pages/p019.webp": {
+     "v": "35879634ad",
+     "size": 67878
     },
     "parts.csv": {
      "v": "6b0fed814f",
@@ -1192,8 +1736,8 @@
   "dracula": {
    "files": {
     "booklet.pdf": {
-     "v": "b912a15f7b",
-     "size": 1826130
+     "v": "0b570b085e",
+     "size": 1817383
     },
     "bricklink_wanted.xml": {
      "v": "6a2f735e5d",
@@ -1210,6 +1754,54 @@
     "model.json": {
      "v": "b6a1410b4b",
      "size": 9943
+    },
+    "pages/p001.webp": {
+     "v": "0f12a51209",
+     "size": 26688
+    },
+    "pages/p002.webp": {
+     "v": "75386cf2da",
+     "size": 62326
+    },
+    "pages/p003.webp": {
+     "v": "3a790f656c",
+     "size": 52948
+    },
+    "pages/p004.webp": {
+     "v": "e344cf7f46",
+     "size": 11114
+    },
+    "pages/p005.webp": {
+     "v": "341f71d487",
+     "size": 22400
+    },
+    "pages/p006.webp": {
+     "v": "777cbdf432",
+     "size": 25856
+    },
+    "pages/p007.webp": {
+     "v": "52b4de598d",
+     "size": 27424
+    },
+    "pages/p008.webp": {
+     "v": "f7b6522d0d",
+     "size": 28436
+    },
+    "pages/p009.webp": {
+     "v": "73cc632b7e",
+     "size": 36498
+    },
+    "pages/p010.webp": {
+     "v": "bacc1a7398",
+     "size": 15216
+    },
+    "pages/p011.webp": {
+     "v": "3b66999389",
+     "size": 29832
+    },
+    "pages/p012.webp": {
+     "v": "2992f8a187",
+     "size": 62822
     },
     "parts.csv": {
      "v": "3f21f4103c",
@@ -1233,16 +1825,16 @@
   "ferret": {
    "files": {
     "booklet.pdf": {
-     "v": "84825fe969",
-     "size": 19989112
+     "v": "defd81a1a9",
+     "size": 19992570
     },
     "booklet_albino.pdf": {
-     "v": "eaee2a1874",
-     "size": 20428051
+     "v": "f41f8e86d8",
+     "size": 20431414
     },
     "booklet_cinnamon.pdf": {
-     "v": "34dc04fad0",
-     "size": 20117386
+     "v": "e1e16e32ad",
+     "size": 20120681
     },
     "bricklink_wanted.xml": {
      "v": "1cbfd82f24",
@@ -1337,13 +1929,13 @@
      "sm": "/assets/img/ferret/renders_three_quarter-480.webp?v=332f73c994"
     }
    },
-   "og": "/assets/og/ferret.png?v=44937cf01d"
+   "og": "/assets/og/ferret.png?v=77eb7564ea"
   },
   "finn_the_human": {
    "files": {
     "booklet.pdf": {
-     "v": "7bbc360174",
-     "size": 7055004
+     "v": "ee561725dd",
+     "size": 7046593
     },
     "bricklink_wanted.xml": {
      "v": "1106956d23",
@@ -1360,6 +1952,126 @@
     "model.json": {
      "v": "62a46c7abe",
      "size": 36359
+    },
+    "pages/p001.webp": {
+     "v": "857ab7943a",
+     "size": 27034
+    },
+    "pages/p002.webp": {
+     "v": "85425d17bb",
+     "size": 88426
+    },
+    "pages/p003.webp": {
+     "v": "e1cde50e75",
+     "size": 52452
+    },
+    "pages/p004.webp": {
+     "v": "ec6666938c",
+     "size": 30868
+    },
+    "pages/p005.webp": {
+     "v": "9ae05b19cd",
+     "size": 52742
+    },
+    "pages/p006.webp": {
+     "v": "4a619f3e2c",
+     "size": 35354
+    },
+    "pages/p007.webp": {
+     "v": "d7be9d6fb8",
+     "size": 38930
+    },
+    "pages/p008.webp": {
+     "v": "3cf38746e3",
+     "size": 33470
+    },
+    "pages/p009.webp": {
+     "v": "43d6bde039",
+     "size": 24718
+    },
+    "pages/p010.webp": {
+     "v": "44b25b8b5e",
+     "size": 30090
+    },
+    "pages/p011.webp": {
+     "v": "c60310ceba",
+     "size": 33966
+    },
+    "pages/p012.webp": {
+     "v": "969dd7e7d9",
+     "size": 25100
+    },
+    "pages/p013.webp": {
+     "v": "c8dc2ef980",
+     "size": 29886
+    },
+    "pages/p014.webp": {
+     "v": "f6203acd47",
+     "size": 24440
+    },
+    "pages/p015.webp": {
+     "v": "224b10c753",
+     "size": 28668
+    },
+    "pages/p016.webp": {
+     "v": "49f586770d",
+     "size": 29424
+    },
+    "pages/p017.webp": {
+     "v": "8e4df4ea20",
+     "size": 24416
+    },
+    "pages/p018.webp": {
+     "v": "661452303d",
+     "size": 28616
+    },
+    "pages/p019.webp": {
+     "v": "a332ba5cad",
+     "size": 39796
+    },
+    "pages/p020.webp": {
+     "v": "b5795515aa",
+     "size": 35812
+    },
+    "pages/p021.webp": {
+     "v": "1706c7c9ff",
+     "size": 47100
+    },
+    "pages/p022.webp": {
+     "v": "25808857d5",
+     "size": 46258
+    },
+    "pages/p023.webp": {
+     "v": "05b2f3745b",
+     "size": 52804
+    },
+    "pages/p024.webp": {
+     "v": "4972ae78a7",
+     "size": 40038
+    },
+    "pages/p025.webp": {
+     "v": "7e9c8275fe",
+     "size": 30346
+    },
+    "pages/p026.webp": {
+     "v": "09bd7e4c9f",
+     "size": 27002
+    },
+    "pages/p027.webp": {
+     "v": "d38c7553bf",
+     "size": 18926
+    },
+    "pages/p028.webp": {
+     "v": "ef0e40afc6",
+     "size": 77158
+    },
+    "pages/p029.webp": {
+     "v": "6d4205f38a",
+     "size": 42566
+    },
+    "pages/p030.webp": {
+     "v": "3560a019ac",
+     "size": 72204
     },
     "parts.csv": {
      "v": "bfe3e055e8",
@@ -1444,8 +2156,8 @@
   "frankenstein": {
    "files": {
     "booklet.pdf": {
-     "v": "c688a85c44",
-     "size": 1656580
+     "v": "50c38ad00e",
+     "size": 1647917
     },
     "bricklink_wanted.xml": {
      "v": "3835e6c986",
@@ -1462,6 +2174,54 @@
     "model.json": {
      "v": "75503a2aba",
      "size": 8647
+    },
+    "pages/p001.webp": {
+     "v": "13511a4031",
+     "size": 27634
+    },
+    "pages/p002.webp": {
+     "v": "88786bfa8c",
+     "size": 71256
+    },
+    "pages/p003.webp": {
+     "v": "4775dab328",
+     "size": 52670
+    },
+    "pages/p004.webp": {
+     "v": "a3f78bf272",
+     "size": 11212
+    },
+    "pages/p005.webp": {
+     "v": "48b38e1ec9",
+     "size": 21990
+    },
+    "pages/p006.webp": {
+     "v": "7b1459050b",
+     "size": 29288
+    },
+    "pages/p007.webp": {
+     "v": "d057ba81f9",
+     "size": 25002
+    },
+    "pages/p008.webp": {
+     "v": "6e5becdf9f",
+     "size": 24998
+    },
+    "pages/p009.webp": {
+     "v": "bb6e8e1846",
+     "size": 25096
+    },
+    "pages/p010.webp": {
+     "v": "e5ba74dedd",
+     "size": 16368
+    },
+    "pages/p011.webp": {
+     "v": "dc82efa4c8",
+     "size": 29366
+    },
+    "pages/p012.webp": {
+     "v": "5696b08803",
+     "size": 64860
     },
     "parts.csv": {
      "v": "33fbf3f6dd",
@@ -1506,8 +2266,8 @@
   "freddy_fazbear": {
    "files": {
     "booklet.pdf": {
-     "v": "8b8c72edc0",
-     "size": 2962390
+     "v": "9d99551bb5",
+     "size": 2953506
     },
     "bricklink_wanted.xml": {
      "v": "1c038b2f96",
@@ -1524,6 +2284,94 @@
     "model.json": {
      "v": "ee5fdf7637",
      "size": 17470
+    },
+    "pages/p001.webp": {
+     "v": "90a955170e",
+     "size": 30204
+    },
+    "pages/p002.webp": {
+     "v": "0fbd2eaa39",
+     "size": 70772
+    },
+    "pages/p003.webp": {
+     "v": "fa6e24fb41",
+     "size": 52734
+    },
+    "pages/p004.webp": {
+     "v": "a9ff901257",
+     "size": 11518
+    },
+    "pages/p005.webp": {
+     "v": "981b16eb8b",
+     "size": 19986
+    },
+    "pages/p006.webp": {
+     "v": "0d14503f71",
+     "size": 19234
+    },
+    "pages/p007.webp": {
+     "v": "455d34b523",
+     "size": 22006
+    },
+    "pages/p008.webp": {
+     "v": "665e0efab5",
+     "size": 19894
+    },
+    "pages/p009.webp": {
+     "v": "c42bba283d",
+     "size": 31676
+    },
+    "pages/p010.webp": {
+     "v": "b275681e2a",
+     "size": 30218
+    },
+    "pages/p011.webp": {
+     "v": "246f1f09b1",
+     "size": 25958
+    },
+    "pages/p012.webp": {
+     "v": "f161136c11",
+     "size": 26672
+    },
+    "pages/p013.webp": {
+     "v": "ec89e58565",
+     "size": 29330
+    },
+    "pages/p014.webp": {
+     "v": "8cd0e7e87b",
+     "size": 27000
+    },
+    "pages/p015.webp": {
+     "v": "46c2453807",
+     "size": 28298
+    },
+    "pages/p016.webp": {
+     "v": "8d46167298",
+     "size": 27152
+    },
+    "pages/p017.webp": {
+     "v": "42d27b7be1",
+     "size": 25838
+    },
+    "pages/p018.webp": {
+     "v": "9cc8100601",
+     "size": 33268
+    },
+    "pages/p019.webp": {
+     "v": "d8949a4412",
+     "size": 25838
+    },
+    "pages/p020.webp": {
+     "v": "53486aa039",
+     "size": 26310
+    },
+    "pages/p021.webp": {
+     "v": "e6c8290406",
+     "size": 51018
+    },
+    "pages/p022.webp": {
+     "v": "059872369e",
+     "size": 66032
     },
     "parts.csv": {
      "v": "f8c04ae1e0",
@@ -1568,8 +2416,8 @@
   "game_boy": {
    "files": {
     "booklet.pdf": {
-     "v": "791ab28862",
-     "size": 2349152
+     "v": "c9ca43d397",
+     "size": 2340607
     },
     "bricklink_wanted.xml": {
      "v": "e9bc39a610",
@@ -1586,6 +2434,50 @@
     "model.json": {
      "v": "39822463e0",
      "size": 10515
+    },
+    "pages/p001.webp": {
+     "v": "fe31798371",
+     "size": 31344
+    },
+    "pages/p002.webp": {
+     "v": "f5c9c85318",
+     "size": 84570
+    },
+    "pages/p003.webp": {
+     "v": "51139cf276",
+     "size": 52374
+    },
+    "pages/p004.webp": {
+     "v": "53b79b54bb",
+     "size": 12530
+    },
+    "pages/p005.webp": {
+     "v": "47a59b42d6",
+     "size": 45108
+    },
+    "pages/p006.webp": {
+     "v": "0c52d1549b",
+     "size": 33260
+    },
+    "pages/p007.webp": {
+     "v": "53cab10193",
+     "size": 37830
+    },
+    "pages/p008.webp": {
+     "v": "f7e1bba162",
+     "size": 36310
+    },
+    "pages/p009.webp": {
+     "v": "90d784c3f8",
+     "size": 25118
+    },
+    "pages/p010.webp": {
+     "v": "3e54c00f89",
+     "size": 35326
+    },
+    "pages/p011.webp": {
+     "v": "956b669920",
+     "size": 66662
     },
     "parts.csv": {
      "v": "f3724328e5",
@@ -1650,8 +2542,8 @@
   "garfield": {
    "files": {
     "booklet.pdf": {
-     "v": "0e7775d8ec",
-     "size": 3250827
+     "v": "3a784db923",
+     "size": 3250798
     },
     "bricklink_wanted.xml": {
      "v": "f2eaa531d3",
@@ -1668,6 +2560,70 @@
     "model.json": {
      "v": "73a3bc1155",
      "size": 11866
+    },
+    "pages/p001.webp": {
+     "v": "d13dc0a12e",
+     "size": 29856
+    },
+    "pages/p002.webp": {
+     "v": "a498ecc47d",
+     "size": 91962
+    },
+    "pages/p003.webp": {
+     "v": "02f1c862b3",
+     "size": 53286
+    },
+    "pages/p004.webp": {
+     "v": "19802b006c",
+     "size": 16996
+    },
+    "pages/p005.webp": {
+     "v": "12299b9ab5",
+     "size": 20420
+    },
+    "pages/p006.webp": {
+     "v": "7b7ed36f84",
+     "size": 26470
+    },
+    "pages/p007.webp": {
+     "v": "1dc57fabbd",
+     "size": 28648
+    },
+    "pages/p008.webp": {
+     "v": "f1143eb520",
+     "size": 38992
+    },
+    "pages/p009.webp": {
+     "v": "9219973a49",
+     "size": 39796
+    },
+    "pages/p010.webp": {
+     "v": "489cff8de5",
+     "size": 26512
+    },
+    "pages/p011.webp": {
+     "v": "f4124534c6",
+     "size": 36882
+    },
+    "pages/p012.webp": {
+     "v": "7614482328",
+     "size": 29368
+    },
+    "pages/p013.webp": {
+     "v": "37762f0356",
+     "size": 30494
+    },
+    "pages/p014.webp": {
+     "v": "65436be1d9",
+     "size": 23404
+    },
+    "pages/p015.webp": {
+     "v": "3e393ddbc2",
+     "size": 34254
+    },
+    "pages/p016.webp": {
+     "v": "5e80ba9cbb",
+     "size": 68166
     },
     "parts.csv": {
      "v": "57ee7df242",
@@ -1722,8 +2678,8 @@
   "guardian": {
    "files": {
     "booklet.pdf": {
-     "v": "ba386291c0",
-     "size": 5936663
+     "v": "036ac58e31",
+     "size": 5927971
     },
     "bricklink_wanted.xml": {
      "v": "cdb7b32a06",
@@ -1740,6 +2696,106 @@
     "model.json": {
      "v": "5b3e946c5d",
      "size": 52259
+    },
+    "pages/p001.webp": {
+     "v": "58e8fbd917",
+     "size": 27726
+    },
+    "pages/p002.webp": {
+     "v": "a911239590",
+     "size": 82312
+    },
+    "pages/p003.webp": {
+     "v": "968eb20005",
+     "size": 53626
+    },
+    "pages/p004.webp": {
+     "v": "5f7211aa99",
+     "size": 22212
+    },
+    "pages/p005.webp": {
+     "v": "9a7ff203ca",
+     "size": 36460
+    },
+    "pages/p006.webp": {
+     "v": "677e5e580d",
+     "size": 33100
+    },
+    "pages/p007.webp": {
+     "v": "137d6cb674",
+     "size": 30766
+    },
+    "pages/p008.webp": {
+     "v": "c29c4e8fba",
+     "size": 38510
+    },
+    "pages/p009.webp": {
+     "v": "3bae8c3346",
+     "size": 40968
+    },
+    "pages/p010.webp": {
+     "v": "dd921f86d7",
+     "size": 40698
+    },
+    "pages/p011.webp": {
+     "v": "1a9cbfeaac",
+     "size": 46062
+    },
+    "pages/p012.webp": {
+     "v": "ede92ab66f",
+     "size": 39080
+    },
+    "pages/p013.webp": {
+     "v": "455b972546",
+     "size": 32210
+    },
+    "pages/p014.webp": {
+     "v": "89ef6da01d",
+     "size": 28098
+    },
+    "pages/p015.webp": {
+     "v": "347c9e56a8",
+     "size": 38768
+    },
+    "pages/p016.webp": {
+     "v": "80875e8912",
+     "size": 28010
+    },
+    "pages/p017.webp": {
+     "v": "497b1cd2f8",
+     "size": 34428
+    },
+    "pages/p018.webp": {
+     "v": "92a9883443",
+     "size": 38750
+    },
+    "pages/p019.webp": {
+     "v": "709afce3ac",
+     "size": 43488
+    },
+    "pages/p020.webp": {
+     "v": "153dc8ea2c",
+     "size": 37820
+    },
+    "pages/p021.webp": {
+     "v": "6e67515045",
+     "size": 38856
+    },
+    "pages/p022.webp": {
+     "v": "9f28fe1d9e",
+     "size": 31432
+    },
+    "pages/p023.webp": {
+     "v": "3805fa9864",
+     "size": 22778
+    },
+    "pages/p024.webp": {
+     "v": "ad5e96b38c",
+     "size": 60906
+    },
+    "pages/p025.webp": {
+     "v": "cc99550ef1",
+     "size": 68982
     },
     "parts.csv": {
      "v": "be248ad8bc",
@@ -1814,8 +2870,8 @@
   "jake_the_dog": {
    "files": {
     "booklet.pdf": {
-     "v": "94169b4899",
-     "size": 6286256
+     "v": "294923ca35",
+     "size": 6277138
     },
     "bricklink_wanted.xml": {
      "v": "f28e8b7f3b",
@@ -1832,6 +2888,110 @@
     "model.json": {
      "v": "b684da6772",
      "size": 32938
+    },
+    "pages/p001.webp": {
+     "v": "84bb4eae7f",
+     "size": 26160
+    },
+    "pages/p002.webp": {
+     "v": "8e2b0705e3",
+     "size": 61280
+    },
+    "pages/p003.webp": {
+     "v": "417acdf727",
+     "size": 53378
+    },
+    "pages/p004.webp": {
+     "v": "24c4a74334",
+     "size": 26176
+    },
+    "pages/p005.webp": {
+     "v": "898aa8d2c7",
+     "size": 53360
+    },
+    "pages/p006.webp": {
+     "v": "bbc88700f8",
+     "size": 45478
+    },
+    "pages/p007.webp": {
+     "v": "d07be2e7c0",
+     "size": 45340
+    },
+    "pages/p008.webp": {
+     "v": "f3d2dc9ff2",
+     "size": 40198
+    },
+    "pages/p009.webp": {
+     "v": "2358e63a9f",
+     "size": 42390
+    },
+    "pages/p010.webp": {
+     "v": "89039958f6",
+     "size": 38332
+    },
+    "pages/p011.webp": {
+     "v": "aca7512545",
+     "size": 37850
+    },
+    "pages/p012.webp": {
+     "v": "3bc0781516",
+     "size": 31794
+    },
+    "pages/p013.webp": {
+     "v": "eeece95d61",
+     "size": 31620
+    },
+    "pages/p014.webp": {
+     "v": "e4d47d8dfa",
+     "size": 36550
+    },
+    "pages/p015.webp": {
+     "v": "3cb8122536",
+     "size": 29302
+    },
+    "pages/p016.webp": {
+     "v": "87f0286e46",
+     "size": 39432
+    },
+    "pages/p017.webp": {
+     "v": "c9087ae11d",
+     "size": 27804
+    },
+    "pages/p018.webp": {
+     "v": "960e476570",
+     "size": 41500
+    },
+    "pages/p019.webp": {
+     "v": "4de512cbf4",
+     "size": 27698
+    },
+    "pages/p020.webp": {
+     "v": "1b6162775b",
+     "size": 31582
+    },
+    "pages/p021.webp": {
+     "v": "d28dcef5e6",
+     "size": 23850
+    },
+    "pages/p022.webp": {
+     "v": "8cb14e80ef",
+     "size": 29270
+    },
+    "pages/p023.webp": {
+     "v": "ca92bfec5b",
+     "size": 23566
+    },
+    "pages/p024.webp": {
+     "v": "398e9fc202",
+     "size": 19856
+    },
+    "pages/p025.webp": {
+     "v": "5fda7f85c1",
+     "size": 76696
+    },
+    "pages/p026.webp": {
+     "v": "4b9ff29a32",
+     "size": 63854
     },
     "parts.csv": {
      "v": "3d986317af",
@@ -1906,8 +3066,8 @@
   "luigi": {
    "files": {
     "booklet.pdf": {
-     "v": "62153c5b39",
-     "size": 2869588
+     "v": "1a29dd4b80",
+     "size": 2861119
     },
     "bricklink_wanted.xml": {
      "v": "e6192808ce",
@@ -1924,6 +3084,62 @@
     "model.json": {
      "v": "736c89aa63",
      "size": 15539
+    },
+    "pages/p001.webp": {
+     "v": "ab110dea0b",
+     "size": 28350
+    },
+    "pages/p002.webp": {
+     "v": "33f1d87fbb",
+     "size": 83592
+    },
+    "pages/p003.webp": {
+     "v": "0899275f44",
+     "size": 52050
+    },
+    "pages/p004.webp": {
+     "v": "db8d150d26",
+     "size": 13026
+    },
+    "pages/p005.webp": {
+     "v": "ce41fb7672",
+     "size": 48282
+    },
+    "pages/p006.webp": {
+     "v": "48f4a8939d",
+     "size": 38856
+    },
+    "pages/p007.webp": {
+     "v": "7a9b9dc0ce",
+     "size": 32506
+    },
+    "pages/p008.webp": {
+     "v": "5ce8d5b84d",
+     "size": 35410
+    },
+    "pages/p009.webp": {
+     "v": "aa1e64e3e8",
+     "size": 42922
+    },
+    "pages/p010.webp": {
+     "v": "f0fe0b98f7",
+     "size": 36204
+    },
+    "pages/p011.webp": {
+     "v": "3bad8a8375",
+     "size": 42432
+    },
+    "pages/p012.webp": {
+     "v": "e88851217f",
+     "size": 23674
+    },
+    "pages/p013.webp": {
+     "v": "818065d0cb",
+     "size": 48260
+    },
+    "pages/p014.webp": {
+     "v": "ff7175ae03",
+     "size": 64486
     },
     "parts.csv": {
      "v": "4d96e7576c",
@@ -1988,8 +3204,8 @@
   "magikarp": {
    "files": {
     "booklet.pdf": {
-     "v": "5fb930b5dd",
-     "size": 3629266
+     "v": "39367ed2e2",
+     "size": 3620807
     },
     "bricklink_wanted.xml": {
      "v": "e44e739d70",
@@ -2006,6 +3222,70 @@
     "model.json": {
      "v": "4484008b43",
      "size": 15392
+    },
+    "pages/p001.webp": {
+     "v": "52ade4ede3",
+     "size": 26574
+    },
+    "pages/p002.webp": {
+     "v": "2767f4234d",
+     "size": 85144
+    },
+    "pages/p003.webp": {
+     "v": "2d1952f9da",
+     "size": 53176
+    },
+    "pages/p004.webp": {
+     "v": "db818ffd02",
+     "size": 19494
+    },
+    "pages/p005.webp": {
+     "v": "60bbedce15",
+     "size": 32144
+    },
+    "pages/p006.webp": {
+     "v": "129387d11b",
+     "size": 43104
+    },
+    "pages/p007.webp": {
+     "v": "bfc77b6192",
+     "size": 36200
+    },
+    "pages/p008.webp": {
+     "v": "dbd56695e7",
+     "size": 31970
+    },
+    "pages/p009.webp": {
+     "v": "7eb8e1fa20",
+     "size": 32640
+    },
+    "pages/p010.webp": {
+     "v": "e04267595b",
+     "size": 34658
+    },
+    "pages/p011.webp": {
+     "v": "2fca101779",
+     "size": 39262
+    },
+    "pages/p012.webp": {
+     "v": "44aa25e7fc",
+     "size": 36046
+    },
+    "pages/p013.webp": {
+     "v": "7165ba403a",
+     "size": 22724
+    },
+    "pages/p014.webp": {
+     "v": "786b03a0b1",
+     "size": 19774
+    },
+    "pages/p015.webp": {
+     "v": "5b2cd1b3bf",
+     "size": 44776
+    },
+    "pages/p016.webp": {
+     "v": "4a06d5c84f",
+     "size": 76276
     },
     "parts.csv": {
      "v": "c69a3a61eb",
@@ -2090,8 +3370,8 @@
   "mario": {
    "files": {
     "booklet.pdf": {
-     "v": "8254c16493",
-     "size": 2862224
+     "v": "0087877011",
+     "size": 2853473
     },
     "bricklink_wanted.xml": {
      "v": "cc04707d5f",
@@ -2108,6 +3388,62 @@
     "model.json": {
      "v": "f9ea0e672d",
      "size": 15524
+    },
+    "pages/p001.webp": {
+     "v": "4f3d5dd020",
+     "size": 30270
+    },
+    "pages/p002.webp": {
+     "v": "04858c7b6e",
+     "size": 84216
+    },
+    "pages/p003.webp": {
+     "v": "39e9aa8633",
+     "size": 52136
+    },
+    "pages/p004.webp": {
+     "v": "0681f22187",
+     "size": 13266
+    },
+    "pages/p005.webp": {
+     "v": "5db1613b8b",
+     "size": 48114
+    },
+    "pages/p006.webp": {
+     "v": "d2ff9ad83f",
+     "size": 38722
+    },
+    "pages/p007.webp": {
+     "v": "7b1a11b022",
+     "size": 32498
+    },
+    "pages/p008.webp": {
+     "v": "5061d846d3",
+     "size": 35824
+    },
+    "pages/p009.webp": {
+     "v": "c476531948",
+     "size": 43358
+    },
+    "pages/p010.webp": {
+     "v": "73404a4248",
+     "size": 36576
+    },
+    "pages/p011.webp": {
+     "v": "db4da4343b",
+     "size": 42702
+    },
+    "pages/p012.webp": {
+     "v": "474a197151",
+     "size": 23570
+    },
+    "pages/p013.webp": {
+     "v": "7259a8d9f8",
+     "size": 48420
+    },
+    "pages/p014.webp": {
+     "v": "ab06188139",
+     "size": 64536
     },
     "parts.csv": {
      "v": "9c98ca25b9",
@@ -2172,8 +3508,8 @@
   "moby_dick": {
    "files": {
     "booklet.pdf": {
-     "v": "f1ac6939b5",
-     "size": 1898876
+     "v": "63a9407fce",
+     "size": 1898554
     },
     "bricklink_wanted.xml": {
      "v": "db6b5e13ce",
@@ -2190,6 +3526,54 @@
     "model.json": {
      "v": "cc6b6738d5",
      "size": 8167
+    },
+    "pages/p001.webp": {
+     "v": "684272b7b3",
+     "size": 25434
+    },
+    "pages/p002.webp": {
+     "v": "9500189838",
+     "size": 87112
+    },
+    "pages/p003.webp": {
+     "v": "c1ccfe5f36",
+     "size": 54056
+    },
+    "pages/p004.webp": {
+     "v": "75c87ecaa3",
+     "size": 12142
+    },
+    "pages/p005.webp": {
+     "v": "d4b22e5716",
+     "size": 35998
+    },
+    "pages/p006.webp": {
+     "v": "050b286bab",
+     "size": 35534
+    },
+    "pages/p007.webp": {
+     "v": "7e5c98ec9e",
+     "size": 35730
+    },
+    "pages/p008.webp": {
+     "v": "32e85e768a",
+     "size": 35928
+    },
+    "pages/p009.webp": {
+     "v": "5f7560f25e",
+     "size": 34144
+    },
+    "pages/p010.webp": {
+     "v": "323cf37af2",
+     "size": 23180
+    },
+    "pages/p011.webp": {
+     "v": "d4265eb4f4",
+     "size": 26180
+    },
+    "pages/p012.webp": {
+     "v": "871c32f446",
+     "size": 71958
     },
     "parts.csv": {
      "v": "dc7caa6b82",
@@ -2244,8 +3628,8 @@
   "nautilus": {
    "files": {
     "booklet.pdf": {
-     "v": "7b92959387",
-     "size": 41339697
+     "v": "82addf13d5",
+     "size": 41332667
     },
     "bricklink_wanted.xml": {
      "v": "31226c58c4",
@@ -2320,13 +3704,13 @@
      "sm": "/assets/img/nautilus/hero_open_hero-480.webp?v=8bb01f2572"
     }
    },
-   "og": "/assets/og/nautilus.png?v=d4f16cc50c"
+   "og": "/assets/og/nautilus.png?v=5a2f0514dd"
   },
   "nautilus_crew": {
    "files": {
     "booklet.pdf": {
-     "v": "6ef7bf1f25",
-     "size": 10814953
+     "v": "3413d9258e",
+     "size": 10812856
     },
     "bricklink_wanted.xml": {
      "v": "c759841af2",
@@ -2443,13 +3827,13 @@
      "sm": "/assets/img/nautilus_crew/renders_three_quarter-480.webp?v=0824febba2"
     }
    },
-   "og": "/assets/og/nautilus_crew.png?v=0273587d77"
+   "og": "/assets/og/nautilus_crew.png?v=5a51a12549"
   },
   "onkey": {
    "files": {
     "booklet.pdf": {
-     "v": "dda7be836e",
-     "size": 3997904
+     "v": "9e1283d54d",
+     "size": 3989002
     },
     "bricklink_wanted.xml": {
      "v": "12d13a668e",
@@ -2466,6 +3850,74 @@
     "onkey.mpd": {
      "v": "89a652efa7",
      "size": 5974
+    },
+    "pages/p001.webp": {
+     "v": "1892c661c2",
+     "size": 30538
+    },
+    "pages/p002.webp": {
+     "v": "b6c058e811",
+     "size": 90364
+    },
+    "pages/p003.webp": {
+     "v": "b7ba5d0681",
+     "size": 51932
+    },
+    "pages/p004.webp": {
+     "v": "dec984eed7",
+     "size": 16222
+    },
+    "pages/p005.webp": {
+     "v": "95bc215157",
+     "size": 30752
+    },
+    "pages/p006.webp": {
+     "v": "bd8933254b",
+     "size": 42208
+    },
+    "pages/p007.webp": {
+     "v": "966e16f79d",
+     "size": 49364
+    },
+    "pages/p008.webp": {
+     "v": "70f81591c6",
+     "size": 27920
+    },
+    "pages/p009.webp": {
+     "v": "7b0ef0b65a",
+     "size": 33676
+    },
+    "pages/p010.webp": {
+     "v": "d4650d3aa7",
+     "size": 37176
+    },
+    "pages/p011.webp": {
+     "v": "84c021773c",
+     "size": 47078
+    },
+    "pages/p012.webp": {
+     "v": "eb04bba300",
+     "size": 39570
+    },
+    "pages/p013.webp": {
+     "v": "82083c9108",
+     "size": 38968
+    },
+    "pages/p014.webp": {
+     "v": "fd70675095",
+     "size": 42138
+    },
+    "pages/p015.webp": {
+     "v": "bc49deccdd",
+     "size": 47050
+    },
+    "pages/p016.webp": {
+     "v": "ad623d320f",
+     "size": 66880
+    },
+    "pages/p017.webp": {
+     "v": "e2f594b373",
+     "size": 71032
     },
     "parts.csv": {
      "v": "702a003956",
@@ -2530,8 +3982,8 @@
   "pez_darth_vader": {
    "files": {
     "booklet.pdf": {
-     "v": "0941715b08",
-     "size": 2973689
+     "v": "e1715353a6",
+     "size": 2965176
     },
     "bricklink_wanted.xml": {
      "v": "11c6399922",
@@ -2544,6 +3996,66 @@
     "model.json": {
      "v": "8d08ac2708",
      "size": 18723
+    },
+    "pages/p001.webp": {
+     "v": "8681f94c57",
+     "size": 25854
+    },
+    "pages/p002.webp": {
+     "v": "3616f66dc6",
+     "size": 81770
+    },
+    "pages/p003.webp": {
+     "v": "34f23abe55",
+     "size": 52310
+    },
+    "pages/p004.webp": {
+     "v": "6617f37175",
+     "size": 14516
+    },
+    "pages/p005.webp": {
+     "v": "8b74764c2e",
+     "size": 44026
+    },
+    "pages/p006.webp": {
+     "v": "1bd74ecc53",
+     "size": 35870
+    },
+    "pages/p007.webp": {
+     "v": "9d1ef68385",
+     "size": 26476
+    },
+    "pages/p008.webp": {
+     "v": "ec9387a0ca",
+     "size": 23764
+    },
+    "pages/p009.webp": {
+     "v": "24dbf7f5c4",
+     "size": 38218
+    },
+    "pages/p010.webp": {
+     "v": "0e5bad5fa6",
+     "size": 32266
+    },
+    "pages/p011.webp": {
+     "v": "c1335a5b9d",
+     "size": 42594
+    },
+    "pages/p012.webp": {
+     "v": "ddf408e5c4",
+     "size": 33804
+    },
+    "pages/p013.webp": {
+     "v": "aa978bf468",
+     "size": 31116
+    },
+    "pages/p014.webp": {
+     "v": "72a6226f6e",
+     "size": 38978
+    },
+    "pages/p015.webp": {
+     "v": "44788a048e",
+     "size": 71074
     },
     "parts.csv": {
      "v": "b1af118efe",
@@ -2612,8 +4124,8 @@
   "pez_stormtrooper": {
    "files": {
     "booklet.pdf": {
-     "v": "48545834f6",
-     "size": 3150518
+     "v": "0aa73ff427",
+     "size": 3142090
     },
     "bricklink_wanted.xml": {
      "v": "bbeeebe7fa",
@@ -2626,6 +4138,66 @@
     "model.json": {
      "v": "d5441c3eec",
      "size": 19461
+    },
+    "pages/p001.webp": {
+     "v": "18cfc542d0",
+     "size": 24370
+    },
+    "pages/p002.webp": {
+     "v": "b5c52f07c2",
+     "size": 81444
+    },
+    "pages/p003.webp": {
+     "v": "cce91a4613",
+     "size": 52760
+    },
+    "pages/p004.webp": {
+     "v": "75ee09358d",
+     "size": 15914
+    },
+    "pages/p005.webp": {
+     "v": "6d37fd086e",
+     "size": 46466
+    },
+    "pages/p006.webp": {
+     "v": "f1e588642d",
+     "size": 36682
+    },
+    "pages/p007.webp": {
+     "v": "4fc1c617df",
+     "size": 27204
+    },
+    "pages/p008.webp": {
+     "v": "2cb5de1861",
+     "size": 24392
+    },
+    "pages/p009.webp": {
+     "v": "1c1cb7109a",
+     "size": 40756
+    },
+    "pages/p010.webp": {
+     "v": "8e4f32abbe",
+     "size": 35512
+    },
+    "pages/p011.webp": {
+     "v": "3e37274f61",
+     "size": 45340
+    },
+    "pages/p012.webp": {
+     "v": "d3f2a45331",
+     "size": 36908
+    },
+    "pages/p013.webp": {
+     "v": "211dc14125",
+     "size": 33534
+    },
+    "pages/p014.webp": {
+     "v": "bb1ec1148a",
+     "size": 42374
+    },
+    "pages/p015.webp": {
+     "v": "caf64a2f52",
+     "size": 70968
     },
     "parts.csv": {
      "v": "9a6e4b24a5",
@@ -2694,8 +4266,8 @@
   "pez_yoda": {
    "files": {
     "booklet.pdf": {
-     "v": "d0d11ba2a6",
-     "size": 3322563
+     "v": "cb44be4931",
+     "size": 3313629
     },
     "bricklink_wanted.xml": {
      "v": "44ea3872b6",
@@ -2708,6 +4280,70 @@
     "model.json": {
      "v": "19fcd57eaa",
      "size": 19706
+    },
+    "pages/p001.webp": {
+     "v": "5b0b86370c",
+     "size": 24814
+    },
+    "pages/p002.webp": {
+     "v": "66e11b87b8",
+     "size": 81898
+    },
+    "pages/p003.webp": {
+     "v": "88272bcb65",
+     "size": 52510
+    },
+    "pages/p004.webp": {
+     "v": "ab5155ae6c",
+     "size": 15110
+    },
+    "pages/p005.webp": {
+     "v": "ce1372416f",
+     "size": 46254
+    },
+    "pages/p006.webp": {
+     "v": "da7eb64734",
+     "size": 36662
+    },
+    "pages/p007.webp": {
+     "v": "80fb4fe36f",
+     "size": 27222
+    },
+    "pages/p008.webp": {
+     "v": "249c330d6c",
+     "size": 24352
+    },
+    "pages/p009.webp": {
+     "v": "341c8183a0",
+     "size": 38672
+    },
+    "pages/p010.webp": {
+     "v": "dcdd81e347",
+     "size": 33636
+    },
+    "pages/p011.webp": {
+     "v": "f405655160",
+     "size": 53728
+    },
+    "pages/p012.webp": {
+     "v": "adb1624838",
+     "size": 40828
+    },
+    "pages/p013.webp": {
+     "v": "cb0f8a69a3",
+     "size": 34628
+    },
+    "pages/p014.webp": {
+     "v": "f03986c15c",
+     "size": 19982
+    },
+    "pages/p015.webp": {
+     "v": "17dc85c229",
+     "size": 41232
+    },
+    "pages/p016.webp": {
+     "v": "6e6819ad9b",
+     "size": 70932
     },
     "parts.csv": {
      "v": "7da0909109",
@@ -2776,8 +4412,8 @@
   "pikachu": {
    "files": {
     "booklet.pdf": {
-     "v": "889d7a4ee6",
-     "size": 3351171
+     "v": "75dc90196d",
+     "size": 3342749
     },
     "bricklink_wanted.xml": {
      "v": "de8cbe87de",
@@ -2790,6 +4426,50 @@
     "model.json": {
      "v": "a8ff80f470",
      "size": 14990
+    },
+    "pages/p001.webp": {
+     "v": "4ee71afc1b",
+     "size": 27962
+    },
+    "pages/p002.webp": {
+     "v": "5af342721f",
+     "size": 76468
+    },
+    "pages/p003.webp": {
+     "v": "a10ea962a8",
+     "size": 53424
+    },
+    "pages/p004.webp": {
+     "v": "5c0b6158a4",
+     "size": 15350
+    },
+    "pages/p005.webp": {
+     "v": "11a51b69a0",
+     "size": 40498
+    },
+    "pages/p006.webp": {
+     "v": "cc8443d939",
+     "size": 48636
+    },
+    "pages/p007.webp": {
+     "v": "a4951bd728",
+     "size": 52642
+    },
+    "pages/p008.webp": {
+     "v": "f830ef0e77",
+     "size": 47612
+    },
+    "pages/p009.webp": {
+     "v": "db07de960f",
+     "size": 57874
+    },
+    "pages/p010.webp": {
+     "v": "f94426882b",
+     "size": 52952
+    },
+    "pages/p011.webp": {
+     "v": "e4492054bd",
+     "size": 71690
     },
     "parts.csv": {
      "v": "b9d690626e",
@@ -2858,8 +4538,8 @@
   "porygon": {
    "files": {
     "booklet.pdf": {
-     "v": "97042981b5",
-     "size": 2025082
+     "v": "3f670c6632",
+     "size": 2016223
     },
     "bricklink_wanted.xml": {
      "v": "7d753832ef",
@@ -2872,6 +4552,54 @@
     "model.json": {
      "v": "cbacbf5ea7",
      "size": 8678
+    },
+    "pages/p001.webp": {
+     "v": "cedba739c8",
+     "size": 26098
+    },
+    "pages/p002.webp": {
+     "v": "bf11e696e8",
+     "size": 70192
+    },
+    "pages/p003.webp": {
+     "v": "deb8117734",
+     "size": 53610
+    },
+    "pages/p004.webp": {
+     "v": "286abd5244",
+     "size": 11988
+    },
+    "pages/p005.webp": {
+     "v": "9a17d13104",
+     "size": 30156
+    },
+    "pages/p006.webp": {
+     "v": "d06e6e854b",
+     "size": 34310
+    },
+    "pages/p007.webp": {
+     "v": "395f890495",
+     "size": 34540
+    },
+    "pages/p008.webp": {
+     "v": "e0e55b55f5",
+     "size": 31928
+    },
+    "pages/p009.webp": {
+     "v": "5757a12cf7",
+     "size": 35008
+    },
+    "pages/p010.webp": {
+     "v": "dd3fccf59f",
+     "size": 20964
+    },
+    "pages/p011.webp": {
+     "v": "27cb97de7e",
+     "size": 31280
+    },
+    "pages/p012.webp": {
+     "v": "f529db3692",
+     "size": 63872
     },
     "parts.csv": {
      "v": "a22fc55969",
@@ -2960,8 +4688,8 @@
   "pumpkin": {
    "files": {
     "booklet.pdf": {
-     "v": "feb759e73e",
-     "size": 5369846
+     "v": "b347736a5c",
+     "size": 5361497
     },
     "bricklink_wanted.xml": {
      "v": "efbbc5b4c6",
@@ -2974,6 +4702,78 @@
     "model.json": {
      "v": "4babbd52d2",
      "size": 15170
+    },
+    "pages/p001.webp": {
+     "v": "6b78a83e43",
+     "size": 30112
+    },
+    "pages/p002.webp": {
+     "v": "f59fad4cfd",
+     "size": 72950
+    },
+    "pages/p003.webp": {
+     "v": "2a831d533a",
+     "size": 53814
+    },
+    "pages/p004.webp": {
+     "v": "a3a33f5d1d",
+     "size": 26518
+    },
+    "pages/p005.webp": {
+     "v": "5f0b714354",
+     "size": 44954
+    },
+    "pages/p006.webp": {
+     "v": "8112077783",
+     "size": 42620
+    },
+    "pages/p007.webp": {
+     "v": "0d0d453d74",
+     "size": 25736
+    },
+    "pages/p008.webp": {
+     "v": "6536287912",
+     "size": 39050
+    },
+    "pages/p009.webp": {
+     "v": "6a21b9bc53",
+     "size": 36496
+    },
+    "pages/p010.webp": {
+     "v": "89db604039",
+     "size": 51454
+    },
+    "pages/p011.webp": {
+     "v": "118a6471ef",
+     "size": 32670
+    },
+    "pages/p012.webp": {
+     "v": "79b9cba770",
+     "size": 28516
+    },
+    "pages/p013.webp": {
+     "v": "53d7643112",
+     "size": 35192
+    },
+    "pages/p014.webp": {
+     "v": "0c5d6227f9",
+     "size": 27298
+    },
+    "pages/p015.webp": {
+     "v": "6c494e70e8",
+     "size": 53516
+    },
+    "pages/p016.webp": {
+     "v": "fd52fa15e6",
+     "size": 27838
+    },
+    "pages/p017.webp": {
+     "v": "afce4a6357",
+     "size": 49600
+    },
+    "pages/p018.webp": {
+     "v": "0c8e24225d",
+     "size": 66146
     },
     "parts.csv": {
      "v": "f1e9345769",
@@ -3032,8 +4832,8 @@
   "squirtle": {
    "files": {
     "booklet.pdf": {
-     "v": "9b6b2e7a61",
-     "size": 3662554
+     "v": "4f6905b83c",
+     "size": 3654071
     },
     "bricklink_wanted.xml": {
      "v": "2dddadab40",
@@ -3046,6 +4846,70 @@
     "model.json": {
      "v": "f08fc8e01b",
      "size": 14637
+    },
+    "pages/p001.webp": {
+     "v": "7de1e10d9e",
+     "size": 23610
+    },
+    "pages/p002.webp": {
+     "v": "b294ecc716",
+     "size": 59638
+    },
+    "pages/p003.webp": {
+     "v": "909661bfd0",
+     "size": 52746
+    },
+    "pages/p004.webp": {
+     "v": "22a72e5f78",
+     "size": 16976
+    },
+    "pages/p005.webp": {
+     "v": "fde61cf60e",
+     "size": 27838
+    },
+    "pages/p006.webp": {
+     "v": "0dbfaef091",
+     "size": 27828
+    },
+    "pages/p007.webp": {
+     "v": "28742196e2",
+     "size": 42948
+    },
+    "pages/p008.webp": {
+     "v": "bddedbcf26",
+     "size": 38236
+    },
+    "pages/p009.webp": {
+     "v": "4219c0447f",
+     "size": 29648
+    },
+    "pages/p010.webp": {
+     "v": "365847a96b",
+     "size": 40888
+    },
+    "pages/p011.webp": {
+     "v": "1971d55521",
+     "size": 41450
+    },
+    "pages/p012.webp": {
+     "v": "e77cea36dc",
+     "size": 30356
+    },
+    "pages/p013.webp": {
+     "v": "34e802fe8c",
+     "size": 29796
+    },
+    "pages/p014.webp": {
+     "v": "816eeaa8be",
+     "size": 38920
+    },
+    "pages/p015.webp": {
+     "v": "cdcb545dc8",
+     "size": 47288
+    },
+    "pages/p016.webp": {
+     "v": "beb78297ca",
+     "size": 60514
     },
     "parts.csv": {
      "v": "d923acc332",
@@ -3114,8 +4978,8 @@
   "taco": {
    "files": {
     "booklet.pdf": {
-     "v": "db0add31a5",
-     "size": 2513750
+     "v": "f895ee2af7",
+     "size": 2504697
     },
     "bricklink_wanted.xml": {
      "v": "43715c21a9",
@@ -3128,6 +4992,54 @@
     "model.json": {
      "v": "f41a14af46",
      "size": 9608
+    },
+    "pages/p001.webp": {
+     "v": "1d62011a5e",
+     "size": 25784
+    },
+    "pages/p002.webp": {
+     "v": "6ec6c25ea5",
+     "size": 73058
+    },
+    "pages/p003.webp": {
+     "v": "ac9ed18e73",
+     "size": 54100
+    },
+    "pages/p004.webp": {
+     "v": "bc38eff425",
+     "size": 12654
+    },
+    "pages/p005.webp": {
+     "v": "e1eebf3c96",
+     "size": 27988
+    },
+    "pages/p006.webp": {
+     "v": "3749b78e3a",
+     "size": 33202
+    },
+    "pages/p007.webp": {
+     "v": "210fd3cc41",
+     "size": 34630
+    },
+    "pages/p008.webp": {
+     "v": "5ccf25feaf",
+     "size": 34130
+    },
+    "pages/p009.webp": {
+     "v": "2a01846726",
+     "size": 36560
+    },
+    "pages/p010.webp": {
+     "v": "b05a0bd59d",
+     "size": 38368
+    },
+    "pages/p011.webp": {
+     "v": "9d4affb008",
+     "size": 32122
+    },
+    "pages/p012.webp": {
+     "v": "8806f1e224",
+     "size": 62968
     },
     "parts.csv": {
      "v": "98bbda2282",
@@ -3166,8 +5078,8 @@
   "the_thing": {
    "files": {
     "booklet.pdf": {
-     "v": "45fe08e5fb",
-     "size": 4195993
+     "v": "d8ccb27fe2",
+     "size": 4195860
     },
     "bricklink_wanted.xml": {
      "v": "bc20f4c2a6",
@@ -3186,100 +5098,100 @@
      "size": 29728
     },
     "pages/p002.webp": {
-     "v": "2f33e3d289",
-     "size": 91832
+     "v": "58b982378c",
+     "size": 91814
     },
     "pages/p003.webp": {
-     "v": "904c2d4688",
-     "size": 53354
+     "v": "f9fd0a4b54",
+     "size": 53340
     },
     "pages/p004.webp": {
-     "v": "dab4e43e68",
-     "size": 12594
+     "v": "e18d0e57b0",
+     "size": 12680
     },
     "pages/p005.webp": {
-     "v": "28b65a0b2e",
-     "size": 29238
+     "v": "d5f4629e3e",
+     "size": 29210
     },
     "pages/p006.webp": {
-     "v": "ac726da75a",
-     "size": 35090
+     "v": "b552b6d75b",
+     "size": 35026
     },
     "pages/p007.webp": {
-     "v": "c74fc6d16f",
-     "size": 34962
+     "v": "6a41696575",
+     "size": 34938
     },
     "pages/p008.webp": {
-     "v": "fe0a9d9291",
-     "size": 31252
+     "v": "57aec77df1",
+     "size": 31228
     },
     "pages/p009.webp": {
-     "v": "d30b20728a",
-     "size": 31334
+     "v": "8fb10f4f0f",
+     "size": 31320
     },
     "pages/p010.webp": {
-     "v": "d4afca9fbf",
-     "size": 27648
+     "v": "3f4ad7af08",
+     "size": 27620
     },
     "pages/p011.webp": {
-     "v": "f5fb725459",
-     "size": 26628
+     "v": "e533d82446",
+     "size": 26588
     },
     "pages/p012.webp": {
-     "v": "f5a4842a9d",
-     "size": 30132
+     "v": "9b8f40ad7e",
+     "size": 30114
     },
     "pages/p013.webp": {
-     "v": "f95b11bdd9",
-     "size": 29196
+     "v": "5c798f902d",
+     "size": 29176
     },
     "pages/p014.webp": {
-     "v": "42573ed199",
-     "size": 35446
+     "v": "506aa8e54b",
+     "size": 35432
     },
     "pages/p015.webp": {
-     "v": "5032022de8",
-     "size": 34472
+     "v": "f12d72f39d",
+     "size": 34452
     },
     "pages/p016.webp": {
-     "v": "1b464ba99e",
-     "size": 47284
+     "v": "65857cd948",
+     "size": 47266
     },
     "pages/p017.webp": {
-     "v": "673ec205ef",
-     "size": 40190
+     "v": "d20c83b8b0",
+     "size": 40172
     },
     "pages/p018.webp": {
-     "v": "2a25138ad9",
-     "size": 44154
+     "v": "ef0447bd98",
+     "size": 44140
     },
     "pages/p019.webp": {
-     "v": "e3ecf657b7",
-     "size": 39192
+     "v": "dbe449c43e",
+     "size": 39184
     },
     "pages/p020.webp": {
-     "v": "d885d48527",
-     "size": 38136
+     "v": "1db70bcf00",
+     "size": 38160
     },
     "pages/p021.webp": {
-     "v": "57f6ffc87c",
-     "size": 38084
+     "v": "912ecd3158",
+     "size": 38070
     },
     "pages/p022.webp": {
-     "v": "190993ae73",
-     "size": 37812
+     "v": "9c13046438",
+     "size": 37792
     },
     "pages/p023.webp": {
-     "v": "6f68f5d77c",
-     "size": 21856
+     "v": "20b8c62269",
+     "size": 21822
     },
     "pages/p024.webp": {
-     "v": "c7c5337ea4",
-     "size": 50248
+     "v": "4db14693ce",
+     "size": 50222
     },
     "pages/p025.webp": {
-     "v": "e57f8d0dbe",
-     "size": 72134
+     "v": "5a6645e1cf",
+     "size": 72064
     },
     "parts.csv": {
      "v": "bf356f5a31",
@@ -3469,8 +5381,8 @@
   "watermelon_ice_lolly": {
    "files": {
     "booklet.pdf": {
-     "v": "8f55921f30",
-     "size": 2399000
+     "v": "b007b27599",
+     "size": 2389953
     },
     "bricklink_wanted.xml": {
      "v": "4ec61f4d4c",
@@ -3483,6 +5395,58 @@
     "model.json": {
      "v": "06fe28a558",
      "size": 9752
+    },
+    "pages/p001.webp": {
+     "v": "15862e3b58",
+     "size": 27962
+    },
+    "pages/p002.webp": {
+     "v": "c78de0a54b",
+     "size": 70118
+    },
+    "pages/p003.webp": {
+     "v": "b5942cb4bc",
+     "size": 52026
+    },
+    "pages/p004.webp": {
+     "v": "ddd9767c03",
+     "size": 16494
+    },
+    "pages/p005.webp": {
+     "v": "1356d1d833",
+     "size": 28714
+    },
+    "pages/p006.webp": {
+     "v": "a0e08fc0e4",
+     "size": 29550
+    },
+    "pages/p007.webp": {
+     "v": "bb5a17e023",
+     "size": 30078
+    },
+    "pages/p008.webp": {
+     "v": "85eb85b5b1",
+     "size": 28438
+    },
+    "pages/p009.webp": {
+     "v": "3b937f275a",
+     "size": 26980
+    },
+    "pages/p010.webp": {
+     "v": "3b0bfa2553",
+     "size": 22662
+    },
+    "pages/p011.webp": {
+     "v": "8c5e440d66",
+     "size": 18572
+    },
+    "pages/p012.webp": {
+     "v": "d478cdd717",
+     "size": 31110
+    },
+    "pages/p013.webp": {
+     "v": "c2dc010d03",
+     "size": 64936
     },
     "parts.csv": {
      "v": "4183ff1ce0",
@@ -3521,8 +5485,8 @@
   "xenomorph": {
    "files": {
     "booklet.pdf": {
-     "v": "041b3753e1",
-     "size": 5256930
+     "v": "183222e015",
+     "size": 5248350
     },
     "bricklink_wanted.xml": {
      "v": "fe47c18804",
@@ -3535,6 +5499,102 @@
     "model.json": {
      "v": "e4bc0bb74a",
      "size": 20680
+    },
+    "pages/p001.webp": {
+     "v": "cebb6f58a2",
+     "size": 32744
+    },
+    "pages/p002.webp": {
+     "v": "9d4d500470",
+     "size": 95970
+    },
+    "pages/p003.webp": {
+     "v": "1e97c388a1",
+     "size": 52258
+    },
+    "pages/p004.webp": {
+     "v": "decc8a1a01",
+     "size": 29850
+    },
+    "pages/p005.webp": {
+     "v": "b5ad3e2a66",
+     "size": 21038
+    },
+    "pages/p006.webp": {
+     "v": "ab9480e18e",
+     "size": 29206
+    },
+    "pages/p007.webp": {
+     "v": "0acafdc112",
+     "size": 29532
+    },
+    "pages/p008.webp": {
+     "v": "5dc1c51a90",
+     "size": 29610
+    },
+    "pages/p009.webp": {
+     "v": "8ba2dcbead",
+     "size": 27270
+    },
+    "pages/p010.webp": {
+     "v": "b1e4e036b4",
+     "size": 27890
+    },
+    "pages/p011.webp": {
+     "v": "39862d1113",
+     "size": 29244
+    },
+    "pages/p012.webp": {
+     "v": "b9327134d5",
+     "size": 31692
+    },
+    "pages/p013.webp": {
+     "v": "56c4690bc7",
+     "size": 26692
+    },
+    "pages/p014.webp": {
+     "v": "a82d19cd3b",
+     "size": 26084
+    },
+    "pages/p015.webp": {
+     "v": "161ba711f0",
+     "size": 26608
+    },
+    "pages/p016.webp": {
+     "v": "95b124d3bb",
+     "size": 38762
+    },
+    "pages/p017.webp": {
+     "v": "ae748896bb",
+     "size": 33312
+    },
+    "pages/p018.webp": {
+     "v": "f61c8f521d",
+     "size": 34510
+    },
+    "pages/p019.webp": {
+     "v": "103b7f7c18",
+     "size": 30160
+    },
+    "pages/p020.webp": {
+     "v": "c0ce8ac0ed",
+     "size": 29762
+    },
+    "pages/p021.webp": {
+     "v": "14c668f509",
+     "size": 39838
+    },
+    "pages/p022.webp": {
+     "v": "2057c10757",
+     "size": 28224
+    },
+    "pages/p023.webp": {
+     "v": "7220ac5882",
+     "size": 42804
+    },
+    "pages/p024.webp": {
+     "v": "a125b0e05d",
+     "size": 73542
     },
     "parts.csv": {
      "v": "ce1a3cfa3c",

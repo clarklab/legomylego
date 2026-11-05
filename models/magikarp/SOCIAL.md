@@ -3,7 +3,7 @@
 Copy for this model's Quick Bricks video, to paste and post by hand (docs/new-model.md).
 
 - **Video:** `out/magikarp-1080x1920.mp4` (9:16, sound on: the clicks are the point)
-- **Link:** https://bricks.superfun.games/quick/magikarp/
+- **Link:** https://bricks.vhsgarage.com/quick/magikarp/
 - **Credit:** Design by Redverse (Rebrickable MOC-182443).
 
 ## Instagram

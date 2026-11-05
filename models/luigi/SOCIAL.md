@@ -3,7 +3,7 @@
 Copy for this model's Quick Bricks video, to paste and post by hand (docs/new-model.md).
 
 - **Video:** `out/luigi-1080x1920.mp4` (9:16, sound on: the clicks are the point)
-- **Link:** https://bricks.superfun.games/quick/luigi/
+- **Link:** https://bricks.vhsgarage.com/quick/luigi/
 - **Credit:** The build is JellsaTheBobJeffCreator's Mario (Rebrickable MOC-249307),
   https://rebrickable.com/mocs/MOC-249307/. The green is our colour swap, not the designer's:
   say both.

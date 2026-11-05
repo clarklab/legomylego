@@ -3,7 +3,7 @@
 Copy for this model's Quick Bricks video, to paste and post by hand (docs/new-model.md).
 
 - **Video:** `out/game_boy-1080x1920.mp4` (9:16, sound on: the clicks are the point)
-- **Link:** https://bricks.superfun.games/quick/game_boy/
+- **Link:** https://bricks.vhsgarage.com/quick/game_boy/
 - **Credit:** Design by Phoenix_bricks (Rebrickable MOC-238888),
   https://rebrickable.com/mocs/MOC-238888/
 

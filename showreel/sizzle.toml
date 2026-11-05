@@ -4,7 +4,7 @@
 # `brickkit video SLUG` for a model first.
 
 title = "Bricks"
-url = "bricks.superfun.games"
+url = "bricks.vhsgarage.com"
 music = "audio/track_long_1.mp3"   # ElevenLabs music (audio/sfx.toml): 4 bars of intro, the
                                   # drop at bar 4, fills at the ends of bars 11 and 19, the
                                   # final hit on bar 22; its beats are detected

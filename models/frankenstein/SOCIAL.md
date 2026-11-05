@@ -3,7 +3,7 @@
 Copy for this model's Quick Bricks video, to paste and post by hand (docs/new-model.md).
 
 - **Video:** `out/frankenstein-1080x1920.mp4` (9:16, sound on: the clicks are the point)
-- **Link:** https://bricks.superfun.games/quick/frankenstein/
+- **Link:** https://bricks.vhsgarage.com/quick/frankenstein/
 - **Credit:** Design by Agosami Brickworks (Rebrickable MOC-215912).
 
 ## Instagram

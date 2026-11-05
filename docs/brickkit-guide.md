@@ -376,7 +376,7 @@ chromium`). A full render takes roughly an hour of GPU time per model; iterate w
 | colourways | 4 per colourway | wipes between colourways that share the parts, with swatches | variants |
 | booklet | 12 | the printed booklet: its real cover opens, a thumb-flip through the step pages (motion-blurred) lands on a step spread, then loose step sheets are dealt into a fan (from every colourway's booklet if there are any) | `out/booklet.pdf` |
 | companions | 10 each | a smaller build featured with the model (e.g. a kids' version): its eyebrow and heading, its turntable loop on a card, chips (pieces, steps, about what it costs on Pick a Brick), then to scale: the model's cut-out with the companion dropping in beside it, each height measured | `[[companions]]` with `video = true` |
-| outro | 8 | logo, `bricks.superfun.games/m/SLUG`, the small print and the model's notice | always |
+| outro | 8 | logo, `bricks.vhsgarage.com/m/SLUG`, the small print and the model's notice | always |
 | coda | seconds | the last moments: the model in the dark sea and a giant squid about its size coming out of the murk at it, fading to black as it closes in | `[video.coda]` |
 
 **Config** in model.toml (all optional; `model.meta["video"]` from design.py wins key by key):
@@ -695,7 +695,7 @@ the drop, then studs in yellow and brick red. Any number of models works; lay th
 the music's own phrases (its drop, fills and breaks) by their `bars`.
 ```toml
 title = "Bricks"
-url = "bricks.superfun.games"
+url = "bricks.vhsgarage.com"
 music = "audio/track_long_1.mp3"   # next to the config; omit for the synthesised music
 bpm = 128                     # a hint for the beat tracker (or the synth's tempo)
 whoosh = "audio/whoosh_1.mp3" # on every wipe (else the synthesised whoosh)

@@ -3,7 +3,7 @@
 Copy for this model's Quick Bricks video, to paste and post by hand (docs/new-model.md).
 
 - **Video:** `out/the_thing-1080x1920.mp4` (9:16, sound on: the clicks are the point)
-- **Link:** https://bricks.superfun.games/quick/the_thing/
+- **Link:** https://bricks.vhsgarage.com/quick/the_thing/
 - **Credit:** Design by zeldar, from Brickit: https://brickit.app/ideas/2d4e49a5-3670-42b3-a2d3-39c16475d11a
 
 ## Instagram

@@ -267,7 +267,7 @@ def test_reel_plan_and_cues(engine, sample, tmp_path):
                                        {"label": "Nothing", "tag": "missing_*"}]
     rp = R.plan_reel(engine, proj, model, tl, theme, tmp_path, tmp_path, log=lambda m: None)
     json.dumps(rp)                                   # all JSON-able
-    assert rp["model"]["pieces"] == 6 and rp["model"]["url"] == "bricks.superfun.games"
+    assert rp["model"]["pieces"] == 6 and rp["model"]["url"] == "bricks.vhsgarage.com"
     assert sum(c["qty"] for c in rp["palette"]) == 6
     qty = [c["qty"] for c in rp["palette"]]
     assert qty == sorted(qty, reverse=True)

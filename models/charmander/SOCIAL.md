@@ -3,7 +3,7 @@
 Copy for this model's Quick Bricks video, to paste and post by hand (docs/new-model.md).
 
 - **Video:** `out/charmander-1080x1920.mp4` (9:16, sound on: the clicks are the point)
-- **Link:** https://bricks.superfun.games/quick/charmander/
+- **Link:** https://bricks.vhsgarage.com/quick/charmander/
 - **Credit:** Design by SwordBricks (RSierra) (Rebrickable MOC-220190).
 
 ## Instagram

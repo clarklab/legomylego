@@ -3,7 +3,7 @@
 Copy for this model's Quick Bricks video, to paste and post by hand (docs/new-model.md).
 
 - **Video:** `out/taco-1080x1920.mp4` (9:16, sound on: the clicks are the point)
-- **Link:** https://bricks.superfun.games/quick/taco/
+- **Link:** https://bricks.vhsgarage.com/quick/taco/
 - **Credit:** A build from LEGO Classic 11039 Creative Food Friends.
 
 ## Instagram

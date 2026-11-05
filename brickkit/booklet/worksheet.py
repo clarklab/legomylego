@@ -139,7 +139,7 @@ def build(engine, proj, model) -> dict:
         "name": model.name, "pieces": sum(r["qty"] for r in rows), "rows": rows,
         "cover": "booklet/cover.png" if (img_dir / "cover.png").exists() else None,
         "paper": paper, "page_w": pw, "page_h": ph, "margin": MARGIN, "gutter": GUTTER,
-        "site": "bricks.superfun.games",
+        "site": "bricks.vhsgarage.com",
     }
 
 

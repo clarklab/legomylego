@@ -3,7 +3,7 @@
 Copy for this model's Quick Bricks video, to paste and post by hand (docs/new-model.md).
 
 - **Video:** `out/jake_the_dog-1080x1920.mp4` (9:16, sound on: the clicks are the point)
-- **Link:** https://bricks.superfun.games/quick/jake_the_dog/
+- **Link:** https://bricks.vhsgarage.com/quick/jake_the_dog/
 - **Credit:** Our own design: no credit line needed.
 
 ## Instagram

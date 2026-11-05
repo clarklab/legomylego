@@ -3,7 +3,7 @@
 Copy for this model's Quick Bricks video, to paste and post by hand (docs/new-model.md).
 
 - **Video:** `out/mario-1080x1920.mp4` (9:16, sound on: the clicks are the point)
-- **Link:** https://bricks.superfun.games/quick/mario/
+- **Link:** https://bricks.vhsgarage.com/quick/mario/
 - **Credit:** Design by JellsaTheBobJeffCreator (Rebrickable MOC-249307),
   https://rebrickable.com/mocs/MOC-249307/
 

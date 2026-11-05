@@ -3,7 +3,7 @@
 Copy for this model's Quick Bricks video, to paste and post by hand (docs/new-model.md).
 
 - **Video:** `out/garfield-1080x1920.mp4` (9:16, sound on: the clicks are the point)
-- **Link:** https://bricks.superfun.games/quick/garfield/
+- **Link:** https://bricks.vhsgarage.com/quick/garfield/
 - **Credit:** Design by zeldar, from Brickit: https://brickit.app/ideas/4938967d-9f27-44fc-b41a-ef581aeff4b8
 
 ## Instagram

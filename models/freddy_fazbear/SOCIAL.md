@@ -3,7 +3,7 @@
 Copy for this model's Quick Bricks video, to paste and post by hand (docs/new-model.md).
 
 - **Video:** `out/freddy_fazbear-1080x1920.mp4` (9:16, sound on: the clicks are the point)
-- **Link:** https://bricks.superfun.games/quick/freddy_fazbear/
+- **Link:** https://bricks.vhsgarage.com/quick/freddy_fazbear/
 - **Credit:** Design from Rebrickable MOC-265184 (its plans do not name the designer).
 
 ## Instagram

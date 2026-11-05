@@ -38,7 +38,7 @@ from ..ldraw.library import part_id
 from ..ldraw.matrix import apply
 
 TEMPLATES = Path(__file__).with_name("templates")
-SITE_URL = "https://bricks.superfun.games"
+SITE_URL = "https://bricks.vhsgarage.com"
 
 
 def _dims_cm(engine, placed) -> list[float]:

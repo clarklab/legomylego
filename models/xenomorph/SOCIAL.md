@@ -3,7 +3,7 @@
 Copy for this model's Quick Bricks video, to paste and post by hand (docs/new-model.md).
 
 - **Video:** `out/xenomorph-1080x1920.mp4` (9:16, sound on: clicks, one meow, one screech)
-- **Link:** https://bricks.superfun.games/quick/xenomorph/
+- **Link:** https://bricks.vhsgarage.com/quick/xenomorph/
 - **Credit:** Design by yodakya (Rebrickable MOC-34927). The cat on its back is our addition.
 
 ## Instagram

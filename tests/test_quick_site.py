@@ -64,7 +64,7 @@ def test_quick_index_includes_every_configured_model_without_video(tmp_path):
     page = (site / 'quick/apple/index.html').read_text()
     assert 'data-slug="apple"' in page and 'apple &amp; friend' in page
     assert 'A &lt;tiny&gt; build &amp; friend' in page
-    assert 'https://bricks.superfun.games/quick/apple/' in page
+    assert 'https://bricks.vhsgarage.com/quick/apple/' in page
     assert '/m/apple/' not in page
     # Deterministic reruns do not rewrite JSON/pages or change existing media.
     stamp = (site / 'quick/models.json').stat().st_mtime_ns

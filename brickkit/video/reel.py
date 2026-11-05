@@ -43,7 +43,7 @@ import numpy as np
 from . import companions as Cmp
 from . import timeline as T
 
-URL = "bricks.superfun.games"
+URL = "bricks.vhsgarage.com"
 DISCLAIMER = "Unofficial fan model · computer-checked, not yet built with real bricks"
 DISCLAIMER_BUILT = "Unofficial fan model · built with real bricks, checked by computer"
 
