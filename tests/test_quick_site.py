@@ -192,6 +192,9 @@ def test_quick_page_credits_the_designer(tmp_path):
     page = quick_page(template, item)
     assert '<p class="qd-credit">Designed by <a href="https://example.com/moc/1"' in page
     assert "A. &lt;Builder&gt;</a>" in page
+    assert "not the designer's own instructions" in page
+    theirs = quick_page(template, {**item, "designer_steps": True})   # their own steps, redrawn
+    assert "follow the designer's own instructions" in theirs and "not the designer" not in theirs
     assert credit_html({"credit": "Another builder's design."}) == \
         '<p class="qd-credit">Another builder&#x27;s design.</p>'
     assert "the original</a>" in credit_html({"source": "https://example.com/moc/2"})

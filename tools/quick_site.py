@@ -65,6 +65,9 @@ def credit_html(item: dict) -> str:
                          if source else text)
     if item.get("credit"):
         text = esc(item["credit"]) + (f' {link("The original")}.' if source else "")
+    elif designer and item.get("designer_steps"):      # the designer's own steps, redrawn
+        text = (f"Designed by {link(esc(designer))}. These steps follow the designer's own "
+                "instructions, redrawn here.")
     elif designer:
         text = (f"Designed by {link(esc(designer))}. These steps were worked out from the design; "
                 "they are not the designer's own instructions.")
@@ -158,7 +161,8 @@ def build_quick_site(site: Path = ROOT / "site", models_dir: Path = ROOT / "mode
             if unknown:
                 raise ValueError(f"{slug}: no logo in brands/ for {', '.join(unknown)}")
             items[-1]["brands"] = list(cfg["brands"])
-        for key in ("designer", "source", "credit", "built"):   # (whose design, where; built when)
+        for key in ("designer", "source", "credit", "built",   # (whose design, where; built when;
+                    "designer_steps"):                          # the steps are the designer's)
             if cfg.get(key):
                 items[-1][key] = cfg[key]
     result = {"models": items}

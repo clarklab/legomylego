@@ -88,7 +88,10 @@ fill in and an empty `reference/`, and claims it for you.
      and what each saved file shows. For someone else's design also set `designer` and
      `source` (a link to the original) in `model.toml`'s `[model]`: the booklet's cover and
      the model's page on the site say "Designed by ...", linked to the original. With no
-     name to give, write `credit = "..."`, our own sentence for it, instead.
+     name to give, write `credit = "..."`, our own sentence for it, instead. When the steps
+     are the designer's own, followed page by page (a Brickit model), also set
+     `designer_steps = true`: the booklet and the page then say so, instead of "worked out
+     from the design".
    - *The plans, page by page*: one row per page, with the pieces (quantity, name, part
      number, colour) and where they go. Say how you name the columns and rows.
    - *What had to be worked out*: everything the source did not show plainly, and how sure
