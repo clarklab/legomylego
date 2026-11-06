@@ -12,7 +12,7 @@ Copy for this model's Quick Bricks video, to paste and post by hand (docs/new-mo
 
 Why did the chicken cross the studs? 🐔
 
-30 pieces, all squares and all attitude: a printed face, an orange beak over a red wattle, a wing on each side and yellow legs.
+31 pieces, all squares and all attitude: a printed face, an orange beak over a red wattle, a wing on each side and yellow legs.
 5 cm tall. Design by zeldar on Brickit.
 
 Free instructions and parts list: link in bio.
@@ -25,7 +25,7 @@ Free instructions and parts list: link in bio.
 
 **Caption**
 
-30 pieces. One blocky chicken. Zero eggs. Design by zeldar. 🐔
+31 pieces. One blocky chicken. Zero eggs. Design by zeldar. 🐔
 
 **Hashtags**
 
@@ -33,7 +33,7 @@ Free instructions and parts list: link in bio.
 
 **On-screen text** (one line, in the first second)
 
-- 30 pieces. 1 square chicken.
+- 31 pieces. 1 square chicken.
 - the beak clicks last
 
 ## More lines

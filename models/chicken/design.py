@@ -31,10 +31,11 @@ FLIP = rot(z=180)                         # upside down
 EYES = "3069bpx3"                         # Tile 1 x 2 with 2 Black Squares (the Minecraft
 #                                           chicken's eyes: Rebrickable 3069bpr0250)
 EYE_TURN = FWD                            # the squares at the bottom, as on page 20
-EYE_X = 10                                # zeldar centres the face tile on the upper brick's
-#                                           top stud, which is solid: a 1 x 2 tile's centre pin
-#                                           cannot go in it. Half a stud over, one of the tile's
-#                                           own stud places is on it and it holds
+# zeldar centres the face tile straight on the upper brick's top stud. That stud is solid (only
+# 47905's side studs are hollow) and a 1 x 2 tile's middle tube goes only into a hollow one, so
+# the tile cannot sit there centred. A white jumper plate under it holds it centred, in line
+# with the beak, the way the beak's tile sits on its jumper: one piece more than zeldar's, and
+# the face a plate further out
 
 
 def build(model):
@@ -108,9 +109,10 @@ def build(model):
     m.place("3024", "white", (0, HY, HZ - 3 * PLATE), FWD, tag="head")
     m.step("A 2 x 2 plate on the right side studs of the two bricks: the other side of the head")
     m.place("3022", "white", (18, HY - 10, HZ), axes(EY, -EX, EZ), tag="head")
-    m.step("The eyes: a 1 x 2 tile printed with two black squares on the upper brick's stud, by "
-           "one end, reaching out to the right")
-    m.place(EYES, "white", (EYE_X, HY - 20, HZ - 20 - PLATE), EYE_TURN, tag="eyes")
+    m.step("The eyes: a white 1 x 2 jumper plate on the upper brick's stud, and on its stud the "
+           "1 x 2 tile printed with two black squares, in line with the beak")
+    m.place("15573", "white", (0, HY - 20, HZ - 20 - PLATE), FWD, tag="eyes")
+    m.place(EYES, "white", (0, HY - 20, HZ - 20 - 2 * PLATE), EYE_TURN, tag="eyes")
     m.step("The beak: an orange 1 x 2 jumper plate on the white 1 x 1 plate's stud")
     m.place("15573", "orange", (0, HY, HZ - 4 * PLATE), FWD, tag="beak")
     m.step("An orange 1 x 2 tile on the jumper's stud")

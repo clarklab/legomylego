@@ -1,10 +1,10 @@
 # Chicken: price
 
-30 pieces in 16 lines.
+31 pieces in 17 lines.
 
-**BrickLink: $2.85** for new parts, before shipping, from BrickLink's price guide on 2026-11-05: each line at the average it sold for over the last six months (the average asking price where nothing sold), weighted by quantity.
+**BrickLink: $2.88** for new parts, before shipping, from BrickLink's price guide on 2026-11-05: each line at the average it sold for over the last six months (the average asking price where nothing sold), weighted by quantity.
 
-**Pick a Brick: $2.47** at LEGO Pick a Brick (US shop) on 2026-11-05, before shipping. Not sold there: 1 x Tile 1 x 2 with 2 Black Squares print (3069pb0691), White. All of it is in the Bestseller range, so it comes as one parcel.
+**Pick a Brick: $2.53** at LEGO Pick a Brick (US shop) on 2026-11-05, before shipping. Not sold there: 1 x Tile 1 x 2 with 2 Black Squares print (3069pb0691), White. All of it is in the Bestseller range, so it comes as one parcel.
 
 Order with `bricklink_wanted.xml` (upload as a BrickLink Wanted List, then Easy Buy) or `pick_a_brick.csv` (upload on Pick a Brick).
 
@@ -25,4 +25,5 @@ Order with `bricklink_wanted.xml` (upload as a BrickLink Wanted List, then Easy 
 | 1 | 3069 Tile 1 x 2 with Groove | Orange | 0.06 | 0.06 | 0.08 | 0.08 |
 | 1 | 4070 Brick Special 1 x 1 with Headlight | White | 0.05 | 0.05 | 0.08 | 0.08 |
 | 1 | 15573 Plate Special 1 x 2 with 1 Stud with Groove and Inside Stud Holder (Jumper) | Orange | 0.03 | 0.03 | 0.06 | 0.06 |
+| 1 | 15573 Plate Special 1 x 2 with 1 Stud with Groove and Inside Stud Holder (Jumper) | White | 0.03 | 0.03 | 0.06 | 0.06 |
 | 1 | 3024 Plate 1 x 1 | Red | 0.02 | 0.02 | 0.06 | 0.06 |

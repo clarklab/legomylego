@@ -674,39 +674,39 @@
     {
       "slug": "chicken",
       "name": "Chicken",
-      "description": "A blocky white chicken in 30 pieces, about 5 cm tall: a printed face, an orange beak over a red wattle, wings on the sides and yellow legs. zeldar's design, built as zeldar's instructions build it, with the face half a stud over so it holds.",
+      "description": "A blocky white chicken in 31 pieces, about 5 cm tall: a printed face, an orange beak over a red wattle, wings on the sides and yellow legs. zeldar's design, built as zeldar's instructions build it, with a jumper plate under the face so it sits centred, in line with the beak.",
       "collection": "quick_bricks",
       "steps": 22,
       "notice": "",
-      "parts": 30,
-      "pieces": 30,
+      "parts": 31,
+      "pieces": 31,
       "dims_mm": [
         33.6,
         48.0,
         48.0
       ],
       "price": {
-        "low": 2.78,
-        "high": 3.93,
+        "low": 2.8,
+        "high": 3.97,
         "currency": "USD",
-        "note": "BrickLink price guide, 2026-11-05: 16 of 16 part lines priced live (six-month sold average to current asking average, new, USD).",
+        "note": "BrickLink price guide, 2026-11-05: 17 of 17 part lines priced live (six-month sold average to current asking average, new, USD).",
         "source": "bricklink",
         "date": "2026-11-05",
-        "live_lines": 16,
-        "lines": 16,
+        "live_lines": 17,
+        "lines": 17,
         "bricklink": {
-          "usd": 2.85,
+          "usd": 2.88,
           "date": "2026-11-05",
-          "lines": 16,
-          "of": 16,
+          "lines": 17,
+          "of": 17,
           "missing": [],
           "basis": "new parts, the average each sold for over the last six months (the average asking price where nothing sold), before shipping"
         },
         "pick_a_brick": {
-          "usd": 2.47,
+          "usd": 2.53,
           "date": "2026-11-05",
-          "lines": 15,
-          "of": 16,
+          "lines": 16,
+          "of": 17,
           "missing": [
             "1 x Tile 1 x 2 with 2 Black Squares print (3069pb0691), White"
           ],

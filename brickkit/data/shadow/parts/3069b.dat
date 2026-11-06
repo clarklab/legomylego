@@ -1,7 +1,0 @@
-0 brickkit overlay for "Tile 1 x 2 with Groove" (3069b)
-0 // The LDraw model (2010) is simplified underneath and leaves out the tube in the middle,
-0 // which a 1 x 2 tile has like a 1 x 2 plate (3023b draws it with stud3.dat). The tube goes
-0 // into a hollow stud, so the tile can sit centred on one, half a stud off the grid: zeldar's
-0 // The Thing hangs its brow tiles on the brackets' hollow side studs that way. The same snap
-0 // as stud3.dat's, where 3023b's subpart puts it (overlays add to the library's snaps).
-0 !LDCAD SNAP_CYL [gender=M] [caps=one] [secs=R 4 4] [pos=0 4 0] [ori=1 0 0 0 -1 0 0 0 1]

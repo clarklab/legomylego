@@ -1,6 +1,6 @@
 # Chicken
 
-A blocky white chicken, the Minecraft one, in 30 pieces, about 5 cm tall: a printed face, an orange
+A blocky white chicken, the Minecraft one, in 31 pieces (zeldar's 30 and a jumper under the face), about 5 cm tall: a printed face, an orange
 beak over a red wattle, a 2 x 2 wing on each side and yellow legs. zeldar's design, built the way
 zeldar's instructions build it.
 
@@ -67,18 +67,23 @@ piece. Things only the overlays settled:
 | 17 | 3024 Red | upside down under it, its stud showing below |
 | 18 | 3024 White | on the red bracket's stud |
 | 19 | 3022 White | the head's right side |
-| 20 | 3069bpx3 White | the face (here half a stud to the right) |
+| 20 | 3069bpx3 White | the face (here on a white 15573 jumper, centred) |
 | 21 | 15573 Orange | the beak: a jumper on the white plate's stud |
 | 22 | 3069b Orange | a tile on the jumper's hollow stud |
 
 ## Not exactly as the app, and open questions
 
-- **The face tile is half a stud to the right.** zeldar centres the 1 x 2 face tile on the upper
-  47905's top stud, which is solid. A real 1 x 2 tile has a pin in the middle of its underside,
-  as the 1 x 2 plate has (LDraw draws it on the 1 x 3 and 1 x 4 tiles; its 1 x 2 tile is older
-  and leaves it out), so a solid stud cannot go in there: the tile has nothing to grip. The owner
-  chose (2026-11-05) the nearest real fix with the same pieces: the tile half a stud to the right,
-  on one of its own stud places (`EYE_X` in design.py). The face sits 4 mm off centre.
+- **The face sits on a white jumper plate.** zeldar centres the 1 x 2 face tile on the upper
+  47905's top stud, which is solid (only its two side studs are hollow, `stud2a` in LDraw). A
+  real 1 x 2 tile has a tube in the middle of its underside, as the 1 x 2 plate has, which goes
+  only into a hollow stud: on a solid one the tile has nothing to grip. The beak shows the way:
+  its tile sits centred on a jumper's hollow stud. So the face tile does too, on a white 15573
+  on the brick's stud, in line with the beak: one piece more than zeldar's (31), and the face a
+  plate further out. The owner first chose the tile half a stud to the right (2026-11-05,
+  morning), then asked for it in line with the beak (same day). The jumper puts a little more
+  weight out front: it tips forward at 1.7 degrees, not 2.9 (`min_tilt_deg = 1.5`). The tube is
+  a snap overlay on the tile's body, `brickkit/data/shadow/parts/s/3069bs01.dat`, so printed
+  1 x 2 tiles get it too.
 - **Pages 13 and 14 are one sub-assembly.** zeldar puts the upper 47905 on, then slides the two
   1 x 1 plates in behind it: they have to come in from the side and then press forward 4 LDU onto
   the brick (the headlight brick's top stud is right behind them), a two-part move neither the
@@ -90,7 +95,7 @@ piece. Things only the overlays settled:
 
 ## Parts and price
 
-30 pieces in 16 lines, every one with a LEGO element ID. BrickLink $2.85, Pick a Brick $2.47 with 1
+31 pieces in 17 lines, every one with a LEGO element ID. BrickLink $2.88, Pick a Brick $2.53 with 1
 line not sold there (the printed face tile: rare, one set, 2019), 2026-11-05, before shipping.
 
 ## Quick Bricks

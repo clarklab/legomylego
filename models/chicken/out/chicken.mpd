@@ -64,8 +64,9 @@
 0 // A 2 x 2 plate on the right side studs of the two bricks: the other side of the head
 1 15 18 -100 -50 0 -1 0 1 0 0 0 0 1 3022.dat
 0 STEP
-0 // The eyes: a 1 x 2 tile printed with two black squares on the upper brick's stud, by one end, reaching out to the right
-1 15 10 -110 -78 1 0 0 0 0 -1 0 1 0 3069bpx3.dat
+0 // The eyes: a white 1 x 2 jumper plate on the upper brick's stud, and on its stud the 1 x 2 tile printed with two black squares, in line with the beak
+1 15 0 -110 -78 1 0 0 0 0 -1 0 1 0 15573.dat
+1 15 0 -110 -86 1 0 0 0 0 -1 0 1 0 3069bpx3.dat
 0 STEP
 0 // The beak: an orange 1 x 2 jumper plate on the white 1 x 1 plate's stud
 1 25 0 -90 -82 1 0 0 0 0 -1 0 1 0 15573.dat

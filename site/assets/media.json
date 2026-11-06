@@ -1451,40 +1451,40 @@
   "chicken": {
    "files": {
     "booklet.pdf": {
-     "v": "4399c17e3f",
-     "size": 2941217
+     "v": "45a7388708",
+     "size": 2972779
     },
     "bricklink_wanted.xml": {
-     "v": "83387f5d77",
-     "size": 1494
+     "v": "304228bde8",
+     "size": 1586
     },
     "chicken.mpd": {
-     "v": "0e63cef465",
-     "size": 3512
+     "v": "254c3d8de1",
+     "size": 3586
     },
     "model.glb": {
-     "v": "014e5d014e",
-     "size": 409824
+     "v": "e62f5db2bb",
+     "size": 409936
     },
     "model.json": {
-     "v": "ab3ceba111",
-     "size": 12396
+     "v": "58504f23e1",
+     "size": 12865
     },
     "pages/p001.webp": {
-     "v": "98ff2a9328",
-     "size": 23038
+     "v": "db86d71d07",
+     "size": 22618
     },
     "pages/p002.webp": {
-     "v": "bc155e3c45",
-     "size": 90970
+     "v": "dfbd3c8172",
+     "size": 92420
     },
     "pages/p003.webp": {
-     "v": "f168553e13",
-     "size": 53578
+     "v": "cfa3fdd715",
+     "size": 53632
     },
     "pages/p004.webp": {
-     "v": "45a7f233c1",
-     "size": 14864
+     "v": "b18f6b0d5c",
+     "size": 14944
     },
     "pages/p005.webp": {
      "v": "608da7858c",
@@ -1523,76 +1523,76 @@
      "size": 28498
     },
     "pages/p014.webp": {
-     "v": "52ce61f409",
-     "size": 34320
+     "v": "eb05b42de3",
+     "size": 40388
     },
     "pages/p015.webp": {
-     "v": "694cf085e9",
-     "size": 30732
+     "v": "25baaebcb8",
+     "size": 31514
     },
     "pages/p016.webp": {
-     "v": "c469db00a8",
-     "size": 35700
+     "v": "f521bfc8a0",
+     "size": 37008
     },
     "pages/p017.webp": {
-     "v": "a7fb2a8b8e",
-     "size": 66652
+     "v": "e445c169c4",
+     "size": 66588
     },
     "parts.csv": {
-     "v": "7ac8071bd1",
-     "size": 1277
+     "v": "8a5e3217b1",
+     "size": 1399
     },
     "pick_a_brick.csv": {
-     "v": "f24d777a79",
-     "size": 189
+     "v": "3b4dde9448",
+     "size": 200
     },
     "price_estimate.md": {
-     "v": "ad16b1c5df",
-     "size": 1995
+     "v": "b7a04811c2",
+     "size": 2121
     },
     "quick_poster.jpg": {
-     "v": "559a241200",
-     "size": 133560
+     "v": "7a95739111",
+     "size": 133632
     },
     "renders/renders_front.png": {
-     "v": "2c37fdceb0",
-     "size": 795240
+     "v": "f2d140f1e0",
+     "size": 795400
     },
     "renders/renders_side.png": {
-     "v": "7655a06437",
-     "size": 805297
+     "v": "d03cd2cf62",
+     "size": 805115
     },
     "renders/renders_three_quarter.png": {
-     "v": "0a2745aa5e",
-     "size": 811585
+     "v": "36ae2d8b56",
+     "size": 810788
     },
     "renders/renders_three_quarter_right.png": {
      "v": "77be9a51ae",
      "size": 810062
     },
     "renders/renders_top.png": {
-     "v": "5bd75b0ff8",
-     "size": 799773
+     "v": "9cb2bc4ade",
+     "size": 796003
     }
    },
    "images": {
     "renders/renders_front.png": {
      "w": 900,
      "h": 900,
-     "lg": "/assets/img/chicken/renders_front.webp?v=e5843a3250",
-     "sm": "/assets/img/chicken/renders_front-480.webp?v=2a304df617"
+     "lg": "/assets/img/chicken/renders_front.webp?v=605b15e711",
+     "sm": "/assets/img/chicken/renders_front-480.webp?v=b43444482f"
     },
     "renders/renders_side.png": {
      "w": 900,
      "h": 900,
-     "lg": "/assets/img/chicken/renders_side.webp?v=1cdbd0c2c6",
-     "sm": "/assets/img/chicken/renders_side-480.webp?v=19460d8a7c"
+     "lg": "/assets/img/chicken/renders_side.webp?v=96bed960e2",
+     "sm": "/assets/img/chicken/renders_side-480.webp?v=5132a20778"
     },
     "renders/renders_three_quarter.png": {
      "w": 900,
      "h": 900,
-     "lg": "/assets/img/chicken/renders_three_quarter.webp?v=118921aff4",
-     "sm": "/assets/img/chicken/renders_three_quarter-480.webp?v=68bae166e7"
+     "lg": "/assets/img/chicken/renders_three_quarter.webp?v=d2a8f74d26",
+     "sm": "/assets/img/chicken/renders_three_quarter-480.webp?v=9d858dd92f"
     },
     "renders/renders_three_quarter_right.png": {
      "w": 900,
@@ -1603,8 +1603,8 @@
     "renders/renders_top.png": {
      "w": 900,
      "h": 900,
-     "lg": "/assets/img/chicken/renders_top.webp?v=138a81d542",
-     "sm": "/assets/img/chicken/renders_top-480.webp?v=b8ec302593"
+     "lg": "/assets/img/chicken/renders_top.webp?v=b335a2e187",
+     "sm": "/assets/img/chicken/renders_top-480.webp?v=ccd6f16953"
     }
    }
   },
