@@ -256,8 +256,8 @@ def audit_quick(engine, model, config):
     # the video builds bottom up (quick.realistic_sequence) or, where that forces a piece, in
     # the source's order: no other
     seq = quick.build_sequence(model, placed)
-    orders = [seq] + ([quick.realistic_sequence(engine, model, placed, seq),
-                       quick.realistic_sequence(engine, model, placed, seq, wait=False)]
+    orders = [seq] + ([quick.realistic_sequence(engine, model, placed, seq, m) for m in ("layers", "steps")] + [
+                       quick.realistic_sequence(engine, model, placed, seq, "loose")]
                       if cfg["order"] == "bottom_up" else [])
     steps = lambda s: [placed[i].build_order for i in s]    # noqa: E731
     assert steps(result["order"]) in [steps(s) for s in orders], "Quick reorders source steps"

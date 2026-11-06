@@ -311,8 +311,9 @@ def test_quick_close_ups_face_on(engine):
     m.place("98138", "Blue", (10, -14, -28), rot(x=90), tag="front")
     assert {c.status for c in run_checks(engine.context(model), ["connections", "collisions", "buildability"])} == {"pass"}
     placed = model.flatten()
-    tags = lambda hl: [placed[c["part"]].tags for c in Q.plan(     # noqa: E731
-        engine, model, Q.quick_config({"quick": {"highlight": hl, "close_ups": 2}}))["close_ups"]]
+    tags = lambda hl: [placed[c["part"]].tags for c in Q.plan(     # noqa: E731  (in this
+        engine, model, Q.quick_config({"quick": {"highlight": hl, "close_ups": 2,  # order: the
+                                                 "order": "instructions"}}))["close_ups"]]   # two last)
     assert tags(["front", "side"]) == [("front",)]
     assert tags(["side", "front"]) == [("side",)]
     assert tags(["side"]) == [("side",)]
@@ -448,8 +449,8 @@ def test_quick_builds_for_real(engine, slug):
     seq = Q.build_sequence(model, placed)
     orders = [seq]
     if cfg["order"] == "bottom_up":
-        orders += [Q.realistic_sequence(engine, model, placed, seq),
-                   Q.realistic_sequence(engine, model, placed, seq, wait=False)]
+        orders += [Q.realistic_sequence(engine, model, placed, seq, m) for m in ("layers", "steps")] + [
+                   Q.realistic_sequence(engine, model, placed, seq, "loose")]
     steps = lambda s: [placed[i].build_order for i in s]    # noqa: E731  (a unit's own steps
     assert steps(pl["order"]) in [steps(s) for s in orders]  # may go in their own order)
     for i, p in enumerate(placed):
@@ -691,7 +692,9 @@ def test_quick_builds_bottom_up(engine):
     pl = Q.plan(engine, model, Q.quick_config(proj.config, slug="chicken"))
     first = [placed[i].part for i in pl["order"][:7]]
     assert first[:2] == ["73825.dat", "73825.dat"] and first.index("11212.dat") > first.index("36841.dat")
-    sc = A.assemble(engine, model, placed, Q.realistic_sequence(engine, model, placed, Q.build_sequence(model, placed)))
+    assert pl["forced"] == 0                           # (layer by layer would shut the head's way in:
+    steps = Q.realistic_sequence(engine, model, placed, Q.build_sequence(model, placed), "steps")
+    sc = A.assemble(engine, model, placed, steps)     # it goes by the designer's steps, bottom up)
     assert not any(it.forced or it.carry or it.mode == "under" for it in sc["items"])
 
 

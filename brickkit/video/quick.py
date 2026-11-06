@@ -149,6 +149,8 @@ LAYOUT_PRE = 1.2      # s to take the laid-out parts in before the first one lif
 LAYOUT_HERO = 3.2     # s from the last landing to the cut then: the camera's turn round the
                       # model is all at the end, once the table is clear
 LAYOUT_CALM = 0.4     # the orbit's pace until then, as a share of ORBIT
+CALM_TURN = 60.0      # degrees: the most a laid-out build's camera may have come round by the
+                      # time the table is all but clear (else plan() tries the next order)
 FLOAT = (0.85, 0.6)   # s a laid-out part takes to float up and in: the first, the last ones
 LAYOUT_GAP = (12.0, 16.0)   # LDU between neighbours in a row of the grid, between rows
 LAYOUT_CLEAR = 36.0   # LDU from the build's footprint to the nearest row
@@ -236,17 +238,21 @@ def build_sequence(model, placed) -> list[int]:
                                                       i))
 
 
-def realistic_sequence(engine, model, placed, seq, wait: bool = True) -> list[int]:
+def realistic_sequence(engine, model, placed, seq, mode: str = "layers") -> list[int]:
     """Bottom up, the way a person builds it (the owner, 2026-11-05: "show the build from the
     bottom up, when possible ... always build realistically"; some designers' pages put a plate
     on first and hang what goes under it after): what stands on the table goes first, then the
-    designer's order - but only ever a piece that joins what is built, and none while a piece
-    still to come lies under it (both legs before the plate across them). So nothing is hung
+    lowest layer that can go on next ("layers": a person goes layer by layer), else the
+    designer's order ("steps"); a piece only joined sideways (an eye, a wing) goes in with the
+    part it hangs on - but only ever a piece that joins what is built, and none while
+    a built-up piece still to come lies under it (both legs before the plate across them; a
+    piece hung under another does not count: nothing under it reaches the table). So nothing is hung
     under what is built or slid in under it (no lifts), and where the designer's order goes up
     already it is kept (sub-assemblies and ways in that depend on it: a side plate that would
     shut a later piece's way in). Each of the main model's sub-assemblies stays one block, in
     its own order; a bought kit stays one piece. The booklet keeps the designer's order.
-    `wait` False: without the waiting for what lies under (a model hung from the top in places)."""
+    "loose": the designer's order without the waiting for what lies under (a model hung from
+    the top in places). plan() tries them in that order, first that forces no piece."""
     st = A.structure(model, placed, seq)
     link = A.links(engine, model, placed)
     low = [A.low(engine, p.part, np.asarray(p.M, float)) for p in placed]
@@ -268,10 +274,28 @@ def realistic_sequence(engine, model, placed, seq, wait: bool = True) -> list[in
     span = [(np.concatenate([box[i] for i in b]).min(0), np.concatenate([box[i] for i in b]).max(0))
             for b in blocks]
 
+    # built up from the table: on it, or joined to such a part reaching lower (a cuff hung
+    # under a hung arm is not: nothing under it goes down to the table)
+    up = {i for i in range(len(placed)) if abs(low[i] - ground) < 0.5}
+    grew = True
+    while grew:
+        grew = False
+        for i in range(len(placed)):
+            if i not in up and any(o in up and box[o][1][1] > box[i][1][1] + 0.5 for o, *_ in link.get(i, ())):
+                up.add(i)
+                grew = True
+
     def rests(c) -> bool:
-        """Block c is built up, not hung: it stands on the table or joins a part reaching lower."""
-        return table[c] or any(box[o][1][1] > span[c][1][1] + 0.5
-                               for i in blocks[c] for o, *_ in link.get(i, ()) if o not in blocks[c])
+        return any(i in up for i in blocks[c])
+
+    def layer(c) -> float:
+        """Block c's layer (its bottom, LDU): a piece only joined sideways (an eye on a side
+        stud, a wing) goes in with the part it hangs on, not by its own low edge."""
+        js = [(o, ax) for i in blocks[c] for o, _, ax, _ in link.get(i, ()) if o not in blocks[c]]
+        if js and all(ax is not None and abs(float(ax[1])) < 0.5 for _, ax in js):
+            return float(max(box[o][1][1] for o, _ in js))
+        return float(span[c][1][1])
+    lay = [round(layer(c)) for c in range(len(blocks))]
 
     def under(c, b) -> bool:
         """Block c, built up, lies under block b: lower (its studs may reach into b), and under
@@ -287,8 +311,12 @@ def realistic_sequence(engine, model, placed, seq, wait: bool = True) -> list[in
     while left:
         ready = [b for b in left
                  if table[b] or any(o in built for i in blocks[b] for o, *_ in link.get(i, ()))]
-        free = [b for b in ready if not (wait and any(under(c, b) for c in left if c != b))]
-        b = min(free or ready or left, key=lambda b: (not table[b], first[b]))
+        free = [b for b in ready if not (mode != "loose" and any(under(c, b) for c in left if c != b))]
+        if mode == "layers":                           # (-Y up: the largest bottom is the lowest)
+            key = lambda b: (not table[b], -lay[b], first[b])   # noqa: E731
+        else:
+            key = lambda b: (not table[b], first[b])   # noqa: E731
+        b = min(free or ready or left, key=key)
         left.remove(b)
         built.update(blocks[b])
         out += sorted(blocks[b], key=lambda i: rank[i])
@@ -1340,7 +1368,56 @@ def plan(engine, model, cfg: dict, fps: int = FPS, size=SIZE, log=None) -> dict:
     build is assemble.assemble()'s: every piece on a clear way in, nothing in the air - so a
     bought kit is one piece, a sub-assembly that cannot be built in place is built beside the
     model and joined, and what is built is lifted for a piece that goes underneath. If all
-    that does not fit in [quick] seconds the loop is made as much longer as it needs."""
+    that does not fit in [quick] seconds the loop is made as much longer as it needs.
+
+    The order (the owner's rule: bottom up, the way a person builds): realistic_sequence layer
+    by layer, then by the designer's steps, then loosely, then the designer's own order - the
+    first whose plan forces no piece and passes nothing through anything (else the least bad)."""
+    placed = model.flatten()
+    seq0 = build_sequence(model, placed)
+    tries = [("instructions", seq0)]
+    if cfg.get("order", "bottom_up") == "bottom_up":
+        tries = [(name, realistic_sequence(engine, model, placed, seq0, mode))
+                 for name, mode in (("bottom up, layer by layer", "layers"),
+                                    ("bottom up, by the designer's steps", "steps"),
+                                    ("bottom up, loosely", "loose"))] + tries
+    best, seen = None, []
+    for name, s in tries:
+        if s in seen:
+            continue
+        seen.append(s)
+        said: list = []
+        pl = _plan(engine, model, cfg, s, fps, size, said.append)
+        bad = pl["forced"] + len(clashes(engine, placed, pl)) + too_fast(pl, placed)
+        if best is None or bad < best[0]:
+            best = (bad, name, pl, said)
+        if not bad:
+            break
+    bad, name, pl, said = best
+    if name != tries[0][0]:
+        said.insert(0, f"  quick: built in {name} order (stricter orders force or clash)")
+    for line in said:
+        (log or print)(line)
+    return pl
+
+
+def too_fast(pl: dict, placed) -> int:
+    """How the plan's camera breaks its rules (an order whose close-ups come too close
+    together, or late after a laid-out table): 1 if it goes round faster than it should
+    anywhere, 1 more if it has come round CALM_TURN or more while parts still lie on the table."""
+    pos = np.array(pl["camera"]["pos"])[:pl["cut"]]
+    lo, hi = np.array(pl["bounds"][0]), np.array(pl["bounds"][1])
+    d = pos - (lo + hi) / 2
+    az = np.degrees(np.unwrap(np.arctan2(d[:, 0], -d[:, 2])))
+    bad = int(len(az) > 1 and float((np.diff(az) * pl["fps"]).max()) >= 1.3 * FASTEST)
+    if pl["layout"] and len(pl["order"]) >= 3:
+        clear = int(pl["parts"][pl["order"][-3]]["launch"])
+        bad += int(clear > 0 and float(np.abs(az[:clear] - az[0]).max()) >= CALM_TURN)
+    return bad
+
+
+def _plan(engine, model, cfg: dict, seq, fps: int, size, log) -> dict:
+    """plan() for one build order `seq` (the parts' indices)."""
     from ..render.scene import model_scene
     placed = model.flatten()
     C = T.corners(engine, placed)
@@ -1360,29 +1437,8 @@ def plan(engine, model, cfg: dict, fps: int = FPS, size=SIZE, log=None) -> dict:
                 laid["corners"] = laid["corners"] + up
         return laid, A.assemble(engine, model, placed, seq, [laid["box"]] if laid else (), front, say)
 
-    # bottom up (realistic_sequence) - strictly, then without its waiting for what lies under,
-    # then the designer's order: the first that forces no piece (else the one forcing fewest)
-    seq0 = build_sequence(model, placed)
-    tries = [("instructions", seq0)]
-    if cfg.get("order", "bottom_up") == "bottom_up":
-        tries = [("bottom up", realistic_sequence(engine, model, placed, seq0)),
-                 ("bottom up, loosely", realistic_sequence(engine, model, placed, seq0, wait=False))] + tries
-    best = None
-    for name, s in tries:
-        if best is not None and s == best[1]:
-            continue
-        said: list = []
-        laid, script = build(s, said.append)
-        forced = sum(it.forced for it in script["items"])
-        if best is None or forced < best[2]:
-            best = (name, s, forced, laid, script, said)
-        if not forced:
-            break
-    name, seq, forced, laid, script, said = best
-    if name != tries[0][0]:
-        said.append(f"  quick: built in {name} order (stricter orders force pieces)")
-    for line in said:
-        (log or print)(line)
+    laid, script = build(seq, log)
+    forced = sum(it.forced for it in script["items"])
     items, order = script["items"], script["order"]
     piece = {i: k for k, it in enumerate(items) if it.kind == "piece" for i in it.parts}
     order_of = {i: k for k, i in enumerate(order)}
@@ -1459,6 +1515,7 @@ def plan(engine, model, cfg: dict, fps: int = FPS, size=SIZE, log=None) -> dict:
         "surface": cfg["surface"], "room": cfg["room"], "light": cfg["light"], "seed": cfg["seed"],
         "exposure": float(cfg["exposure"]), "view": cfg["view"], "seconds": seconds,
         "cut": int(round(sch["cut"] * fps)), "scene": scene, "reach": round(reach, 4), "seat": seat,
+        "forced": int(forced),
         "bounds": [r5(allp.min(0)), r5(allp.max(0))],
         "layout": laid is not None, "floor": [r5(floor.min(0)), r5(floor.max(0))],
         "order": order, "land": [int(fl[i]["land"]) for i in order],
