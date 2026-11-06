@@ -60,6 +60,8 @@ Configured by model.toml's [quick] (all optional):
                                  # lowest of what can go on, first); "instructions": the
                                  # designer's. Bottom up falls back to it by itself if it
                                  # would have to force a piece
+    stage_margin = 28            # LDU: how far from the model a sub-assembly is built beside it
+                                 # (more for a big model whose pieces come in on long runs)
     cover = 0                    # the cover picture (quick_poster.jpg): degrees from the model's
                                  # front it is seen from - the frame of the hero nearest to that
                                  # (45: three-quarters on, for a face that is on the side)
@@ -120,6 +122,7 @@ TAIL = 0.3            # s of the empty set after the cut (it runs on into the fi
 RATE_RAMP = 3.2       # the last parts land this many times as often as the first
 FLIGHT = (0.45, 0.24)  # s a part takes to fly in: the first, the last ones
 SETTLE = 0.2          # s a part is held after it lands (what was lifted for it set down)
+LATE = 0.5            # s the last landing may run after its time (else the build is made longer)
 CLICK = 4.0           # LDU short of its place: where a part lines up before it is pressed home
 PRESS = 0.86          # of its time: when it is lined up there (the rest is the press)
 LIFT = 0.3            # of a piece's time: what is built is lifted clear for it by then
@@ -1339,6 +1342,9 @@ def clashes(engine, placed, pl: dict, every: int = 1) -> list[dict]:
     for i in range(n):                                 # as it lands: on the table, or on a part
         f = pl["parts"][i]["land"]
         M = pose_at(pl, i, min(f, pl["cut"] - 1))
+        if M is None:                                  # (not there as it lands: it never is)
+            found.setdefault((i, "air"), f)
+            continue
         if abs(A.low(engine, placed[i].part, M) - ground) < 1.0:
             continue
         held = False
@@ -1451,7 +1457,7 @@ def _plan(engine, model, cfg: dict, seq, fps: int, size, log) -> dict:
                 laid["corner_of"] = {i: c + up for i, c in laid["corner_of"].items()}
                 laid["corners"] = laid["corners"] + up
         return laid, A.assemble(engine, model, placed, seq, [laid["box"]] if laid else (), front, say,
-                                cfg.get("travel", A.TRAVEL))
+                                cfg.get("travel", A.TRAVEL), float(cfg.get("stage_margin") or A.MARGIN))
 
     laid, script = build(seq, log)
     forced = sum(it.forced for it in script["items"])
@@ -1501,20 +1507,28 @@ def _plan(engine, model, cfg: dict, seq, fps: int, size, log) -> dict:
         return at
 
     # schedule, pick the close-ups on it, schedule again with room round them, then the camera
-    si, sch = timed([])
-    cam = plan_camera(model, placed, Cl, order, sch, groups, cfg, axes, fps, size, laid, C, home=home(si))
-    for _ in range(2):                                 # (again, if one is dropped: face_on())
-        picked = [w[2] for w in cam["windows"]]
-        si, sch = timed([piece[i] for i in picked])
-        groups2 = [g2 for g2 in ([i for i in g if i in picked] for g in groups) if g2]   # (first wanted first)
-        cam = plan_camera(model, placed, Cl, order, sch, groups2, cfg, axes, fps, size, laid, C, sure=True,
-                          home=home(si))
-        if len(cam["windows"]) == len(picked):
+    for _ in range(4):                                 # (longer, if the landings run late)
+        si, sch = timed([])
+        cam = plan_camera(model, placed, Cl, order, sch, groups, cfg, axes, fps, size, laid, C, home=home(si))
+        for _ in range(2):                             # (again, if one is dropped: face_on())
+            picked = [w[2] for w in cam["windows"]]
+            si, sch = timed([piece[i] for i in picked])
+            groups2 = [g2 for g2 in ([i for i in g if i in picked] for g in groups) if g2]   # (first wanted first)
+            cam = plan_camera(model, placed, Cl, order, sch, groups2, cfg, axes, fps, size, laid, C, sure=True,
+                              home=home(si))
+            if len(cam["windows"]) == len(picked):
+                break
+        fl, lands, notes = motion(engine, placed, script, si, cam, laid, fps, size)
+        # pieces in the air at once keep out of each other's way, a few frames late: at a low
+        # frame rate (a preview) a long build's last landings can run into the hero, or past
+        # the cut. Then the schedule is made that much longer, and planned again
+        late = max(lands) - float(sch["land"][-1])
+        if late <= LATE:
             break
+        seconds += late + 0.25
     if seconds > float(cfg["seconds"]) and log:
         log(f"  quick: {seconds:g} s, not {float(cfg['seconds']):g}: the build takes that long "
             f"({len(slow)} lifts and joins)")
-    fl, lands, notes = motion(engine, placed, script, si, cam, laid, fps, size)
     if flex:
         flex_moves(model, placed, fl, float(sch["cut"]), flex, fps)
     landed = np.array([lands[piece[i]] for i in order])         # (a moment late, some)

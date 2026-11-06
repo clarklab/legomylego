@@ -41,7 +41,8 @@ TRAVEL = 24.0     # LDU: the least clear run of a way in (as checks/buildability
                   # [checks.buildability] travel sets both)
 RUN = (12.0, 1.2, 6.0)    # the straight run in: at least, x the piece's size that way, plus
 TOL = 0.6         # LDU: "on the table"
-MARGIN = 28.0     # LDU: a staged unit this clear of the model's footprint
+MARGIN = 28.0     # LDU: a staged unit this clear of the model's footprint (a model's [quick]
+                  # stage_margin: more, for a big model whose pieces come in on long runs)
 UP = np.array([0.0, -1.0, 0.0])
 DOWN = -UP
 
@@ -174,9 +175,9 @@ def structure(model, placed, seq) -> dict:
 
 class Assembler:
     def __init__(self, engine, model, placed, seq, keep_out=(), front: float = 0.0, log=None,
-                 travel: float = TRAVEL):
+                 travel: float = TRAVEL, margin: float = MARGIN):
         self.e, self.col, self.placed = engine, engine.collide, placed
-        self.travel = float(travel)
+        self.travel, self.margin = float(travel), float(margin)
         self.M = [np.asarray(p.M, float) for p in placed]
         self.boxf = self.col.aabbs([(p.part, M) for p, M in zip(placed, self.M)])
         allp = self.boxf.reshape(-1, 3)
@@ -247,6 +248,26 @@ class Assembler:
                 return 99, flex
         return hard, flex
 
+    def below(self, pts, S, up, beside: bool = False) -> float:
+        """How far a piece (its box corners `pts`) reaches up past the lowest of what is
+        built right over it (S's parts whose footprint, across `up`, overlaps its own; with
+        `beside`, those next to it too - for a piece that slides in along the table under
+        what is held up): the run it needs from underneath to start clear below them (0 if
+        nothing hangs there)."""
+        h = pts @ up
+        flat = pts - np.outer(h, up)
+        g = 2.0 if beside else -1.0                    # (across: out a little, or in a hair)
+        lo, hi = flat.min(0) - g - np.abs(up), flat.max(0) + g + np.abs(up)
+        low = None
+        for j in S:
+            q = np.array([[x, y, z] for x in self.boxf[j][:, 0] for y in self.boxf[j][:, 1] for z in self.boxf[j][:, 2]])
+            qf = q - np.outer(q @ up, up)
+            if np.any(qf.max(0) < lo) or np.any(qf.min(0) > hi):
+                continue
+            v = float((q @ up).min())
+            low = v if low is None else min(low, v)
+        return 0.0 if low is None else max(0.0, float(h.max()) - low)
+
     def ways(self, parts, S, hint, Ru) -> tuple[list, list]:
         """Ways in for a piece, best first: [(hard, rank, tie, label, d, travel, snaps)] in
         the model's own frame (d: where it comes from), and the built parts it connects to.
@@ -296,6 +317,10 @@ class Assembler:
         # a ball pushed into its socket the way a hint says squeezes past the socket's lip: that
         # last touch is the snap, not a clash (a hint is otherwise held to touching nothing)
         balls = {j for i in parts for j, kind, _, _ in self.link.get(i, ()) if kind in BALL and j in inS}
+        # as low as all that is built: it will be what the unit stands on, slid in under it
+        lows = [float((np.array([[x, y, z] for x in self.boxf[j][:, 0] for y in self.boxf[j][:, 1]
+                                 for z in self.boxf[j][:, 2]]) @ up).min()) for j in S]
+        slides = bool(lows) and float((pts @ up).min()) <= min(lows) + TOL
         out, seen = [], set()
         for rank, label, d, snap in cands:
             key = (tuple(np.round(d, 3)), bool(snap))
@@ -305,14 +330,21 @@ class Assembler:
             run = min(TRAVEL * 2, max(RUN[0], RUN[1] * float(np.abs(ext) @ np.abs(d)) + RUN[2]))
             if rank == 2 or float(d @ up) < -0.7:      # pushed on across a bar, or up from
                 run = RUN[0] + (2.0 if rank == 2 else 0.0)            # underneath: a short run
+            longer = run                               # ... but from under what hangs over it,
+            if float(d @ up) < -0.7 and rank != 2:     # far enough to start clear below that
+                longer = max(run, self.below(pts, S, up, slides) + 4.0)    # (an axle up a reel)
             if not snap and rank in (2, 3, 4):
                 snap = snaps_all
             if label == "hint" and not snap:
                 snap = balls
             # pushed on across its bar a clip only flexes the last FLEX; slid along its own
             # axis (a pin in its hole, a clip along its bar) a snap never blocks itself
-            hard, flex = self.sweep(parts, d, max(self.travel, run), S, boxes, snap,
-                                    FLEX if rank == 2 or label == "hint" else 1e9)
+            reach = FLEX if rank == 2 or label == "hint" else 1e9
+            hard, flex = self.sweep(parts, d, max(self.travel, longer), S, boxes, snap, reach)
+            if longer > run and hard:                  # (no room for that: the short run)
+                hard, flex = self.sweep(parts, d, max(self.travel, run), S, boxes, snap, reach)
+            else:
+                run = longer
             if rank == 2 and flex > FLEX - 2:          # through the back of the clip, not its mouth
                 hard = max(hard, 1)
             tie = (flex if rank == 2 else -votes.get(tuple(np.round(d, 2)), 0), -round(float(d @ up), 2))
@@ -396,16 +428,16 @@ class Assembler:
         for da in (0, 35, -35, 70, -70, 105, -105, 140, -140, 180):
             h = np.array([math.cos(a0 + math.radians(da)), math.sin(a0 + math.radians(da))])
             for more in (0.0, 30.0, 60.0, 120.0):
-                dist = min((mh[k] + half[k] + MARGIN) / max(abs(h[k]), 1e-6) for k in (0, 1)) + more
+                dist = min((mh[k] + half[k] + self.margin) / max(abs(h[k]), 1e-6) for k in (0, 1)) + more
                 c = mid[[0, 2]] + h * dist
                 box = np.array([c - half, c + half])
-                if all(np.any(box[1] + MARGIN / 2 <= b[0]) or np.any(box[0] - MARGIN / 2 >= b[1]) for b in busy):
+                if all(np.any(box[1] + self.margin / 2 <= b[0]) or np.any(box[0] - self.margin / 2 >= b[1]) for b in busy):
                     best = (c, box)
                     break
             if best:
                 break
         if best is None:
-            best = (mid[[0, 2]] + np.array([math.cos(a0), math.sin(a0)]) * (max(mh) + max(half) + MARGIN) * 2, None)
+            best = (mid[[0, 2]] + np.array([math.cos(a0), math.sin(a0)]) * (max(mh) + max(half) + self.margin) * 2, None)
         c, box = best
         qc = (q.min(0) + q.max(0)) / 2
         base = trans([c[0] - qc[0], 0.0, c[1] - qc[2]]) @ turn
@@ -469,11 +501,11 @@ class Assembler:
 
 
 def assemble(engine, model, placed, seq, keep_out=(), front: float = 0.0, log=None,
-             travel: float = TRAVEL) -> dict:
+             travel: float = TRAVEL, margin: float = MARGIN) -> dict:
     """The build as it really goes: {items: [Item] in order, order: every part in the order
     it lands, landed: part -> 4 x 4 where it lands (not always where it ends up: its unit may
     be joined, or set down, later), axis: part -> the way it came in from, ground, warnings}."""
-    a = Assembler(engine, model, placed, seq, keep_out, front, log, travel)
+    a = Assembler(engine, model, placed, seq, keep_out, front, log, travel, margin)
     a.build((), ())
     order, landed, axis = [], {}, {}
     for it in a.items:
@@ -621,7 +653,14 @@ def route(world: World, movers, start, turn, ways, *, direct: bool = False, hop:
 
     def checked(path):                                 # (the last of the run in is the sweep's)
         n = int(np.searchsorted(path["s"], path["sure"])) + 1
-        return all(world.free(poses(movers, c, p, spin(x))) for p, x in zip(path["p"][:n], path["q"][:n]))
+        if not all(world.free(poses(movers, c, p, spin(x))) for p, x in zip(path["p"][:n], path["q"][:n])):
+            return False
+        # and half way between, over the last stretch before the run in, where it comes down
+        # past what is built round its place (a piece flush with its neighbour, a step off)
+        P, Qs, S_ = path["p"], path["q"], path["s"]
+        near = [k for k in range(1, n) if S_[k] >= path["sure"] - 3.0 * path["travel"]]
+        return all(world.free(poses(movers, c, (P[k - 1] + P[k]) / 2, spin((Qs[k - 1] + Qs[k]) / 2)))
+                   for k in near)
 
     first = None
     middle = world.boxes.reshape(-1, 3).mean(0) if len(world.items) else c
