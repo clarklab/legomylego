@@ -249,10 +249,18 @@ def audit_exports(model, catalog, directory):
 
 def audit_quick(engine, model, config):
     placed = model.flatten()
-    result = quick.plan(engine, model, quick.quick_config(config, slug=model.slug))
+    cfg = quick.quick_config(config, slug=model.slug)
+    result = quick.plan(engine, model, cfg)
     assert sorted(result["order"]) == list(range(len(placed))), "Quick drops/duplicates parts"
     assert len(result["parts"]) == len(placed), "Quick has missing flight records"
-    assert [placed[i].build_order for i in result["order"]] == sorted(p.build_order for p in placed), "Quick reorders source steps"
+    # the video builds bottom up (quick.realistic_sequence) or, where that forces a piece, in
+    # the source's order: no other
+    seq = quick.build_sequence(model, placed)
+    orders = [seq] + ([quick.realistic_sequence(engine, model, placed, seq),
+                       quick.realistic_sequence(engine, model, placed, seq, wait=False)]
+                      if cfg["order"] == "bottom_up" else [])
+    steps = lambda s: [placed[i].build_order for i in s]    # noqa: E731
+    assert steps(result["order"]) in [steps(s) for s in orders], "Quick reorders source steps"
     for index, flight in enumerate(result["parts"]):
         frames = np.asarray(flight["frames"]).reshape(-1, 4, 4)
         last = quick.pose_at(result, index, result["cut"] - 1)     # (built on the table, then set on its stick)

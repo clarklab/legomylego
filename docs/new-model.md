@@ -160,6 +160,15 @@ model's in its `scene` column. Under 25 pieces the parts start laid out on the t
   If it prints a `quick:` line (a piece with no clear way in, a part that passes through
   another), fix that before rendering: usually an `insert=(x, y, z)` hint on the piece, the
   way it comes in from. `brickkit status --check` should say `clean`.
+- **It builds bottom up, the way a person would** (the owner's rule), even when the
+  designer's pages hang pieces under what is built: what stands on the table first, then the
+  designer's order, only ever onto what is built. If that would force a piece somewhere (a
+  face built hanging upside down), the planner says `built in ... order` and falls back by
+  itself; `order = "instructions"` in `[quick]` forces the designer's. The booklet always
+  keeps the designer's order. Check the preview does not lift the model or slide a piece
+  under it.
+- On a studded mat (`lego_*`, `baseplate`) the mat's studs line up with the model's bottom
+  anti-studs and come up into them: the first pieces click in. Look at the base in the preview.
 - Look at the preview before the final. Check the close-ups land on the right pieces.
   `highlight` is in order of preference: put the face first. A piece the camera cannot get
   in front of in time (it faces another way than the piece before it) gets no close-up.

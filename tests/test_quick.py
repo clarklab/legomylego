@@ -436,14 +436,22 @@ def test_quick_builds_for_real(engine, slug):
     """Every Quick Bricks model goes together the way it really would: in the plan's own
     frames no part is ever in another (but a clip's last flex onto its bar) or under the
     table, each lands on the table or on a part it connects to, a clear way in was found for
-    every piece, every part ends in its place - and the instruction order is kept."""
+    every piece, every part ends in its place - and the order is bottom up (realistic_sequence,
+    strictly or loosely) or, where that would force a piece, the designer's."""
     proj = Project(slug, paths.MODELS_DIR)
     model = proj.build(engine.catalog)
     placed = model.flatten()
-    pl = Q.plan(engine, model, Q.quick_config(proj.config, slug=slug))
+    cfg = Q.quick_config(proj.config, slug=slug)
+    pl = Q.plan(engine, model, cfg)
     assert Q.clashes(engine, placed, pl) == [] and pl["notes"] == []
     assert sorted(pl["order"]) == list(range(len(placed)))
-    assert [placed[i].build_order for i in pl["order"]] == sorted(p.build_order for p in placed)
+    seq = Q.build_sequence(model, placed)
+    orders = [seq]
+    if cfg["order"] == "bottom_up":
+        orders += [Q.realistic_sequence(engine, model, placed, seq),
+                   Q.realistic_sequence(engine, model, placed, seq, wait=False)]
+    steps = lambda s: [placed[i].build_order for i in s]    # noqa: E731  (a unit's own steps
+    assert steps(pl["order"]) in [steps(s) for s in orders]  # may go in their own order)
     for i, p in enumerate(placed):
         assert np.allclose(Q.pose_at(pl, i, pl["cut"] - 1), np.asarray(p.M, float), atol=1e-3)
     assert np.all(np.diff(pl["clicks_s"]) > 0) and pl["clicks_s"][-1] < pl["cut_s"] - 1.0
@@ -670,3 +678,27 @@ def test_quick_flex(engine):
     assert np.allclose(ys[int(n * 0.42):int(n * 0.58)], rest[1, 3] - 40, atol=1e-3)      # held open
     assert np.all(np.diff(ys[:int(n * 0.4)]) <= 1e-6) and np.all(np.diff(ys[int(n * 0.6):]) >= -1e-6)
     assert abs(ys[1] - ys[0]) < 0.5 and abs(ys[-1] - ys[-2]) < 0.5       # gently off and gently home
+
+
+def test_quick_builds_bottom_up(engine):
+    """The owner's rule (2026-11-05): the video builds from the bottom up, the way a person
+    would, even when the designer's pages hang pieces under what is built. zeldar's Chicken
+    turns its plate over and hangs the legs under it; the video stands the legs on the table
+    first, then the brackets on them, then the plate - and nothing is lifted on the way."""
+    proj = Project("chicken", paths.MODELS_DIR)
+    model = proj.build(engine.catalog)
+    placed = model.flatten()
+    pl = Q.plan(engine, model, Q.quick_config(proj.config, slug="chicken"))
+    first = [placed[i].part for i in pl["order"][:7]]
+    assert first[:2] == ["73825.dat", "73825.dat"] and first.index("11212.dat") > first.index("36841.dat")
+    sc = A.assemble(engine, model, placed, Q.realistic_sequence(engine, model, placed, Q.build_sequence(model, placed)))
+    assert not any(it.forced or it.carry or it.mode == "under" for it in sc["items"])
+
+
+def test_mat_seat_lines_up_with_the_bottom(engine):
+    """A studded mat lines up with the model's lowest anti-studs and comes up into them:
+    Garfield stands on whole-stud places (the mat used to sit half a stud off), Moby Dick on
+    half-stud ones."""
+    for slug, phase in (("garfield", [0.0, 0.0]), ("moby_dick", [10.0, 10.0])):
+        model = Project(slug, paths.MODELS_DIR).build(engine.catalog)
+        assert Q.mat_seat(engine, model.flatten()) == {"phase": phase, "into": True}

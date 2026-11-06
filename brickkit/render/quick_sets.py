@@ -118,9 +118,12 @@ class Ctx:
     walls `R` out (close enough to see past the model, clear of the camera's path), a seeded
     rng; `reach` how far out the camera goes (m, from the middle)."""
 
-    def __init__(self, mn, mx, seed, reach=0.0):
+    def __init__(self, mn, mx, seed, reach=0.0, seat=None):
         self.c = (mn + mx) / 2
         self.z = mn.z
+        # a studded mat's studs: on the grid of the model's lowest anti-studs (phase, LDU: x and
+        # z mod 20; Blender x and y), and up into them ("into"), or under it, as the plan says
+        self.seat = seat or {"phase": [10.0, 10.0], "into": False}
         self.foot = max(mx.x - mn.x, mx.y - mn.y)
         self.reach = float(reach)
         self.R = max(0.45, 4.0 * self.foot, self.reach + 0.32)     # room for props past it
@@ -271,23 +274,37 @@ def surface_oak(x):
 
 
 def surface_baseplate(x):
-    """A light grey 48 x 48 baseplate, 3.2 mm thick, studs and all, the model on its studs."""
+    """A light grey 48 x 48 baseplate, 3.2 mm thick, studs and all, lined up with the model's
+    anti-studs and up into them (as lego_floor)."""
     c, z = x.c, x.z
-    desk(x, "white", z - 0.0017 - 0.0032)
     pitch = 0.008
     n = 48
     half = n * pitch / 2
+    top = stud_top(x)
+    desk(x, "white", top - 0.0032)
+    gx, gy = on_grid(x, c.x - half + pitch / 2, 0), on_grid(x, c.y - half + pitch / 2, 1)
     m = Mesh()
-    top = z - 0.0017
-    box(m, (c.x - half, c.y - half, top - 0.0032), (c.x + half, c.y + half, top))
+    box(m, (gx - pitch / 2, gy - pitch / 2, top - 0.0032), (gx + (n - 0.5) * pitch, gy + (n - 0.5) * pitch, top))
     studs = Mesh()
     for i in range(n):
         for j in range(n):
-            px, py = c.x - half + (i + 0.5) * pitch, c.y - half + (j + 0.5) * pitch
-            studs.tube([(px, py, top), (px, py, z)], 0.0024, 10)
+            px, py = gx + i * pitch, gy + j * pitch
+            studs.tube([(px, py, top), (px, py, top + 0.0017)], 0.0024, 10)
     grey = plain("baseplate", (0.36, 0.37, 0.38), 0.32, **{"Coat Weight": 0.15})
     put(m, "surface", grey)
     put(studs, "studs", grey, smooth=True)
+
+
+def stud_top(x) -> float:
+    """A studded mat's top (Blender z, m): the model's bottom when it clicks into the studs,
+    else a stud's height under it (the model on the stud tops)."""
+    return x.z if x.seat.get("into") else x.z - 0.0017
+
+
+def on_grid(x, v: float, axis: int) -> float:
+    """The nearest place to v (m, Blender x or y) on the grid of the model's anti-studs."""
+    pitch, ph = 0.008, float(x.seat["phase"][axis]) * 0.0004
+    return math.floor((v - ph) / pitch + 0.5) * pitch + ph
 
 
 LEGO_FLOORS = {"lego_yellow": "#F2CD37", "lego_blue": "#0055BF", "lego_green": "#237841",
@@ -298,16 +315,17 @@ STUD_NEAR = 0.3           # m from the model: studs out to here are round, 12-si
 
 def lego_floor(x, colour):
     """An endless LEGO mat in one colour: a plate's worth of plastic out past the walls, and
-    its studs, real ones (the model stands on them, loose parts lie on them). The studs are on
-    the world's own 8 mm grid, the one the model's studs are on."""
+    its studs, real ones. They are on the grid of the model's lowest anti-studs and come up
+    into them, so the first pieces click in (loose parts lie on the stud tops: the plan lifts
+    them); with nothing to click into, the model stands on the stud tops (x.seat)."""
     c, z = x.c, x.z
-    pitch, top = 0.008, z - 0.0017
+    pitch, top = 0.008, stud_top(x)
     s = 1.25 * x.R
     m = Mesh()
     box(m, (c.x - s, c.y - s, top - 0.0032), (c.x + s, c.y + s, top))
     n = int(math.ceil(1.08 * x.R / pitch))
-    ks = np.arange(-n, n) + 0.5
-    px, py = np.meshgrid((math.floor(c.x / pitch) + ks) * pitch, (math.floor(c.y / pitch) + ks) * pitch)
+    ks = np.arange(-n, n)
+    px, py = np.meshgrid(on_grid(x, c.x, 0) + ks * pitch, on_grid(x, c.y, 1) + ks * pitch)
     at = np.stack([px.ravel(), py.ravel(), np.zeros(px.size)], -1)
     near = np.hypot(at[:, 0] - c.x, at[:, 1] - c.y) < STUD_NEAR
     studs = Mesh()
@@ -315,7 +333,7 @@ def lego_floor(x, colour):
         if not len(where):
             continue
         one = Mesh()
-        one.tube([(0, 0, top), (0, 0, z)], 0.0024, sides)
+        one.tube([(0, 0, top), (0, 0, top + 0.0017)], 0.0024, sides)
         V1, F1 = np.concatenate(one.V), np.concatenate(one.F)
         studs.tris((V1[None] + where[:, None]).reshape(-1, 3),
                    (F1[None] + (np.arange(len(where)) * len(V1))[:, None, None]).reshape(-1, 3))
@@ -581,11 +599,11 @@ ROOMS = {"workbench": room_workbench, "studio": room_studio, "window": room_wind
          "night": room_night, "bookshelf": room_bookshelf}
 
 
-def build_set(surface, room, light_name, mn, mx, seed=7, reach=0.0) -> float:
+def build_set(surface, room, light_name, mn, mx, seed=7, reach=0.0, seat=None) -> float:
     """The workshop round the model's box (mn, mx: Blender, metres): a surface, a room and a
     light, everything on the desk out past `reach` (m: how far the camera goes from the
     middle). Returns the light's exposure (EV)."""
-    x = Ctx(mn, mx, seed, reach)
+    x = Ctx(mn, mx, seed, reach, seat)
     SURFACES[surface](x)
     ROOMS[room](x)
     return light(x, light_name)

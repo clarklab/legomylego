@@ -69,7 +69,7 @@ class Quick:
         mn = Vector([min(v[i] for v in corners) for i in range(3)])
         mx = Vector([max(v[i] for v in corners) for i in range(3)])
         ev = quick_sets.build_set(pl["surface"], pl["room"], pl["light"], mn, mx, int(pl.get("seed", 7)),
-                                  float(pl.get("reach", 0.0)))
+                                  float(pl.get("reach", 0.0)), pl.get("seat"))
         if filmic:
             ev += quick_sets.LIGHTS[pl["light"]].get("filmic", 0.0)
         sc.view_settings.exposure = exposure + ev

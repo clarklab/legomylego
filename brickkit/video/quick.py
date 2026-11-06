@@ -7,7 +7,8 @@
 writes models/SLUG/out/SLUG-1080x1920.mp4 (60 fps, H.264 + AAC, about 14 s, made to loop) and
 out/quick_poster.jpg. Photoreal (Cycles) in a little workshop - a surface, a room and a
 light, mix and match (render/quick_sets.py) - build only: it opens on
-the empty set; the pieces fly in from just off frame in instruction order, each over or round
+the empty set; the pieces fly in from just off frame bottom up, as a person would build it
+(realistic_sequence; the booklet keeps the designer's order), each over or round
 what is built to line up with its place and be pressed home (no bounce), faster and faster -
 and it goes together for real (video/assemble.py): no part ever passes through another or
 the table, none lands on nothing, a sub-assembly that cannot be built in place is built
@@ -55,6 +56,10 @@ Configured by model.toml's [quick] (all optional):
     view = "filmic"              # the render's film response: "filmic" (the parts' colours
                                  # true) or "agx" (softer; a bright yellow goes pale orange)
     watermark = false            # true: the Bricks logo, small and faint, top centre
+    order = "bottom_up"          # the build's order: bottom up, the way a person builds it (the
+                                 # lowest of what can go on, first); "instructions": the
+                                 # designer's. Bottom up falls back to it by itself if it
+                                 # would have to force a piece
     cover = 0                    # the cover picture (quick_poster.jpg): degrees from the model's
                                  # front it is seen from - the frame of the hero nearest to that
                                  # (45: three-quarters on, for a face that is on the side)
@@ -89,7 +94,7 @@ FPS = 60              # the finals: the top rate Reels and TikTok take (every ti
 SIZE = (1080, 1920)
 QUICK = {"set": "cutting_mat", "seconds": 14.0, "highlight": [], "close_ups": 2, "music": False,
          "ending": None, "ending_level": -3.0, "ending_at": 0.25, "sound": [], "layout": "auto",
-         "cover": 0.0, "flex": 0.0,
+         "cover": 0.0, "flex": 0.0, "order": "bottom_up",
          "view": "filmic",
          "lens": 50.0, "samples": 32, "exposure": -1.0, "watermark": False}
 # the workshop's layers (render/quick_sets.py builds them), any with any, and named combos
@@ -205,6 +210,8 @@ def quick_config(config: dict, over: dict | None = None, slug: str = "") -> dict
         raise SystemExit('[quick] layout: true, false or "auto"')
     if out["view"] not in ("filmic", "agx"):
         raise SystemExit('[quick] view: "filmic" or "agx"')
+    if out["order"] not in ("bottom_up", "instructions"):
+        raise SystemExit('[quick] order: "bottom_up" or "instructions"')
     if float(out["seconds"]) < 6:
         raise SystemExit("[quick] seconds: at least 6")
     try:
@@ -227,6 +234,91 @@ def build_sequence(model, placed) -> list[int]:
     return sorted(range(len(placed)), key=lambda i: (placed[i].build_order,
                                                       order.get((placed[i].owner, placed[i].local_step), 0),
                                                       i))
+
+
+def realistic_sequence(engine, model, placed, seq, wait: bool = True) -> list[int]:
+    """Bottom up, the way a person builds it (the owner, 2026-11-05: "show the build from the
+    bottom up, when possible ... always build realistically"; some designers' pages put a plate
+    on first and hang what goes under it after): what stands on the table goes first, then the
+    designer's order - but only ever a piece that joins what is built, and none while a piece
+    still to come lies under it (both legs before the plate across them). So nothing is hung
+    under what is built or slid in under it (no lifts), and where the designer's order goes up
+    already it is kept (sub-assemblies and ways in that depend on it: a side plate that would
+    shut a later piece's way in). Each of the main model's sub-assemblies stays one block, in
+    its own order; a bought kit stays one piece. The booklet keeps the designer's order.
+    `wait` False: without the waiting for what lies under (a model hung from the top in places)."""
+    st = A.structure(model, placed, seq)
+    link = A.links(engine, model, placed)
+    low = [A.low(engine, p.part, np.asarray(p.M, float)) for p in placed]
+    ground = max(low)
+    blocks, unit_block = [], {}
+    for parts in st["bodies"]:
+        top = st["unit_of"][parts[0]][:1]              # (): the main model's own pieces
+        if top:
+            if top not in unit_block:
+                unit_block[top] = len(blocks)
+                blocks.append([])
+            blocks[unit_block[top]] += parts
+        else:
+            blocks.append(list(parts))
+    rank = {i: k for k, i in enumerate(seq)}
+    first = [min(rank[i] for i in b) for b in blocks]
+    table = [any(abs(low[i] - ground) < 0.5 for i in b) for b in blocks]   # (-Y up: ground is the largest)
+    box = engine.collide.aabbs([(p.part, np.asarray(p.M, float)) for p in placed])
+    span = [(np.concatenate([box[i] for i in b]).min(0), np.concatenate([box[i] for i in b]).max(0))
+            for b in blocks]
+
+    def rests(c) -> bool:
+        """Block c is built up, not hung: it stands on the table or joins a part reaching lower."""
+        return table[c] or any(box[o][1][1] > span[c][1][1] + 0.5
+                               for i in blocks[c] for o, *_ in link.get(i, ()) if o not in blocks[c])
+
+    def under(c, b) -> bool:
+        """Block c, built up, lies under block b: lower (its studs may reach into b), and under
+        its footprint (a stud's worth in) - so b has to wait for it."""
+        (clo, chi), (blo, bhi) = span[c], span[b]
+        return (clo[1] >= bhi[1] - 5
+                and min(chi[0], bhi[0]) - max(clo[0], blo[0]) > 4
+                and min(chi[2], bhi[2]) - max(clo[2], blo[2]) > 4
+                and rests(c))
+
+    built: set = set()
+    left, out = list(range(len(blocks))), []
+    while left:
+        ready = [b for b in left
+                 if table[b] or any(o in built for i in blocks[b] for o, *_ in link.get(i, ()))]
+        free = [b for b in ready if not (wait and any(under(c, b) for c in left if c != b))]
+        b = min(free or ready or left, key=lambda b: (not table[b], first[b]))
+        left.remove(b)
+        built.update(blocks[b])
+        out += sorted(blocks[b], key=lambda i: rank[i])
+    return out
+
+
+STUDDED = ("baseplate", "lego_yellow", "lego_blue", "lego_green", "lego_red")   # mats with studs
+STUD_UP = 4.25    # LDU: a mat's studs (1.7 mm, render/quick_sets.py)
+
+
+def mat_seat(engine, placed) -> dict:
+    """How the model sits on a studded mat (the owner, 2026-11-05: "make sure our first blocks
+    actually click into the mat (or at least look like it, line up)"): the mat's studs on the
+    grid of the model's lowest anti-studs (`phase`: LDU, x and z mod 20) and up into them
+    (`into`) - or, on nothing to click into, lined up under its middle with it standing on
+    the stud tops as before."""
+    ground = max(A.low(engine, p.part, np.asarray(p.M, float)) for p in placed)
+    hits = []
+    for p in placed:
+        M = np.asarray(p.M, float)
+        for c in engine.shadow.connectors(p.part):
+            if c.gender != "F" or c.kind != "cyl":
+                continue
+            w = c.transformed(M)
+            if w is not None and abs(float(w.origin[1]) - ground) < 0.6 and float(w.axis[1]) < -0.9:
+                hits.append((round(float(w.origin[0]) % 20, 1) % 20, round(float(w.origin[2]) % 20, 1) % 20))
+    if not hits:
+        return {"phase": [10.0, 10.0], "into": False}
+    vals, counts = np.unique(np.array(hits), axis=0, return_counts=True)
+    return {"phase": [float(v) for v in vals[counts.argmax()]], "into": True}
 
 
 PRINTED = re.compile(r"^\d+[a-z]?p[0-9a-z]+(\.dat)?$")
@@ -1252,14 +1344,45 @@ def plan(engine, model, cfg: dict, fps: int = FPS, size=SIZE, log=None) -> dict:
     from ..render.scene import model_scene
     placed = model.flatten()
     C = T.corners(engine, placed)
-    seq = build_sequence(model, placed)
     front = float(model.meta.get("azimuth_offset", 0.0))
-    # laid out first? (layout: "auto" - a model of a few pieces)
-    bodies = A.structure(model, placed, seq)["bodies"]
-    laid = None
-    if cfg.get("layout", "auto") is True or (cfg.get("layout", "auto") == "auto" and len(bodies) < LAYOUT_UNDER):
-        laid = lay_out(engine, placed, C, seq, front, bodies)
-    script = A.assemble(engine, model, placed, seq, [laid["box"]] if laid else (), front, log)
+    seat = mat_seat(engine, placed)
+
+    def build(seq, say):
+        # laid out first? (layout: "auto" - a model of a few pieces)
+        bodies = A.structure(model, placed, seq)["bodies"]
+        laid = None
+        if cfg.get("layout", "auto") is True or (cfg.get("layout", "auto") == "auto" and len(bodies) < LAYOUT_UNDER):
+            laid = lay_out(engine, placed, C, seq, front, bodies)
+            if seat["into"] and cfg["surface"] in STUDDED:         # (the loose parts on the stud tops)
+                up = np.array([0.0, -STUD_UP, 0.0])
+                laid["start"] = {i: A.trans(up) @ M for i, M in laid["start"].items()}
+                laid["corner_of"] = {i: c + up for i, c in laid["corner_of"].items()}
+                laid["corners"] = laid["corners"] + up
+        return laid, A.assemble(engine, model, placed, seq, [laid["box"]] if laid else (), front, say)
+
+    # bottom up (realistic_sequence) - strictly, then without its waiting for what lies under,
+    # then the designer's order: the first that forces no piece (else the one forcing fewest)
+    seq0 = build_sequence(model, placed)
+    tries = [("instructions", seq0)]
+    if cfg.get("order", "bottom_up") == "bottom_up":
+        tries = [("bottom up", realistic_sequence(engine, model, placed, seq0)),
+                 ("bottom up, loosely", realistic_sequence(engine, model, placed, seq0, wait=False))] + tries
+    best = None
+    for name, s in tries:
+        if best is not None and s == best[1]:
+            continue
+        said: list = []
+        laid, script = build(s, said.append)
+        forced = sum(it.forced for it in script["items"])
+        if best is None or forced < best[2]:
+            best = (name, s, forced, laid, script, said)
+        if not forced:
+            break
+    name, seq, forced, laid, script, said = best
+    if name != tries[0][0]:
+        said.append(f"  quick: built in {name} order (stricter orders force pieces)")
+    for line in said:
+        (log or print)(line)
     items, order = script["items"], script["order"]
     piece = {i: k for k, it in enumerate(items) if it.kind == "piece" for i in it.parts}
     order_of = {i: k for k, i in enumerate(order)}
@@ -1335,7 +1458,7 @@ def plan(engine, model, cfg: dict, fps: int = FPS, size=SIZE, log=None) -> dict:
         "fps": fps, "frames": sch["frames"], "size": list(size), "set": cfg["set"],
         "surface": cfg["surface"], "room": cfg["room"], "light": cfg["light"], "seed": cfg["seed"],
         "exposure": float(cfg["exposure"]), "view": cfg["view"], "seconds": seconds,
-        "cut": int(round(sch["cut"] * fps)), "scene": scene, "reach": round(reach, 4),
+        "cut": int(round(sch["cut"] * fps)), "scene": scene, "reach": round(reach, 4), "seat": seat,
         "bounds": [r5(allp.min(0)), r5(allp.max(0))],
         "layout": laid is not None, "floor": [r5(floor.min(0)), r5(floor.max(0))],
         "order": order, "land": [int(fl[i]["land"]) for i in order],
