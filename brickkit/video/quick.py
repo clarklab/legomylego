@@ -170,6 +170,10 @@ RELEASE = 0.5         # of its distance a second: how fast the camera closes in 
                       # built beside the model has joined it (it goes out for one at once)
 HERO_WIDE = 1.15      # the camera this much further back than the finished model needs (it was
 HERO_IN = 0.9         # framing units built beside it): it moves in for the hero, over this long (s)
+HERO_SIDE = 1.4       # air at the finished model's sides in the hero (MARGIN at its top and foot):
+                      # a wide model filled the tall frame edge to edge
+HERO_STOP = 16.0      # the most the lens stops down for the hero, focused on the model's front
+                      # half: all of it sharp (a big model close up had its face soft), the set soft
 TILT = 26.0           # degrees a part tumbles in its flight, straightening as it lands
 SOUNDS = {"click": [f"click_{k}.mp3" for k in range(1, 7)], "snap": "snap_1.mp3",
           "swish": "swish_1.mp3", "bed": "bed_2.mp3"}
@@ -207,6 +211,8 @@ def quick_config(config: dict, over: dict | None = None, slug: str = "") -> dict
         out[key] = out.get(key) or default
         if out[key] not in names:
             raise SystemExit(f"unknown quick {key} {out[key]!r}; choose from {', '.join(names)}")
+    # the least clear run of a way in: the buildability check's, so the video and the check agree
+    out["travel"] = float(((config.get("checks") or {}).get("buildability") or {}).get("travel", A.TRAVEL))
     out["close_ups"] = int(np.clip(int(out["close_ups"]), 0, 3))
     if out["layout"] not in (True, False, "auto"):
         raise SystemExit('[quick] layout: true, false or "auto"')
@@ -451,13 +457,16 @@ def tangents(lens: float, size=SIZE) -> tuple[float, float]:
     return ty * size[0] / size[1], ty
 
 
-def frame_distance(points, target, d, lens: float, margin: float = MARGIN, size=SIZE) -> float:
-    """How far along d from `target` the camera must be to hold `points` in the frame."""
+def frame_distance(points, target, d, lens: float, margin: float = MARGIN, size=SIZE,
+                   side: float | None = None) -> float:
+    """How far along d from `target` the camera must be to hold `points` in the frame (with
+    `margin` round them; `side`, if given, at the left and right instead)."""
     tx, ty = tangents(lens, size)
     r, u = basis(d)
     c = np.asarray(points, float) - target
     cd = c @ d
-    return float(max((cd + margin * np.abs(c @ r) / tx).max(), (cd + margin * np.abs(c @ u) / ty).max()))
+    sx = margin if side is None else side
+    return float(max((cd + sx * np.abs(c @ r) / tx).max(), (cd + margin * np.abs(c @ u) / ty).max()))
 
 
 def azimuth(d) -> float:
@@ -697,7 +706,7 @@ def plan_camera(model, placed, C, seq, sch: dict, groups: list[list[int]], cfg: 
         c = (box.min(0) + box.max(0)) / 2
         tgt[f] = c
         mg = 1.0 + (MARGIN - 1.0) * (1.0 if hero[f] else height[f])      # tight on the base first
-        dist[f] = frame_distance(box, c, d, lens0, mg, size)
+        dist[f] = frame_distance(box, c, d, lens0, mg, size, HERO_SIDE if hero[f] else None)
     # smooth, and never closer than it was (the shot grows with the build), until the hero:
     # then on the finished model, if the shot had grown for more than that
     tgt = np.stack([T._gauss(tgt[:, a], (0.6 if beside else 0.35) * fps) for a in range(3)], 1)
@@ -729,6 +738,12 @@ def plan_camera(model, placed, C, seq, sch: dict, groups: list[list[int]], cfg: 
         d = view_dir(az[f], el[f])
         pos[f] = tgt[f] + d * dist[f]
     foc[:] = tgt
+    # the hero: focused half way from the middle to the model's nearest point (its face, not its
+    # middle), easing in over half a second
+    held = T.smootherstep(np.clip((t - t_h) / 0.5, 0, 1)) * hero * (t < float(sch["cut"]))
+    for f in np.nonzero(held > 0)[0]:
+        d = view_dir(az[f], el[f])
+        foc[f] = tgt[f] + d * 0.5 * float(((allp - tgt[f]) @ d).max()) * held[f]
     # the close-ups: in along the orbit (the camera stays on the orbit's azimuth: only its
     # distance and height change, and it turns to look at the part), hold, out again
     axis = tgt.copy()                                  # what the orbit goes round
@@ -778,7 +793,7 @@ def plan_camera(model, placed, C, seq, sch: dict, groups: list[list[int]], cfg: 
     for f in range(n):
         s = float(np.linalg.norm(foc[f] - pos[f]))
         depth = model_depth + (24.0 - model_depth) * close[f]
-        fstop[f] = dof_fstop(lens[f], s * 0.4, depth * 0.4)
+        fstop[f] = dof_fstop(lens[f], s * 0.4, depth * 0.4, most=6.3 + (HERO_STOP - 6.3) * held[f])
         if wide[f] > 1e-4:                             # the laid-out parts: all of them sharp
             deep = dof_fstop(lens[f], s * 0.4, 0.5 * (laid["b"] + 80.0) * 0.4, most=LAYOUT_STOP)
             fstop[f] += (deep - fstop[f]) * wide[f]
@@ -1435,7 +1450,8 @@ def _plan(engine, model, cfg: dict, seq, fps: int, size, log) -> dict:
                 laid["start"] = {i: A.trans(up) @ M for i, M in laid["start"].items()}
                 laid["corner_of"] = {i: c + up for i, c in laid["corner_of"].items()}
                 laid["corners"] = laid["corners"] + up
-        return laid, A.assemble(engine, model, placed, seq, [laid["box"]] if laid else (), front, say)
+        return laid, A.assemble(engine, model, placed, seq, [laid["box"]] if laid else (), front, say,
+                                cfg.get("travel", A.TRAVEL))
 
     laid, script = build(seq, log)
     forced = sum(it.forced for it in script["items"])

@@ -5,7 +5,7 @@ model's lowest point). Any surface goes with any room and any light.
 Surfaces - what the model stands on (and the desk under it):
     blue_mat     a blue self-healing cutting mat with a grid of white dots, on an oak desk
     green_mat    the classic green cutting mat, pale grid and diagonals, on a walnut desk
-    kraft        a tan linen cloth with a big printed ring round the model, on a painted table
+    kraft        a tan linen cloth, the Bricks mark printed faint under the model, on a painted table
     oak          a bare light-oak desktop
     baseplate    a light grey LEGO baseplate (48 x 48 studs) on a white desk
     lego_yellow, lego_blue, lego_green, lego_red
@@ -25,6 +25,7 @@ Lights - presets that work with any of them (a key, a fill, the room's ambient):
     evening      cosy: a warm lamp-like key, little fill, a dark room (exposure up a little)
 """
 import math
+from pathlib import Path
 
 import bpy
 import numpy as np
@@ -235,15 +236,22 @@ def surface_green_mat(x):
     cutting_mat(x, (0.02, 0.15, 0.06), (0.55, 0.8, 0.55), diagonals=True)
 
 
+MARK = Path(__file__).with_name("bricks_mark.png")   # the Bricks mark (site/assets/brand/
+MARK_INK = 0.45       # bricks.svg, its ink white on black) and how strongly it is printed
+
+
 def surface_kraft(x):
-    """A tan linen cloth with a big printed ring (and a thin one inside it) round the model."""
+    """A tan linen cloth with the Bricks mark printed big and faint under the model, the
+    studs away from the front."""
     c, z = x.c, x.z
     desk(x, "cream", z - 0.0004)
     m = Mesh()
     s = max(0.5, x.foot * 5)
     m.quad([(c.x - s, c.y - s, z - 0.0002), (c.x + s, c.y - s, z - 0.0002),
             (c.x + s, c.y + s, z - 0.0002), (c.x - s, c.y + s, z - 0.0002)])
-    ring = max(0.06, x.foot * 0.95)
+    side = max(0.13, x.foot * 2.2)                   # the mark's square (m)
+    logo = bpy.data.images.load(str(MARK), check_existing=True)
+    logo.colorspace_settings.name = "Non-Color"
 
     def cloth(nb):
         p = nb.node("ShaderNodeTexCoord").outputs["Object"]
@@ -257,10 +265,12 @@ def surface_kraft(x):
             weave = w.outputs["Fac"] if weave is None else nb.mul(weave, w.outputs["Fac"])
         slub = nb.noise(nb.vec("MULTIPLY", p, (900.0, 40.0, 1.0)), 1.0, 2.0, 0.6)
         base = nb.mix(nb.add(nb.mul(weave, 0.5), nb.mul(slub, 0.5)), (0.2, 0.115, 0.055), (0.29, 0.18, 0.095))
-        r = nb.vec("LENGTH", nb.vec("SUBTRACT", nb.comb(px, py, 0.0), (c.x, c.y, 0.0)), out=1)
-        band = nb.smooth(nb.math("ABSOLUTE", nb.sub(r, ring)), 0.0022, 0.0018)
-        band2 = nb.smooth(nb.math("ABSOLUTE", nb.sub(r, ring * 0.9)), 0.0007, 0.0005)
-        ink = nb.mul(nb.math("MAXIMUM", band, nb.mul(band2, 0.8)), nb.add(0.75, nb.mul(slub, 0.25)))
+        u = nb.mul(nb.sub(px, c.x - side / 2), 1.0 / side)
+        v = nb.mul(nb.sub(py, c.y - side / 2), 1.0 / side)  # (+y: away from the front camera)
+        tex = nb.node("ShaderNodeTexImage", interpolation="Cubic", extension="CLIP")
+        tex.image = logo
+        nb.set(tex.inputs["Vector"], nb.comb(u, v, 0.0))
+        ink = nb.mul(nb.mul(tex.outputs["Color"], MARK_INK), nb.add(0.75, nb.mul(slub, 0.25)))
         b = bsdf(nb, nb.mix(ink, base, (0.09, 0.055, 0.035)), 0.82)
         bump = nb.node("ShaderNodeBump", Strength=0.25, Distance=0.0003)
         nb.set(bump.inputs["Height"], weave)

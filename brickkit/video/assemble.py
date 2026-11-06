@@ -37,7 +37,8 @@ SNAP = ("clip", "hinge", "pin", "ball", "gen")   # they flex as they go on
 CROSS = ("clip", "hinge")     # pushed on across their axis (as well as slid along it)
 FLEX = 8.0        # LDU: this far out a snap may still touch what it snaps onto
 BALL = ("ball", "gen")        # a ball in a socket: pushed in along the way its stem points
-TRAVEL = 24.0     # LDU: the least clear run of a way in (as checks/buildability)
+TRAVEL = 24.0     # LDU: the least clear run of a way in (as checks/buildability; a model's
+                  # [checks.buildability] travel sets both)
 RUN = (12.0, 1.2, 6.0)    # the straight run in: at least, x the piece's size that way, plus
 TOL = 0.6         # LDU: "on the table"
 MARGIN = 28.0     # LDU: a staged unit this clear of the model's footprint
@@ -172,8 +173,10 @@ def structure(model, placed, seq) -> dict:
 
 
 class Assembler:
-    def __init__(self, engine, model, placed, seq, keep_out=(), front: float = 0.0, log=None):
+    def __init__(self, engine, model, placed, seq, keep_out=(), front: float = 0.0, log=None,
+                 travel: float = TRAVEL):
         self.e, self.col, self.placed = engine, engine.collide, placed
+        self.travel = float(travel)
         self.M = [np.asarray(p.M, float) for p in placed]
         self.boxf = self.col.aabbs([(p.part, M) for p, M in zip(placed, self.M)])
         allp = self.boxf.reshape(-1, 3)
@@ -308,7 +311,7 @@ class Assembler:
                 snap = balls
             # pushed on across its bar a clip only flexes the last FLEX; slid along its own
             # axis (a pin in its hole, a clip along its bar) a snap never blocks itself
-            hard, flex = self.sweep(parts, d, max(TRAVEL, run), S, boxes, snap,
+            hard, flex = self.sweep(parts, d, max(self.travel, run), S, boxes, snap,
                                     FLEX if rank == 2 or label == "hint" else 1e9)
             if rank == 2 and flex > FLEX - 2:          # through the back of the clip, not its mouth
                 hard = max(hard, 1)
@@ -465,11 +468,12 @@ class Assembler:
                 waiting = []
 
 
-def assemble(engine, model, placed, seq, keep_out=(), front: float = 0.0, log=None) -> dict:
+def assemble(engine, model, placed, seq, keep_out=(), front: float = 0.0, log=None,
+             travel: float = TRAVEL) -> dict:
     """The build as it really goes: {items: [Item] in order, order: every part in the order
     it lands, landed: part -> 4 x 4 where it lands (not always where it ends up: its unit may
     be joined, or set down, later), axis: part -> the way it came in from, ground, warnings}."""
-    a = Assembler(engine, model, placed, seq, keep_out, front, log)
+    a = Assembler(engine, model, placed, seq, keep_out, front, log, travel)
     a.build((), ())
     order, landed, axis = [], {}, {}
     for it in a.items:

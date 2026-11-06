@@ -152,7 +152,8 @@ def test_quick_plan_camera(engine, sample_plan):
     cut = pl["cut"]
     v = pos[1] - pos[0]
     assert np.allclose(pos[-1] + v, pos[0], atol=1e-3) and np.allclose(tgt[cut:], tgt[0], atol=1e-3)
-    assert all(2.8 <= s <= 6.3 for s in cam["fstop"])
+    hero = pl["land"][-1] + 1                     # (the hero stops down to hold all of it sharp)
+    assert all(2.8 <= s <= 6.3 for s in cam["fstop"][:hero]) and max(cam["fstop"]) <= Q.HERO_STOP
     mid = (C.min(0) + C.max(0)) / 2                 # the set keeps its props out past this
     assert pl["reach"] == pytest.approx(np.linalg.norm((pos - mid) * [1, 0, 1], axis=1).max() * 0.0004,
                                         abs=1e-3)
@@ -212,7 +213,7 @@ def test_quick_layout(engine):
     pos, tgt = np.array(cam["pos"]), np.array(cam["target"])
     el = np.degrees(np.arcsin((tgt[:, 1] - pos[:, 1]) / np.linalg.norm(pos - tgt, axis=1)))
     assert el[0] == pytest.approx(Q.LAYOUT_EL, abs=1.5) and el[pl["land"][-1] + 30] < 25
-    assert max(cam["fstop"]) <= Q.LAYOUT_STOP and cam["fstop"][pl["land"][-1] + 30] <= 6.3
+    assert max(cam["fstop"]) <= Q.LAYOUT_STOP and cam["fstop"][pl["land"][-1]] <= 6.3
     assert Q.lens_room(pl["parts"], {"pos": pos, "target": tgt}) > 0.5   # none past the lens
     assert pl["land_s"][0] > Q.LAYOUT_PRE                                # a look at them first
     assert (np.array(pl["floor"][1]) - pl["floor"][0])[2] > (hi - lo)[2] + 2 * Q.LAYOUT_CLEAR
@@ -507,13 +508,14 @@ def test_quick_units_and_lifts(engine):
 def test_quick_hero_moves_in(engine):
     """Units built beside the model (the T. rex's legs and arms) widen the shot; for the hero
     the camera moves in again, and the finished model fills the frame as one that was built
-    in place does."""
+    in place does (HERO_SIDE of air at its sides: big, never edge to edge)."""
     for slug in ("dinosaur", "bat"):
         proj = Project(slug, paths.MODELS_DIR)
         model = proj.build(engine.catalog)
         pl = Q.plan(engine, model, Q.quick_config(proj.config, slug=slug))
         xy = _project(pl["camera"], pl["cut"] - 2, T.corners(engine, model.flatten()).reshape(-1, 3))
-        assert 1.2 < np.ptp(xy[:, 0]) < 1.9 and np.abs(xy[:, :2]).max() < 1.0, slug    # all of it, and big
+        w = np.ptp(xy[:, 0])                         # (of the frame's 2: all of it, and big)
+        assert 1.0 < w < 2.0 / Q.HERO_SIDE + 0.05 and np.abs(xy[:, :2]).max() < 1.0, (slug, w)
 
 
 def test_quick_last_look():
