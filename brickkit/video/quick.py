@@ -1196,6 +1196,22 @@ def motion(engine, placed, script: dict, sch: dict, cam: dict, laid: dict | None
                         hits += 1
             return hits
 
+        def bumps(path: dict, frames: dict, f0: int, f1: int) -> int:
+            """Frames in which it is in something that stands, short of its straight run in
+            (the route is checked point by point: a frame between two can still clip a
+            neighbour it comes down flush beside)."""
+            if it.kind != "piece":
+                return 0
+            straight = float(path["s"][-1] - path["sure"]) + 1.0
+            n = 0
+            for f in range(f0, f1):
+                Ms = [(placed[i].part, frames[i][f - f0]) for i in it.parts]
+                if min(float(np.linalg.norm(M[:3, 3] - it.seat[i][:3, 3])) for (_, M), i in zip(Ms, it.parts)) <= straight:
+                    break
+                if not world.free(Ms):
+                    n += 1
+            return n
+
         least = max(0, last_land + 1 - f1s, (last_end - f0s) if slow else (held - f1s))
         best = None
         for opts in ((0, 1), (2, 3, 4)):               # (the plain ways only if those are blocked)
@@ -1208,17 +1224,18 @@ def motion(engine, placed, script: dict, sch: dict, cam: dict, laid: dict | None
                         continue
                     f0, f1 = f0s + least + more, f1s + least + more
                     frames, carried = fly(path, f0, f1)
-                    score = (not path["clear"], crossing(frames, f0, f1), more, opt)
+                    score = (not path["clear"], bumps(path, frames, f0, f1) if path["clear"] else 0,
+                             crossing(frames, f0, f1), more, opt)
                     if best is None or score < best[0]:
                         best = (score, path, f0, f1, frames, carried)
-                    if score[:2] == (False, 0):
+                    if score[:3] == (False, 0, 0):
                         break
-                if best[0][:2] == (False, 0):
+                if best[0][:3] == (False, 0, 0):
                     break
         _, path, f0, f1, frames, carried = best
-        if not path["clear"] or it.forced:
+        if not path["clear"] or it.forced or best[0][1]:
             notes.append(f"{A_name(placed, it.parts)}: no clear way in")
-        if best[0][1]:
+        if best[0][2]:
             notes.append(f"{A_name(placed, it.parts)}: crosses another piece in the air")
         for i in it.parts:
             if it.kind == "piece":
