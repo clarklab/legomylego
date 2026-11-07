@@ -707,3 +707,33 @@ def test_mat_seat_lines_up_with_the_bottom(engine):
     for slug, phase in (("garfield", [0.0, 0.0]), ("moby_dick", [10.0, 10.0])):
         model = Project(slug, paths.MODELS_DIR).build(engine.catalog)
         assert Q.mat_seat(engine, model.flatten()) == {"phase": phase, "into": True}
+
+
+def test_quick_spin_and_tempo():
+    """[quick] spin: the camera circles at that share of its usual pace; [quick] tempo: the
+    lifts and joins quicker and the pieces closer, so a long build needs that much less time."""
+    sch = Q.schedule(300, 50.0)                        # (a short one goes round once anyway)
+    t = np.arange(sch["frames"]) / Q.FPS
+    cut = int(sch["cut"] * Q.FPS) - 1
+    turn = lambda spin: float(Q.orbit(t, sch, [], [], 0.0, spin=spin)[cut])   # noqa: E731
+    assert turn(0.5) < 0.6 * turn(1.0)
+    slow = {k: Q.SLOW["lift"] for k in range(10, 300, 12)}
+
+    def shortest(tempo):
+        for s in np.arange(6.0, 200.0, 0.5):
+            try:
+                Q.schedule(300, float(s), slow=slow, tempo=tempo)
+                return float(s)
+            except SystemExit:
+                pass
+    s1, s2 = shortest(1.0), shortest(1.25)
+    assert s2 < 0.85 * s1
+    fast = Q.schedule(300, s1, slow=slow, tempo=1.25)
+    before = Q.SLOW["lift"][0]                         # (the build lifted for piece 10)
+    assert before / 1.25 - 1e-6 <= fast["land"][10] - fast["land"][9] < before
+    cfg = Q.quick_config({"quick": {"spin": 0.5, "tempo": 1.25}})
+    assert (cfg["spin"], cfg["tempo"]) == (0.5, 1.25)
+    assert (Q.quick_config({})["spin"], Q.quick_config({})["tempo"]) == (1.0, 1.0)
+    for bad in ({"spin": 0}, {"tempo": "fast"}, {"tempo": 5}):
+        with pytest.raises(SystemExit):
+            Q.quick_config({"quick": bad})

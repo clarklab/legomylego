@@ -36,6 +36,10 @@ Configured by model.toml's [quick] (all optional):
     highlight = ["14769p0m", "3688"]   # parts (numbers or tags) worth a macro close-up, in
                                  # order of preference (else printed parts and the last ones)
     close_ups = 2                # how many (0..3)
+    spin = 1.0                   # how fast the camera circles, as a share of the usual (0.5: half
+                                 # as fast - a long build went round five times)
+    tempo = 1.0                  # how fast the build goes: 1.25 a quarter faster (the lifts and
+                                 # joins quicker, the pieces closer together; a long build's length)
     layout = "auto"              # true: every part starts laid out on the table round the
                                  # build, then one at a time they float up and into place;
                                  # false: they fly in from off frame; "auto": laid out if the
@@ -98,7 +102,7 @@ FPS = 60              # the finals: the top rate Reels and TikTok take (every ti
 SIZE = (1080, 1920)
 QUICK = {"set": "cutting_mat", "seconds": 14.0, "highlight": [], "close_ups": 2, "music": False,
          "ending": None, "ending_level": -3.0, "ending_at": 0.25, "sound": [], "layout": "auto",
-         "cover": 0.0, "flex": 0.0, "order": "bottom_up",
+         "cover": 0.0, "flex": 0.0, "order": "bottom_up", "spin": 1.0, "tempo": 1.0,
          "view": "filmic",
          "lens": 50.0, "samples": 32, "exposure": -1.0, "watermark": False}
 # the workshop's layers (render/quick_sets.py builds them), any with any, and named combos
@@ -227,6 +231,13 @@ def quick_config(config: dict, over: dict | None = None, slug: str = "") -> dict
         raise SystemExit('[quick] order: "bottom_up" or "instructions"')
     if float(out["seconds"]) < 6:
         raise SystemExit("[quick] seconds: at least 6")
+    for key, lo, hi in (("spin", 0.1, 2.0), ("tempo", 0.5, 2.0)):
+        try:
+            out[key] = float(out[key])
+        except (TypeError, ValueError):
+            out[key] = -1.0
+        if not lo <= out[key] <= hi:
+            raise SystemExit(f"[quick] {key}: a share of the usual, {lo:g} to {hi:g}")
     try:
         out["cover"] = float(out["cover"])
     except (TypeError, ValueError):
@@ -386,7 +397,8 @@ def highlight_groups(placed, seq, cfg) -> list[list[int]]:
 
 # ---------------------------------------------------------------------------- the schedule
 def schedule(n: int, seconds: float, highlights: list[int] | None = None, fps: int = FPS,
-             laid: bool = False, slow: dict | None = None, flex: float = 0.0) -> dict:
+             laid: bool = False, slow: dict | None = None, flex: float = 0.0,
+             tempo: float = 1.0) -> dict:
     """When each part (in build order, 0..n-1) lands and how long it flies (s): the first after
     PRE s of the empty set, the rest faster and faster (RATE_RAMP), a pause before the last one,
     and CLOSE s of room round each highlighted landing (positions in the order); the last
@@ -396,7 +408,9 @@ def schedule(n: int, seconds: float, highlights: list[int] | None = None, fps: i
     the table to itself (the build lifted for a piece, a unit joined): nothing else lands in
     that time, and it does not start until a close-up just before it is over (the camera
     would be left looking at where the unit was). `flex` (s): that much longer from the last
-    landing to the cut, for the finished model to move in ([quick] flex)."""
+    landing to the cut, for the finished model to move in ([quick] flex). `tempo` ([quick]
+    tempo): the lifts and joins that much quicker, and the pieces that much closer together
+    at the least (a build too long for `seconds` is made only as long as that needs)."""
     highlights = sorted(set(highlights or []))
     u = np.arange(n) / max(1, n - 1)
     pre, fly, hero = (LAYOUT_PRE, FLOAT, LAYOUT_HERO) if laid else (PRE, FLIGHT, HERO)
@@ -414,6 +428,7 @@ def schedule(n: int, seconds: float, highlights: list[int] | None = None, fps: i
         if h + 1 < n:
             fixed[h + 1] = max(fixed[h + 1], CLOSE[1])
     for h, (before, after, takes) in (slow or {}).items():
+        before, after, takes = before / tempo, after / tempo, takes / tempo
         flight[h] = max(flight[h], takes)
         if h > 0:
             fixed[h] = max(fixed[h], before)
@@ -424,7 +439,7 @@ def schedule(n: int, seconds: float, highlights: list[int] | None = None, fps: i
             fixed[h + 1] = max(fixed[h + 1], CLOSE[1] + flight[h + 1])
     span = seconds - pre - hero - TAIL - flight[0]
     free = span - fixed.sum()
-    if free <= 0.05 * n or span <= 0:
+    if free <= 0.05 / tempo * n or span <= 0:
         raise SystemExit(f"{n} parts don't fit in {seconds:g} s: make [quick] seconds longer")
     rel = np.where(fixed > 0, 0.0, gaps)
     k = free / rel.sum() if rel.sum() > 0 else 0.0
@@ -514,7 +529,8 @@ def _pick(centres, tol: float, want: float, least: float) -> float:
 
 
 def orbit(t: np.ndarray, sch: dict, windows: list, faces: list, front: float,
-          opening: float = OPENING, calm: float | None = None, last=None) -> np.ndarray:
+          opening: float = OPENING, calm: float | None = None, last=None,
+          spin: float = 1.0) -> np.ndarray:
     """The camera's azimuth per frame (degrees): one smooth orbit that only ever goes one
     way. It opens on the front's three-quarter view (`opening`), circles slowly at first and faster as
     the build speeds up (ORBIT), is where each close-up's part faces when that part lands
@@ -524,14 +540,15 @@ def orbit(t: np.ndarray, sch: dict, windows: list, faces: list, front: float,
     get round in at FASTEST: the second is seen from as far round as it gets. Close-ups all on
     one side: a whole turn more between two of them, so the back is seen too.) `calm` (s:
     parts lie on the table round the build until then): it only drifts (LAYOUT_CALM) across
-    the front till then - no flying low over them - and makes its turn after, to the cut."""
+    the front till then - no flying low over them - and makes its turn after, to the cut.
+    `spin` ([quick] spin): its pace (ORBIT) as a share of the usual."""
     from scipy.interpolate import PchipInterpolator
     land, cut = sch["land"], float(sch["cut"])
 
     def pace(a, b):
         x = np.linspace(a, b, 16)
         prog = np.interp(x, land, np.linspace(0, 1, len(land)), left=0.0, right=1.0)
-        w = float(np.mean(ORBIT[0] + (ORBIT[1] - ORBIT[0]) * T.smootherstep(prog)))
+        w = spin * float(np.mean(ORBIT[0] + (ORBIT[1] - ORBIT[0]) * T.smootherstep(prog)))
         return w * (LAYOUT_CALM if calm is not None and b <= calm + 1e-6 else 1.0)
 
     keys, free = [(0.0, front + opening)], []          # free: the stretches between close-ups
@@ -558,7 +575,7 @@ def orbit(t: np.ndarray, sch: dict, windows: list, faces: list, front: float,
         keys.append((calm, z0 + pace(t0, calm) * (calm - t0)))
         t0, z0 = keys[-1]
     if cut > t0 + 0.1:
-        speed = pace(t0, cut) if not windows else 0.5 * (ORBIT[0] + ORBIT[1])
+        speed = pace(t0, cut) if not windows else 0.5 * spin * (ORBIT[0] + ORBIT[1])
         look = LAST_LOOK if last is None else last     # ([quick] last_look, for a model that is
         z = _pick([front + look[0], front - look[0]], look[1],    # poor from some of that) (it may all
                   z0 + speed * (cut - t0), z0 + 0.5 * SLOWEST * (cut - t0))       # but stay)
@@ -618,6 +635,7 @@ def plan_camera(model, placed, C, seq, sch: dict, groups: list[list[int]], cfg: 
     calm = None if laid is None else float(sch["launch"][max(0, len(seq) - 3)])   # all but lifted
     last = cfg.get("last_look")                        # where the orbit ends, if not LAST_LOOK
     land = sch["land"]
+    spin = float(cfg.get("spin", 1.0))
     order_of = {i: k for k, i in enumerate(seq)}
     # close-ups: in group order, the part facing the camera best when it lands
     face = {i: facing(C[i], C, axes[i], front) for g in groups for i in g}
@@ -630,7 +648,7 @@ def plan_camera(model, placed, C, seq, sch: dict, groups: list[list[int]], cfg: 
         its eye); nor one that faces the back while parts still lie on the table (`calm`)."""
         ws = sorted(ws)
         az = orbit(t, sch, ws, [(azimuth(face[i][0]), face[i][1]) for _, _, i in ws], front, opening, calm,
-                   last)
+                   last, spin)
         for _, _, i in ws:
             z = float(az[min(n - 1, int(land[order_of[i]] * fps))])
             if abs(T._near(azimuth(face[i][0]), z) - z) > face[i][1] + OFF_FACE:
@@ -638,7 +656,7 @@ def plan_camera(model, placed, C, seq, sch: dict, groups: list[list[int]], cfg: 
         return True
 
     if cfg["close_ups"] > 0:
-        az0 = orbit(t, sch, [], [], front, opening, calm, last)    # the orbit left to itself
+        az0 = orbit(t, sch, [], [], front, opening, calm, last, spin)    # the orbit left to itself
         for g in groups:
             if len(windows) >= cfg["close_ups"]:
                 break
@@ -661,7 +679,7 @@ def plan_camera(model, placed, C, seq, sch: dict, groups: list[list[int]], cfg: 
                     break
     windows.sort()
     az = orbit(t, sch, windows, [(azimuth(face[i][0]), face[i][1]) for _, _, i in windows], front,
-               opening, calm, last)
+               opening, calm, last, spin)
     # what is built (or flying in) at each frame frames the shot; never less than the first
     # part and half the model
     built = np.zeros((n, 2, 3))
@@ -1503,7 +1521,8 @@ def _plan(engine, model, cfg: dict, seq, fps: int, size, log) -> dict:
         nonlocal seconds
         for _ in range(240):                           # (longer, if the build needs it)
             try:
-                si = schedule(len(items), seconds, picks, fps, bool(laid), slow, flex)
+                si = schedule(len(items), seconds, picks, fps, bool(laid), slow, flex,
+                              float(cfg.get("tempo", 1.0)))
                 break
             except SystemExit:
                 if not slow:

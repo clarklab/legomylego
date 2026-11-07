@@ -912,6 +912,14 @@ seconds = 14                        # the whole loop
 highlight = ["14769p0m", "3688"]    # parts (numbers or tags) for the close-ups, by preference
                                     # (else printed parts, then the last two parts)
 close_ups = 2                       # 0..3
+# spin = 0.5                       # how fast the camera circles, as a share of the usual (a
+                                    # long build went round five times)
+# tempo = 1.25                     # how fast the build goes: its lifts and joins quicker, the
+                                    # pieces closer together (a long build that much shorter)
+# stage_margin = 64                # LDU from the model a sub-assembly is built beside it (else
+                                    # 28; more for pieces that come in on long runs)
+# clear_below = "around"           # a piece pushed in from underneath starts clear of what is
+                                    # beside it too, not only over it (a tile up into a recess)
 # last_look = [0, 12]              # where the video ends: degrees from the model's front, give
                                     # or take (else its three-quarter view, either side)
 # cover = 45                       # the cover picture: degrees from the model's front it is seen
