@@ -175,9 +175,9 @@ def structure(model, placed, seq) -> dict:
 
 class Assembler:
     def __init__(self, engine, model, placed, seq, keep_out=(), front: float = 0.0, log=None,
-                 travel: float = TRAVEL, margin: float = MARGIN):
+                 travel: float = TRAVEL, margin: float = MARGIN, around: bool = False):
         self.e, self.col, self.placed = engine, engine.collide, placed
-        self.travel, self.margin = float(travel), float(margin)
+        self.travel, self.margin, self.around = float(travel), float(margin), bool(around)
         self.M = [np.asarray(p.M, float) for p in placed]
         self.boxf = self.col.aabbs([(p.part, M) for p, M in zip(placed, self.M)])
         allp = self.boxf.reshape(-1, 3)
@@ -248,15 +248,15 @@ class Assembler:
                 return 99, flex
         return hard, flex
 
-    def below(self, pts, S, up, beside: bool = False) -> float:
+    def below(self, pts, S, up) -> float:
         """How far a piece (its box corners `pts`) reaches up past the lowest of what is
         built right over it (S's parts whose footprint, across `up`, overlaps its own; with
-        `beside`, those next to it too - for a piece that slides in along the table under
-        what is held up): the run it needs from underneath to start clear below them (0 if
-        nothing hangs there)."""
+        [quick] clear_below = "around", those within 2 LDU beside it too: a tile pushed up into
+        its recess under a raised shell): the run it needs from underneath to start clear
+        below them (0 if nothing hangs there)."""
         h = pts @ up
         flat = pts - np.outer(h, up)
-        g = 2.0 if beside else -1.0                    # (across: out a little, or in a hair)
+        g = 2.0 if self.around else -1.0               # (across: out a little, or in a hair)
         lo, hi = flat.min(0) - g - np.abs(up), flat.max(0) + g + np.abs(up)
         low = None
         for j in S:
@@ -317,10 +317,6 @@ class Assembler:
         # a ball pushed into its socket the way a hint says squeezes past the socket's lip: that
         # last touch is the snap, not a clash (a hint is otherwise held to touching nothing)
         balls = {j for i in parts for j, kind, _, _ in self.link.get(i, ()) if kind in BALL and j in inS}
-        # as low as all that is built: it will be what the unit stands on, slid in under it
-        lows = [float((np.array([[x, y, z] for x in self.boxf[j][:, 0] for y in self.boxf[j][:, 1]
-                                 for z in self.boxf[j][:, 2]]) @ up).min()) for j in S]
-        slides = bool(lows) and float((pts @ up).min()) <= min(lows) + TOL
         out, seen = [], set()
         for rank, label, d, snap in cands:
             key = (tuple(np.round(d, 3)), bool(snap))
@@ -332,7 +328,7 @@ class Assembler:
                 run = RUN[0] + (2.0 if rank == 2 else 0.0)            # underneath: a short run
             longer = run                               # ... but from under what hangs over it,
             if float(d @ up) < -0.7 and rank != 2:     # far enough to start clear below that
-                longer = max(run, self.below(pts, S, up, slides) + 4.0)    # (an axle up a reel)
+                longer = max(run, self.below(pts, S, up) + 4.0)    # (an axle up a reel)
             if not snap and rank in (2, 3, 4):
                 snap = snaps_all
             if label == "hint" and not snap:
@@ -501,11 +497,11 @@ class Assembler:
 
 
 def assemble(engine, model, placed, seq, keep_out=(), front: float = 0.0, log=None,
-             travel: float = TRAVEL, margin: float = MARGIN) -> dict:
+             travel: float = TRAVEL, margin: float = MARGIN, around: bool = False) -> dict:
     """The build as it really goes: {items: [Item] in order, order: every part in the order
     it lands, landed: part -> 4 x 4 where it lands (not always where it ends up: its unit may
     be joined, or set down, later), axis: part -> the way it came in from, ground, warnings}."""
-    a = Assembler(engine, model, placed, seq, keep_out, front, log, travel, margin)
+    a = Assembler(engine, model, placed, seq, keep_out, front, log, travel, margin, around)
     a.build((), ())
     order, landed, axis = [], {}, {}
     for it in a.items:

@@ -62,6 +62,8 @@ Configured by model.toml's [quick] (all optional):
                                  # would have to force a piece
     stage_margin = 28            # LDU: how far from the model a sub-assembly is built beside it
                                  # (more for a big model whose pieces come in on long runs)
+    clear_below = "over"         # a piece pushed in from underneath starts clear below what is
+                                 # right over it; "around": and beside it (a tile up into a recess)
     cover = 0                    # the cover picture (quick_poster.jpg): degrees from the model's
                                  # front it is seen from - the frame of the hero nearest to that
                                  # (45: three-quarters on, for a face that is on the side)
@@ -1457,7 +1459,8 @@ def _plan(engine, model, cfg: dict, seq, fps: int, size, log) -> dict:
                 laid["corner_of"] = {i: c + up for i, c in laid["corner_of"].items()}
                 laid["corners"] = laid["corners"] + up
         return laid, A.assemble(engine, model, placed, seq, [laid["box"]] if laid else (), front, say,
-                                cfg.get("travel", A.TRAVEL), float(cfg.get("stage_margin") or A.MARGIN))
+                                cfg.get("travel", A.TRAVEL), float(cfg.get("stage_margin") or A.MARGIN),
+                                cfg.get("clear_below", "over") == "around")
 
     laid, script = build(seq, log)
     forced = sum(it.forced for it in script["items"])
