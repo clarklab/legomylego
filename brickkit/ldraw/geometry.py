@@ -5,6 +5,8 @@ from dataclasses import dataclass
 from pathlib import Path
 
 import os
+import re
+
 import numpy as np
 
 from .library import LDrawLibrary, normalize
@@ -47,11 +49,17 @@ def _cat(arrs, shape, dtype=float):
     return np.concatenate(arrs).astype(dtype) if arrs else np.zeros(shape, dtype)
 
 
+ARING = re.compile(r"(48/)?\d+-\d+aring\.dat")   # LDraw's adapter rings: 16 sides to 48
+
+
 class GeometryCache:
     """Every part's mesh, its sub-files flattened in. `round_48`: curved primitives in LDraw's
     high-resolution form (p/48: a circle of 48 sides, not the usual 16), for pictures - a
     round tile's rim is a visible 16-sided polygon otherwise. The checks keep the usual form
-    (their tolerances were set on it)."""
+    (their tolerances were set on it). With 48 sides everywhere an adapter ring (48/n-daring,
+    which fills from a 16-sided circle out to a 48-sided one) has nothing to fill: it is left
+    out, as it lay over the ring it adapted and its long chords showed as corners on the rim
+    (a VHS reel's white hub tiles, 27925, at 600 dpi)."""
 
     def __init__(self, lib: LDrawLibrary, cache_dir: Path | None = None, round_48: bool = False):
         self.lib = lib
@@ -129,6 +137,9 @@ class GeometryCache:
                 if kind == "1" and len(t) >= 15:
                     color, M, sub = parse_type1(t)
                     subkey = normalize(sub)
+                    if self.round_48 and ARING.fullmatch(subkey):
+                        invert_next = False
+                        continue
                     if self.round_48 and "/" not in subkey and ("48/" + subkey) in self.lib.files:
                         subkey = "48/" + subkey        # (the same primitive, more sides)
                     inv = invert_next ^ is_mirror(M)

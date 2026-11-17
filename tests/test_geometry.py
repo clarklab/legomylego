@@ -34,3 +34,19 @@ def test_round_meshes_for_pictures(engine):
     assert (rim(engine.geom), rim(engine.geom_round)) == (16, 48)
     assert np.allclose(np.array(engine.geom.mesh("98138.dat").bbox), np.array(engine.geom_round.mesh("98138.dat").bbox))
     assert len(engine.geom_round.mesh("3005.dat").tris) > len(engine.geom.mesh("3005.dat").tris)   # (its stud)
+
+
+
+def test_round_meshes_leave_out_adapter_rings(engine):
+    """An adapter ring (48/n-daring: from a 16-sided circle out to a 48-sided one) has nothing
+    to fill once every circle has 48 sides; left in, it lay over the ring it adapted and its
+    long chords showed as corners on a VHS reel's white hub tile (27925) at 600 dpi."""
+    from brickkit.ldraw.geometry import GeometryCache
+    ring = GeometryCache(engine.lib)._flatten("48/1-4aring.dat", ()).tris
+    assert len(ring)
+    # 27925.dat: 1 16 -10 0 10 0 0 40 0 1 0 -40 0 0 48\1-4aring.dat
+    M, T = np.array([[0, 0, 40], [0, 1, 0], [-40, 0, 0]], float), np.array([-10, 0, 10], float)
+    faces = lambda tris: {tuple(sorted(map(tuple, np.round(t, 2)))) for t in tris}   # noqa: E731
+    adapter = faces(ring @ M.T + T)
+    assert adapter <= faces(engine.geom.mesh("27925.dat").tris)      # (the checks keep it)
+    assert not adapter & faces(engine.geom_round.mesh("27925.dat").tris)
