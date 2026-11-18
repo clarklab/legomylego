@@ -1,27 +1,29 @@
 {
- "low": 37.53,
- "high": 55.65,
+ "low": 37.52,
+ "high": 55.87,
  "currency": "USD",
- "note": "BrickLink price guide, 2026-10-14: 55 of 55 part lines priced live (six-month sold average to current asking average, new, USD).",
+ "note": "BrickLink price guide, 2026-10-28: 54 of 54 part lines priced live (six-month sold average to current asking average, new, USD).",
  "source": "bricklink",
- "date": "2026-10-14",
- "live_lines": 55,
- "lines": 55,
+ "date": "2026-10-28",
+ "live_lines": 54,
+ "lines": 54,
  "bricklink": {
-  "usd": 37.53,
-  "date": "2026-10-14",
-  "lines": 55,
-  "of": 55,
+  "usd": 37.52,
+  "date": "2026-10-28",
+  "lines": 54,
+  "of": 54,
   "missing": [],
   "basis": "new parts, the average each sold for over the last six months (the average asking price where nothing sold), before shipping"
  },
  "pick_a_brick": {
-  "usd": 47.47,
-  "date": "2026-10-14",
-  "lines": 55,
-  "of": 55,
+  "usd": 47.63,
+  "date": "2026-10-28",
+  "lines": 54,
+  "of": 54,
   "missing": [],
-  "standard": [],
+  "standard": [
+   "5 x Plate 1 x 12 (60479), White"
+  ],
   "basis": "LEGO Pick a Brick, US shop, before shipping"
  }
 }

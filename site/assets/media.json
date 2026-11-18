@@ -5410,133 +5410,153 @@
   "vhs_tape": {
    "files": {
     "booklet.pdf": {
-     "v": "58905abbfe",
-     "size": 19499505
+     "v": "db45f197e1",
+     "size": 19590775
     },
     "bricklink_wanted.xml": {
-     "v": "80a4b15d63",
-     "size": 5103
+     "v": "66f31c484b",
+     "size": 5009
     },
     "model.glb": {
-     "v": "a71c565076",
-     "size": 3097148
+     "v": "a7ab20ade0",
+     "size": 3064364
     },
     "model.json": {
-     "v": "a401de157e",
-     "size": 84396
+     "v": "3d9d41845b",
+     "size": 85316
     },
     "parts.csv": {
-     "v": "e7a8f9ba5a",
-     "size": 3904
+     "v": "792c022675",
+     "size": 3863
     },
     "pick_a_brick.csv": {
-     "v": "259398f61a",
-     "size": 602
+     "v": "e837386978",
+     "size": 590
     },
     "price_estimate.md": {
-     "v": "9351b290e6",
-     "size": 4840
+     "v": "e160e44e26",
+     "size": 4789
     },
     "renders/hero_hero.png": {
-     "v": "49b77b091c",
-     "size": 1043750
+     "v": "b8e586c85d",
+     "size": 1043649
     },
     "renders/hero_open_hero.png": {
-     "v": "1e8e7a238f",
-     "size": 1010464
+     "v": "a848dc421e",
+     "size": 1011714
     },
     "renders/renders_back.png": {
-     "v": "c8f339c161",
-     "size": 792188
+     "v": "57400e380b",
+     "size": 792561
+    },
+    "renders/renders_close_pivots_r.png": {
+     "v": "937a8c88eb",
+     "size": 867878
+    },
+    "renders/renders_front.png": {
+     "v": "0b5ed3475a",
+     "size": 792091
     },
     "renders/renders_open.png": {
-     "v": "32673d82e1",
-     "size": 837489
+     "v": "6a2c6a0676",
+     "size": 838614
     },
     "renders/renders_three_quarter.png": {
-     "v": "7c802943c8",
-     "size": 856243
+     "v": "430e2c18f2",
+     "size": 856016
     },
     "renders/renders_top.png": {
-     "v": "20a0052b8b",
-     "size": 844750
+     "v": "f846b1304b",
+     "size": 844267
     },
     "renders/renders_underside.png": {
-     "v": "13b93da05d",
-     "size": 982767
+     "v": "a95163ff7c",
+     "size": 981940
     },
     "renders/renders_white.png": {
-     "v": "c4c1912e80",
-     "size": 804656
+     "v": "6c305c71da",
+     "size": 803998
     },
     "turntable.mp4": {
-     "v": "a4940636bc",
-     "size": 841238
+     "v": "14b14fc0f7",
+     "size": 844655
     },
     "vhs_tape-1080x1080.mp4": {
-     "v": "e84200b041",
-     "size": 29243087
+     "v": "31b095e6d6",
+     "size": 29098285
     },
     "vhs_tape.mpd": {
-     "v": "50ca233924",
-     "size": 22237
+     "v": "409c14a54e",
+     "size": 23133
     },
     "video_poster.jpg": {
-     "v": "e769e1cd76",
-     "size": 194584
+     "v": "7ff144f7dd",
+     "size": 194036
     }
    },
    "images": {
     "renders/hero_hero.png": {
      "w": 1000,
      "h": 1000,
-     "lg": "/assets/img/vhs_tape/hero_hero.webp?v=722ffa7108",
-     "sm": "/assets/img/vhs_tape/hero_hero-480.webp?v=4792f858c5"
+     "lg": "/assets/img/vhs_tape/hero_hero.webp?v=2ba2333404",
+     "sm": "/assets/img/vhs_tape/hero_hero-480.webp?v=c82e0d1f56"
     },
     "renders/hero_open_hero.png": {
      "w": 1000,
      "h": 1000,
-     "lg": "/assets/img/vhs_tape/hero_open_hero.webp?v=4b0f8f6659",
-     "sm": "/assets/img/vhs_tape/hero_open_hero-480.webp?v=3427d80fa3"
+     "lg": "/assets/img/vhs_tape/hero_open_hero.webp?v=d8c24c9e86",
+     "sm": "/assets/img/vhs_tape/hero_open_hero-480.webp?v=a302d62c8c"
     },
     "renders/renders_back.png": {
      "w": 900,
      "h": 900,
-     "lg": "/assets/img/vhs_tape/renders_back.webp?v=cdf42be5ca",
-     "sm": "/assets/img/vhs_tape/renders_back-480.webp?v=8c68d58abe"
+     "lg": "/assets/img/vhs_tape/renders_back.webp?v=dc597c0a3d",
+     "sm": "/assets/img/vhs_tape/renders_back-480.webp?v=682a106b6f"
+    },
+    "renders/renders_close_pivots_r.png": {
+     "w": 900,
+     "h": 900,
+     "lg": "/assets/img/vhs_tape/renders_close_pivots_r.webp?v=92b6261296",
+     "sm": "/assets/img/vhs_tape/renders_close_pivots_r-480.webp?v=8795df73c9"
+    },
+    "renders/renders_front.png": {
+     "w": 900,
+     "h": 900,
+     "lg": "/assets/img/vhs_tape/renders_front.webp?v=d1c9776796",
+     "sm": "/assets/img/vhs_tape/renders_front-480.webp?v=8d6dd5cc1b"
     },
     "renders/renders_open.png": {
      "w": 900,
      "h": 900,
-     "lg": "/assets/img/vhs_tape/renders_open.webp?v=79944465ee",
-     "sm": "/assets/img/vhs_tape/renders_open-480.webp?v=4e6d69cc07"
+     "lg": "/assets/img/vhs_tape/renders_open.webp?v=77d794b472",
+     "sm": "/assets/img/vhs_tape/renders_open-480.webp?v=051eedf062"
     },
     "renders/renders_three_quarter.png": {
      "w": 900,
      "h": 900,
-     "lg": "/assets/img/vhs_tape/renders_three_quarter.webp?v=a328fea9a2",
-     "sm": "/assets/img/vhs_tape/renders_three_quarter-480.webp?v=ed30c44e6b"
+     "lg": "/assets/img/vhs_tape/renders_three_quarter.webp?v=cd2af136cc",
+     "sm": "/assets/img/vhs_tape/renders_three_quarter-480.webp?v=8f415421a3"
     },
     "renders/renders_top.png": {
      "w": 900,
      "h": 900,
-     "lg": "/assets/img/vhs_tape/renders_top.webp?v=3cd3ede353",
-     "sm": "/assets/img/vhs_tape/renders_top-480.webp?v=0723be2750"
+     "lg": "/assets/img/vhs_tape/renders_top.webp?v=0c726c6ad8",
+     "sm": "/assets/img/vhs_tape/renders_top-480.webp?v=7b7a6ead7f"
     },
     "renders/renders_underside.png": {
      "w": 900,
      "h": 900,
-     "lg": "/assets/img/vhs_tape/renders_underside.webp?v=70011dcbb0",
-     "sm": "/assets/img/vhs_tape/renders_underside-480.webp?v=a9881c8ee9"
+     "lg": "/assets/img/vhs_tape/renders_underside.webp?v=0443d7d02a",
+     "sm": "/assets/img/vhs_tape/renders_underside-480.webp?v=448c736c75"
     },
     "renders/renders_white.png": {
      "w": 900,
      "h": 900,
-     "lg": "/assets/img/vhs_tape/renders_white.webp?v=d4132f34f9",
-     "sm": "/assets/img/vhs_tape/renders_white-480.webp?v=0827f1d39e"
+     "lg": "/assets/img/vhs_tape/renders_white.webp?v=dffe2060db",
+     "sm": "/assets/img/vhs_tape/renders_white-480.webp?v=65fad2863b"
     }
    },
-   "og": "/assets/og/vhs_tape.png?v=16c375abb2"
+   "og": "/assets/og/vhs_tape.png?v=edcc6022aa"
   },
   "watermelon_ice_lolly": {
    "files": {

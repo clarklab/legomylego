@@ -7,8 +7,9 @@ tall (y -64..0): 184.0 x 102.4 x 25.6 mm against the real 187 x 103 x 25 mm.
 Built like a modern display set: an inner chassis (the core: floor, the two reel drive holes,
 lamp tube, brake release, tape run, guide rollers and the posts the shell lands on), two reels
 that drop into their drive holes, end walls, a top shell built upside down (grip bands, two
-glass windows on SNOT hangers, recessed face label, spine label) and a full-length dust flap
-hung on two Technic pins.
+glass windows on SNOT hangers, recessed face label, spine label, and the flap's four hinge
+plates on four Technic pins, two at each front corner) and a full-length dust flap pressed
+onto those hinge plates.
 
 Moving groups: `flap` (the dust flap, about the pin axis) and `reel_l` / `reel_r` (reels,
 about their red spindle axles). `reel_l` is the supply reel: on the left when you hold the
@@ -36,6 +37,10 @@ REEL_Z = -10
 DRIVE = 2                                # the drive hole under a reel: this many studs out from
                                          # its middle each way (4 x 4, 32 mm; a real one is 30)
 PIVOT = (-54.0, -100.0)                  # (y, z) of the flap's pin axis, which runs along X
+# along that axis at each front corner, from the end inwards (x = s * these, s = +-1): the outer
+# hinge plate, the outer pivot block, the inner hinge plate, the inner pivot block; a pin joins
+# each hinge plate to the block inside it
+HINGE_X, BLOCK_X, PIN_X = (220, 180), (200, 160), (210, 170)   # (outer, inner)
 LAMP = (10, -50)                         # lamp tube centre (a 2 x 2 round brick sits on a
                                          # cell corner, 4 mm right of the middle)
 STUDS_FWD = rot(x=90)                    # SNOT: studs toward -Z, part's top face at origin z
@@ -60,6 +65,24 @@ def reel_dist(i, k):
     return min(math.hypot(S * i - x, S * k - REEL_Z) for x in REEL_X.values())
 
 
+# the flap's pivots, in the cassette's own frame (world)
+def block_M(s, x):
+    """A pivot block: Plate 1 x 2 with Pin Hole on Top (11458) in the top shell's third layer,
+    running front to back, its pin hole on the pivot axis at x = s * x."""
+    return transform((s * x, Y_T3, -90), rot(y=90))
+
+
+def hinge_M(s, x):
+    """A hinge plate: 1 x 2 plate with a pin hole under one end (18677), standing on the back
+    of the flap with that end at the top, studs to the front, the hole on the pivot axis."""
+    return transform((s * x, PIVOT[0] + 10, -110), HINGE_UP)
+
+
+def pin_M(s, x):
+    """A Technic pin with friction (2780), two studs long, along the pivot axis at x = s * x."""
+    return transform((s * x, PIVOT[0], PIVOT[1]))
+
+
 def row_parts(table, spans, y, z, R, colour="shell"):
     """1 x N (or 2 x N) SNOT runs along X: spans of (i0, i1); y is the run's centre."""
     out = []
@@ -69,6 +92,21 @@ def row_parts(table, spans, y, z, R, colour="shell"):
         Rr = R @ rot(y=90) if (table is PLATE2 and n == 1) else R
         out.append((table[n], colour, transform((x, y, z), Rr)))
     return out
+
+
+def merge_lone(sub):
+    """When the last step is one lone piece, it goes on in the step before it whose pieces are
+    nearest (of the two before it): no booklet step is a lone piece."""
+    last = [it for it in sub.items if it.step == sub.current_step]
+    if len(last) != 1 or not hasattr(last[0], "part") or sub.current_step < 2:
+        return
+    at = last[0].M[:3, 3]
+    near = {}
+    for it in sub.items:
+        if it.step in (sub.current_step - 1, sub.current_step - 2) and hasattr(it, "part"):
+            near[it.step] = min(near.get(it.step, 1e9), float(np.linalg.norm(it.M[:3, 3] - at)))
+    if near:
+        last[0].step = min(near, key=near.get)    # (the step left empty is reused by the next)
 
 
 def best_layout(layout, phases, tries=36):
@@ -86,10 +124,9 @@ def best_layout(layout, phases, tries=36):
 
 # ------------------------------------------------------------------------------ reels
 def reel(model, name: str, title: str, full: bool):
-    """A reel built around its own axis: a black lower flange (8 x 8 round plate; black is the
-    colour of it Pick a Brick ships with the rest of the kit), a second one for the tape pack,
-    a clear upper flange ring (Trans-Clear 4 x 4 macaroni tiles, r 60..80 LDU) and
-    a white hub: a flat ring of 2 x 2 macaroni tiles round a 2 x 2 round plate whose four
+    """A reel built around its own axis: a light grey lower flange (8 x 8 round plate), a second
+    one on it (on the full reel, the tape pack), a clear upper flange ring (Trans-Clear 4 x 4
+    macaroni tiles, r 60..80 LDU) and a white hub: a flat ring of 2 x 2 macaroni tiles round a 2 x 2 round plate whose four
     studs are the hub's bumps. A red Technic axle runs through the round plates' holes and
     the hub's axle hole: its end is the red dot in the middle of the hub. Underneath, a second
     white round plate is pushed onto the axle upside down, up against the lower flange: the
@@ -97,10 +134,10 @@ def reel(model, name: str, title: str, full: bool):
     bearing), its four studs are the pegs the reel is turned by from underneath, and the
     axle's two axle holes, one in each hub, make the reel turn with it."""
     s = model.submodel(name, title)
-    s.step("The lower flange and the tape pack: two black 8 x 8 round plates with a hole in "
-           "the middle, one on the other")
+    s.step("The lower flange and the tape pack: two light grey 8 x 8 round plates with a "
+           "hole in the middle, one on the other")
     s.place("74611", "flange", (0, -8, 0))
-    s.place("74611", "tape" if full else "flange", (0, -16, 0))
+    s.place("74611", "pack" if full else "flange", (0, -16, 0))
     s.step("The hub: a round plate with an axle hole, and a flat white ring round it")
     s.place("4032a", "hub", (0, -24, 0))
     for q in range(4):
@@ -191,14 +228,18 @@ def core_layout(variant: int) -> Batch:
         b.add("3062b", "roller" if s < 0 else "shell", transform((s * 200, -40, -80)),
               "rollers")
         b.add("3666", "shell", transform((s * 150, -24, 100)), "ledges")
+        # a post under the window's front edge, at its outer corner (the reel turns under the
+        # rest of it): its stud is the stop the frame comes down on if the window is pushed
+        b.add("3005", "shell", transform((s * 200, -40, -60)), "rollers")
     for x in (-180, 0, 180):               # bricks with a side stud carry the tape run
         b.add("87087", "shell", transform((x, -40, -80)), "tape_posts")
 
-    # the tape: black tiles on a plate stood on its edge, studs to the front
+    # the tape: black tiles on a plate stood on its edge, studs to the front. The tiles stop a
+    # stud short of each roller: the flap's inner hinge plate hangs in front of that stud
     for part, colour, M in row_parts(PLATE1, [(-9, -2), (-1, 1), (2, 9)], -30, -98,
                                      STUDS_FWD, "tape"):
         b.add(part, colour, M, "tape_back", insert=(0, 0, -1))
-    for part, colour, M in row_parts(TILE1, [(-9, -4), (-3, -1), (0, 0), (1, 3), (4, 9)],
+    for part, colour, M in row_parts(TILE1, [(-8, -3), (-2, -1), (0, 0), (1, 2), (3, 8)],
                                      -30, -106, STUDS_FWD, "tape"):
         b.add(part, colour, M, "tape", insert=(0, 0, -1))
     return b
@@ -210,7 +251,11 @@ CORE_PHASES = [["f0", "f1"], ["lamp", "brake"], ["rollers", "ledges", "tape_post
 
 def core(model):
     sub = model.submodel("core", "Chassis")
-    best_layout(core_layout, CORE_PHASES).emit(sub, CORE_PHASES, {
+    b = best_layout(core_layout, CORE_PHASES)
+    tape = sorted((it for it in b.items if it[3] in ("tape_back", "tape")),
+                  key=lambda it: (it[3] == "tape", it[2][0, 3]))
+    b.items = [it for it in b.items if it[3] not in ("tape_back", "tape")]
+    b.emit(sub, CORE_PHASES[:3], {
         "f0": "Chassis, bottom layer: the two square gaps are the reel drive holes, the "
               "Technic plate's middle hole is the lamp hole; silver screw heads sit flush "
               "underneath",
@@ -219,12 +264,23 @@ def core(model):
               "drive hub",
         "lamp": "The lamp tube: a black 2 x 2 round brick over the lamp hole",
         "brake": "The white reel-lock release, over its hole at the back",
-        "rollers": "White tape guide rollers at the front corners, a white guide post and "
-                   "the posts the top shell's flap pivots land on",
+        "rollers": "White tape guide rollers at the front corners, a white guide post, the "
+                   "posts the top shell's flap pivots land on, and behind them a black 1 x 1 "
+                   "brick: the front of a window rests on it",
         "ledges": "Ledges the window hangers land on",
-        "tape_posts": "Bricks with a side stud: they carry the tape run",
-        "tape_back": "The tape run: a black 1 x N plate stood on its edge",
-        "tape": "Black tiles on it: the tape stretched across the front"})
+        "tape_posts": "Bricks with a side stud: they carry the tape run"})
+    # the tape by hand: its three plates in one step, its five tiles in two (3 and 2), so no
+    # step is one lone piece (by distance alone the batch would split them 2 + 1 and 4 + 1)
+    plates, tiles = [it for it in tape if it[3] == "tape_back"], [it for it in tape
+                                                                   if it[3] == "tape"]
+    for caption, run in (("The tape run: black 1 x N plates stood on their edges", plates),
+                         ("Black tiles on them: the tape stretched across the front. The stud "
+                          "at each end stays bare: a hinge plate of the flap hangs in front "
+                          "of it", tiles[:3]),
+                         ("", tiles[3:])):
+        sub.step(caption)
+        for part, colour, M, _, tag, insert in run:
+            sub.place(part, colour, tag=tag, insert=insert).M = M
     return sub
 
 
@@ -298,11 +354,14 @@ def grille_row(k, half):
 
 def top_cells():
     t1 = set()
-    t1 |= {(i, -5) for i in range(-9, 10)} | {(i, -4) for i in range(-10, 11)}
+    # (the front row stops four studs from each end: the corner is cut back for the flap's
+    # hinge plates and pivot blocks, which sit on the pivot axis there, and its swing)
+    t1 |= {(i, -5) for i in range(-7, 8)} | {(i, -4) for i in range(-10, 11)}
     t1 |= {(i, k) for i in range(-4, 5) for k in (-3, 4)} | SIDE_RIMS
     t1 |= {(s * 11, k) for s in (-1, 1) for k in range(-3, 5)}
     t1 |= {(i, k) for i in range(-11, 12) for k in (5, 6)}
     t3 = {(i, -4) for i in range(-9, 10)}     # none over the tape: it reads against shadow
+    t3 -= {(s * round(BLOCK_X[1] / S), -4) for s in (-1, 1)}    # the inner pivot blocks
     t3 |= {(s * i, k) for s in (-1, 1) for i in (4, 11) for k in range(-3, 5)}
     t3 |= {(i, k) for i in range(-11, 12) for k in (5, 6)}
     return t1, t3 - LABEL_BASE
@@ -316,7 +375,7 @@ def top_layout(variant: int) -> Batch:
 
     t2_cells, t3_cells = top_cells()
     t1 = []
-    for k, half in ((-5, 9), (-4, 10), (5, 11), (6, 11)):
+    for k, half in ((-5, 7), (-4, 10), (5, 11), (6, 11)):
         t1 += grille_row(k, half)
     for k in (-3, 4):                         # the label's black rim: front and back ...
         t1 += [("2431", transform((-50, Y_T1, S * k))), ("3070b", transform((0, Y_T1, S * k))),
@@ -327,12 +386,16 @@ def top_layout(variant: int) -> Batch:
         t1.append(("4162", transform((s * 220, Y_T1, 10), rot(y=90))))
     for part, M in t1:
         add(part, "shell", M, "t1")
-    t2 = weave(t2_cells, "z", phase=variant)                       # columns across T1
+    # columns across T1; but the three cells behind each cut-back corner, over both pivot
+    # blocks, take a 1 x 3 plate along X: it ties the two grilles over them to the shell and
+    # holds both blocks' studs (as columns they would be three loose 1 x 1s)
+    corner = {(s * i, -4) for s in (-1, 1) for i in (8, 9, 10)}
+    t2 = weave(t2_cells - corner, "z", phase=variant) + weave(corner, "x")
     for r in t2:
         p, M = rect_M(PLATE, r, Y_T2)
         add(p, "shell", M, "t2")
-    for s in (-1, 1):                         # the flap's pivot blocks (Technic pin hole)
-        add("11458", "shell", transform((s * 200, Y_T3, -90), rot(y=90)), "t3")
+    for s in (-1, 1):                         # the flap's inner pivot blocks (Technic pin hole;
+        add("11458", "shell", block_M(s, BLOCK_X[1]), "t3")   # the outer ones go on later)
     ends = {(s * i, k) for s in (-1, 1) for i in (4, 11) for k in range(-3, 5)}
     t3 = weave(t3_cells - ends, "x", phase=variant // 4) + weave(ends, "z")
     for r in t3:
@@ -370,7 +433,9 @@ def top_shell(model, win, label):
     b.emit(sub, TOP_PHASES[:2], {
         "t1": "Top shell, built upside down: the grip-band grilles and the black rims go "
               "face down, then plates on them",
-        "t3": "A third layer, with the flap's pivot blocks (plates with a pin hole)"})
+        "t3": "A third layer, with the flap's inner pivot blocks (plates with a pin hole on "
+              "top)"})
+    merge_lone(sub)
     sub.step("The face label panel: it ties the front and back grip bands together")
     sub.use(label, FLIP[:3, 3], FLIP[:3, :3], insert=(0, -1, 0))
     later.emit(sub, TOP_PHASES[2:], {
@@ -382,7 +447,49 @@ def top_shell(model, win, label):
         sub.step("The window, hung on its six hangers" if s == 0 else "")
         M = FLIP @ translate(x, 0, 0)
         sub.use(win, M[:3, 3], M[:3, :3], insert=(0, -1, 0))
+    pivots(sub)
     return sub
+
+
+def pivots(sub):
+    """The flap's hinges, last on the upside-down top shell, two at each front corner along
+    the pivot axis. A pin goes into a hole only up to its collar, in the middle: it joins two
+    holes when it is pushed into one and the other part slides onto its free half. So at each
+    corner, in this order and all from the end: a pin into the inner pivot block (it is in
+    the third layer), the inner hinge plate slid onto it; the outer pivot block on its stud
+    (it would be in the way of that hinge plate before), a pin into it, the outer hinge plate
+    onto that. The hinge plates turn on their pins; the flap goes on them last (`build`).
+    Each corner's blocks and pins are tagged `pivots_l` (+X) / `pivots_r` (-X) for close-up
+    renders (`brickkit render vhs_tape --views close:pivots_r`)."""
+    R = FLIP[:3, :3]
+
+    def put(part, colour, M, tag, came_from):
+        """`came_from`: the way it goes on, in the cassette's frame (FLIP turns it)."""
+        sub.place(part, colour, (0, 0, 0), tag=tag,
+                  insert=tuple(R @ np.asarray(came_from, float))).M = FLIP @ M
+
+    def corner(s):
+        return "pivots_l" if s > 0 else "pivots_r"
+
+    sub.step("The flap's hinges: two at each front corner. Push a pin into each inner pivot "
+             "block from the end of the shell, up to the ridge in its middle: half of it "
+             "sticks out", view="above")
+    for s in (-1, 1):
+        put("2780", "pin", pin_M(s, PIN_X[1]), corner(s), (s, 0, 0))
+    sub.step("Slide a hinge plate (a 1 x 2 plate with a pin hole under one end) onto each pin, "
+             "studs to the front")
+    for s in (-1, 1):
+        put("18677", "shell", hinge_M(s, HINGE_X[1]), "flap", (s, 0, 0))
+    sub.step("The outer pivot blocks: a plate with a pin hole on top at each end, on its stud "
+             "beside the hinge plate. Push a pin into each, from the end, half of it out",
+             view="above")
+    for s in (-1, 1):
+        put("11458", "shell", block_M(s, BLOCK_X[0]), corner(s), (0, 1, 0))
+        put("2780", "pin", pin_M(s, PIN_X[0]), corner(s), (s, 0, 0))
+    sub.step("The outer hinge plates: slide one onto each pin, studs to the front. All four "
+             "hinge plates turn on their pins")
+    for s in (-1, 1):
+        put("18677", "shell", hinge_M(s, HINGE_X[0]), "flap", (s, 0, 0))
 
 
 # ------------------------------------------------------------------------------ dust flap
@@ -392,37 +499,37 @@ def flap(model):
     is thin and swings clear of the top shell.
 
     Built to be handled: behind the tiles is one 2 x 16 plate, so the flap cannot fold at a
-    seam, and a 2 x 3 plate at each end that reaches the top row: the tile at that end holds it
-    by six studs. On the back of each of those, on two studs side by side, is the flap's hinge:
-    a 1 x 2 plate with a pin hole under one end, the hole on the pivot axis."""
+    seam, and at each end, plates that reach the top row: two 2 x 3 plates at one end, a 2 x 3
+    and a 1 x 3 at the other (the 2 x 16 is a stud off the middle). The tiles at the ends hold
+    them by their studs. On their backs the flap's four hinge plates (in the top shell,
+    `pivots`) take two studs each, side by side, at x = +-220 and +-180."""
     sub = model.submodel("flap", "Dust flap")
     b = Batch()
 
     def add(part, colour, M, cat):
         b.add(part, colour, FLAT @ M, cat)
 
-    for part, colour, M in row_parts(PLATE2, [(-9, -9), (-8, 7), (8, 9)], -24, -118, STUDS_FWD):
-        add(part, colour, M, "plates")           # (the 2 x 16, and what is left over beside it)
-    for s in (-1, 1):
-        add("3021", "shell", transform((s * 210, -34, -118), UPRIGHT_1XN), "ends")
+    for part, colour, M in row_parts(PLATE2, [(-8, 7)], -24, -118, STUDS_FWD):
+        add(part, colour, M, "plates")           # (the 2 x 16)
+    for part, x in (("3021", -210), ("3623", -180), ("3021", 170), ("3021", 210)):
+        add(part, "shell", transform((x, -34, -118), UPRIGHT_1XN), "ends")
     for part, colour, M in row_parts(TILE2, [(-11, -6), (-5, -2), (-1, 1), (2, 5), (6, 11)],
                                      -44, -126, STUDS_FWD):
         add(part, colour, M, "top")
-    for part, colour, M in row_parts(TILE1, [(-11, -6), (-5, -2), (-1, 1), (2, 5), (6, 11)],
-                                     -14, -126, STUDS_FWD):
-        add(part, colour, M, "bottom")
-    for s in (-1, 1):                             # the hinges: pin hole at the pivot, at the top
-        add("18677", "shell", transform((s * 220, PIVOT[0] + 10, -110), HINGE_UP), "hinges")
     # (the plates and the tiles over them in one phase: a plate goes down with the tile that
     # locks it to its neighbour, so no row lies loose)
-    b.emit(sub, [["plates", "ends", "top"], ["bottom"], ["hinges"]], {
-        "plates": "Dust flap, built flat: one long 2 x 16 plate with a short one at each end, "
-                  "locked together by 2 x N tiles. The tiles' top halves hang over the plates: "
-                  "they are the flap's top row",
-        "ends": "A 2 x 3 plate at each end reaches the top row",
-        "bottom": "Bottom row of tiles",
-        "hinges": "Turn it over: a 1 x 2 plate with a pin hole on the back of each end, on two "
-                  "studs, its hole at the flap's top edge. These are the flap's hinges"})
+    b.emit(sub, [["plates", "ends", "top"]], {
+        "plates": "Dust flap, built flat: one long 2 x 16 plate and plates three studs long at "
+                  "the ends, locked together by 2 x N tiles. The tiles' top halves hang over the "
+                  "plates: they are the flap's top row",
+        "ends": "At each end, plates three studs long reach the top row: the hinge plates go "
+                "on their backs"})
+    bottom = row_parts(TILE1, [(-11, -6), (-5, -2), (-1, 1), (2, 5), (6, 11)], -14, -126,
+                       STUDS_FWD)
+    for caption, run in (("Bottom row of tiles", bottom[:3]), ("", bottom[3:])):  # (3 and 2:
+        sub.step(caption)                                       # no step of one lone tile)
+        for part, colour, M in run:
+            sub.place(part, colour).M = FLAT @ M
     return sub
 
 
@@ -486,12 +593,12 @@ def build(model):
         main.place("3005", "shell", (s * 220, -40, -80))     # the wall, one stud further forward
         main.place("3070b", "shell", (s * 220, -24, -100))   # a tile at the corner: the flap's
         #                                                       hinge plate comes down onto it
-    main.step("Lower the top shell onto the chassis")
+    main.step("Lower the top shell onto the chassis. Turn the four hinge plates at the front "
+              "corners to hang straight down, studs to the front", view="above")
     main.use(top, FLIP[:3, 3], FLIP[:3, :3], insert=(0, -1, 0))
-    main.step("Hold the dust flap in place and push a pin through each hinge")
+    main.step("Press the dust flap onto the four hinge plates: each one's two studs go into the "
+              "back of the plates at the flap's ends")
     main.use(door, (0, 0, 0), rot(x=90), tag="flap", insert=(0, 0, -1))
-    for s in (-1, 1):
-        main.place("2780", "pin", (s * 210, PIVOT[0], PIVOT[1]))
 
     model.moving_group("flap", "flap")
     model.moving_group("reel_l", "reel_l")

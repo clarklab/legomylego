@@ -3,21 +3,8 @@
 A life-size (1:1) VHS video cassette in real LEGO, built the way a modern display set is:
 an inner chassis carries the two reel drive holes, lamp tube, brake release, guide rollers
 and the tape run, and a shell goes over it. The full-length dust flap swings up like the real
-one, and both reels turn behind two clear windows, from the drive holes underneath. 370 parts
-in 55 part/colour lines, 131 steps, about 306 g (a real T-120 weighs about 230 g).
-
-## Built with real bricks
-
-The owner built it from the booklet on 2026-10-09, with parts from LEGO Pick a Brick: it goes
-together and it works. `built = "2026-10-09"` in `model.toml` takes the "not physically
-build-tested" warnings out of the booklet and the model's page. What building it taught the
-instructions:
-
-- every piece of a step is in one of its pictures (a piece that goes on underneath is shown
-  from below, in place), and a step's parts are drawn to one scale with their sizes;
-- nothing lies loose from step to step and no step is a lone piece: strips of the top shell
-  are built apart and go on with the plate that locks them, about four things to a step;
-- all four 8 x 8 round plates are Black, so the kit arrives as one Pick a Brick parcel.
+one, and both reels turn behind two clear windows, from the drive holes underneath. 374 parts
+in 54 part/colour lines, 129 steps, about 308 g (a real T-120 weighs about 230 g).
 
 ## Drive holes underneath
 
@@ -40,26 +27,46 @@ A real cassette is turned by its reels' hubs, through two holes in the bottom; s
 The flap is long, thin and hung at its two ends, so it is built against folding and against
 coming off its pivots:
 
-- **one 2 x 16 plate** runs behind the tiles (a 1 x 2 and a 2 x 2 fill in beside it), so there is
-  no seam for it to fold at;
-- each end is a **2 x 3 plate** reaching the top row: the tiles at that end hold it by six studs;
-- the **hinges are 1 x 2 plates with a pin hole under one end (18677)**, stood on the back of
-  those end plates with the hole at the top, on two studs side by side, so a hinge cannot twist
-  off. The hole is the pivot (y = -54, z = -100);
+- **one 2 x 16 plate** runs behind the tiles, so there is no seam for it to fold at;
+- at each end, **plates three studs long reach the top row**: two 2 x 3 plates at one end, a
+  2 x 3 and a 1 x 3 at the other (the 2 x 16 sits a stud off the middle). The tiles at the
+  ends hold them by their studs;
+- it hangs on **four hinges, two at each front corner**: 1 x 2 plates with a pin hole under one
+  end (18677), stood on the back of those end plates with the hole at the top, on two studs side
+  by side, so a hinge cannot twist off. The holes are on the pivot axis (y = -54, z = -100);
+- **four Technic pins**, two at each corner, end to end on that axis, join each hinge plate to a
+  **pivot block** in the top shell (Plate 1 x 2 with Pin Hole on Top, 11458). From the end
+  inwards a corner reads: hinge plate, pivot block, hinge plate, pivot block. The inner pin
+  cannot work loose: the top shell is against its inner end and the outer pin against its outer
+  end. If the outer pin backs out, the inner one still holds that corner;
 - at each front corner of the body the end wall steps down to a **1 x 1 brick** and a **1 x 1
-  tile**, so the hinge plate has room to come down in front of it.
+  tile**, so the outer hinge plate has room to come down in front of it.
+
+### How the pins go in
+
+A Technic pin goes into a hole only up to the ridge in its middle. Two parts are pinned together
+by pushing the pin into one and sliding the other onto the half that sticks out, along the pin.
+The flap is one rigid piece and its pins run along it, so it cannot slide onto them at both
+ends. So the hinge plates go on the pins first, loose, and the flap is pressed onto the hinge
+plates' studs last. At each corner, all from the end, as the last steps of the top shell (it is
+upside down): a pin into the inner pivot block, which is in the shell's third layer; the inner
+hinge plate slid onto it; the outer pivot block onto its stud (before this, it would block that
+hinge plate's way in); a pin into it; the outer hinge plate onto that. The top shell is lowered
+onto the chassis, the four hinge plates are turned to hang straight down, and the flap is
+pressed onto them: eight studs. The buildability check holds the booklet to this order: with the
+outer pivot block on first, it finds no way in for the inner hinge plate.
 
 ## One Pick a Brick parcel
 
 Pick a Brick ships its Bestseller pieces together within days and the rest later, in a parcel of
-their own. Every one of the 55 lines is a Bestseller, looked up on lego.com (US shop) on
-2026-10-13: 370 pieces for $47.47. (That is the black cassette. The `white` colourway's own
-lines were not looked up.) Two elements are sold under other numbers than the ones our parts
-data first named: the flap's friction pins as 6279875 ("CONNECTOR PEG W. FRICTION", LEGO's design
-61332; 4121715 is not on Pick a Brick) and the 2 x 16 plate as 428226 (not 428276).
+their own. Every line of the kit is a Bestseller (lego.com, US shop, 2026-10-28), so it comes in
+one parcel; the reels' 8 x 8 round plates are Light Bluish Gray (6353794) for that reason, as
+Black 74611 is a Standard piece. The range changes: look again before ordering. (That is the
+black cassette; the `white` colourway's own lines were not looked up.) Two elements are sold
+under other numbers than LDraw's data gives: the flap's friction pins as 6279875 ("CONNECTOR
+PEG W. FRICTION", LEGO's design 61332) and the 2 x 16 plate as 428226.
 `brickkit/data/pick_a_brick.json` swaps each for the number that is sold, so
-`out/pick_a_brick.csv` is the whole kit, and it records which elements were found to be
-Bestsellers and when.
+`out/pick_a_brick.csv` is the whole kit.
 
 ## Size
 
@@ -89,19 +96,20 @@ Reel hubs are 88 mm apart (x = +-110), 4 mm behind the middle of the depth.
      a column would be a single 1 x 1.
    - On top: the **lamp tube** (black 2 x 2 round brick) centre-front, the **white brake
      release** at the back centre, **white guide rollers** (1 x 1 round bricks) at both
-     front corners with a guide post behind each, ledges the windows land on, and three
+     front corners with a guide post behind each, ledges and posts the windows land on, and three
      bricks with a side stud carrying the **tape run**: black 1 x N plates stood on edge with
      black tiles facing forward, stretched between the rollers.
 2. **Reels** (17 parts each, identical hardware; see Mechanisms). They drop into the
    chassis' drive holes, the full supply reel at +X, the take-up reel at -X.
 3. **End walls**: a 1 x 8 brick at each end, a 1 x 1 brick in front of it and a 1 x 1 tile
-   at the corner, under the flap's hinge.
-4. **Top shell** (174 parts), built upside down and lowered on:
+   at the corner, under the flap's outer hinge plate.
+4. **Top shell** (180 parts), built upside down and lowered on:
    - Face layer: **grip bands** of 1 x 2 grille tiles along both long edges (slots along
      the cassette, like the moulded ribs), the black rim round the label (1 x 4 tiles
      front and back, a 1 x 6 tile on each side, next to the windows), 1 x 8 tiles at
-     the ends. Two plate layers under it, woven crosswise; the third layer carries the
-     flap's two pivot blocks.
+     the ends. Two plate layers under it, woven crosswise (behind each cut-back front
+     corner a 1 x 3 plate runs along the cassette instead, over both pivot blocks); the
+     third layer carries the flap's two inner pivot blocks.
    - **Face label** panel (its own sub-assembly): seven black 1 x 10 plates running
      front to back, which tie the front and back grip bands together, with white 2 x 4
      and 2 x 3 tiles on them. The label is 7 x 6 studs (56 x 48 mm), one plate below a
@@ -117,7 +125,9 @@ Reel hubs are 88 mm apart (x = +-110), 4 mm behind the middle of the depth.
      plates stood on edge, then two rows of white 1 x N tiles with black ends, recessed
      1.6 mm. The **write-protect tab** is one 1 x 1 tile at the back-left of the lower row.
    - Two **windows** (their own sub-assembly, used twice), hung from the back band.
-5. **Dust flap** (17 parts), built flat, then pinned on.
+   - Last, the flap's **pivots** at the two front corners: four pins, two outer pivot blocks
+     and four hinge plates (see "How the pins go in").
+5. **Dust flap** (15 parts), built flat, then pressed onto the four hinge plates.
 
 ## Windows: the largest clear pane
 
@@ -133,8 +143,13 @@ seams. Real cassettes vary, but this is about the size of the reference windows.
 Mounting (SNOT, all real connections): a 2 x 6 plate stood on edge, studs forward, takes
 the frame's back end; six half-round 1 x 1 x 2/3 plates with a side stud hang that plate
 from the underside of the back band, and they land on ledges in the chassis. The frame's
-front studs are capped by a 1 x 6 tile that butts against the front grip band; the front
-end is held through the frame (a 6-stud cantilever from the back). The glass is placed
+front studs are capped by a 1 x 6 tile that butts against the front grip band. Nothing can
+take those studs (the grip band in front of them is tiles and plates, and a reel turns under
+most of the front edge), so the front rests on a post instead: under each window's outer
+front corner, where the reel does not reach, a black 1 x 1 brick stands on the chassis
+floor, and its stud meets the underside of the frame and of the cap tile. Without it the
+frame is a cantilever from its six back studs, and a poke at its front edge tips it in. The
+reel passes 9 LDU (3.6 mm) from the post at its nearest. The glass is placed
 1 LDU off LDCad's snap point, where the two meshes overlap slightly; its hinge-style
 connection still registers.
 
@@ -142,17 +157,19 @@ connection still registers.
 
 ### Dust flap (`flap`)
 The flap is the whole front edge: 23 studs long, 24 mm tall (y -64..-4), 6.4 mm thick,
-black and smooth. It is built lying on its back: one 2 x 16 plate stood up, studs forward
-(with a 1 x 2 and a 2 x 2 beside it), 2 x N tiles whose upper halves hang over the plates and
-make the flap's top row, 1 x N tiles for the bottom row, and a 2 x 3 plate at each end
-reaching the top row. On the back of each end plate, on two studs, is a **1 x 2 plate with a
-pin hole under one end (18677)**, hole uppermost: the flap's **hinges** (see "After the
-build" for what they replaced, and why).
+black and smooth. It is built lying on its back: one 2 x 16 plate stood up, studs forward,
+2 x N tiles whose upper halves hang over the plates and make the flap's top row, 1 x N tiles
+for the bottom row, and at each end plates that reach the top row (two 2 x 3 at +X, a 2 x 3
+and a 1 x 3 at -X). On their backs, on two studs each, are four **1 x 2 plates with a pin
+hole under one end (18677)**, holes uppermost: the flap's **hinges**, at x = +-220 and
++-180.
 
-It pivots on two **Black Technic pins with friction (2780)** along X: each pin goes
-through a hinge plate into a **Plate 1 x 2 with Pin Hole on Top (11458)** hanging from the top
-shell's third layer. The axis is at y = -54, z = -100: 10 LDU below the top and 10 LDU
-behind the flap. `pose(t)` turns the flap by `rot(x = -90 t)` about it, so the bottom edge
+It pivots on four **Black Technic pins with friction (2780)** along X, two at each corner,
+end to end: each joins a hinge plate to the **Plate 1 x 2 with Pin Hole on Top (11458)**
+inside it, a pivot block in the top shell's third layer (x = +-200 and +-160). The outer
+blocks stand on the white guide rollers and the post behind each; all four hang from the
+second layer by their studs, the two at each corner from one 1 x 3 plate. The axis is at
+y = -54, z = -100: 10 LDU below the top and 10 LDU behind the flap. `pose(t)` turns the flap by `rot(x = -90 t)` about it, so the bottom edge
 swings forward and up until the flap lies flat as a visor. Because the top row is the
 overhanging half of the tiles (nothing behind it), the flap's top edge swings clear of
 the top shell: the mechanism check sweeps it with no collisions. The friction pins give
@@ -164,17 +181,10 @@ guide rollers.
 ### Reels (`reel_l` supply, `reel_r` take-up)
 Each reel, from the bottom:
 
-1. A **Black Plate Round 8 x 8 (74611)**: the lower flange, 64 mm.
-2. The pack: a second **black 74611** on top of it.
-
-   All four of these plates are Black so that the whole kit ships together. Pick a Brick
-   sends its Bestseller parts in one parcel within days and everything else later, in a
-   parcel of its own. Black 74611 is a Bestseller; White (the first choice) and Light
-   Bluish Gray (the second, wrongly noted here as fast) are not: the owner's order came
-   with the one black plate and without the three grey ones (2026-10-09). The lower plate
-   of each reel cannot be seen at all once the second is on it. The take-up reel's upper
-   plate used to be grey, to show a bare flange round a thin pack: it shows only through
-   the clear ring, as a lighter rim, and black there makes the two reels look alike.
+1. A **Light Bluish Gray Plate Round 8 x 8 (74611)**: the lower flange, 64 mm.
+2. A second one on top of it: on the full supply reel, the tape pack under the tape tiles.
+   Through the clear ring both reels show grey, like the grey or white inside of a real
+   cassette, round the black tape.
 3. The hub: a **White 2 x 2 round plate with axle hole (4032a)** in a ring of four white
    **2 x 2 macaroni tiles** (32 mm); the round plate's four studs are the ring of bumps.
 4. Four black **3 x 3 macaroni tiles**: tape round the hub (r 40..60 LDU, 48 mm).
@@ -192,20 +202,19 @@ the hub from below. Nothing clicks a reel to the chassis, so the connections che
 two may be separate (`[checks.connections] allow_separate_tags`), and both are declared
 `captive` (they are trapped by the shell).
 
-Through the windows both reels read as a white hub, a black pack and a clear ring over
-black.
+Through the windows each reel reads as a white hub, a ring of black tape and a clear ring
+over grey.
 `pose(t)` turns both reels the same way, as when playing: the supply reel 270 degrees and
 the take-up reel 360 degrees (the small pack spins faster for the same tape speed).
 
 ## Part choices
 
-- **74611** has no LDCad shadow file, so its underside connected to nothing. The engine
-  now reads overlay snap files from `brickkit/data/shadow/` (see Engine changes); the
-  overlay adds its 44 anti-studs.
-- **Tape is Black**, like real tape seen through a window. It reads against the white
-  flanges and hub; no Dark Brown was needed.
-- **27507 is a ring (r 60..80 only)**. **68568 (Tile 4 x 4 quarter circle)** was tried and
-  dropped: it is not a concentric ring and clashes with the macaroni tiles.
+- **74611** has no LDCad shadow file of its own: the engine reads an overlay snap file from
+  `brickkit/data/shadow/` (see Engine support), which gives it its 44 anti-studs.
+- **Tape is Black**, like real tape seen through a window. It reads against the grey
+  flanges and the white hub.
+- **27507 is a ring (r 60..80 only)**. **68568 (Tile 4 x 4 quarter circle)** would not do: it
+  is not a concentric ring and clashes with the macaroni tiles.
 - **2780 pins stay Black** in every colourway: LEGO never made them in White. On Pick a
   Brick the pin is element 6279875 (see "One Pick a Brick parcel").
 - Screw heads are **Flat Silver** 1 x 1 round plates, flush with the bottom.
@@ -232,7 +241,14 @@ Both pass `real_elements` with no rare parts.
 - **Clear upper flange** is a ring: there is no flat transparent 8 x 8 disc, so inside
   r 60 you see the pack directly.
 - **Lamp tube** is 4 mm right of centre: a 2 x 2 round brick has to sit on a cell corner.
-- The top shell's two front corners are cut back where the flap's hinges sit and swing.
+- The top shell's two front corners are cut back, four studs along the front, where the
+  flap's hinge plates and pivot blocks sit on the pivot axis and swing: from above they read as
+  a hinge's knuckles.
+- The tape's tiles stop a stud short of each guide roller: the inner hinge plate hangs in front
+  of that stud of the tape's plate, which shows beside the roller when the flap is up.
+- The inner pivot blocks hang from the top shell by one stud each (nothing is under them but
+  the tape and the reel). The flap holds them in line with the outer blocks, which also stand
+  on posts.
 - The flap stops 1.6 mm above the bottom edge, and its pin heads show on the ends.
 - The spine label runs to the bottom edge (two tile rows).
 - The bottom is a LEGO bottom (anti-studs), not a smooth moulding.
@@ -241,32 +257,35 @@ Both pass `real_elements` with no rare parts.
 
 ## Checks
 
-`brickkit all vhs_tape`: every check passes with no warnings. real_elements (55
-combinations, 0 rare, also for `white`), connections (962; three pieces: the cassette and
-its two loose reels), collisions (0), buildability (249 insertions, 14 sub-assemblies),
-stability (tips at 75 degrees), mechanism (24 poses, 3 moving groups, plus the size
+`brickkit all vhs_tape`: every check passes with no warnings. real_elements (54
+combinations, 0 rare, also for `white`), connections (973, 29 of them pin; three pieces: the
+cassette and its two loose reels), collisions (0), buildability (255 insertions, 14
+sub-assemblies), stability (tips at 75 degrees), mechanism (24 poses, 3 moving groups: the
+flap with its four hinge plates sweeps 0 to 90 degrees with no collisions; plus the size
 check), electrics (none), technique (0 notes).
 
-## Engine changes made for this model
+## Engine support
 
-- **Shadow overlays** (this redesign): `ShadowLibrary(..., overlays=[...])` reads extra
+- **Shadow overlays**: `ShadowLibrary(..., overlays=[...])` reads extra
   `!LDCAD SNAP_*` files after the LDCad library's own file for a part. The engine passes
   `brickkit/data/shadow/`, which holds `parts/74611.dat` (44 anti-studs). Tested in
   `tests/test_snaps.py`, documented in `docs/brickkit-guide.md` under "The checks".
-- Earlier: buildability lets clips, click hinges and Technic pins snap on; the cache path
-  test honours `BRICKKIT_CACHE`.
+- Buildability lets clips, click hinges and Technic pins snap on.
 
 ## Code
 
 `design.py` holds the sub-assemblies (`reel`, `core`, `window`, `label_panel`,
-`top_shell`, `flap`), the pose and the size check. `kit.py` has the layout helpers:
+`top_shell` with `pivots`, `flap`), the pose and the size check. `kit.py` has the layout helpers:
 `weave` lays a layer in rows along X or columns along Z (runs chosen by `split_line`, never
 a 1-stud run at an end), `Batch` orders a phase's parts into steps that each join what is
 already built, and `best_layout` tries layout variants until every phase is one piece.
 
 ## Renders
 
-`out/renders/`: `three_quarter.png` (closed), `open.png` (flap up, reels turned),
+`out/renders/`: `three_quarter.png` and `front.png` (closed), `open.png` (flap up, reels
+turned: `out/renders_open/three_quarter.png`), `close_pivots_r.png` (the -X front corner,
+closed: the outer pin's end in the end face, the cut-back corner; open:
+`out/renders_open/close_pivots_r.png`; `brickkit render vhs_tape --views close:pivots_r`),
 `back.png` (spine label and write-protect tab), `underside.png` (drive holes with the reels'
-drive hubs, screws, mouth; rendered again 2026-10-13), `white.png` (the white colourway). Hero shots: `out/hero/hero.png` and
+drive hubs, screws, mouth), `white.png` (the white colourway). Hero shots: `out/hero/hero.png` and
 `out/hero_open/hero.png`.

@@ -18,13 +18,11 @@
 1 0 220 -40 -80 1 0 0 0 1 0 0 0 1 3005.dat
 1 0 220 -24 -100 1 0 0 0 1 0 0 0 1 3070b.dat
 0 STEP
-0 // Lower the top shell onto the chassis
+0 // Lower the top shell onto the chassis. Turn the four hinge plates at the front corners to hang straight down, studs to the front
 1 16 0 0 0 -1 0 0 0 -1 0 0 0 1 top_shell.ldr
 0 STEP
-0 // Hold the dust flap in place and push a pin through each hinge
+0 // Press the dust flap onto the four hinge plates: each one's two studs go into the back of the plates at the flap's ends
 1 16 0 0 0 1 0 0 0 0 -1 0 1 0 flap.ldr
-1 0 -210 -54 -100 1 0 0 0 1 0 0 0 1 2780.dat
-1 0 210 -54 -100 1 0 0 0 1 0 0 0 1 2780.dat
 0 STEP
 0 NOFILE
 
@@ -33,9 +31,9 @@
 0 Name: reel_full.ldr
 0 Author: brickkit
 
-0 // The lower flange and the tape pack: two black 8 x 8 round plates with a hole in the middle, one on the other
-1 0 0 -8 0 1 0 0 0 1 0 0 0 1 74611.dat
-1 0 0 -16 0 1 0 0 0 1 0 0 0 1 74611.dat
+0 // The lower flange and the tape pack: two light grey 8 x 8 round plates with a hole in the middle, one on the other
+1 71 0 -8 0 1 0 0 0 1 0 0 0 1 74611.dat
+1 71 0 -16 0 1 0 0 0 1 0 0 0 1 74611.dat
 0 STEP
 0 // The hub: a round plate with an axle hole, and a flat white ring round it
 1 15 0 -24 0 1 0 0 0 1 0 0 0 1 4032a.dat
@@ -67,9 +65,9 @@
 0 Name: reel_empty.ldr
 0 Author: brickkit
 
-0 // The lower flange and the tape pack: two black 8 x 8 round plates with a hole in the middle, one on the other
-1 0 0 -8 0 1 0 0 0 1 0 0 0 1 74611.dat
-1 0 0 -16 0 1 0 0 0 1 0 0 0 1 74611.dat
+0 // The lower flange and the tape pack: two light grey 8 x 8 round plates with a hole in the middle, one on the other
+1 71 0 -8 0 1 0 0 0 1 0 0 0 1 74611.dat
+1 71 0 -16 0 1 0 0 0 1 0 0 0 1 74611.dat
 0 STEP
 0 // The hub: a round plate with an axle hole, and a flat white ring round it
 1 15 0 -24 0 1 0 0 0 1 0 0 0 1 4032a.dat
@@ -266,30 +264,31 @@
 1 0 -150 -24 100 1 0 0 0 1 0 0 0 1 3666.dat
 1 0 150 -24 100 1 0 0 0 1 0 0 0 1 3666.dat
 0 STEP
-0 // White tape guide rollers at the front corners, a white guide post and the posts the top shell's flap pivots land on
+0 // White tape guide rollers at the front corners, a white guide post, the posts the top shell's flap pivots land on, and behind them a black 1 x 1 brick: the front of a window rests on it
+1 0 -200 -40 -60 1 0 0 0 1 0 0 0 1 3005.dat
 1 15 -200 -40 -80 1 0 0 0 1 0 0 0 1 3062b.dat
 1 0 -180 -40 -80 1 0 0 0 1 0 0 0 1 87087.dat
 1 15 -200 -40 -100 1 0 0 0 1 0 0 0 1 3062b.dat
 0 STEP
-1 0 0 -40 -80 1 0 0 0 1 0 0 0 1 87087.dat
-1 0 180 -40 -80 1 0 0 0 1 0 0 0 1 87087.dat
-0 STEP
+1 0 200 -40 -60 1 0 0 0 1 0 0 0 1 3005.dat
 1 0 200 -40 -80 1 0 0 0 1 0 0 0 1 3062b.dat
+1 0 180 -40 -80 1 0 0 0 1 0 0 0 1 87087.dat
 1 15 200 -40 -100 1 0 0 0 1 0 0 0 1 3062b.dat
 0 STEP
-0 // The tape run: a black 1 x N plate stood on its edge
+1 0 0 -40 -80 1 0 0 0 1 0 0 0 1 87087.dat
+0 STEP
+0 // The tape run: black 1 x N plates stood on their edges
 1 0 -110 -30 -98 1 0 0 0 0 -1 0 1 0 3460.dat
 1 0 0 -30 -98 1 0 0 0 0 -1 0 1 0 3623.dat
-0 STEP
 1 0 110 -30 -98 1 0 0 0 0 -1 0 1 0 3460.dat
 0 STEP
-0 // Black tiles on it: the tape stretched across the front
-1 0 -130 -30 -106 1 0 0 0 0 -1 0 1 0 6636.dat
-1 0 -40 -30 -106 1 0 0 0 0 -1 0 1 0 63864.dat
+0 // Black tiles on them: the tape stretched across the front. The stud at each end stays bare: a hinge plate of the flap hangs in front of it
+1 0 -110 -30 -106 1 0 0 0 0 -1 0 1 0 6636.dat
+1 0 -30 -30 -106 1 0 0 0 0 -1 0 1 0 3069b.dat
 1 0 0 -30 -106 1 0 0 0 0 -1 0 1 0 3070b.dat
 0 STEP
-1 0 40 -30 -106 1 0 0 0 0 -1 0 1 0 63864.dat
-1 0 130 -30 -106 1 0 0 0 0 -1 0 1 0 6636.dat
+1 0 30 -30 -106 1 0 0 0 0 -1 0 1 0 3069b.dat
+1 0 110 -30 -106 1 0 0 0 0 -1 0 1 0 6636.dat
 0 STEP
 0 NOFILE
 
@@ -385,8 +384,8 @@
 1 0 50 64 -60 -1 0 0 0 -1 0 0 0 1 2431.dat
 1 0 90 64 100 -1 0 0 0 -1 0 0 0 1 2412b.dat
 1 0 70 64 -80 -1 0 0 0 -1 0 0 0 1 2412b.dat
-1 0 90 64 120 -1 0 0 0 -1 0 0 0 1 2412b.dat
 1 0 90 64 -100 -1 0 0 0 -1 0 0 0 1 2412b.dat
+1 0 90 64 120 -1 0 0 0 -1 0 0 0 1 2412b.dat
 1 0 80 56 10 0 0 -1 0 -1 0 -1 0 0 60479.dat
 0 STEP
 1 0 100 56 110 0 0 -1 0 -1 0 -1 0 0 3023b.dat
@@ -417,12 +416,8 @@
 1 0 -150 64 -80 -1 0 0 0 -1 0 0 0 1 2412b.dat
 1 0 -140 56 -90 0 0 -1 0 -1 0 -1 0 0 3023b.dat
 0 STEP
-1 0 -170 64 -100 -1 0 0 0 -1 0 0 0 1 2412b.dat
-1 0 -160 56 -90 0 0 -1 0 -1 0 -1 0 0 3023b.dat
 1 0 -190 64 -80 -1 0 0 0 -1 0 0 0 1 2412b.dat
-1 0 -180 56 -90 0 0 -1 0 -1 0 -1 0 0 3023b.dat
-0 STEP
-1 0 -200 56 -80 -1 0 0 0 -1 0 0 0 1 3024.dat
+1 0 -180 56 -80 -1 0 0 0 -1 0 0 0 1 3623.dat
 0 STEP
 1 0 110 64 -80 -1 0 0 0 -1 0 0 0 1 2412b.dat
 1 0 100 56 -90 0 0 -1 0 -1 0 -1 0 0 3023b.dat
@@ -432,14 +427,10 @@
 1 0 150 64 -80 -1 0 0 0 -1 0 0 0 1 2412b.dat
 1 0 140 56 -90 0 0 -1 0 -1 0 -1 0 0 3023b.dat
 0 STEP
-1 0 170 64 -100 -1 0 0 0 -1 0 0 0 1 2412b.dat
-1 0 160 56 -90 0 0 -1 0 -1 0 -1 0 0 3023b.dat
 1 0 190 64 -80 -1 0 0 0 -1 0 0 0 1 2412b.dat
-1 0 180 56 -90 0 0 -1 0 -1 0 -1 0 0 3023b.dat
+1 0 180 56 -80 -1 0 0 0 -1 0 0 0 1 3623.dat
 0 STEP
-1 0 200 56 -80 -1 0 0 0 -1 0 0 0 1 3024.dat
-0 STEP
-0 // A third layer, with the flap's pivot blocks (plates with a pin hole)
+0 // A third layer, with the flap's inner pivot blocks (plates with a pin hole on top)
 1 16 0 0 0 1 0 0 0 1 0 0 0 1 top_shell_strip1.ldr
 1 0 -10 48 120 -1 0 0 0 -1 0 0 0 1 60479.dat
 1 0 -80 48 70 0 0 -1 0 -1 0 -1 0 0 3023b.dat
@@ -467,14 +458,15 @@
 1 0 220 48 10 0 0 -1 0 -1 0 -1 0 0 3460.dat
 0 STEP
 1 0 -80 48 -10 0 0 -1 0 -1 0 -1 0 0 3666.dat
-1 0 -130 48 -80 -1 0 0 0 -1 0 0 0 1 3666.dat
+1 0 -110 48 -80 -1 0 0 0 -1 0 0 0 1 3710.dat
+1 0 -160 48 -90 0 0 -1 0 -1 0 -1 0 0 11458.dat
+1 0 -180 48 -80 -1 0 0 0 -1 0 0 0 1 3024.dat
+1 0 -220 48 -40 0 0 -1 0 -1 0 -1 0 0 3623.dat
 0 STEP
 1 0 80 48 -30 0 0 -1 0 -1 0 -1 0 0 3710.dat
-1 0 130 48 -80 -1 0 0 0 -1 0 0 0 1 3666.dat
-1 0 200 48 -90 0 0 -1 0 -1 0 -1 0 0 11458.dat
-0 STEP
-1 0 -220 48 -40 0 0 -1 0 -1 0 -1 0 0 3623.dat
-1 0 -200 48 -90 0 0 -1 0 -1 0 -1 0 0 11458.dat
+1 0 110 48 -80 -1 0 0 0 -1 0 0 0 1 3710.dat
+1 0 160 48 -90 0 0 -1 0 -1 0 -1 0 0 11458.dat
+1 0 180 48 -80 -1 0 0 0 -1 0 0 0 1 3024.dat
 0 STEP
 0 // The face label panel: it ties the front and back grip bands together
 1 16 0 0 0 -1 0 0 0 -1 0 0 0 1 label.ldr
@@ -522,6 +514,24 @@
 1 16 150 0 0 -1 0 0 0 -1 0 0 0 1 window.ldr
 0 STEP
 1 16 -150 0 0 -1 0 0 0 -1 0 0 0 1 window.ldr
+0 STEP
+0 // The flap's hinges: two at each front corner. Push a pin into each inner pivot block from the end of the shell, up to the ridge in its middle: half of it sticks out
+1 0 170 54 -100 -1 0 0 0 -1 0 0 0 1 2780.dat
+1 0 -170 54 -100 -1 0 0 0 -1 0 0 0 1 2780.dat
+0 STEP
+0 // Slide a hinge plate (a 1 x 2 plate with a pin hole under one end) onto each pin, studs to the front
+1 0 180 44 -110 0 0 1 1 0 0 0 1 0 18677.dat
+1 0 -180 44 -110 0 0 1 1 0 0 0 1 0 18677.dat
+0 STEP
+0 // The outer pivot blocks: a plate with a pin hole on top at each end, on its stud beside the hinge plate. Push a pin into each, from the end, half of it out
+1 0 200 48 -90 0 0 -1 0 -1 0 -1 0 0 11458.dat
+1 0 210 54 -100 -1 0 0 0 -1 0 0 0 1 2780.dat
+1 0 -200 48 -90 0 0 -1 0 -1 0 -1 0 0 11458.dat
+1 0 -210 54 -100 -1 0 0 0 -1 0 0 0 1 2780.dat
+0 STEP
+0 // The outer hinge plates: slide one onto each pin, studs to the front. All four hinge plates turn on their pins
+1 0 220 44 -110 0 0 1 1 0 0 0 1 0 18677.dat
+1 0 -220 44 -110 0 0 1 1 0 0 0 1 0 18677.dat
 0 STEP
 0 NOFILE
 
@@ -615,9 +625,9 @@
 0 Name: flap.ldr
 0 Author: brickkit
 
-0 // Dust flap, built flat: one long 2 x 16 plate with a short one at each end, locked together by 2 x N tiles. The tiles' top halves hang over the plates: they are the flap's top row
+0 // Dust flap, built flat: one long 2 x 16 plate and plates three studs long at the ends, locked together by 2 x N tiles. The tiles' top halves hang over the plates: they are the flap's top row
 1 0 -210 -118 34 0 0 1 0 1 0 -1 0 0 3021.dat
-1 0 -180 -118 24 0 0 1 0 1 0 -1 0 0 3023b.dat
+1 0 -180 -118 34 0 0 1 0 1 0 -1 0 0 3623.dat
 1 0 -10 -118 24 1 0 0 0 1 0 0 0 1 4282.dat
 1 0 -170 -126 44 1 0 0 0 1 0 0 0 1 69729.dat
 0 STEP
@@ -625,21 +635,16 @@
 1 0 0 -126 44 1 0 0 0 1 0 0 0 1 26603.dat
 1 0 70 -126 44 1 0 0 0 1 0 0 0 1 87079.dat
 0 STEP
-1 0 170 -118 24 1 0 0 0 1 0 0 0 1 3022.dat
+1 0 170 -118 34 0 0 1 0 1 0 -1 0 0 3021.dat
 1 0 210 -118 34 0 0 1 0 1 0 -1 0 0 3021.dat
 1 0 170 -126 44 1 0 0 0 1 0 0 0 1 69729.dat
 0 STEP
 0 // Bottom row of tiles
 1 0 -170 -126 14 1 0 0 0 1 0 0 0 1 6636.dat
 1 0 -70 -126 14 1 0 0 0 1 0 0 0 1 2431.dat
-0 STEP
 1 0 0 -126 14 1 0 0 0 1 0 0 0 1 63864.dat
+0 STEP
 1 0 70 -126 14 1 0 0 0 1 0 0 0 1 2431.dat
-0 STEP
 1 0 170 -126 14 1 0 0 0 1 0 0 0 1 6636.dat
-0 STEP
-0 // Turn it over: a 1 x 2 plate with a pin hole on the back of each end, on two studs, its hole at the flap's top edge. These are the flap's hinges
-1 0 -220 -110 44 0 0 -1 0 1 0 1 0 0 18677.dat
-1 0 220 -110 44 0 0 -1 0 1 0 1 0 0 18677.dat
 0 STEP
 0 NOFILE
